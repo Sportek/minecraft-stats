@@ -1,10 +1,16 @@
+"use client";
+
 import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "../ui/button";
+
 const Footer = () => {
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="flex flex-col items-center gap-4 p-4 bg-zinc-200">
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-row items-center justify-start w-full gap-2">
             <Image src={MinecraftStatsLogo} alt="Minecraft Stats Logo" width={32} height={32} />
@@ -12,19 +18,66 @@ const Footer = () => {
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="text-sm">
-              Minecraft Stats est un service gratuit qui permet de répertorier les statistiques de connections des
-              différents serveurs Minecraft existants. Vous pouvez ajouter facilement un serveur Minecraft et obtenir
-              des statistiques de connections en temps réel.
+              Minecraft Stats is a free service that allows you to list the connection statistics of various existing
+              Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.
             </div>
-            <Button variant="outline" className="w-full">
-              Ajouter un serveur
-            </Button>
+            <Button className="w-full">Add Your Server</Button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="text-md font-bold">RESSOURCES</div>
+          <div className="flex flex-col gap-2 text-sm">
+            <Link href="https://github.com/Sportek/minecraft-stats" className="text-zinc-600 hover:text-zinc-700">
+              GitHub
+            </Link>
+            <Link href="/api" className="text-zinc-600 hover:text-zinc-700">
+              Access to API
+            </Link>
+            <Link href="/docs" className="text-zinc-600 hover:text-zinc-700">
+              Documentation
+            </Link>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="text-md font-bold">ACCOUNT</div>
+          <div className="flex flex-col gap-2 text-sm">
+            <Link href="https://github.com/Sportek/minecraft-stats" className="text-zinc-600 hover:text-zinc-700">
+              Login
+            </Link>
+            <Link href="/api" className="text-zinc-600 hover:text-zinc-700">
+              Register
+            </Link>
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-between w-full">
-        <div>Icons</div>
-        <div className="text-sm">Copyright © 2024 Minecraft Stats. All Rights Reserved.</div>
+      <hr className="w-full h-[2px] bg-zinc-400" />
+      <div className="flex flex-row items-center justify-center w-full">
+        <div className="text-xs text-zinc-500">
+          <div className="flex flex-col items-center justify-center">
+            <div>
+              Copyright © 2024 Minecraft Stats. All Rights Reserved. We aren&apos;t affiliated or officially connected
+              with Mojang.
+            </div>
+            <div className="flex flex-row items-center justify-center gap-2">
+              <div>Made with</div>
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                className="text-red-500"
+              >
+                <Icon icon="ic:round-favorite" className="w-4 h-4" />
+              </motion.div>
+              <div>by</div>
+              <Link href="https://sportek.dev" className="text-zinc-600 hover:text-zinc-700">
+                Sportek
+              </Link>
+              <div>aka</div>
+              <Link href="https://gabriel-landry.dev" className="text-zinc-600 hover:text-zinc-700">
+                Gabriel Landry
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
