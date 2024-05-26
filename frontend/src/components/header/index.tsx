@@ -10,9 +10,11 @@ const Header = () => {
   return (
     <div className="w-full flex flex-row justify-between p-4 bg-stats-blue-1050 text-stats-blue-0">
       {/* Left side */}
-      <div className="flex flex-row items-center gap-2">
-        <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
-        <div className="text-2xl font-bold">Minecraft Stats</div>
+      <div className="flex flex-row items-center">
+        <Link href="/" className="flex flex-row items-center gap-2">
+          <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
+          <div className="text-2xl font-bold">Minecraft Stats</div>
+        </Link>
       </div>
 
       {/* Right side */}
