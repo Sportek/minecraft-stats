@@ -15,7 +15,7 @@ export default class StatsController {
         throw new Exception('Server id is required', { status: 400 })
       }
 
-      let query = ServerStat.query().where('server_id', validatedData.serverId)
+      let query = ServerStat.query().where({ server_id: validatedData.serverId })
 
       if (validatedData.exactTime) {
         const exactDateTime = DateTime.fromISO(validatedData.exactTime.toISOString())
