@@ -9,8 +9,9 @@
 
 import router from '@adonisjs/core/services/router'
 
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
-})
+router
+  .group(() => {
+    router.resource('servers', 'ServersController').except(['create', 'edit'])
+    router.resource('servers.stats', 'StatsController').only(['index'])
+  })
+  .prefix('/api/v1')
