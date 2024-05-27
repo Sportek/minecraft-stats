@@ -34,7 +34,6 @@ export default class StatsController {
       }
 
       if (validatedData.interval) {
-        // Exemple pour une moyenne par intervalle d'une heure
         query = query
           .select(Database.raw(`DATE_TRUNC('${validatedData.interval}', created_at) as interval`))
           .select(Database.raw('AVG(player_count) as average_player_count'))
