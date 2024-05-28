@@ -50,7 +50,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @beforeCreate()
   static async createVerificationToken(user: User) {
-    user.verificationToken = randomBytes(20).toString('hex')
+    user.verificationToken = randomBytes(4).toString('hex')
     user.verificationTokenExpires = DateTime.now().plus({ days: 7 })
   }
 }

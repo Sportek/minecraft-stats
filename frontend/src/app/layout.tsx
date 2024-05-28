@@ -3,6 +3,7 @@ import Header from "@/components/header";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import CheatCodeComponent from "./_cheatcode";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, "w-full min-h-screen flex flex-col bg-zinc-100")}>
+        <CheatCodeComponent />
         <Header />
         <div className="flex-1 flex flex-col">{children}</div>
         <Footer />

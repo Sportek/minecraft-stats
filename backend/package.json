@@ -41,6 +41,7 @@
     "@japa/plugin-adonisjs": "^3.0.1",
     "@japa/runner": "^3.1.4",
     "@swc/core": "^1.5.3",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.12.10",
     "adonis-sail": "^1.0.0",
@@ -58,6 +59,7 @@
     "@adonisjs/lucid": "^20.6.0",
     "@adonisjs/mail": "^9.2.1",
     "@vinejs/vine": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
     "luxon": "^3.4.4",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.2"

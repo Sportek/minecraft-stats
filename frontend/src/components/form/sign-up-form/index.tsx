@@ -1,7 +1,9 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { register } from "@/http/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
@@ -22,11 +24,18 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
     defaultValues: {
       username: "",
       password: "",
+      email: "",
     },
   });
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     console.log(credentials);
+
+    try {
+      await register(credentials);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

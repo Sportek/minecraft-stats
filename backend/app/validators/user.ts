@@ -22,3 +22,9 @@ export const LoginUserValidator = vine.compile(
     password: vine.string().maxLength(72).minLength(8),
   })
 )
+
+export const VerifyEmailValidator = vine.compile(
+  vine.object({
+    token: vine.string().trim(),
+  })
+)
