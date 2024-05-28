@@ -24,7 +24,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare verified: boolean
 
-  @column()
+  @column({ serializeAs: null })
   declare verificationToken: string | null
 
   @column()

@@ -16,10 +16,13 @@ export const register = async (credentials: { username: string; email: string; p
   return response.json();
 };
 
-export const verifyEmail = async (credentials: { email: string; verificationToken: string }) => {
+export const verifyEmail = async (credentials: { token: string }) => {
   const response = await fetch(`${getBaseUrl()}/verify-email`, {
     method: "POST",
-    body: JSON.stringify(credentials),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: credentials.token }),
   });
 
   if (!response.ok) {

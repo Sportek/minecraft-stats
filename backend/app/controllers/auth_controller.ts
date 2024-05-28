@@ -21,12 +21,14 @@ export default class AuthController {
     const data = request.only(['token'])
     const validatedUserData = await VerifyEmailValidator.validate(data)
 
-    const jwtToken = jwt.verify(validatedUserData.token, process.env.JWT_SECRET as string)
-    console.log(jwtToken)
+    const jwtToken = jwt.verify(validatedUserData.token, process.env.JWT_SECRET as string) as {
+      email: string
+      verificationToken: string
+    }
 
-    const user = await User.findBy('verificationToken', validatedUserData.token)
+    const user = await User.findBy('email', jwtToken.email)
     if (!user) return response.notFound('User not found')
-    if (user.verificationToken !== validatedUserData.token)
+    if (user.verificationToken !== jwtToken.verificationToken)
       return response.badRequest('Invalid verification token')
     if (user.verified) return response.badRequest('Email already verified')
     if (user.verificationTokenExpires && user.verificationTokenExpires < DateTime.now())
