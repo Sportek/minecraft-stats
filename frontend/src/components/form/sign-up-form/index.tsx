@@ -11,9 +11,9 @@ import { z } from "zod";
 interface SignUpFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const formSchema = z.object({
-  username: z.string().min(1).trim(),
-  email: z.string().email(),
-  password: z.string().min(1).trim(),
+  username: z.string().min(3).max(254).trim(),
+  email: z.string().email().max(254).trim(),
+  password: z.string().min(8).max(72).trim(),
 });
 
 const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
