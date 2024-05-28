@@ -36,7 +36,7 @@ const VerifyEmail = () => {
         <div className="text-lg">
           {isLoading && <div>Loading...</div>}
           {isVerified && <div>Verified</div>}
-          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+          {errorMessage && <div className="text-red-800">{errorMessage}</div>}
         </div>
       </div>
     </div>

@@ -41,7 +41,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
   return (
     <div className={cn("flex flex-col", className)}>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
           <FormField
             control={form.control}
             name="email"

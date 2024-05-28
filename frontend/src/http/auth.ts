@@ -37,6 +37,9 @@ export const verifyEmail = async (credentials: { token: string }) => {
 export const login = async (credentials: { email: string; password: string }) => {
   const response = await fetch(`${getBaseUrl()}/login`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(credentials),
   });
   return response.json();

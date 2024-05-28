@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { login } from "@/http/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useState } from "react";
@@ -11,8 +12,8 @@ import { z } from "zod";
 interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const formSchema = z.object({
-  username: z.string().min(1).trim(),
-  password: z.string().min(1).trim(),
+  email: z.string().email().trim(),
+  password: z.string().min(8).trim(),
 });
 
 const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
@@ -21,25 +22,31 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
-    console.log(credentials);
+    try {
+      await login(credentials);
+    } catch (error: any) {
+      if (error instanceof Error) {
+        setHasFailedLogin(error.message);
+      }
+    }
   };
 
   return (
     <div className={cn("flex flex-col", className)}>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
