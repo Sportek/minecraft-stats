@@ -1,6 +1,7 @@
 "use client";
 
 import { getBaseUrl } from "@/app/_cheatcode";
+import { User } from "@/types/auth";
 
 export const register = async (credentials: { username: string; email: string; password: string }) => {
   console.log("url", getBaseUrl());
@@ -26,10 +27,11 @@ export const verifyEmail = async (credentials: { token: string }) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to verify email");
+    const error = await response.json();
+    throw new Error(error.error);
   }
 
-  return response.json();
+  return response.json() as Promise<User>;
 };
 
 export const login = async (credentials: { email: string; password: string }) => {

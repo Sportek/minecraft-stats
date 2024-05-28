@@ -11,9 +11,9 @@ export default class AuthController {
     const data = request.only(['email', 'password'])
     const validatedUserData = await LoginUserValidator.validate(data)
     const user = await User.findBy('email', validatedUserData.email)
-    if (!user) return response.notFound('User not found')
+    if (!user) return response.notFound({ error: 'User not found' })
     const passwordsMatch = await hash.verify(user.password, validatedUserData.password)
-    if (!passwordsMatch) return response.badRequest('Invalid password')
+    if (!passwordsMatch) return response.badRequest({ error: 'Invalid password' })
     return response.ok(user)
   }
 
@@ -27,12 +27,12 @@ export default class AuthController {
     }
 
     const user = await User.findBy('email', jwtToken.email)
-    if (!user) return response.notFound('User not found')
+    if (!user) return response.notFound({ error: 'User not found' })
     if (user.verificationToken !== jwtToken.verificationToken)
-      return response.badRequest('Invalid verification token')
-    if (user.verified) return response.badRequest('Email already verified')
+      return response.badRequest({ error: 'Invalid verification token' })
+    if (user.verified) return response.badRequest({ error: 'Email already verified' })
     if (user.verificationTokenExpires && user.verificationTokenExpires < DateTime.now())
-      return response.badRequest('Verification token expired')
+      return response.badRequest({ error: 'Verification token expired' })
     user.verificationToken = null
     user.verified = true
     user.verificationTokenExpires = null
