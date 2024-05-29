@@ -1,5 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { AuthProvider } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, "w-full min-h-screen flex flex-col bg-zinc-100")}>
-        <CheatCodeComponent />
-        <Header />
-        <div className="flex-1 flex flex-col">{children}</div>
-        <Footer />
+        <AuthProvider>
+          <CheatCodeComponent />
+          <Header />
+          <div className="flex-1 flex flex-col">{children}</div>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

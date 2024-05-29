@@ -12,6 +12,7 @@ export default class AuthController {
     const validatedUserData = await LoginUserValidator.validate(data)
     const user = await User.findBy('email', validatedUserData.email)
     if (!user) return response.notFound({ error: 'User not found' })
+    if (!user.verified) return response.badRequest({ error: 'Email not verified' })
     const passwordsMatch = await hash.verify(user.password, validatedUserData.password)
     if (!passwordsMatch) return response.badRequest({ error: 'Invalid password' })
     return response.ok(user)
@@ -56,5 +57,41 @@ export default class AuthController {
       )
     })
     return response.ok(user)
+  }
+
+  async providerLogin({ ally, request }: HttpContext) {
+    const driverInstance = ally.use(request.param('provider'))
+    return await driverInstance.redirect()
+  }
+
+  async discordCallback({ ally, response }: HttpContext) {
+    const discordInstance = ally.use('discord')
+    const user = await discordInstance.user()
+
+    if (discordInstance.accessDenied())
+      return response.badRequest({ error: 'You have cancelled the login process' })
+
+    if (discordInstance.stateMisMatch())
+      return response.badRequest({ error: 'We are unable to verify the request. Please try again' })
+
+    if (discordInstance.hasError())
+      return response.badRequest({ error: 'An error occurred while logging in. Please try again' })
+
+    await User.create({
+      username: user.name,
+      email: user.email,
+      password: Math.random().toString(36).slice(2),
+      verified: user.emailVerificationState === 'verified',
+      provider: 'discord',
+    })
+
+    return response.ok(user)
+  }
+
+  async githubCallback({ ally }: HttpContext) {
+    const driverInstance = ally.use('github')
+    const user = await driverInstance.user()
+    console.log(user)
+    return user
   }
 }

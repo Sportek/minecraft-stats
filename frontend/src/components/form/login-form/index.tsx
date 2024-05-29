@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { login } from "@/http/auth";
+import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useState } from "react";
@@ -27,13 +27,14 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
     },
   });
 
+  const { login } = useAuth();
+
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
-    try {
-      await login(credentials);
-    } catch (error: any) {
-      if (error instanceof Error) {
-        setHasFailedLogin(error.message);
-      }
+    const response = await login(credentials.email, credentials.password);
+    if (response?.error) {
+      setHasFailedLogin(response.error);
+    } else {
+      setHasFailedLogin("");
     }
   };
 

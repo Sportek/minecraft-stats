@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@/contexts/auth";
 import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -6,6 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 const Header = () => {
   const [activeTab, setActiveTab] = useState("all-servers");
+  const { user } = useAuth();
 
   return (
     <div className="w-full flex flex-row justify-between p-4 bg-stats-blue-1050 text-stats-blue-0">
@@ -39,16 +41,20 @@ const Header = () => {
         >
           API
         </Link>
-        <Link
-          href="/login"
-          className={cn(
-            "text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out",
-            activeTab === "login" ? "bg-stats-blue-1000" : null
-          )}
-          onClick={() => setActiveTab("login")}
-        >
-          LOGIN
-        </Link>
+        {user ? (
+          <div>{user.username}</div>
+        ) : (
+          <Link
+            href="/login"
+            className={cn(
+              "text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out",
+              activeTab === "login" ? "bg-stats-blue-1000" : null
+            )}
+            onClick={() => setActiveTab("login")}
+          >
+            LOGIN
+          </Link>
+        )}
       </div>
     </div>
   );

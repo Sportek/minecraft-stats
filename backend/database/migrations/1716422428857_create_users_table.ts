@@ -12,6 +12,7 @@ export default class extends BaseSchema {
       table.boolean('verified').defaultTo(false)
       table.string('verification_token', 8).nullable()
       table.timestamp('verification_token_expires').nullable()
+      table.enum('provider', ['github', 'discord']).nullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at').nullable()
     })
