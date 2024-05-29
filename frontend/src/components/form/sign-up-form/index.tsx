@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { register } from "@/http/auth";
+import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,11 +29,11 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
     },
   });
 
-  const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
-    console.log(credentials);
+  const { register } = useAuth();
 
+  const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await register(credentials);
+      await register(credentials.username, credentials.email, credentials.password);
     } catch (error) {
       console.error(error);
     }
@@ -84,6 +85,23 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
 
           <Button className="w-full" type="submit">
             Submit
+          </Button>
+          <div className="flex items-center justify-center space-x-2">
+            <div className="h-px bg-gray-300 w-full" />
+            <div className="text-gray-500 text-xs">Or</div>
+            <div className="h-px bg-gray-300 w-full" />
+          </div>
+          <Button variant={"outline"} className="w-full" type="button">
+            <div className="flex items-center space-x-2 text-center">
+              <Icon icon="logos:discord-icon" className="w-5 h-5" />
+              <div>Register with Discord</div>
+            </div>
+          </Button>
+          <Button variant={"outline"} className="w-full" type="button">
+            <div className="flex items-center space-x-2 text-center">
+              <Icon icon="mdi:github" className="w-5 h-5" />
+              <div>Register with Github</div>
+            </div>
           </Button>
         </form>
       </Form>

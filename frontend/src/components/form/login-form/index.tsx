@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +39,8 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
       setHasFailedLogin("");
     }
   };
+
+  const router = useRouter();
 
   return (
     <div className={cn("flex flex-col", className)}>
@@ -71,6 +75,23 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
           {hasFailedLogin && <FormMessage>{hasFailedLogin}</FormMessage>}
           <Button className="w-full" type="submit">
             Submit
+          </Button>
+          <div className="flex items-center justify-center space-x-2">
+            <div className="h-px bg-gray-300 w-full" />
+            <div className="text-gray-500 text-xs">Or</div>
+            <div className="h-px bg-gray-300 w-full" />
+          </div>
+          <Button variant={"outline"} className="w-full" type="button">
+            <div className="flex items-center space-x-2 text-center">
+              <Icon icon="logos:discord-icon" className="w-5 h-5" />
+              <div>Login with Discord</div>
+            </div>
+          </Button>
+          <Button variant={"outline"} className="w-full" type="button">
+            <div className="flex items-center space-x-2 text-center">
+              <Icon icon="mdi:github" className="w-5 h-5" />
+              <div>Login with Github</div>
+            </div>
           </Button>
         </form>
       </Form>
