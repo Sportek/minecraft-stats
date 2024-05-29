@@ -84,8 +84,7 @@ export default class AuthController {
       verified: user.emailVerificationState === 'verified',
       provider: 'discord',
     })
-
-    return response.ok(user)
+    return response.redirect(process.env.WEBSITE_URL as string)
   }
 
   async githubCallback({ ally }: HttpContext) {

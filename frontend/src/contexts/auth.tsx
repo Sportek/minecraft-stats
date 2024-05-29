@@ -1,6 +1,8 @@
 "use client";
+import { getBaseUrl } from "@/app/_cheatcode";
 import { loginUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
+import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 interface AuthContextProps {
@@ -8,6 +10,8 @@ interface AuthContextProps {
   login: (email: string, password: string) => Promise<{ error: string } | undefined>;
   register: (username: string, email: string, password: string) => Promise<{ error: string } | undefined>;
   logout: () => void;
+  loginWithDiscord: () => void;
+  loginWithGithub: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -22,6 +26,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -44,9 +49,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
   }, []);
 
+  const loginWithDiscord = useCallback(() => {
+    router.push(`${getBaseUrl()}/login/discord`);
+  }, [router]);
+
+  const loginWithGithub = useCallback(() => {
+    router.push(`${getBaseUrl()}/login/github`);
+  }, [router]);
+
   const contextValue = useMemo(() => {
-    return { user, login, register, logout };
-  }, [user, login, register, logout]);
+    return { user, login, register, logout, loginWithDiscord, loginWithGithub };
+  }, [user, login, register, logout, loginWithDiscord, loginWithGithub]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
