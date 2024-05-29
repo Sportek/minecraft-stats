@@ -12,8 +12,6 @@ export default class AuthController {
     const validatedUserData = await LoginUserValidator.validate(data)
     const user = await User.findBy('email', validatedUserData.email)
     if (!user) return response.notFound({ error: 'User not found' })
-    console.log(user.password)
-    console.log(validatedUserData.password)
     const passwordsMatch = await hash.verify(user.password, validatedUserData.password)
     if (!passwordsMatch) return response.badRequest({ error: 'Invalid password' })
     return response.ok(user)
@@ -22,7 +20,6 @@ export default class AuthController {
   async verifyEmail({ request, response }: HttpContext) {
     const data = request.only(['token'])
     const validatedUserData = await VerifyEmailValidator.validate(data)
-
     const jwtToken = jwt.verify(validatedUserData.token, process.env.JWT_SECRET as string) as {
       email: string
       verificationToken: string
