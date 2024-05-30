@@ -88,8 +88,8 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
           </Button>
           <Button variant={"outline"} className="w-full" type="button" onClick={loginWithGithub}>
             <div className="flex items-center space-x-2 text-center">
-              <Icon icon="mdi:github" className="w-5 h-5" />
-              <div>Login with Github</div>
+              <Icon icon="logos:google-icon" className="w-5 h-5" />
+              <div>Login with Google</div>
             </div>
           </Button>
         </form>

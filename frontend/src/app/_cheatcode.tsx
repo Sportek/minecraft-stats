@@ -7,7 +7,9 @@ import { useEffect } from "react";
 
 let baseUrl = "";
 
-export const getBaseUrl = () => baseUrl;
+export const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then((res) => res.json());
+
+export const getBaseUrl = (): string => baseUrl;
 
 const CheatCodeComponent = () => {
   useEffect(() => {

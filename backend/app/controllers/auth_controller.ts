@@ -60,13 +60,13 @@ export default class AuthController {
   }
 
   async providerLogin({ ally, request }: HttpContext) {
-    const driverInstance = ally.use(request.param('provider'))
+    const driverInstance = ally.use(request.param('provider') as 'discord' | 'github')
     return await driverInstance.redirect()
   }
 
   async discordCallback({ ally, response }: HttpContext) {
     const discordInstance = ally.use('discord')
-    const user = await discordInstance.user()
+    const discordUser = await discordInstance.user()
 
     if (discordInstance.accessDenied())
       return response.badRequest({ error: 'You have cancelled the login process' })
@@ -77,14 +77,20 @@ export default class AuthController {
     if (discordInstance.hasError())
       return response.badRequest({ error: 'An error occurred while logging in. Please try again' })
 
+    const user = await User.findBy('email', discordUser.email)
+
+    if (user) return response.ok(user)
+
     await User.create({
-      username: user.name,
-      email: user.email,
+      username: discordUser.nickName,
+      email: discordUser.email,
       password: Math.random().toString(36).slice(2),
-      verified: user.emailVerificationState === 'verified',
+      verified: discordUser.emailVerificationState === 'verified',
       provider: 'discord',
+      avatarUrl: discordUser.avatarUrl,
     })
-    return response.redirect(process.env.WEBSITE_URL as string)
+
+    return response.ok(user)
   }
 
   async githubCallback({ ally }: HttpContext) {

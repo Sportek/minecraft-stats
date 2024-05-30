@@ -5,9 +5,18 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 const Header = () => {
   const [activeTab, setActiveTab] = useState("all-servers");
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div className="w-full flex flex-row justify-between p-4 bg-stats-blue-1050 text-stats-blue-0">
@@ -42,7 +51,22 @@ const Header = () => {
           API
         </Link>
         {user ? (
-          <div>{user.username}</div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar>
+                <AvatarImage src={user.avatarUrl ?? ""} alt={user.username ?? ""} />
+                <AvatarFallback>{user.username?.[0].toUpperCase()}</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>{user.username}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="hover:cursor-pointer">Profile</DropdownMenuItem>
+              <DropdownMenuItem className="hover:cursor-pointer" onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <Link
             href="/login"

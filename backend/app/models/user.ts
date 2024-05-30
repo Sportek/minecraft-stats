@@ -27,6 +27,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare provider: 'github' | 'discord' | null
 
+  @column()
+  declare avatarUrl: string | null
+
   @column({ serializeAs: null })
   declare verificationToken: string | null
 

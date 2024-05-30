@@ -5,7 +5,7 @@ const allyConfig = defineConfig({
   discord: services.discord({
     clientId: env.get('DISCORD_CLIENT_ID'),
     clientSecret: env.get('DISCORD_CLIENT_SECRET'),
-    callbackUrl: 'http://localhost:3333/api/v1/callback/discord',
+    callbackUrl: 'http://localhost:3000/callback/discord',
   }),
   github: services.github({
     clientId: env.get('GITHUB_CLIENT_ID'),

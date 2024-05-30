@@ -4,6 +4,7 @@ import { getBaseUrl } from "@/app/_cheatcode";
 import { User } from "@/types/auth";
 
 export const registerUser = async (credentials: { username: string; email: string; password: string }) => {
+  console.log(credentials);
   const response = await fetch(`${getBaseUrl()}/register`, {
     method: "POST",
     body: JSON.stringify(credentials),

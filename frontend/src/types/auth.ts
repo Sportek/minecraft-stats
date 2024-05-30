@@ -3,6 +3,7 @@ export type User = {
   username: string;
   email: string;
   verificationTokenExpires: Date;
+  avatarUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -99,8 +99,8 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
           </Button>
           <Button variant={"outline"} className="w-full" type="button">
             <div className="flex items-center space-x-2 text-center">
-              <Icon icon="mdi:github" className="w-5 h-5" />
-              <div>Register with Github</div>
+              <Icon icon="logos:google-icon" className="w-5 h-5" />
+              <div>Register with Google</div>
             </div>
           </Button>
         </form>
