@@ -45,7 +45,13 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 
-  static readonly accessTokens = DbAccessTokensProvider.forModel(User)
+  static readonly accessTokens = DbAccessTokensProvider.forModel(User, {
+    expiresIn: '30 days',
+    prefix: 'oat_',
+    table: 'auth_access_tokens',
+    type: 'auth_token',
+    tokenSecretLength: 40,
+  })
 
   @beforeCreate()
   static async createVerificationToken(user: User) {

@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,7 @@ import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -31,11 +32,22 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
 
   const { register } = useAuth();
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
+      setLoading(true);
       await register(credentials.username, credentials.email, credentials.password);
     } catch (error) {
-      console.error(error);
+      // clear le form
+      if (error instanceof Error) {
+        console.log(error.message);
+        setErrorMessage(error.message);
+        form.reset();
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,6 +115,12 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
               <div>Register with Google</div>
             </div>
           </Button>
+          {errorMessage && <div className="text-red-700 text-center">{errorMessage}</div>}
+          {loading && (
+            <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+              <Loader message="Registering..." />
+            </div>
+          )}
         </form>
       </Form>
     </div>

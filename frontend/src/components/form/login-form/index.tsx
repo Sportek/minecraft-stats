@@ -18,7 +18,7 @@ const formSchema = z.object({
 });
 
 const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
-  const [hasFailedLogin, setHasFailedLogin] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,10 +32,10 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     const response = await login(credentials.email, credentials.password);
-    if (response?.error) {
-      setHasFailedLogin(response.error);
+    if (response?.message) {
+      setErrorMessage(response.message);
     } else {
-      setHasFailedLogin("");
+      setErrorMessage(null);
     }
   };
 
@@ -71,7 +71,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
               </FormItem>
             )}
           />
-          {hasFailedLogin && <FormMessage>{hasFailedLogin}</FormMessage>}
+          {errorMessage && <FormMessage className="text-center text-red-700">{errorMessage}</FormMessage>}
           <Button className="w-full" type="submit">
             Submit
           </Button>

@@ -4,16 +4,19 @@ import { getBaseUrl } from "@/app/_cheatcode";
 import { User } from "@/types/auth";
 
 export const registerUser = async (credentials: { username: string; email: string; password: string }) => {
-  console.log(credentials);
   const response = await fetch(`${getBaseUrl()}/register`, {
     method: "POST",
     body: JSON.stringify(credentials),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to register");
+    const error = await response.json();
+    throw new Error(error.message);
   }
-  return response.json();
+  return response.json() as Promise<User>;
 };
 
 export const verifyEmail = async (credentials: { token: string }) => {
@@ -22,12 +25,12 @@ export const verifyEmail = async (credentials: { token: string }) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ token: credentials.token }),
+    body: JSON.stringify(credentials),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error);
+    throw new Error(error.message);
   }
 
   return response.json() as Promise<User>;
@@ -44,7 +47,8 @@ export const loginUser = async (credentials: { email: string; password: string }
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error);
+    console.log(error);
+    throw new Error(error.message);
   }
 
   return response.json() as Promise<User>;

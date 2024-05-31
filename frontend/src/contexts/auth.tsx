@@ -8,8 +8,8 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 interface AuthContextProps {
   user: User | null;
   setUser: (user: User | null) => void;
-  login: (email: string, password: string) => Promise<{ error: string } | undefined>;
-  register: (username: string, email: string, password: string) => Promise<{ error: string } | undefined>;
+  login: (email: string, password: string) => Promise<{ message: string } | undefined>;
+  register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   loginWithDiscord: () => void;
   loginWithGithub: () => void;
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(response);
         router.push("/");
       } catch (error: any) {
-        return { error: error.message };
+        return { message: error.message };
       }
     },
     [router, setUser]
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await registerUser({ username, email, password });
         router.push("/");
       } catch (error: any) {
-        return { error: error.message };
+        throw new Error(error.message);
       }
     },
     [router]
