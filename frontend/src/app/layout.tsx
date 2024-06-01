@@ -1,5 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import RestrictedWidthLayout from "@/components/restricted-width-layout";
 import { AuthProvider } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -22,11 +23,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(inter.className, "w-full min-h-screen flex flex-col bg-zinc-100")}>
+      <body className={cn(inter.className, "w-full min-h-screen flex flex-col bg-zinc-100 text-stats-blue-1050")}>
         <AuthProvider>
           <CheatCodeComponent />
           <Header />
-          <div className="flex-1 flex flex-col">{children}</div>
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
+          </div>
           <Footer />
         </AuthProvider>
       </body>
