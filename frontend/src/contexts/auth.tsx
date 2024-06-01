@@ -13,6 +13,8 @@ interface AuthContextProps {
   logout: () => void;
   loginWithDiscord: () => void;
   loginWithGithub: () => void;
+  getToken: () => string | null;
+  saveToken: (token: string) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -33,7 +35,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     async (email: string, password: string) => {
       try {
         const response = await loginUser({ email, password });
-        setUser(response);
+        setUser(response.user);
+        saveToken(response.accessToken.token);
         router.push("/");
       } catch (error: any) {
         return { message: error.message };
@@ -54,6 +57,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [router]
   );
 
+  const getToken = () => {
+    return localStorage.getItem("accessToken");
+  };
+
+  const saveToken = (token: string) => {
+    localStorage.setItem("accessToken", token);
+  };
+
   const logout = useCallback(() => {
     setUser(null);
     router.push("/");
@@ -68,8 +79,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [router]);
 
   const contextValue = useMemo(() => {
-    return { user, setUser, login, register, logout, loginWithDiscord, loginWithGithub };
-  }, [user, login, register, logout, loginWithDiscord, loginWithGithub]);
+    return { user, setUser, login, register, logout, loginWithDiscord, loginWithGithub, getToken, saveToken };
+  }, [user, login, register, logout, loginWithDiscord, loginWithGithub, getToken, saveToken]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

@@ -47,9 +47,15 @@ export const loginUser = async (credentials: { email: string; password: string }
 
   if (!response.ok) {
     const error = await response.json();
-    console.log(error);
     throw new Error(error.message);
   }
 
-  return response.json() as Promise<User>;
+  return response.json() as Promise<{
+    accessToken: {
+      type: string;
+      token: string;
+      expiresAt: Date;
+    };
+    user: User;
+  }>;
 };

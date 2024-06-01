@@ -32,6 +32,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     const response = await login(credentials.email, credentials.password);
+    console.log(response);
     if (response?.message) {
       setErrorMessage(response.message);
     } else {
