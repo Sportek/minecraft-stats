@@ -42,8 +42,8 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await changePassword(credentials.oldPassword, credentials.newPassword);
       setErrorMessage(null);
+      await changePassword(credentials.oldPassword, credentials.newPassword);
     } catch (error: any) {
       console.log(error.message);
       setErrorMessage(error.message);

@@ -42,8 +42,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const fetchUser = useCallback(async () => {
-    const response = await getUser(getToken() ?? "");
-    setUser(response || null);
+    try {
+      const response = await getUser(getToken() ?? "");
+      setUser(response || null);
+    } catch (error: any) {
+      setUser(null);
+    }
   }, [getToken, setUser]);
 
   const login = useCallback(

@@ -38,6 +38,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
+      setErrorMessage(null);
       await register(credentials.username, credentials.email, credentials.password);
     } catch (error) {
       // clear le form

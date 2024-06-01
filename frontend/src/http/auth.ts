@@ -13,8 +13,8 @@ export const registerUser = async (credentials: { username: string; email: strin
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
   }
   return response.json() as Promise<User>;
 };
@@ -29,8 +29,8 @@ export const verifyEmail = async (credentials: { token: string }) => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
   }
 
   return response.json() as Promise<User>;
@@ -46,8 +46,8 @@ export const loginUser = async (credentials: { email: string; password: string }
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
   }
 
   return response.json() as Promise<{
@@ -70,8 +70,8 @@ export const getUser = async (token: string) => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
   }
 
   const user = await response.json();
@@ -89,14 +89,15 @@ export const changeUserPassword = async (credentials: { oldPassword: string; new
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    console.log("My Error", error);
-
-    const errorMessage = error.error || error.errors[0];
-    console.log("My Error Message", errorMessage);
-
-    throw new Error(errorMessage.message);
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
   }
 
   return response.json() as Promise<User>;
+};
+
+export const getErrorMessage = async (response: Response) => {
+  const error = await response.json();
+  const errorMessage = error?.error?.message || error?.errors?.[0]?.message || error?.message;
+  return errorMessage;
 };

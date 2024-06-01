@@ -31,11 +31,10 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
   const { login } = useAuth();
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
+    setErrorMessage(null);
     const response = await login(credentials.email, credentials.password);
     if (response?.message) {
       setErrorMessage(response.message);
-    } else {
-      setErrorMessage(null);
     }
   };
 

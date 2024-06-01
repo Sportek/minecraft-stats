@@ -30,9 +30,9 @@ export default class AuthController {
     }
     const user = await User.findBy('email', jwtToken.email)
     if (!user) return response.notFound({ message: 'User not found' })
+    if (user.verified) return response.badRequest({ message: 'Email already verified' })
     if (user.verificationToken !== jwtToken.verificationToken)
       return response.badRequest({ message: 'Invalid verification token' })
-    if (user.verified) return response.badRequest({ message: 'Email already verified' })
     if (user.verificationTokenExpires && user.verificationTokenExpires < DateTime.now())
       return response.badRequest({ message: 'Verification token expired' })
     user.verificationToken = null
