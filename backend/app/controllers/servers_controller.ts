@@ -1,6 +1,6 @@
+import ServerPolicy from '#policies/server_policy'
 import type { HttpContext } from '@adonisjs/core/http'
 import Server from '../models/server.js'
-import User from '../models/user.js'
 
 export default class ServersController {
   async index() {
@@ -20,32 +20,24 @@ export default class ServersController {
     return Server.find(params.id)
   }
 
-  async update({ params, request, response, auth }: HttpContext) {
+  async update({ params, request, response, bouncer }: HttpContext) {
     const data = request.only(['name', 'address', 'port', 'imageUrl'])
     const server = await Server.find(params.id)
-    if (!server) {
-      return response.notFound('Server not found')
-    }
-    const user = auth.user
-    if (!user || !this.isOwner(server, user)) {
-      return response.unauthorized('Unauthorized')
+    if (!server) return response.notFound('Server not found')
+    if (await bouncer.with(ServerPolicy).denies('update', server)) {
+      return response.forbidden('Unauthorized')
     }
     return server.merge(data).save()
   }
 
-  async destroy({ params, response, auth }: HttpContext) {
+  async destroy({ params, response, bouncer }: HttpContext) {
     const server = await Server.find(params.id)
     if (!server) {
       return response.notFound('Server not found')
     }
-    const user = auth.user
-    if (!user || !this.isOwner(server, user)) {
-      return response.unauthorized('Unauthorized')
+    if (await bouncer.with(ServerPolicy).denies('destroy', server)) {
+      return response.forbidden('Unauthorized')
     }
     return server.delete()
-  }
-
-  isOwner(server: Server, user: User) {
-    return server.user.id === user.id
   }
 }

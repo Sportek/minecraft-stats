@@ -1,4 +1,5 @@
 import User from '#models/user'
+import UserPolicy from '#policies/user_policy'
 import { CreateUserValidator, UpdateUserValidator } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -8,7 +9,10 @@ export default class UsersController {
     return response.ok(users)
   }
 
-  async store({ request, response }: HttpContext) {
+  async store({ request, response, bouncer }: HttpContext) {
+    if (await bouncer.with(UserPolicy).denies('store')) {
+      return response.forbidden('Unauthorized')
+    }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
     const user = await User.create(validatedUserData)
@@ -20,7 +24,10 @@ export default class UsersController {
     return response.ok(user)
   }
 
-  async update({ params, request, response }: HttpContext) {
+  async update({ params, request, response, bouncer }: HttpContext) {
+    if (await bouncer.with(UserPolicy).denies('update')) {
+      return response.forbidden('Unauthorized')
+    }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await UpdateUserValidator.validate(data)
     const user = await User.find(params.id)
@@ -30,7 +37,10 @@ export default class UsersController {
     return response.ok(user)
   }
 
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, bouncer }: HttpContext) {
+    if (await bouncer.with(UserPolicy).denies('destroy')) {
+      return response.forbidden('Unauthorized')
+    }
     const user = await User.find(params.id)
     if (!user) return response.notFound('User not found')
     await user.delete()

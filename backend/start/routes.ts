@@ -12,11 +12,20 @@ import { middleware } from './kernel.js'
 
 router
   .group(() => {
-    router.resource('servers', '#controllers/servers_controller').except(['create', 'edit'])
-    router.resource('servers.stats', '#controllers/stats_controller').only(['index'])
-    router.resource('users', '#controllers/users_controller').except(['create', 'edit'])
+    // Gestion des ressources
+    router
+      .resource('servers', '#controllers/servers_controller')
+      .except(['create', 'edit'])
+      .middleware(['destroy', 'store', 'update'], middleware.auth())
 
-    // Authentification
+    router.resource('servers.stats', '#controllers/stats_controller').only(['index'])
+
+    router
+      .resource('users', '#controllers/users_controller')
+      .except(['create', 'edit'])
+      .middleware(['destroy', 'store', 'update'], middleware.auth())
+
+    // Authentification et gestion de compte
     router.post('/login', '#controllers/auth_controller.login')
     router.post('/register', '#controllers/auth_controller.register')
     router.post('/verify-email', '#controllers/auth_controller.verifyEmail')

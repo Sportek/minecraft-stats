@@ -1,3 +1,4 @@
+import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
 import {
   ChangePasswordValidator,
@@ -52,14 +53,7 @@ export default class AuthController {
       { email: newUser.email, verificationToken: newUser.verificationToken },
       process.env.JWT_SECRET as string
     )
-    await mail.sendLater((message) => {
-      message.from('no-reply@minecraft-stats.fr')
-      message.to(newUser.email)
-      message.subject('Verify your email address')
-      message.text(
-        `Please verify your email address with this link: ${process.env.WEBSITE_URL}/verify-email/${jwtToken} or with this code : ${newUser.verificationToken}`
-      )
-    })
+    await mail.sendLater(new VerifyENotification(newUser, jwtToken))
     return response.ok(newUser)
   }
 
