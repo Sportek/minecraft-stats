@@ -50,6 +50,14 @@ const Header = () => {
             PROFILE
           </DropdownMenuItem>
           <DropdownMenuItem
+            className="hover:cursor-pointer text-sm font-semibold"
+            onClick={() => router.push("/account/add-server")}
+          >
+            <Icon icon="material-symbols:add-box" className="w-6 h-6 mr-2" />
+            ADD SERVER
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
             className="hover:cursor-pointer text-sm font-semibold text-red-800"
             onClick={() => logout()}
           >

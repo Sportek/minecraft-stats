@@ -7,18 +7,22 @@ interface LoginPageProps {}
 
 const LoginPage: FC<LoginPageProps> = () => {
   return (
-    <div className="flex flex-col items-center flex-1 rounded-lg py-8 bg-zinc-100">
-      <div className="flex flex-col gap-4 shadow-lg p-4 rounded-lg">
-        <div>
-          <div className="text-2xl font-bold">Login</div>
-          <div className="text-sm flex flex-row items-center gap-1">
-            <div className="text-zinc-500">Doesn&apos;t have an account yet?</div>
-            <Link href="/sign-up" className="text-stats-blue-900 underline font-semibold">
-              Sign Up
-            </Link>
+    <div className="flex flex-col items-center justify-center h-full flex-1 py-8">
+      <div className="bg-zinc-100 shadow-md rounded-md p-4 w-full sm:w-fit gap-4 flex flex-col">
+        <h1 className="text-2xl font-bold">Login</h1>
+        <div className="text-sm flex flex-row items-center gap-1">
+          <div className="text-zinc-500">Doesn&apos;t have an account yet?</div>
+          <Link href="/sign-up" className="text-stats-blue-900 underline font-semibold">
+            Sign Up
+          </Link>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row gap-4">
+            <div className="w-screen max-w-2xl">
+              <LoginForm />
+            </div>
           </div>
         </div>
-        <LoginForm className="w-[400px]" />
       </div>
     </div>
   );

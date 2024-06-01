@@ -1,7 +1,7 @@
 "use client";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
@@ -70,6 +70,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
+                <FormDescription>Your email address</FormDescription>
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
@@ -83,6 +84,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Username</FormLabel>
+                <FormDescription>Your username</FormDescription>
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
@@ -96,6 +98,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
+                <FormDescription>Your password</FormDescription>
                 <FormControl>
                   <Input type="password" placeholder="" {...field} />
                 </FormControl>

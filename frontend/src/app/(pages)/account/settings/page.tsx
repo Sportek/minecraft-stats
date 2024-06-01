@@ -35,7 +35,7 @@ const SettingsPage = () => {
         <div className="flex flex-col gap-2">
           <div className="text-xl font-semibold">Manage Password</div>
           <div className="flex flex-row gap-4">
-            <div className="flex flex-col gap-2 w-full">
+            <div className="w-screen max-w-2xl">
               <ChangePasswordForm />
             </div>
           </div>

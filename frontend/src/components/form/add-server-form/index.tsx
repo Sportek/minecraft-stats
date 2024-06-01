@@ -10,30 +10,21 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-interface ChangePasswordFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+interface AddServerFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
-const formSchema = z
-  .object({
-    oldPassword: z.string().min(8).trim(),
-    newPassword: z.string().min(8).trim(),
-    confirmPassword: z.string().min(8).trim(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "New password and confirm password do not match",
-    path: ["confirmPassword"],
-  })
-  .refine((data) => data.newPassword !== data.oldPassword, {
-    message: "New password cannot be the same as the old password",
-    path: ["newPassword"],
-  });
+const formSchema = z.object({
+  name: z.string().min(1).trim(),
+  address: z.string().min(1).trim(),
+  port: z.number().int().min(1).max(65535),
+});
 
-const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }) => {
+const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      name: "",
+      address: "",
+      port: 25565,
     },
   });
 
@@ -42,16 +33,16 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await changePassword(credentials.oldPassword, credentials.newPassword);
+      // TODO: Method
       form.reset();
       toast({
-        title: "Password changed",
-        description: "Your password has been changed successfully",
+        title: "Server added",
+        description: "Your server has been added successfully",
         variant: "success",
       });
     } catch (error: any) {
       toast({
-        title: "Error while changing password",
+        title: "Error while adding server",
         description: error.message,
         variant: "error",
       });
@@ -64,13 +55,13 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
           <FormField
             control={form.control}
-            name="oldPassword"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Old Password</FormLabel>
-                <FormDescription>Your current password</FormDescription>
+                <FormLabel>Name</FormLabel>
+                <FormDescription>The name of the server</FormDescription>
                 <FormControl>
-                  <Input type="password" placeholder="" {...field} />
+                  <Input type="text" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -78,13 +69,13 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
           />
           <FormField
             control={form.control}
-            name="newPassword"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>New Password</FormLabel>
-                <FormDescription>Your new password</FormDescription>
+                <FormLabel>Address</FormLabel>
+                <FormDescription>The address of the server</FormDescription>
                 <FormControl>
-                  <Input type="password" placeholder="" {...field} />
+                  <Input type="text" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -92,13 +83,13 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
           />
           <FormField
             control={form.control}
-            name="confirmPassword"
+            name="port"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormDescription>Confirm your new password</FormDescription>
+                <FormLabel>Port</FormLabel>
+                <FormDescription>The port of the server</FormDescription>
                 <FormControl>
-                  <Input type="password" placeholder="" {...field} />
+                  <Input type="number" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,4 +104,4 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
   );
 };
 
-export default ChangePasswordForm;
+export default AddServerForm;
