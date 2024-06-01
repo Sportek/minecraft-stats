@@ -28,3 +28,10 @@ export const VerifyEmailValidator = vine.compile(
     token: vine.string().trim(),
   })
 )
+
+export const ChangePasswordValidator = vine.compile(
+  vine.object({
+    oldPassword: vine.string().maxLength(72).minLength(8),
+    newPassword: vine.string().maxLength(72).minLength(8),
+  })
+)

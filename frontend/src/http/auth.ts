@@ -77,3 +77,26 @@ export const getUser = async (token: string) => {
   const user = await response.json();
   return user.user as User | undefined;
 };
+
+export const changeUserPassword = async (credentials: { oldPassword: string; newPassword: string }, token: string) => {
+  const response = await fetch(`${getBaseUrl()}/change-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.log("My Error", error);
+
+    const errorMessage = error.error || error.errors[0];
+    console.log("My Error Message", errorMessage);
+
+    throw new Error(errorMessage.message);
+  }
+
+  return response.json() as Promise<User>;
+};

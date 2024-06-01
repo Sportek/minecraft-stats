@@ -1,6 +1,6 @@
 "use client";
 import { getBaseUrl } from "@/app/_cheatcode";
-import { getUser, loginUser, registerUser } from "@/http/auth";
+import { changeUserPassword, getUser, loginUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ interface AuthContextProps {
   getToken: () => string | null;
   saveToken: (token: string) => void;
   fetchUser: () => Promise<void>;
+  changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -76,6 +77,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push("/");
   }, [router, setUser]);
 
+  const changePassword = useCallback(
+    async (oldPassword: string, newPassword: string) => {
+      try {
+        await changeUserPassword({ oldPassword, newPassword }, getToken() ?? "");
+      } catch (error: any) {
+        console.log("AuthError", error.message);
+        throw new Error(error.message);
+      }
+    },
+    [getToken]
+  );
+
   const loginWithDiscord = useCallback(() => {
     router.push(`${getBaseUrl()}/login/discord`);
   }, [router]);
@@ -100,8 +113,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       getToken,
       saveToken,
       fetchUser,
+      changePassword,
     };
-  }, [user, login, register, logout, loginWithDiscord, loginWithGithub, getToken, saveToken, fetchUser]);
+  }, [
+    user,
+    login,
+    register,
+    logout,
+    loginWithDiscord,
+    loginWithGithub,
+    getToken,
+    saveToken,
+    fetchUser,
+    changePassword,
+  ]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

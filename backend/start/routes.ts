@@ -22,6 +22,9 @@ router
     router.post('/verify-email', '#controllers/auth_controller.verifyEmail')
     router.get('/me', '#controllers/auth_controller.retrieveUser').use(middleware.auth())
     router
+      .post('/change-password', '#controllers/auth_controller.changePassword')
+      .use(middleware.auth())
+    router
       .get('/login/:provider', '#controllers/auth_controller.providerLogin')
       .where('provider', /github|discord/)
     router.get('/callback/discord', '#controllers/auth_controller.discordCallback')

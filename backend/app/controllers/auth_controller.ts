@@ -1,5 +1,10 @@
 import User from '#models/user'
-import { CreateUserValidator, LoginUserValidator, VerifyEmailValidator } from '#validators/user'
+import {
+  ChangePasswordValidator,
+  CreateUserValidator,
+  LoginUserValidator,
+  VerifyEmailValidator,
+} from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 import jwt from 'jsonwebtoken'
@@ -60,6 +65,19 @@ export default class AuthController {
 
   async retrieveUser({ response, auth }: HttpContext) {
     return response.ok({ user: auth.user })
+  }
+
+  async changePassword({ request, response, auth }: HttpContext) {
+    const data = request.only(['oldPassword', 'newPassword'])
+    const validatedUserData = await ChangePasswordValidator.validate(data)
+    const user = auth.user
+    if (!user) return response.notFound({ message: 'User not found' })
+    if (!user.verified) return response.badRequest({ message: 'Email not verified' })
+    if (!(await User.verifyCredentials(user.email, validatedUserData.oldPassword)))
+      return response.badRequest({ message: 'Invalid old password' })
+    user.password = validatedUserData.newPassword
+    await user.save()
+    return response.ok(user)
   }
 
   async providerLogin({ ally, request }: HttpContext) {
