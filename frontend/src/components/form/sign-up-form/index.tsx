@@ -1,9 +1,9 @@
 "use client";
-
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,18 +32,27 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
 
   const { register } = useAuth();
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { toast } = useToast();
+
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
-      setErrorMessage(null);
       await register(credentials.username, credentials.email, credentials.password);
+      toast({
+        title: "Registration successful",
+        description: "Your account has been created successfully",
+        variant: "success",
+      });
     } catch (error) {
       // clear le form
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        toast({
+          title: "Error while registering",
+          description: error.message,
+          variant: "error",
+        });
         form.reset();
       }
     } finally {
@@ -115,7 +124,6 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
               <div>Register with Google</div>
             </div>
           </Button>
-          {errorMessage && <div className="text-red-700 text-center">{errorMessage}</div>}
           {loading && (
             <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
               <Loader message="Registering..." />

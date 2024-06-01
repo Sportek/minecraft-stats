@@ -1,6 +1,7 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import RestrictedWidthLayout from "@/components/restricted-width-layout";
+import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -27,6 +28,7 @@ export default function RootLayout({
         <AuthProvider>
           <CheatCodeComponent />
           <Header />
+          <Toaster />
           <div className="flex-1 flex flex-col items-center justify-center">
             <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
           </div>

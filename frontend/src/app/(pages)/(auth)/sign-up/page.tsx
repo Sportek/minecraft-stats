@@ -7,7 +7,7 @@ interface SignUpPageProps {}
 
 const SignUpPage: FC<SignUpPageProps> = () => {
   return (
-    <div className="flex flex-col items-center flex-1 rounded-lg py-8 bg-zinc-100">
+    <div className="flex flex-col items-center flex-1 rounded-lg py-8 bg-zinc-100 relative">
       <div className="flex flex-col gap-4 shadow-lg p-4 rounded-lg">
         <div>
           <div className="text-2xl font-bold">Sign Up</div>

@@ -2,11 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -18,8 +19,6 @@ const formSchema = z.object({
 });
 
 const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,12 +28,22 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
   });
 
   const { login } = useAuth();
+  const { toast } = useToast();
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
-    setErrorMessage(null);
     const response = await login(credentials.email, credentials.password);
     if (response?.message) {
-      setErrorMessage(response.message);
+      toast({
+        title: "Error while logging in",
+        description: response.message,
+        variant: "error",
+      });
+    } else {
+      toast({
+        title: "Login successful",
+        description: "Your account has been logged in successfully",
+        variant: "success",
+      });
     }
   };
 
@@ -70,7 +79,6 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
               </FormItem>
             )}
           />
-          {errorMessage && <FormMessage className="text-center text-red-700">{errorMessage}</FormMessage>}
           <Button className="w-full" type="submit">
             Submit
           </Button>

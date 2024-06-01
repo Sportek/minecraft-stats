@@ -101,7 +101,7 @@ const Header = () => {
 
   const mobileMenu = () => {
     return (
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-red-500 flex flex-col items-center gap-4">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-zinc-100 flex flex-col items-center gap-4">
         <div className="flex flex-row items-center p-4 bg-stats-blue-1050 w-full justify-around">
           <Link href="/" className="flex flex-row items-center gap-2">
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />

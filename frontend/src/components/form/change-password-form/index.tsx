@@ -2,10 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -27,8 +28,6 @@ const formSchema = z
   });
 
 const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }) => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,14 +38,23 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
   });
 
   const { changePassword } = useAuth();
+  const { toast } = useToast();
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      setErrorMessage(null);
       await changePassword(credentials.oldPassword, credentials.newPassword);
+      form.reset();
+      toast({
+        title: "Password changed",
+        description: "Your password has been changed successfully",
+        variant: "success",
+      });
     } catch (error: any) {
-      console.log(error.message);
-      setErrorMessage(error.message);
+      toast({
+        title: "Error while changing password",
+        description: error.message,
+        variant: "error",
+      });
     }
   };
 
@@ -93,7 +101,6 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
               </FormItem>
             )}
           />
-          {errorMessage && <FormMessage className="text-center text-red-700">{errorMessage}</FormMessage>}
           <Button className="w-full" type="submit">
             Submit
           </Button>
