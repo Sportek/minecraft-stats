@@ -58,6 +58,10 @@ export default class AuthController {
     return response.ok(newUser)
   }
 
+  async retrieveUser({ response, auth }: HttpContext) {
+    return response.ok({ user: auth.user })
+  }
+
   async providerLogin({ ally, request }: HttpContext) {
     const driverInstance = ally.use(request.param('provider') as 'discord' | 'github')
     return await driverInstance.redirect()
@@ -100,7 +104,6 @@ export default class AuthController {
   async githubCallback({ ally }: HttpContext) {
     const driverInstance = ally.use('github')
     const user = await driverInstance.user()
-    console.log(user)
     return user
   }
 }

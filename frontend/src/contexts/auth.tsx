@@ -1,9 +1,9 @@
 "use client";
 import { getBaseUrl } from "@/app/_cheatcode";
-import { loginUser, registerUser } from "@/http/auth";
+import { getUser, loginUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 interface AuthContextProps {
   user: User | null;
@@ -15,6 +15,7 @@ interface AuthContextProps {
   loginWithGithub: () => void;
   getToken: () => string | null;
   saveToken: (token: string) => void;
+  fetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -31,6 +32,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
+  const getToken = useCallback(() => {
+    return localStorage.getItem("accessToken");
+  }, []);
+
+  const saveToken = useCallback((token: string) => {
+    localStorage.setItem("accessToken", token);
+  }, []);
+
+  const fetchUser = useCallback(async () => {
+    const response = await getUser(getToken() ?? "");
+    setUser(response || null);
+  }, [getToken, setUser]);
+
   const login = useCallback(
     async (email: string, password: string) => {
       try {
@@ -42,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { message: error.message };
       }
     },
-    [router, setUser]
+    [router, setUser, saveToken]
   );
 
   const register = useCallback(
@@ -57,14 +71,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [router]
   );
 
-  const getToken = () => {
-    return localStorage.getItem("accessToken");
-  };
-
-  const saveToken = (token: string) => {
-    localStorage.setItem("accessToken", token);
-  };
-
   const logout = useCallback(() => {
     setUser(null);
     router.push("/");
@@ -78,9 +84,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push(`${getBaseUrl()}/login/github`);
   }, [router]);
 
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
   const contextValue = useMemo(() => {
-    return { user, setUser, login, register, logout, loginWithDiscord, loginWithGithub, getToken, saveToken };
-  }, [user, login, register, logout, loginWithDiscord, loginWithGithub, getToken, saveToken]);
+    return {
+      user,
+      setUser,
+      login,
+      register,
+      logout,
+      loginWithDiscord,
+      loginWithGithub,
+      getToken,
+      saveToken,
+      fetchUser,
+    };
+  }, [user, login, register, logout, loginWithDiscord, loginWithGithub, getToken, saveToken, fetchUser]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

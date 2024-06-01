@@ -42,7 +42,6 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
     } catch (error) {
       // clear le form
       if (error instanceof Error) {
-        console.log(error.message);
         setErrorMessage(error.message);
         form.reset();
       }

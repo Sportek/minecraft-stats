@@ -59,3 +59,21 @@ export const loginUser = async (credentials: { email: string; password: string }
     user: User;
   }>;
 };
+
+export const getUser = async (token: string) => {
+  const response = await fetch(`${getBaseUrl()}/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  const user = await response.json();
+  return user.user as User | undefined;
+};
