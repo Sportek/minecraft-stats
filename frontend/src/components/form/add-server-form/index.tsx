@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/auth";
+import { useServers } from "@/contexts/servers";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
@@ -28,12 +28,12 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     },
   });
 
-  const { changePassword } = useAuth();
   const { toast } = useToast();
+  const { addServer } = useServers();
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      // TODO: Method
+      await addServer(credentials);
       form.reset();
       toast({
         title: "Server added",

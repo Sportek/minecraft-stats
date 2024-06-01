@@ -13,7 +13,10 @@ export default class ServersController {
     if (!user) {
       return response.unauthorized('Unauthorized')
     }
-    return Server.create(data)
+
+    const server = await Server.create(data)
+    await server.related('user').associate(user)
+    return server
   }
 
   async show({ params }: HttpContext) {

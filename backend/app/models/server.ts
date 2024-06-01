@@ -17,7 +17,10 @@ export default class Server extends BaseModel {
   declare port: number
 
   @column()
-  declare imageUrl: string
+  declare imageUrl: string | null
+
+  @column({ columnName: 'user_id' })
+  declare userId: number
 
   @belongsTo(() => User)
   declare user: relations.BelongsTo<typeof User>

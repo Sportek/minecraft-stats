@@ -25,7 +25,7 @@ const Loader = ({ message }: LoaderProps) => {
         }
       `}
       </style>
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 flex-1 w-full h-full justify-center">
         <div>{message}</div>
         <div className="loader" />
       </div>
