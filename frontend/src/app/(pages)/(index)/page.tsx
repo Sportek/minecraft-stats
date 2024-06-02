@@ -14,7 +14,7 @@ const Home = () => {
       {isLoading && <Loader message="Loading..." />}
       {error && <div>{error.message}</div>}
       {data && (
-        <div className="flex-1 grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full h-full p-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full py-4">
           {data.map((server) => (
             <ServerCard key={server.id} server={server} />
           ))}

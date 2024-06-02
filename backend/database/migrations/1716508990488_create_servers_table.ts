@@ -11,7 +11,8 @@ export default class extends BaseSchema {
       table.integer('port').defaultTo(25565).notNullable()
       table.string('image_url').nullable()
       table.integer('user_id').references('users.id').onDelete('cascade')
-
+      table.string('version').nullable()
+      table.string('motd').nullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

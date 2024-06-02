@@ -10,8 +10,14 @@ export default class ServerStat extends BaseModel {
   @belongsTo(() => Server)
   declare server: relations.BelongsTo<typeof Server>
 
+  @column({ columnName: 'server_id' })
+  declare serverId: number
+
   @column()
   declare playerCount: number
+
+  @column()
+  declare maxCount: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

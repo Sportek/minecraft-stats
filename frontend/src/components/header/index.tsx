@@ -109,8 +109,8 @@ const Header = () => {
 
   const mobileMenu = () => {
     return (
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-zinc-100 flex flex-col items-center gap-4">
-        <div className="flex flex-row items-center p-4 bg-stats-blue-1050 w-full justify-around">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-zinc-100 flex flex-col items-center gap-4 z-50">
+        <div className="flex flex-row items-center p-4 bg-stats-blue-1050 w-full justify-between">
           <Link href="/" className="flex flex-row items-center gap-2">
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
             <div className="text-2xl font-bold">Minecraft Stats</div>
@@ -155,8 +155,8 @@ const Header = () => {
   };
 
   return (
-    <div className="w-full p-4 bg-stats-blue-1050 text-stats-blue-0 flex flex-col items-center justify-center">
-      <RestrictedWidthLayout className="flex flex-row justify-around md:justify-between">
+    <div className="w-full py-4 bg-stats-blue-1050 text-stats-blue-0 flex flex-col items-center justify-center">
+      <RestrictedWidthLayout className="flex flex-row justify-between">
         <div className="flex flex-row items-center">
           <Link href="/" className="flex flex-row items-center gap-2">
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />

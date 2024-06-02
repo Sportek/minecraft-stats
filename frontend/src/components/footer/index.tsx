@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 
 const Footer = () => {
   return (
-    <div className="flex flex-col items-center gap-4 p-4 bg-zinc-200">
+    <div className="flex flex-col items-center gap-4 py-4 bg-zinc-200">
       <RestrictedWidthLayout className="gap-4 flex flex-col items-center justify-center">
         <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
           <div className="flex flex-col items-center gap-4">

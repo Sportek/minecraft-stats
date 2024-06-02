@@ -17,6 +17,12 @@ export default class Server extends BaseModel {
   declare port: number
 
   @column()
+  declare version: string | null
+
+  @column()
+  declare motd: string | null
+
+  @column()
   declare imageUrl: string | null
 
   @column({ columnName: 'user_id' })

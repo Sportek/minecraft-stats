@@ -1,6 +1,17 @@
-const NotFound = () => {
+interface NotFoundProps extends React.SVGProps<SVGSVGElement> {
+  className?: string;
+}
+const NotFound = ({ className, ...props }: NotFoundProps) => {
   return (
-    <svg width="85" height="85" viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="85"
+      height="85"
+      viewBox="0 0 85 85"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
       <path
         d="M77.5 0H7.5C3.358 0 0 3.358 0 7.5V77.5C0 81.642 3.358 85 7.5 85H77.5C81.642 85 85 81.642 85 77.5V7.5C85 3.358 81.642 0 77.5 0ZM77.5 77.5H7.5V27.5H77.5V77.5ZM77.5 22.5H7.5V7.5H77.5V22.5Z"
         fill="currentColor"

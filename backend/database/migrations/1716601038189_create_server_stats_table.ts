@@ -7,7 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.integer('server_id').references('id').inTable('servers')
-      table.integer('player_count').defaultTo(0)
+      table.integer('player_count').nullable()
+      table.integer('max_count').nullable()
       table.timestamp('created_at', { useTz: true })
     })
   }
