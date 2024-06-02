@@ -7,6 +7,7 @@ export interface Server {
   port: number;
   imageUrl: string;
   user: User;
+  createdAt: Date;
 }
 
 export interface ServerStat {

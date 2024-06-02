@@ -29,7 +29,7 @@ scheduler
     await Promise.all(
       servers.map(async (server) => {
         try {
-          const data = await pingMinecraftJava(server.address)
+          const data = await pingMinecraftJava(server.address, server.port)
           if (!data) return
 
           if (!server.imageUrl && data.favicon) {
@@ -62,4 +62,4 @@ scheduler
       })
     )
   })
-  .everyThirtySeconds()
+  .everyTwoMinutes()

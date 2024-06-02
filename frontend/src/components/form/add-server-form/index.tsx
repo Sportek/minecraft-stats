@@ -12,11 +12,21 @@ import { z } from "zod";
 
 interface AddServerFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
-const formSchema = z.object({
-  name: z.string().min(1).trim(),
-  address: z.string().min(1).trim(),
-  port: z.number().int().min(1).max(65535),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(1).trim(),
+    address: z.string().min(1).trim(),
+    port: z.string().min(1).max(5),
+  })
+  .refine(
+    (data) => {
+      return parseInt(data.port) >= 1 && parseInt(data.port) <= 65535;
+    },
+    {
+      path: ["port"],
+      message: "Port must be between 1 and 65535",
+    }
+  );
 
 const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -24,7 +34,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     defaultValues: {
       name: "",
       address: "",
-      port: 25565,
+      port: "25565",
     },
   });
 
@@ -33,7 +43,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await addServer(credentials);
+      await addServer({ ...credentials, port: parseInt(credentials.port) });
       form.reset();
       toast({
         title: "Server added",
