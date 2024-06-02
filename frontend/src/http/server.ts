@@ -1,5 +1,5 @@
 import { getBaseUrl } from "@/app/_cheatcode";
-import { Server } from "@/types/server";
+import { Server, ServerStat } from "@/types/server";
 import { getErrorMessage } from "./auth";
 
 export const addMinecraftServer = async (data: { name: string; address: string; port: number }, token: string) => {
@@ -33,4 +33,29 @@ export const getServers = async () => {
   }
 
   return response.json() as Promise<Server[]>;
+};
+
+export const getServerStats = async (
+  serverId: number,
+  fromDate: EpochTimeStamp,
+  toDate: EpochTimeStamp,
+  interval?: string
+) => {
+  const response = await fetch(
+    `${getBaseUrl()}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}${
+      interval ? `&interval=${interval}` : ""
+    }`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<ServerStat[]>;
 };

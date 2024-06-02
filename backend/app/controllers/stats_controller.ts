@@ -9,24 +9,24 @@ import { DateTime } from 'luxon'
 export default class StatsController {
   async index({ request, response }: HttpContext) {
     try {
-      const validatedData = await StatValidator.validate(request.qs())
+      const validatedData = await StatValidator.validate({ ...request.params(), ...request.qs() })
 
-      if (!validatedData.serverId) {
+      if (!validatedData.server_id) {
         throw new Exception('Server id is required', { status: 400 })
       }
 
-      let query = ServerStat.query().where({ server_id: validatedData.serverId })
+      let query = ServerStat.query().where({ server_id: validatedData.server_id })
 
       if (validatedData.exactTime) {
-        const exactDateTime = DateTime.fromISO(validatedData.exactTime.toISOString())
+        const exactDateTime = DateTime.fromMillis(validatedData.exactTime)
         if (exactDateTime.isValid) {
           query = query.where('created_at', exactDateTime.toSQL())
         }
       }
 
       if (validatedData.fromDate && validatedData.toDate) {
-        const fromDateTime = DateTime.fromISO(validatedData.fromDate.toISOString())
-        const toDateTime = DateTime.fromISO(validatedData.toDate.toISOString())
+        const fromDateTime = DateTime.fromMillis(validatedData.fromDate)
+        const toDateTime = DateTime.fromMillis(validatedData.toDate)
         if (!fromDateTime.isValid || !toDateTime.isValid) {
           throw new Exception('Invalid date format', { status: 400 })
         }
@@ -43,8 +43,7 @@ export default class StatsController {
       const stats = await query
       return response.status(200).json(stats)
     } catch (error) {
-      console.error(error)
-      return response.status(500).json({ error: 'Internal server error' })
+      return response.status(500).json({ error: error.messages || 'Internal server error' })
     }
   }
 }

@@ -4,7 +4,7 @@ import Server from '../models/server.js'
 
 export default class ServersController {
   async index() {
-    return Server.all()
+    return Server.query().preload('user')
   }
 
   async store({ request, auth, response }: HttpContext) {
@@ -20,7 +20,7 @@ export default class ServersController {
   }
 
   async show({ params }: HttpContext) {
-    return Server.find(params.id)
+    return Server.query().where('id', params.id).preload('user').first()
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
