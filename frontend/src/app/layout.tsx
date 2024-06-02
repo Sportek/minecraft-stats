@@ -25,7 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(inter.className, "min-h-screen w-screen flex flex-col bg-zinc-100 text-stats-blue-1050")}>
+      <body
+        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col bg-zinc-100 text-stats-blue-1050")}
+      >
         <AuthProvider>
           <ServersProvider>
             <CheatCodeComponent />

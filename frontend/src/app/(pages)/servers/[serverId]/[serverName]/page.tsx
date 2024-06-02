@@ -80,13 +80,15 @@ const ServerPage = () => {
   return server.isLoading ? (
     <Loader message="Querying server..." />
   ) : (
-    <div>
+    <div className="flex flex-1 flex-col">
       {isLoading ? (
         <Loader message="Querying server stats..." />
       ) : (
-        <div className="w-full h-full flex flex-col flex-1 py-4 gap-4" style={{ height: "400px" }}>
+        <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
           {getServerInformations()}
-          <AgChartsReact options={options} />
+          <div style={{ height: "400px" }}>
+            <AgChartsReact options={options} />
+          </div>
         </div>
       )}
     </div>
