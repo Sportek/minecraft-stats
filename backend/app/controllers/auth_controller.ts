@@ -16,6 +16,8 @@ export default class AuthController {
     const data = await request.validateUsing(LoginUserValidator)
     const user = await User.verifyCredentials(data.email, data.password)
     if (!user.verified) return response.badRequest({ message: 'Email not verified' })
+    if (user.provider)
+      return response.badRequest({ message: 'You are using a third-party provider' })
     return {
       user,
       accessToken: await User.accessTokens.create(user),
@@ -106,6 +108,9 @@ export default class AuthController {
         avatarUrl: discordUser.avatarUrl,
       }
     )
+
+    if (!user.provider && user.provider !== 'discord')
+      return response.badRequest({ message: 'Cannot login with this third-party provider' })
 
     return {
       user,

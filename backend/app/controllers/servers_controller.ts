@@ -1,10 +1,18 @@
+import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
 import type { HttpContext } from '@adonisjs/core/http'
 import Server from '../models/server.js'
 
 export default class ServersController {
   async index() {
-    return Server.query().preload('user')
+    const servers = await Server.query().preload('user')
+    const serversWithStats = await Promise.all(
+      servers.map(async (server) => {
+        const stat = await this.getActualStats(server)
+        return { server, stat }
+      })
+    )
+    return serversWithStats
   }
 
   async store({ request, auth, response }: HttpContext) {
@@ -19,8 +27,19 @@ export default class ServersController {
     return server
   }
 
-  async show({ params }: HttpContext) {
-    return Server.query().where('id', params.id).preload('user').first()
+  private async getActualStats(server: Server) {
+    const stats = await ServerStat.query()
+      .where('server_id', server.id)
+      .orderBy('created_at', 'desc')
+      .first()
+    return stats
+  }
+
+  async show({ params, response }: HttpContext) {
+    let server = await Server.query().where('id', params.id).preload('user').first()
+    if (!server) return response.notFound('Server not found')
+    const stat = await this.getActualStats(server)
+    return { server, stat }
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {

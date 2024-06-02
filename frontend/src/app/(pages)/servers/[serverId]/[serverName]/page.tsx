@@ -5,6 +5,7 @@ import { Server, ServerStat } from "@/types/server";
 import { AgChartsReact } from "ag-charts-react";
 
 import Loader from "@/components/loader";
+import ServerCard from "@/components/serveur/card";
 import { AgChartOptions } from "ag-charts-community";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ import useSWR from "swr";
 
 const ServerPage = () => {
   const { serverId } = useParams();
-  const server = useSWR<Server, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher);
+  const server = useSWR<{ server: Server; stat: ServerStat }, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher);
 
   const intervalType = {
     "1 Day": Date.now() - 1000 * 60 * 60 * 24,
@@ -39,7 +40,7 @@ const ServerPage = () => {
   useEffect(() => {
     setOptions({
       title: {
-        text: server.data?.name,
+        text: server.data?.server.name,
       },
       data: stats.map((stat) => ({
         time: new Date(stat.createdAt),
@@ -62,25 +63,19 @@ const ServerPage = () => {
         },
       ],
     });
-  }, [stats, server.data?.name]);
+  }, [stats, server.data?.server.name]);
 
   const getServerInformations = () => {
-    return (
-      <div className="bg-zinc-200 p-4 rounded-lg">
-        <div className="flex flex-col">
-          <h1>{server.data?.name}</h1>
-          <p>{server.data?.address}</p>
-          <p>{server.data?.port}</p>
-          <p>{server.data?.user?.username}</p>
-        </div>
-      </div>
-    );
+    return server?.data ? (
+      <ServerCard key={server.data?.server.id} server={server.data.server} stat={server.data.stat} />
+    ) : null;
   };
 
   return server.isLoading ? (
     <Loader message="Querying server..." />
   ) : (
     <div className="flex flex-1 flex-col">
+      {server.error ? <div className="text-red-500">{server.error.message}</div> : null}
       {isLoading ? (
         <Loader message="Querying server stats..." />
       ) : (

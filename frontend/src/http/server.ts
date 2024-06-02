@@ -32,7 +32,7 @@ export const getServers = async () => {
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<Server[]>;
+  return response.json() as Promise<{ server: Server; stat: ServerStat }[]>;
 };
 
 export const getServerStats = async (
