@@ -1,14 +1,14 @@
 const CGU = () => {
   return (
-    <div className="p-4">
+    <div className="py-4">
       <h1 className="text-2xl font-bold mb-4">Conditions Générales d&apos;Utilisation (CGU)</h1>
       <p className="mb-2">Dernière mise à jour : 2 Juin 2024 16h00</p>
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">1. Informations légales</h2>
         <p>
-          Le présent site internet est édité par Gabriel Landry, domicilié au 439 Ave. Thérèse-Lavoie-Roux, Montréal,
-          Québec. Pour toute question ou réclamation, vous pouvez nous contacter par email à :{" "}
+          Le présent site internet est édité par Gabriel Landry. Pour toute question ou réclamation, vous pouvez nous
+          contacter par email à :{" "}
           <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
             gablandry31@gmail.com
           </a>
