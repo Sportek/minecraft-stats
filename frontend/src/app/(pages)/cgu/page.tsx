@@ -136,7 +136,7 @@ const CGU = () => {
         <h2 className="text-xl font-semibold mb-2">9. Modification des CGU</h2>
         <p>
           Gabriel Landry se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront
-          informés de toute modification par une notification sur le site. L'utilisation continue du site après
+          informés de toute modification par une notification sur le site. L&apos;utilisation continue du site après
           notification des modifications vaut acceptation des nouvelles CGU.
         </p>
       </section>
@@ -168,8 +168,8 @@ const CGU = () => {
         <h3 className="text-lg font-medium mb-1">Droits des Utilisateurs</h3>
         <p>
           Conformément au Règlement Général sur la Protection des Données (RGPD), les utilisateurs bénéficient de droits
-          d'accès, de rectification, de suppression, de limitation et de portabilité de leurs données. Pour exercer ces
-          droits, contactez-nous à :{" "}
+          d&apos;accès, de rectification, de suppression, de limitation et de portabilité de leurs données. Pour exercer
+          ces droits, contactez-nous à :{" "}
           <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
             gablandry31@gmail.com
           </a>
