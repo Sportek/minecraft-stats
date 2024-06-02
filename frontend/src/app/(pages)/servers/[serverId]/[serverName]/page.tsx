@@ -13,7 +13,9 @@ import useSWR from "swr";
 
 const ServerPage = () => {
   const { serverId } = useParams();
-  const server = useSWR<{ server: Server; stat: ServerStat }, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher);
+  const server = useSWR<{ server: Server; stat: ServerStat }, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {
+    refreshInterval: 1000 * 60 * 2,
+  });
 
   const intervalType = {
     "1 Day": Date.now() - 1000 * 60 * 60 * 24,
