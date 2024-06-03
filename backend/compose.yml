@@ -27,10 +27,12 @@ services:
       - .env
     volumes:
       - ./:/home/node/app
-      - ./public:/home/node/app/public
+      - server-images:/home/node/app/public
     depends_on:
       - pgsql
     command: 'node ace serve --watch'
+    networks:
+      - sail
 
 networks:
   sail:
@@ -38,3 +40,4 @@ networks:
 
 volumes:
   sailpgsql:
+  server-images:
