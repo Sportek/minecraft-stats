@@ -3,21 +3,34 @@ services:
   pgsql:
     image: 'postgres:15'
     ports:
-      - '${PG_PORT:-5432}:5432'
+      - '${DB_PORT:-5432}:5432'
     environment:
-      PGPASSWORD: '${PG_PASSWORD:-secret}'
-      POSTGRES_DB: '${PG_DB_NAME:-default}'
-      POSTGRES_USER: '${PG_USER}'
-      POSTGRES_PASSWORD: '${PG_PASSWORD:-secret}'
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE:-default}'
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
     volumes:
       - 'sailpgsql:/var/lib/postgresql/data'
     networks:
       - sail
     healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "${PG_DB_NAME:-default}", "-U", "${PG_USER}"]
+      test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE:-default}', '-U', '${DB_USER}']
       retries: 3
       timeout: 5s
-
+  adonis_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3333:3333'
+    env_file:
+      - .env
+    volumes:
+      - ./:/home/node/app
+      - ./public:/home/node/app/public
+    depends_on:
+      - pgsql
+    command: 'node ace serve --watch'
 
 networks:
   sail:
