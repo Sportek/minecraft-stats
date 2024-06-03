@@ -4,6 +4,7 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
 import { Server, ServerStat } from "@/types/server";
+import { useEffect } from "react";
 import useSWR from "swr";
 
 const Home = () => {
@@ -15,11 +16,15 @@ const Home = () => {
     }
   );
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
       {isLoading && <Loader message="Loading..." />}
       {error && <div>{error.message}</div>}
-      {data && (
+      {data && data.length > 0 && (
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 py-4 w-full truncate">
           {data.map((server) => (
             <ServerCard key={server.server.id} server={server.server} stat={server.stat} />

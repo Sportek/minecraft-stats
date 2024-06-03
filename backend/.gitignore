@@ -14,6 +14,8 @@ public/assets
 
 public/images/servers
 
+supervisord.log
+
 # Build tools specific
 npm-debug.log
 yarn-error.log
