@@ -11,7 +11,7 @@ export default class UsersController {
 
   async store({ request, response, bouncer }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('store')) {
-      return response.forbidden('Unauthorized')
+      return response.forbidden({ message: 'Unauthorized' })
     }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
@@ -31,7 +31,7 @@ export default class UsersController {
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await UpdateUserValidator.validate(data)
     const user = await User.find(params.id)
-    if (!user) return response.notFound('User not found')
+    if (!user) return response.notFound({ message: 'User not found' })
     await user.merge(validatedUserData)
     await user.save()
     return response.ok(user)
@@ -39,10 +39,10 @@ export default class UsersController {
 
   async destroy({ params, response, bouncer }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('destroy')) {
-      return response.forbidden('Unauthorized')
+      return response.forbidden({ message: 'Unauthorized' })
     }
     const user = await User.find(params.id)
-    if (!user) return response.notFound('User not found')
+    if (!user) return response.notFound({ message: 'User not found' })
     await user.delete()
     return response.ok(user)
   }
