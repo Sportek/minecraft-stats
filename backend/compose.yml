@@ -18,6 +18,7 @@ services:
       test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE:-default}', '-U', '${DB_USER}']
       retries: 3
       timeout: 5s
+
   adonis_app:
     build:
       context: .
@@ -29,11 +30,13 @@ services:
     volumes:
       - ./:/home/node/app
       - server-images:/home/node/app/public
+      - /home/node/app/node_modules
     depends_on:
       - pgsql
     command: 'node ace serve --watch'
     networks:
       - sail
+
   adonis_scheduler:
     build:
       context: .
@@ -48,6 +51,7 @@ services:
     volumes:
       - ./:/home/node/app
       - server-images:/home/node/app/public
+      - /home/node/app/node_modules
 
 networks:
   sail:
