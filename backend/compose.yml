@@ -32,7 +32,7 @@ services:
     depends_on:
       - pgsql
     command: >
-      sh -c "node ace migration:run && npm run build && npm run start"
+      sh -c "node ace migration:run && npm run start"
     networks:
       - sail
 
