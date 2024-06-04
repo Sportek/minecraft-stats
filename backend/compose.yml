@@ -33,6 +33,20 @@ services:
     command: 'node ace serve --watch'
     networks:
       - sail
+  adonis_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - pgsql
+    command: 'node ace scheduler:run'
+    networks:
+      - sail
+    volumes:
+      - ./:/home/node/app
+      - server-images:/home/node/app/public
 
 networks:
   sail:
