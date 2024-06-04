@@ -3,8 +3,6 @@ name: minecraft-stats
 services:
   pgsql:
     image: 'postgres:15'
-    ports:
-      - '${DB_PORT:-5432}:5432'
     environment:
       PGPASSWORD: '${DB_PASSWORD:-secret}'
       POSTGRES_DB: '${DB_DATABASE:-default}'
@@ -33,7 +31,8 @@ services:
       - /home/node/app/node_modules
     depends_on:
       - pgsql
-    command: 'node ace serve --watch'
+    command: >
+      sh -c "node ace migration:run && npm run build && npm run start"
     networks:
       - sail
 
@@ -45,6 +44,7 @@ services:
       - .env
     depends_on:
       - pgsql
+      - adonis_app
     command: 'node ace scheduler:run'
     networks:
       - sail
