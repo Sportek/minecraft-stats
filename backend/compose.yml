@@ -1,4 +1,5 @@
 # For more information: https://github.com/julien-r44/adonis-sail
+name: minecraft-stats
 services:
   pgsql:
     image: 'postgres:15'
@@ -22,7 +23,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3333:3333'
+      - '9000:9000'
     env_file:
       - .env
     volumes:
