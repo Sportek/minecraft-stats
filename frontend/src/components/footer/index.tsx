@@ -35,18 +35,18 @@ const Footer = () => {
               <Link href="/api" className="text-zinc-600 hover:text-zinc-700">
                 Access to API
               </Link>
-              <Link href="/docs" className="text-zinc-600 hover:text-zinc-700">
-                Documentation
-              </Link>
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <div className="text-md font-bold">ACCOUNT</div>
+            <div className="text-md font-bold">OTHER</div>
             <div className="flex flex-col gap-2 text-sm">
-              <Link href="https://github.com/Sportek/minecraft-stats" className="text-zinc-600 hover:text-zinc-700">
+              <Link href="/cgu" className="text-zinc-600 hover:text-zinc-700">
+                Terms of Service
+              </Link>
+              <Link href="/login" className="text-zinc-600 hover:text-zinc-700">
                 Login
               </Link>
-              <Link href="/api" className="text-zinc-600 hover:text-zinc-700">
+              <Link href="/sign-up" className="text-zinc-600 hover:text-zinc-700">
                 Register
               </Link>
             </div>

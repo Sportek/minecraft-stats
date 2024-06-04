@@ -1,6 +1,7 @@
 import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
 import type { HttpContext } from '@adonisjs/core/http'
+import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
 
 export default class ServersController {
@@ -20,6 +21,11 @@ export default class ServersController {
     const user = auth.user
     if (!user) {
       return response.unauthorized('Unauthorized')
+    }
+
+    const successPing = await isPingPossible(data.address, data.port)
+    if (!successPing) {
+      return response.badRequest('Server is not reachable')
     }
 
     const server = await Server.create(data)
