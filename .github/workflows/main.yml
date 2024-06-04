@@ -1,0 +1,38 @@
+name: Deploy Minecraft-Stats Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install SSH
+      run: sudo apt-get install openssh-client
+
+    - name: Update repository on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/minecraft-stats/website/backend
+          git pull origin main
+
+    - name: Use SSH to connect to server and run Docker Compose commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/minecraft-stats/website/backend
+          docker compose build
+          docker compose up -d
