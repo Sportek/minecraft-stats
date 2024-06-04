@@ -24,7 +24,7 @@ services:
     ports:
       - '9000:9000'
     env_file:
-      - .env
+      - .env.production
     volumes:
       - ./:/home/node/app
       - server-images:/home/node/app/public
@@ -41,7 +41,7 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file:
-      - .env
+      - .env.production
     depends_on:
       - pgsql
       - adonis_app
