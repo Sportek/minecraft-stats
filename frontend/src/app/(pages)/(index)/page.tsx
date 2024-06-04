@@ -4,7 +4,6 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
 import { Server, ServerStat } from "@/types/server";
-import { useEffect } from "react";
 import useSWR from "swr";
 
 const Home = () => {
@@ -15,10 +14,6 @@ const Home = () => {
       refreshInterval: 1000 * 60 * 2,
     }
   );
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
