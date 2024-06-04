@@ -10,29 +10,40 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Install SSH
-      run: sudo apt-get install openssh-client
+      - name: Install SSH
+        run: sudo apt-get install openssh-client
 
-    - name: Update repository on server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /home/minecraft-stats/website/backend
-          git pull origin main
+      - name: Update repository on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/minecraft-stats/website/backend
+            git pull origin main
 
-    - name: Use SSH to connect to server and run Docker Compose commands
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /home/minecraft-stats/website/backend
-          docker compose build
-          docker compose up -d
+      - name: Use SSH to connect to server and run Docker Compose commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/minecraft-stats/website/backend
+            docker compose build
+            docker compose up -d
+        env:
+          PORT: ${{ vars.PORT }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          WEBSITE_URL: ${{ vars.WEBSITE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
