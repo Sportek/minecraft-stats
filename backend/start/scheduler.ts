@@ -40,6 +40,7 @@ scheduler
             const imagePath = path.join(pathDirname, '../public/images/servers')
             const imageName = `${server.id}.png`
             const imageFullPath = path.join(imagePath, imageName)
+            fs.mkdirSync(imagePath, { recursive: true })
             saveBase64Image(imageBase64, imageFullPath)
             server.imageUrl = `/images/servers/${imageName}`
           }
