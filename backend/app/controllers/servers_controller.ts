@@ -20,12 +20,12 @@ export default class ServersController {
     const data = request.only(['name', 'address', 'port', 'imageUrl'])
     const user = auth.user
     if (!user) {
-      return response.unauthorized('Unauthorized')
+      return response.unauthorized({ message: 'Unauthorized' })
     }
 
     const successPing = await isPingPossible(data.address, data.port)
     if (!successPing) {
-      return response.badRequest('Server is not reachable')
+      return response.badRequest({ message: 'Server is not reachable' })
     }
 
     const server = await Server.create(data)
@@ -43,7 +43,7 @@ export default class ServersController {
 
   async show({ params, response }: HttpContext) {
     let server = await Server.query().where('id', params.id).preload('user').first()
-    if (!server) return response.notFound('Server not found')
+    if (!server) return response.notFound({ message: 'Server not found' })
     const stat = await this.getActualStats(server)
     return { server, stat }
   }
@@ -51,9 +51,9 @@ export default class ServersController {
   async update({ params, request, response, bouncer }: HttpContext) {
     const data = request.only(['name', 'address', 'port', 'imageUrl'])
     const server = await Server.find(params.id)
-    if (!server) return response.notFound('Server not found')
+    if (!server) return response.notFound({ message: 'Server not found' })
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
-      return response.forbidden('Unauthorized')
+      return response.forbidden({ message: 'Unauthorized' })
     }
     return server.merge(data).save()
   }
@@ -61,10 +61,10 @@ export default class ServersController {
   async destroy({ params, response, bouncer }: HttpContext) {
     const server = await Server.find(params.id)
     if (!server) {
-      return response.notFound('Server not found')
+      return response.notFound({ message: 'Server not found' })
     }
     if (await bouncer.with(ServerPolicy).denies('destroy', server)) {
-      return response.forbidden('Unauthorized')
+      return response.forbidden({ message: 'Unauthorized' })
     }
     return server.delete()
   }
