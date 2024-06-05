@@ -58,6 +58,7 @@ services:
 
 networks:
   sail:
+    name: 'stats-bridge-${APP_NAME}'
     driver: bridge
 
 volumes:
