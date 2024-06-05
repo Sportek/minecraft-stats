@@ -3,6 +3,7 @@ name: minecraft-stats
 services:
   pgsql:
     image: 'postgres:15'
+    container_name: 'stats-pgsql-${APP_NAME:-minecraft-stats}'
     environment:
       PGPASSWORD: '${DB_PASSWORD:-secret}'
       POSTGRES_DB: '${DB_DATABASE:-default}'
@@ -18,6 +19,7 @@ services:
       timeout: 5s
 
   adonis_app:
+    container_name: 'stats-backend-${APP_NAME:-minecraft-stats}'
     build:
       context: .
       dockerfile: Dockerfile
@@ -37,6 +39,7 @@ services:
       - sail
 
   adonis_scheduler:
+    container_name: 'stats-scheduler-${APP_NAME:-minecraft-stats}'
     build:
       context: .
       dockerfile: Dockerfile
