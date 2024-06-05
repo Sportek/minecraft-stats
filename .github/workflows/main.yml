@@ -34,6 +34,9 @@ jobs:
           envkey_NODE_ENV: development
           envkey_DB_HOST: pgsql
           envkey_DB_PORT: 5432
+          envkey_TZ: UTC
+          envkey_HOST: 0.0.0.0
+          envkey_LOG_LEVEL: info
           envkey_DB_USER: ${{ secrets.DB_USER }}
           envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           envkey_DB_DATABASE: ${{ secrets.DB_DATABASE }}
