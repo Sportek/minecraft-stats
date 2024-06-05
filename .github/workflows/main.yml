@@ -45,6 +45,7 @@ jobs:
           envkey_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           file_name: .env.production
+          directory: ./home/minecraft-stats/website/backend
 
       - name: Use SSH to connect to server and run Docker Compose commands
         uses: appleboy/ssh-action@master
