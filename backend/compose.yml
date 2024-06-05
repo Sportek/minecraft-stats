@@ -37,6 +37,7 @@ services:
       sh -c "node ace migration:run && node ace serve"
     networks:
       - sail
+    tty: true
 
   adonis_scheduler:
     container_name: 'stats-scheduler-${APP_NAME}'
@@ -55,6 +56,7 @@ services:
       - ./:/home/node/app
       - server-images:/home/node/app/public
       - /home/node/app/node_modules
+    tty: true
 
 networks:
   sail:
