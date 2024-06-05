@@ -3,23 +3,23 @@ name: minecraft-stats
 services:
   pgsql:
     image: 'postgres:15'
-    container_name: 'stats-pgsql-${APP_NAME:-minecraft-stats}'
+    container_name: 'stats-pgsql-${APP_NAME}'
     environment:
-      PGPASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE:-default}'
+      PGPASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_DATABASE}'
       POSTGRES_USER: '${DB_USER}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
     volumes:
       - 'sailpgsql:/var/lib/postgresql/data'
     networks:
       - sail
     healthcheck:
-      test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE:-default}', '-U', '${DB_USER}']
+      test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE}', '-U', '${DB_USER}']
       retries: 3
       timeout: 5s
 
   adonis_app:
-    container_name: 'stats-backend-${APP_NAME:-minecraft-stats}'
+    container_name: 'stats-backend-${APP_NAME}'
     build:
       context: .
       dockerfile: Dockerfile
@@ -39,7 +39,7 @@ services:
       - sail
 
   adonis_scheduler:
-    container_name: 'stats-scheduler-${APP_NAME:-minecraft-stats}'
+    container_name: 'stats-scheduler-${APP_NAME}'
     build:
       context: .
       dockerfile: Dockerfile
