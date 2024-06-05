@@ -52,6 +52,15 @@ jobs:
       - name: Vérifier la création du fichier .env.production 2
         run: cat .env.production
 
+      - name: Copier le fichier .env.production sur le serveur
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: .env.production
+          target: /home/minecraft-stats/website/backend/.env.production
+
       - name: Use SSH to connect to server and run Docker Compose commands
         uses: appleboy/ssh-action@master
         with:
