@@ -9,6 +9,3 @@ RUN npm install
 
 # On copie le reste du code
 COPY . .
-
-# On expose le port 3333
-EXPOSE 3333
