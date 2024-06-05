@@ -45,7 +45,7 @@ jobs:
           envkey_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           file_name: .env.production
-          directory: /home/minecraft-stats/website/backend
+          directory: ./home/minecraft-stats/website/backend
 
       - name: Vérifier la création du fichier .env.production 1
         run: ls -la
