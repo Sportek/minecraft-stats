@@ -62,4 +62,6 @@ networks:
 
 volumes:
   sailpgsql:
+    name: 'stats-pgsql-${APP_NAME}'
   server-images:
+    name: 'stats-images-${APP_NAME}'
