@@ -7,5 +7,7 @@ WORKDIR /home/node/app
 COPY package.json ./
 RUN npm install
 
+COPY .env.production /app/.env.production
+
 # On copie le reste du code
 COPY . .
