@@ -28,8 +28,8 @@ jobs:
       - name: Create .env.production file with secrets
         uses: SpicyPizza/create-envfile@v2.0
         with:
-          envkey_APP_NAME: ${{ secrets.APP_NAME }}
-          envkey_PORT: ${{ secrets.PORT }}
+          envkey_APP_NAME: ${{ vars.APP_NAME }}
+          envkey_PORT: ${{ vars.PORT }}
           envkey_APP_KEY: ${{ secrets.APP_KEY }}
           envkey_NODE_ENV: development
           envkey_DB_HOST: pgsql
@@ -38,7 +38,7 @@ jobs:
           envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           envkey_DB_DATABASE: ${{ secrets.DB_DATABASE }}
           envkey_RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          envkey_WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+          envkey_WEBSITE_URL: ${{ vars.WEBSITE_URL }}
           envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
           envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
           envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
