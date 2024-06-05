@@ -25,6 +25,25 @@ jobs:
           script: |
             cd /home/minecraft-stats/website/backend
             git pull origin main
+      - name: Create .env.production file with secrets
+        run: |
+          echo "TZ=UTC" > .env.production
+          echo "APP_NAME=${{ secrets.APP_NAME }}" >> .env.production
+          echo "PORT=${{ secrets.PORT }}" >> .env.production
+          echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env.production
+          echo "NODE_ENV=development" >> .env.production
+          echo "DB_HOST=pgsql" >> .env.production
+          echo "DB_PORT=5432" >> .env.production
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env.production
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.production
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env.production
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .env.production
+          echo "WEBSITE_URL=${{ secrets.WEBSITE_URL }}" >> .env.production
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.production
+          echo "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}" >> .env.production
+          echo "DISCORD_CLIENT_SECRET=${{ secrets.DISCORD_CLIENT_SECRET }}" >> .env.production
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env.production
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env.production
 
       - name: Use SSH to connect to server and run Docker Compose commands
         uses: appleboy/ssh-action@master
