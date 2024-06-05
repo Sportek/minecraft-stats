@@ -46,12 +46,6 @@ jobs:
           envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           file_name: .env.production
 
-      - name: Vérifier la création du fichier .env.production 1
-        run: ls -la
-
-      - name: Vérifier la création du fichier .env.production 2
-        run: cat /home/minecraft-stats/website/backend/.env.production
-
       - name: Use SSH to connect to server and run Docker Compose commands
         uses: appleboy/ssh-action@master
         with:
