@@ -3,6 +3,7 @@
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
+import Vote from "@/components/vote";
 import { Server, ServerStat } from "@/types/server";
 import useSWR from "swr";
 
@@ -17,6 +18,7 @@ const Home = () => {
 
   return (
     <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+      <Vote />
       {isLoading && <Loader message="Loading..." />}
       {error && <div>{error.message}</div>}
       {data && data.length > 0 && (
