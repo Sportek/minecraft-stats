@@ -19,6 +19,7 @@ const CallbackPage = () => {
   const {toast} = useToast();
 
   useEffect(() => {
+    if(isLoading) return;
     if (data?.user?.username) {
       setUser(data.user);
       saveToken(data.accessToken.token);
