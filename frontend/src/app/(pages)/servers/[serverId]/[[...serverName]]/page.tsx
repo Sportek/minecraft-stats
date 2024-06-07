@@ -25,7 +25,7 @@ const ServerPage = () => {
     "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
   };
 
-  const [intervalChoice, setIntervalChoice] = useState<number>(intervalType["1 Day"]);
+  const [intervalChoice, setIntervalChoice] = useState<number>(intervalType["1 Week"]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);

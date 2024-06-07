@@ -40,7 +40,7 @@ export default class StatsController {
           .groupBy('interval')
       }
 
-      const stats = await query
+      const stats = await query.orderBy('created_at', 'asc')
       return response.status(200).json(stats)
     } catch (error) {
       return response.status(500).json({ error: error.messages || 'Internal server error' })
