@@ -19,6 +19,7 @@ const CallbackPage = () => {
   const {toast} = useToast();
 
   useEffect(() => {
+    if(isLoading) return;
     if (data?.user?.username) {
       setUser(data.user);
       saveToken(data.accessToken.token);
@@ -30,7 +31,7 @@ const CallbackPage = () => {
         description: "Please try again",
       });
     }
-  }, [data, router, setUser, saveToken, toast, provider]);
+  }, [data, router, setUser, saveToken, toast, provider, isLoading]);
 
   return (
     <div>
