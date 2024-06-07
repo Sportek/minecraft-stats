@@ -31,7 +31,7 @@ const CallbackPage = () => {
         description: "Please try again",
       });
     }
-  }, [data, router, setUser, saveToken, toast, provider]);
+  }, [data, router, setUser, saveToken, toast, provider, isLoading]);
 
   return (
     <div>
