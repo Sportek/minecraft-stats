@@ -1,7 +1,7 @@
 "use client";
 
 import { getBaseUrl } from "@/app/_cheatcode";
-import { User } from "@/types/auth";
+import { AccessToken, User } from "@/types/auth";
 
 export const registerUser = async (credentials: { username: string; email: string; password: string }) => {
   const response = await fetch(`${getBaseUrl()}/register`, {
@@ -51,11 +51,7 @@ export const loginUser = async (credentials: { email: string; password: string }
   }
 
   return response.json() as Promise<{
-    accessToken: {
-      type: string;
-      token: string;
-      expiresAt: Date;
-    };
+    accessToken: AccessToken;
     user: User;
   }>;
 };

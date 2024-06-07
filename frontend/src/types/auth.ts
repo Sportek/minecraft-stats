@@ -15,3 +15,9 @@ export type Error = {
 export type ErrorMessage = {
   message: string;
 };
+
+export type AccessToken = {
+  type: "bearer",
+  token: string,
+  expiresAt: Date
+};
