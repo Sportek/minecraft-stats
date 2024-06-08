@@ -1,14 +1,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Server, ServerStat } from "@/types/server";
+import { Category, Server, ServerStat } from "@/types/server";
 import Link from "next/link";
 import { useState } from "react";
 import NotFound from "../not-found";
+import { Badge } from "@/components/ui/badge";
 
 interface ServerCardProps {
   server: Server;
   stat: ServerStat | null;
+  categories: Category[]
 }
-const ServerCard = ({ server, stat }: ServerCardProps) => {
+const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -43,7 +45,14 @@ const ServerCard = ({ server, stat }: ServerCardProps) => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col flex-grow truncate">
-            <div className="text-xl font-semibold truncate">{server.name}</div>
+            <div className="text-xl font-semibold truncate flex gap-2">
+              <div>{server.name}</div>
+              <div className="flex flex-row items-center gap-4">
+                {categories.map((category) => (
+                  <Badge key={category.id} className="text-sm" variant="secondary">{category.name}</Badge>
+                ))}
+              </div>
+            </div>
             <div className="text-sm text-zinc-500 truncate">{server?.address?.toUpperCase()}</div>
           </div>
           {stat ? (

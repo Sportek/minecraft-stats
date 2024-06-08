@@ -4,12 +4,12 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import { ResearchInput } from "@/components/research";
 import ServerCard from "@/components/serveur/card";
-import { Server, ServerStat } from "@/types/server";
+import { Category, Server, ServerStat } from "@/types/server";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 
 const Home = () => {
-  const { data, error, isLoading } = useSWR<{ server: Server; stat: ServerStat | null }[], Error>(
+  const { data, error, isLoading } = useSWR<{ server: Server; stat: ServerStat | null; categories: Category[] }[], Error>(
     `${getBaseUrl()}/servers`,
     fetcher,
     {
@@ -19,7 +19,7 @@ const Home = () => {
 
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [serversToShow, setServersToShow] = useState<{ server: Server; stat: ServerStat | null }[]>([]);
+  const [serversToShow, setServersToShow] = useState<{ server: Server; stat: ServerStat | null; categories: Category[] }[]>([]);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
@@ -49,7 +49,7 @@ const Home = () => {
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full truncate">
             {serversToShow.length > 0 ? (
               serversToShow.map((server) => (
-                <ServerCard key={server.server.id} server={server.server} stat={server.stat} />
+                <ServerCard key={server.server.id} server={server.server} stat={server.stat} categories={server.categories} />
               ))
             ) : (
               <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>

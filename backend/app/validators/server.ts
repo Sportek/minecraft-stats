@@ -20,7 +20,7 @@ export const CreateServerValidator = vine.compile(
     address: vine.string(),
     port: vine.number().max(65535).min(1),
     imageUrl: vine.string().optional(),
-    category: vine.array(vine.enum(Object.values(ServerCategory))),
+    categories: vine.array(vine.string()),
     version: vine.string().optional(),
     motd: vine.string().optional(),
   })
@@ -32,7 +32,7 @@ export const UpdateServerValidator = vine.compile(
     address: vine.string().optional(),
     port: vine.number().max(65535).min(1).optional(),
     imageUrl: vine.string().optional(),
-    category: vine.array(vine.enum(Object.values(ServerCategory))).optional(),
+    categories: vine.array(vine.string()).optional(),
     version: vine.string().optional(),
     motd: vine.string().optional(),
   })
