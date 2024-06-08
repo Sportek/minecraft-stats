@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import CheatCodeComponent from "./_cheatcode";
 import "./globals.css";
+import Metrics from "@/components/metrics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +39,7 @@ export default function RootLayout({
             <Toaster />
             <div className="flex-1 flex flex-col items-center justify-center">
               <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
+              <Metrics />
             </div>
             <Footer />
           </ServersProvider>
