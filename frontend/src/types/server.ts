@@ -17,3 +17,9 @@ export interface ServerStat {
   maxCount: number;
   createdAt: Date;
 }
+
+export interface Category {
+  id: number;
+  name: string;
+  createdAt: Date;
+}
