@@ -3,6 +3,7 @@ import ServerPolicy from '#policies/server_policy'
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
+import { CreateServerValidator } from '#validators/server'
 
 export default class ServersController {
   async index() {
@@ -17,18 +18,20 @@ export default class ServersController {
   }
 
   async store({ request, auth, response }: HttpContext) {
-    const data = request.only(['name', 'address', 'port', 'imageUrl'])
+    const data = request.only(['name', 'address', 'port', 'imageUrl', 'category'])
     const user = auth.user
     if (!user) {
       return response.unauthorized({ message: 'Unauthorized' })
     }
 
-    const successPing = await isPingPossible(data.address, data.port)
+    const validatedData = await CreateServerValidator.validate(data)
+
+    const successPing = await isPingPossible(validatedData.address, validatedData.port)
     if (!successPing) {
       return response.badRequest({ message: 'Server is not reachable' })
     }
 
-    const server = await Server.create(data)
+    const server = await Server.create(validatedData)
     await server.related('user').associate(user)
     return server
   }
@@ -49,7 +52,7 @@ export default class ServersController {
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
-    const data = request.only(['name', 'address', 'port', 'imageUrl'])
+    const data = request.only(['name', 'address', 'port', 'imageUrl', 'category'])
     const server = await Server.find(params.id)
     if (!server) return response.notFound({ message: 'Server not found' })
     if (await bouncer.with(ServerPolicy).denies('update', server)) {

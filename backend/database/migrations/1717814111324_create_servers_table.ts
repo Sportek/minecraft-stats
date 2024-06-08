@@ -5,7 +5,8 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.string('category').notNullable().defaultTo('other')
+      table.foreign('category_id').references('categories.id')
+      table.dropColumn('category')
     })
   }
 

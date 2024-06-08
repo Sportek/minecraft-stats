@@ -18,6 +18,15 @@ router
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
 
+    router
+      .resource('servers.categories', '#controllers/server_categories_controller')
+      .only(['index', 'store', 'destroy'])
+
+    router
+      .resource('categories', '#controllers/categories_controller')
+      .except(['create', 'edit'])
+      .middleware(['destroy', 'store', 'update'], middleware.auth())
+
     router.resource('servers.stats', '#controllers/stats_controller').only(['index'])
 
     router
