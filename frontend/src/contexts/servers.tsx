@@ -22,7 +22,7 @@ export const ServersProvider = ({ children }: { children: React.ReactNode }) => 
   const { getToken } = useAuth();
 
   const addServer = useCallback(
-    async (data: { name: string; address: string; port: number }) => {
+    async (data: { name: string; address: string; port: number; categories: string[] }) => {
       try {
         await addMinecraftServer(data, getToken() ?? "");
       } catch (error: any) {
