@@ -17,6 +17,8 @@ interface AuthContextProps {
   saveToken: (token: string) => void;
   fetchUser: () => Promise<void>;
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -31,6 +33,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
   const getToken = useCallback(() => {
@@ -41,14 +44,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("accessToken", token);
   }, []);
 
+  const removeToken = useCallback(() => {
+    localStorage.removeItem("accessToken");
+  }, []);
+
   const fetchUser = useCallback(async () => {
     try {
-      const response = await getUser(getToken() ?? "");
+      const token = getToken();
+      if (!token) return;
+      const response = await getUser(token);
       setUser(response || null);
+      setIsLoggedIn(true);
     } catch (error: any) {
       setUser(null);
+      setIsLoggedIn(false);
+      removeToken();
     }
-  }, [getToken, setUser]);
+  }, [getToken, setUser, setIsLoggedIn, removeToken]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -56,12 +68,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const response = await loginUser({ email, password });
         setUser(response.user);
         saveToken(response.accessToken.token);
+        setIsLoggedIn(true);
         router.push("/");
       } catch (error: any) {
+        setUser(null);
+        setIsLoggedIn(false);
+        removeToken();
         return { message: error.message };
       }
     },
-    [router, setUser, saveToken]
+    [router, setUser, saveToken, setIsLoggedIn, removeToken]
   );
 
   const register = useCallback(
@@ -78,8 +94,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = useCallback(() => {
     setUser(null);
+    setIsLoggedIn(false);
+    removeToken();
     router.push("/");
-  }, [router, setUser]);
+  }, [router, setUser, setIsLoggedIn, removeToken]);
 
   const changePassword = useCallback(
     async (oldPassword: string, newPassword: string) => {
@@ -118,6 +136,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       saveToken,
       fetchUser,
       changePassword,
+      isLoggedIn,
+      setIsLoggedIn,
     };
   }, [
     user,
@@ -130,6 +150,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     saveToken,
     fetchUser,
     changePassword,
+    isLoggedIn,
+    setIsLoggedIn,
   ]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

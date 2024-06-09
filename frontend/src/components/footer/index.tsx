@@ -23,7 +23,9 @@ const Footer = () => {
                 Minecraft Stats is a free service that allows you to list the connection statistics of various existing
                 Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.
               </div>
-              <Button className="w-full">Add Your Server</Button>
+                <Link href="/account/add-server" className="w-full">
+                  <Button className="w-full">Add Your Server</Button>
+                </Link>
             </div>
           </div>
           <div className="flex flex-col gap-4">
