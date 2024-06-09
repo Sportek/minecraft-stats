@@ -7,22 +7,24 @@ import { Badge } from "./badge";
 import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 
 import { Command as CommandPrimitive } from "cmdk";
+import { cn } from "@/lib/utils";
 
 
 interface MultiSelectProps {
-  elements: readonly {
+  readonly elements: readonly {
     readonly value: string;
     readonly label: string;
   }[];
-  title: string;
-  onSelectionChange?: (selected: string[]) => void;
+  readonly title: string;
+  readonly onSelectionChange?: (selected: string[]) => void;
+  readonly className?: string;
 }
 
-export function FancyMultiSelect({ elements, title, onSelectionChange }: MultiSelectProps) {
+export function FancyMultiSelect({ elements, title, onSelectionChange, className }: MultiSelectProps) {
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<readonly { value: string; label: string }[]>([elements[1]]);
+  const [selected, setSelected] = React.useState<readonly { value: string; label: string }[]>([]);
   const [inputValue, setInputValue] = React.useState("");
 
   React.useEffect(() => {
@@ -61,15 +63,15 @@ export function FancyMultiSelect({ elements, title, onSelectionChange }: MultiSe
   const selectables = elements.filter((element) => !selected.some((s) => s.value === element.value));
 
   return (
-    <Command onKeyDown={handleKeyDown} className="overflow-visible bg-transparent">
-      <div className="group bg-white rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+    <Command onKeyDown={handleKeyDown} className={cn("overflow-visible bg-transparent h-full", className)}>
+      <div className="group rounded-md px-3 py-2 text-sm h-full w-full">
         <div className="flex flex-wrap gap-1">
           {selected.map((element) => {
             return (
               <Badge key={element.value} variant="secondary">
                 {element.label}
                 <button
-                  className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  className="rounded-full outline-none"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleUnselect(element);
@@ -97,7 +99,7 @@ export function FancyMultiSelect({ elements, title, onSelectionChange }: MultiSe
           />
         </div>
       </div>
-      <div className="relative mt-2">
+      <div className="relative">
         <CommandList>
           {open && selectables.length > 0 ? (
             <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in bg-zinc-200">

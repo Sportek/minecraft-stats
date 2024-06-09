@@ -32,11 +32,20 @@ const ServerPage = () => {
   const [options, setOptions] = useState<AgChartOptions>({});
 
   useEffect(() => {
+
+    function fetchServerStats() {
+      getServerStats(Number(serverId), intervalChoice, Date.now()).then((stats) => {
+        setStats(stats);
+      });
+    }
+
     setIsLoading(true);
-    getServerStats(Number(serverId), intervalChoice, Date.now()).then((stats) => {
-      setStats(stats);
-      setIsLoading(false);
-    });
+    fetchServerStats();
+    setIsLoading(false);
+
+    setInterval(() => {
+      fetchServerStats();
+    }, 1000 * 60 * 2);
   }, [serverId, intervalChoice]);
 
   useEffect(() => {
