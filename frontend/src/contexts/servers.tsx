@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useMemo } from "react";
 import { useAuth } from "./auth";
 
 interface ServersContextProps {
-  addServer: (data: { name: string; address: string; port: number }) => Promise<void>;
+  addServer: (data: { name: string; address: string; port: number; categories: string[] }) => Promise<void>;
 }
 
 export const ServersContext = createContext<ServersContextProps | null>(null);

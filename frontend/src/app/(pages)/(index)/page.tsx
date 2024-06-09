@@ -47,7 +47,7 @@ const Home = () => {
   }, [data, searchTerm, selectedCategories]);
 
   return (
-    <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+    <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
       {isLoading || categories.isLoading ? <Loader message="Loading..." /> : null}
       {error && <div>{error.message}</div>}
       {data && (
@@ -71,7 +71,7 @@ const Home = () => {
           </div>
         </>
       )}
-    </div>
+    </main>
   );
 };
 export default Home;

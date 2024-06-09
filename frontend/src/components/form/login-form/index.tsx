@@ -47,7 +47,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
     }
   };
 
-  const { loginWithDiscord, loginWithGithub } = useAuth();
+  const { loginWithDiscord, loginWithGoogle } = useAuth();
 
   return (
     <div className={cn("flex flex-col", className)}>
@@ -95,7 +95,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
               <div>Login with Discord</div>
             </div>
           </Button>
-          <Button variant={"outline"} className="w-full" type="button" onClick={loginWithGithub}>
+          <Button variant={"outline"} className="w-full" type="button" onClick={loginWithGoogle}>
             <div className="flex items-center space-x-2 text-center">
               <Icon icon="logos:google-icon" className="w-5 h-5" />
               <div>Login with Google</div>

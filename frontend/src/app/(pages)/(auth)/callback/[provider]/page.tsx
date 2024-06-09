@@ -12,7 +12,7 @@ const CallbackPage = () => {
   const provider = useParams().provider;
   const code = useSearchParams().get("code");
 
-  const { data, error, isLoading } = useSWR<{user: User, accessToken: AccessToken}>(`${getBaseUrl()}/callback/${provider}?code=${code}`, fetcher);
+  const { data, isLoading } = useSWR<{user: User, accessToken: AccessToken}>(`${getBaseUrl()}/callback/${provider}?code=${code}`, fetcher);
   const { setUser, saveToken } = useAuth();
 
   const router = useRouter();
