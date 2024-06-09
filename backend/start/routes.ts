@@ -44,8 +44,8 @@ router
       .use(middleware.auth())
     router
       .get('/login/:provider', '#controllers/auth_controller.providerLogin')
-      .where('provider', /github|discord/)
+      .where('provider', /google|discord/)
+    router.get('/callback/google', '#controllers/auth_controller.googleCallback')
     router.get('/callback/discord', '#controllers/auth_controller.discordCallback')
-    router.get('/callback/github', '#controllers/auth_controller.githubCallback')
   })
   .prefix('/api/v1')

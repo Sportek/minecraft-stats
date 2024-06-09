@@ -5,8 +5,8 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
+      table.integer('category_id').unsigned().nullable()
       table.foreign('category_id').references('categories.id')
-      table.dropColumn('category')
     })
   }
 
