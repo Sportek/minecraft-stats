@@ -49,7 +49,9 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
               <div>{server.name}</div>
               <div className="flex flex-row items-center gap-4">
                 {categories.map((category) => (
-                  <Badge key={category.id} className="text-sm" variant="secondary">{category.name}</Badge>
+                  <Badge key={category.id} className="text-xs" variant="secondary">
+                    {category.name}
+                  </Badge>
                 ))}
               </div>
             </div>
