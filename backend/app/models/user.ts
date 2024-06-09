@@ -25,7 +25,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare verified: boolean
 
   @column()
-  declare provider: 'github' | 'discord' | null
+  declare provider: 'discord' | 'google' | null
 
   @column()
   declare role: 'admin' | 'user'

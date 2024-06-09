@@ -1,7 +1,8 @@
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import * as relations from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import User from './user.js'
+import Category from './category.js'
 
 export default class Server extends BaseModel {
   @column({ isPrimary: true })
@@ -30,6 +31,9 @@ export default class Server extends BaseModel {
 
   @belongsTo(() => User)
   declare user: relations.BelongsTo<typeof User>
+
+  @manyToMany(() => Category, { pivotTimestamps: true, pivotTable: 'server_categories' })
+  declare categories: relations.ManyToMany<typeof Category>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

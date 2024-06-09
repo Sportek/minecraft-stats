@@ -77,7 +77,7 @@ export default class AuthController {
   }
 
   async providerLogin({ ally, request }: HttpContext) {
-    const driverInstance = ally.use(request.param('provider') as 'discord' | 'github')
+    const driverInstance = ally.use(request.param('provider') as 'discord' | 'google')
     return await driverInstance.redirect()
   }
 
@@ -118,9 +118,40 @@ export default class AuthController {
     }
   }
 
-  async githubCallback({ ally }: HttpContext) {
-    const driverInstance = ally.use('github')
-    const user = await driverInstance.user()
-    return user
+  async googleCallback({ ally, response }: HttpContext) {
+    const driverInstance = ally.use('google')
+    const googleUser = await driverInstance.user()
+
+    if (driverInstance.accessDenied())
+      return response.badRequest({ message: 'You have cancelled the login process' })
+
+    if (driverInstance.stateMisMatch())
+      return response.badRequest({
+        message: 'We are unable to verify the request. Please try again',
+      })
+
+    if (driverInstance.hasError())
+      return response.badRequest({
+        message: 'An error occurred while logging in. Please try again',
+      })
+
+    const user = await User.firstOrCreate(
+      { email: googleUser.email },
+      {
+        username: googleUser.name,
+        password: Math.random().toString(36).slice(2),
+        verified: true,
+        provider: 'google',
+        avatarUrl: googleUser.avatarUrl,
+      }
+    )
+
+    if (!user.provider && user.provider !== 'google')
+      return response.badRequest({ message: 'Cannot login with this third-party provider' })
+
+    return {
+      user,
+      accessToken: await User.accessTokens.create(user),
+    }
   }
 }

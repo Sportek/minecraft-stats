@@ -18,6 +18,15 @@ router
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
 
+    router
+      .resource('servers.categories', '#controllers/server_categories_controller')
+      .only(['index', 'store', 'destroy'])
+
+    router
+      .resource('categories', '#controllers/categories_controller')
+      .except(['create', 'edit'])
+      .middleware(['destroy', 'store', 'update'], middleware.auth())
+
     router.resource('servers.stats', '#controllers/stats_controller').only(['index'])
 
     router
@@ -35,8 +44,8 @@ router
       .use(middleware.auth())
     router
       .get('/login/:provider', '#controllers/auth_controller.providerLogin')
-      .where('provider', /github|discord/)
+      .where('provider', /google|discord/)
+    router.get('/callback/google', '#controllers/auth_controller.googleCallback')
     router.get('/callback/discord', '#controllers/auth_controller.discordCallback')
-    router.get('/callback/github', '#controllers/auth_controller.githubCallback')
   })
   .prefix('/api/v1')

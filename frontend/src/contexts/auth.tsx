@@ -12,7 +12,7 @@ interface AuthContextProps {
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   loginWithDiscord: () => void;
-  loginWithGithub: () => void;
+  loginWithGoogle: () => void;
   getToken: () => string | null;
   saveToken: (token: string) => void;
   fetchUser: () => Promise<void>;
@@ -97,8 +97,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push(`${getBaseUrl()}/login/discord`);
   }, [router]);
 
-  const loginWithGithub = useCallback(() => {
-    router.push(`${getBaseUrl()}/login/github`);
+  const loginWithGoogle = useCallback(() => {
+    router.push(`${getBaseUrl()}/login/google`);
   }, [router]);
 
   useEffect(() => {
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       register,
       logout,
       loginWithDiscord,
-      loginWithGithub,
+      loginWithGoogle,
       getToken,
       saveToken,
       fetchUser,
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     register,
     logout,
     loginWithDiscord,
-    loginWithGithub,
+    loginWithGoogle,
     getToken,
     saveToken,
     fetchUser,
