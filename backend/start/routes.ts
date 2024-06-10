@@ -21,6 +21,7 @@ router
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
       .only(['index', 'store', 'destroy'])
+      .middleware(['destroy', 'store'], middleware.auth())
 
     router
       .resource('categories', '#controllers/categories_controller')
