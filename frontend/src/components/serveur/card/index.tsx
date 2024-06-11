@@ -23,7 +23,7 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
       {isHover ? (
         <div className="flex flex-row items-center gap-4">
           <Avatar>
-            <AvatarImage src={server.user.avatarUrl ?? ""} alt={server.user.username ?? "User Avatar"} />
+            <AvatarImage loading="lazy" src={server.user.avatarUrl ?? ""} alt={server.user.username ?? "User Avatar"} />
             <AvatarFallback className="bg-stats-blue-900 text-stats-blue-0 text-sm font-semibold">
               {server.user.username?.[0].toUpperCase()}
             </AvatarFallback>
