@@ -39,7 +39,7 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
       ) : (
         <div className="flex flex-row items-center gap-4 w-full h-full flex-grow justify-between min-w-0">
           <Avatar>
-            <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}`} alt={server.name} />
+            <AvatarImage src={server.imageUrl ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}` : ""} alt={server.name} />
             <AvatarFallback>
               <NotFound className="text-stats-blue-950" />
             </AvatarFallback>

@@ -10,15 +10,14 @@ import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 
 const Home = () => {
-  const { data, error, isLoading } = useSWR<{ server: Server; stat: ServerStat | null; categories: Category[] }[], Error>(
-    `${getBaseUrl()}/servers`,
-    fetcher,
-    {
-      refreshInterval: 1000 * 60 * 2,
-    }
-  );
+  const { data, error, isLoading } = useSWR<
+    { server: Server; stat: ServerStat | null; categories: Category[] }[],
+    Error
+  >(`${process.env.NEXT_PUBLIC_API_URL}/servers`, fetcher, {
+    refreshInterval: 1000 * 60 * 2,
+  });
 
-  const categories = useSWR<Category[], Error>(`${getBaseUrl()}/categories`, fetcher);
+  const categories = useSWR<Category[], Error>(`${process.env.NEXT_PUBLIC_API_URL}/categories`, fetcher);
 
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
