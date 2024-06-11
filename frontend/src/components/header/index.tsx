@@ -115,7 +115,7 @@ const Header = () => {
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
             <div className="text-2xl font-bold">Minecraft Stats</div>
           </Link>
-          <button className="md:hidden flex flex-row items-center gap-8" onClick={() => setIsMobileMenuOpen(false)}>
+          <button aria-label="Open or close mobile menu" className="md:hidden flex flex-row items-center gap-8" onClick={() => setIsMobileMenuOpen(false)}>
             <Icon icon="material-symbols:close" className="w-6 h-6" />
           </button>
         </div>
