@@ -34,6 +34,8 @@ router
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
 
+    router.get('website-stats', '#controllers/website_stats_controller.index')
+
     // Authentification et gestion de compte
     router.post('/login', '#controllers/auth_controller.login')
     router.post('/register', '#controllers/auth_controller.register')
