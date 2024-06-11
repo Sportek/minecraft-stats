@@ -10,12 +10,17 @@ import { AgChartOptions } from "ag-charts-community";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import Head from "next/head";
 
 const ServerPage = () => {
   const { serverId } = useParams();
-  const server = useSWR<{ server: Server; stat: ServerStat; categories: Category[] }, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {
-    refreshInterval: 1000 * 60 * 2,
-  });
+  const server = useSWR<{ server: Server; stat: ServerStat; categories: Category[] }, Error>(
+    `${getBaseUrl()}/servers/${serverId}`,
+    fetcher,
+    {
+      refreshInterval: 1000 * 60 * 2,
+    }
+  );
 
   const intervalType = {
     "1 Day": Date.now() - 1000 * 60 * 60 * 24,
@@ -32,7 +37,6 @@ const ServerPage = () => {
   const [options, setOptions] = useState<AgChartOptions>({});
 
   useEffect(() => {
-
     function fetchServerStats() {
       getServerStats(Number(serverId), intervalChoice, Date.now()).then((stats) => {
         setStats(stats);
@@ -78,26 +82,51 @@ const ServerPage = () => {
 
   const getServerInformations = () => {
     return server?.data ? (
-      <ServerCard key={server.data?.server.id} server={server.data.server} stat={server.data.stat} categories={server.data.categories} />
+      <ServerCard
+        key={server.data?.server.id}
+        server={server.data.server}
+        stat={server.data.stat}
+        categories={server.data.categories}
+      />
     ) : null;
   };
 
-  return server.isLoading ? (
-    <Loader message="Querying server..." />
-  ) : (
-    <div className="flex flex-1 flex-col">
-      {server.error ? <div className="text-red-500">{server.error.message}</div> : null}
-      {isLoading ? (
-        <Loader message="Querying server stats..." />
+  return (
+    <>
+      <Head>
+        <title>{server.data?.server.name} - Server Details</title>
+        <title>{server.data?.server.name} - Server Details</title>
+        <meta name="description" content={`Details and statistics for server ${server.data?.server.name}.`} />
+        <meta name="keywords" content="server, statistics, server details, server stats" />
+        <meta name="image" content={server.data?.server.imageUrl} />
+        <meta property="og:title" content={`${server.data?.server.name} - Server Details`} />
+        <meta property="og:description" content={`Details and statistics for server ${server.data?.server.name}.`} />
+        <meta property="og:image" content={server.data?.server.imageUrl} />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${server.data?.server.name} - Server Details`} />
+        <meta name="twitter:description" content={`Details and statistics for server ${server.data?.server.name}.`} />
+        <meta name="twitter:image" content={server.data?.server.imageUrl} />
+        <meta name="author" content={server.data?.server.user.username} />
+      </Head>
+      {server.isLoading ? (
+        <Loader message="Querying server..." />
       ) : (
-        <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-          {getServerInformations()}
-          <div style={{ height: "400px" }}>
-            <AgChartsReact options={options} />
-          </div>
+        <div className="flex flex-1 flex-col">
+          {server.error ? <div className="text-red-500">{server.error.message}</div> : null}
+          {isLoading ? (
+            <Loader message="Querying server stats..." />
+          ) : (
+            <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+              {getServerInformations()}
+              <div style={{ height: "400px" }}>
+                <AgChartsReact options={options} />
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
