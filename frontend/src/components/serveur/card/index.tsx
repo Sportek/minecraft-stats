@@ -27,9 +27,9 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
             server.user.avatarUrl ? (
               <Image loading="lazy" priority={false} src={server.user.avatarUrl} alt={server.user.username} width={38} height={38} className="rounded-md" />
             ) : (
-              <AvatarFallback className="bg-stats-blue-90 text-stats-blue-0 text-sm font-semibold rounded-md" style={{ width: "38px", height: "38px" }}>
+              <div className="bg-stats-blue-90 text-stats-blue-0 text-sm font-semibold rounded-md flex items-center justify-center" style={{ width: "38px", height: "38px" }}>
                 {server.user.username?.[0].toUpperCase()}
-              </AvatarFallback>
+              </div>
             )
           }
           <div className="flex flex-col w-full">
