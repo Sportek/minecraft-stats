@@ -31,8 +31,8 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
           <div className="flex flex-col w-full">
             <div className="text-xl font-semibold">Added By</div>
             <div className="flex flex-row items-center gap-4">
-              <div className="text-sm text-zinc-500 ">{server.user.username}</div>
-              <div className="text-sm text-zinc-500">{new Date(server.createdAt).toLocaleDateString()}</div>
+              <div className="text-sm text-zinc-700">{server.user.username}</div>
+              <div className="text-sm text-zinc-700">{new Date(server.createdAt).toLocaleDateString()}</div>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
                 ))}
               </div>
             </div>
-            <div className="text-sm text-zinc-500 truncate">{server?.address?.toUpperCase()}</div>
+            <div className="text-sm text-zinc-700 truncate">{server?.address?.toUpperCase()}</div>
           </div>
           {stat ? (
             <div className="flex flex-row items-center gap-4">
