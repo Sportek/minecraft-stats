@@ -115,7 +115,12 @@ const Header = () => {
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
             <div className="text-2xl font-bold">Minecraft Stats</div>
           </Link>
-          <button aria-label="Open or close mobile menu" className="md:hidden flex flex-row items-center gap-8" onClick={() => setIsMobileMenuOpen(false)}>
+          <button
+            aria-label="Close mobile menu"
+            id="mobile-menu-close-button"
+            className="md:hidden flex flex-row items-center gap-8"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             <Icon icon="material-symbols:close" className="w-6 h-6" />
           </button>
         </div>
@@ -201,6 +206,8 @@ const Header = () => {
         </div>
         <button
           className="md:hidden flex flex-row items-center gap-8"
+          aria-label="Open or close mobile menu"
+          id="mobile-menu-button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <Icon icon="material-symbols:menu" className="w-6 h-6" />
