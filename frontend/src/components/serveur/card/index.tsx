@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import NotFound from "../not-found";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
 
 interface ServerCardProps {
   server: Server;
@@ -23,15 +22,12 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
     >
       {isHover ? (
         <div className="flex flex-row items-center gap-4">
-          {
-            server.user.avatarUrl ? (
-              <Image loading="lazy" priority={false} src={server.user.avatarUrl} alt={server.user.username} width={38} height={38} className="rounded-md" />
-            ) : (
-              <div className="bg-stats-blue-90 text-stats-blue-0 text-sm font-semibold rounded-md flex items-center justify-center" style={{ width: "38px", height: "38px" }}>
-                {server.user.username?.[0].toUpperCase()}
-              </div>
-            )
-          }
+          <Avatar>
+            <AvatarImage loading="lazy" src={server.user.avatarUrl ?? ""} alt={server.user.username ?? "User Avatar"} />
+            <AvatarFallback className="bg-stats-blue-900 text-stats-blue-0 text-sm font-semibold">
+              {server.user.username?.[0].toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex flex-col w-full">
             <div className="text-xl font-semibold">Added By</div>
             <div className="flex flex-row items-center gap-4">
@@ -42,13 +38,12 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
         </div>
       ) : (
         <div className="flex flex-row items-center gap-4 w-full h-full flex-grow justify-between min-w-0">
-          {
-            server.imageUrl ? (
-              <Image loading="lazy" priority={false} src={server.imageUrl} alt={server.name} width={38} height={38} className="rounded-md" />
-            ) : (
-              <NotFound className="text-stats-blue-950 w-[38px] h-[38px] rounded-md" />
-            )
-          }
+          <Avatar>
+            <AvatarImage src={server.imageUrl ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}` : ""} alt={server.name} />
+            <AvatarFallback>
+              <NotFound className="text-stats-blue-950" />
+            </AvatarFallback>
+          </Avatar>
           <div className="flex flex-col flex-grow truncate">
             <div className="text-xl font-semibold truncate flex gap-2">
               <div>{server.name}</div>
