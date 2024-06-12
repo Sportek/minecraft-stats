@@ -17,6 +17,10 @@ const Home = () => {
     refreshInterval: 1000 * 60 * 2,
   });
 
+  const serversStats = useSWR<{totalRecords: number}>(`${process.env.NEXT_PUBLIC_API_URL}/website-stats`, fetcher, {
+    refreshInterval: 1000 * 60 * 2,
+  });
+
   const categories = useSWR<Category[], Error>(`${process.env.NEXT_PUBLIC_API_URL}/categories`, fetcher);
 
   const searchRef = useRef<HTMLInputElement>(null);
@@ -47,7 +51,7 @@ const Home = () => {
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-      {isLoading || categories.isLoading ? <Loader message="Loading..." /> : null}
+      {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
       {error && <div>{error.message}</div>}
       {data && (
         <>
@@ -67,6 +71,16 @@ const Home = () => {
             ) : (
               <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>
             )}
+          </div>
+          <div className="bg-zinc-200 p-4 rounded-md shadow-sm w-full flex flex-col sm:flex-row gap-2 justify-around">
+            <div className="flex flex-row gap-2 items-center">
+              <div>Nombre de connectés total</div>
+              <div className="text-sm font-semibold">{data?.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0)}</div>
+            </div>
+            <div className="flex flex-row gap-2 items-center">
+              <div>Nombre de données</div>
+              <div className="text-sm font-semibold">{serversStats.data?.totalRecords}</div>
+            </div>
           </div>
         </>
       )}

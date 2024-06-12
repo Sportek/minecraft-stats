@@ -10,7 +10,7 @@ import { AgChartOptions } from "ag-charts-community";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Head from "next/head";
+import ImprovedCard from "@/components/serveur/improved-card";
 
 const ServerPage = () => {
   const { serverId } = useParams();
@@ -82,33 +82,19 @@ const ServerPage = () => {
 
   const getServerInformations = () => {
     return server?.data ? (
-      <ServerCard
-        key={server.data?.server.id}
-        server={server.data.server}
-        stat={server.data.stat}
-        categories={server.data.categories}
-      />
+      <div className="flex flex-row flex-wrap gap-4 w-full">
+        <ServerCard
+          key={server.data?.server.id}
+          server={server.data.server}
+          stat={server.data.stat}
+          categories={server.data.categories}
+        />
+      </div>
     ) : null;
   };
 
   return (
     <>
-      <Head>
-        <title>{server.data?.server.name} - Server Details</title>
-        <title>{server.data?.server.name} - Server Details</title>
-        <meta name="description" content={`Details and statistics for server ${server.data?.server.name}.`} />
-        <meta name="keywords" content="server, statistics, server details, server stats" />
-        <meta name="image" content={server.data?.server.imageUrl} />
-        <meta property="og:title" content={`${server.data?.server.name} - Server Details`} />
-        <meta property="og:description" content={`Details and statistics for server ${server.data?.server.name}.`} />
-        <meta property="og:image" content={server.data?.server.imageUrl} />
-        <meta property="og:url" content={window.location.href} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${server.data?.server.name} - Server Details`} />
-        <meta name="twitter:description" content={`Details and statistics for server ${server.data?.server.name}.`} />
-        <meta name="twitter:image" content={server.data?.server.imageUrl} />
-        <meta name="author" content={server.data?.server.user.username} />
-      </Head>
       {server.isLoading ? (
         <Loader message="Querying server..." />
       ) : (
@@ -122,6 +108,17 @@ const ServerPage = () => {
               <div style={{ height: "400px" }}>
                 <AgChartsReact options={options} />
               </div>
+              {
+                server.data ? (
+                  <ImprovedCard
+                    isLoading={isLoading}
+                    key={server.data?.server.name}
+                    server={server.data.server}
+                    stats={stats}
+                    categories={server.data.categories}
+                  />
+                ) : null
+              }
             </div>
           )}
         </div>
