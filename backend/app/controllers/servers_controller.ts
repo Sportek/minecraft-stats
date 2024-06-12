@@ -67,12 +67,20 @@ export default class ServersController {
   async update({ params, request, response, bouncer }: HttpContext) {
     const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories'])
     const validatedData = await UpdateServerValidator.validate(data)
-    const server = await Server.find(params.id)
-    if (!server) return response.notFound({ message: 'Server not found' })
+    const server = await Server.findByOrFail('id', params.id)
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
       return response.forbidden({ message: 'Unauthorized' })
     }
+
     const { categories, ...dataToUpdate } = validatedData
+
+    const successPing = await isPingPossible(
+      validatedData.address ?? server.address,
+      validatedData.port ?? server.port
+    )
+    if (!successPing) {
+      return response.badRequest({ message: 'Server is not reachable' })
+    }
 
     if (categories) {
       const categoriesToAttach = await Promise.all(
@@ -95,6 +103,7 @@ export default class ServersController {
     if (await bouncer.with(ServerPolicy).denies('destroy', server)) {
       return response.forbidden({ message: 'Unauthorized' })
     }
-    return server.delete()
+    await server.delete()
+    return response.noContent()
   }
 }

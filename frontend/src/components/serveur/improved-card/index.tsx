@@ -21,13 +21,6 @@ const ImprovedCard = ({ server, stats, categories, isLoading }: ImprovedCardProp
     }
   };
 
-  const getFirstStat = () => {
-    if (stats.length === 0) {
-      return { createdAt: new Date() }
-    }
-    return stats[0]
-  }
-
 
   
   return isLoading ? null : (
@@ -35,22 +28,32 @@ const ImprovedCard = ({ server, stats, categories, isLoading }: ImprovedCardProp
       <StatCard
         title="Record of players"
         value={stats.reduce((acc, curr) => Math.max(acc, curr.playerCount), 0).toString()}
-        icon={<Icon icon="mdi:crown" className="text-yellow-600 w-6 h-6"/>}
+        icon={<Icon icon="mdi:crown" className="text-yellow-600 w-6 h-6" />}
+      />
+      <StatCard
+        title="Negative record of players"
+        value={stats.reduce((acc, curr) => Math.min(acc, curr.playerCount), Number.MAX_SAFE_INTEGER).toString()}
+        icon={<Icon icon="mdi:crown" className="text-red-700 w-6 h-6" />}
       />
       <StatCard
         title="Number of connected on average"
         value={Math.round(stats.reduce((acc, curr) => acc + curr.playerCount, 0) / stats.length).toString()}
-        icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6"/>}
+        icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
       />
       <StatCard
         title="Median number of players"
         value={Math.round(calculateMedian(stats.map((stat) => stat.playerCount))).toString()}
-        icon={<Icon icon="mdi:chart-bar" className="text-orange-700 w-6 h-6"/>}
+        icon={<Icon icon="mdi:chart-bar" className="text-pink-700 w-6 h-6" />}
       />
       <StatCard
         title="Data registered since"
-        value={new Date(getFirstStat().createdAt).toLocaleDateString()}
-        icon={<Icon icon="mdi:calendar" className="text-green-700 w-6 h-6"/>}
+        value={new Date(server.createdAt).toLocaleDateString()}
+        icon={<Icon icon="mdi:calendar" className="text-green-700 w-6 h-6" />}
+      />
+      <StatCard
+        title="Registered by"
+        value={server.user?.username.toUpperCase()}
+        icon={<Icon icon="mdi:account" className="text-violet-700 w-6 h-6" />}
       />
     </div>
   );

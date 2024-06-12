@@ -18,13 +18,14 @@ interface MultiSelectProps {
   readonly title: string;
   readonly onSelectionChange?: (selected: string[]) => void;
   readonly className?: string;
+  readonly defaultSelected?: readonly { value: string; label: string }[];
 }
 
-export function FancyMultiSelect({ elements, title, onSelectionChange, className }: MultiSelectProps) {
+export function FancyMultiSelect({ elements, title, onSelectionChange, className, defaultSelected }: MultiSelectProps) {
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<readonly { value: string; label: string }[]>([]);
+  const [selected, setSelected] = React.useState<readonly { value: string; label: string }[]>(defaultSelected || []);
   const [inputValue, setInputValue] = React.useState("");
 
   React.useEffect(() => {
