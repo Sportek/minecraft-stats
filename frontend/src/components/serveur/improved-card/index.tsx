@@ -21,7 +21,7 @@ const ImprovedCard = ({ server, stats, categories, isLoading }: ImprovedCardProp
 
   const getFirstStat = () => {
     if (stats.length === 0) {
-      return new Date()
+      return { createdAt: new Date() }
     }
     return stats[0]
   }
@@ -46,7 +46,7 @@ const ImprovedCard = ({ server, stats, categories, isLoading }: ImprovedCardProp
         </div>
         <div className="flex flex-row items-center gap-4">
           <div>Data registered since</div>
-          <div className="text-sm font-semibold">{new Date(getFirstStat()?.createdAt).toLocaleDateString()}</div>
+          <div className="text-sm font-semibold">{new Date(getFirstStat().createdAt).toLocaleDateString()}</div>
         </div>
       </div>
     </div>
