@@ -5,10 +5,14 @@ import { AuthorizerResponse } from '@adonisjs/bouncer/types'
 
 export default class ServerPolicy extends BasePolicy {
   destroy(user: User, server: Server): AuthorizerResponse {
-    return user.id === server.user.id || user.role === 'admin'
+    return server.load('user').then(() => {
+      return user.id === server.user.id || user.role === 'admin'
+    })
   }
 
   update(user: User, server: Server): AuthorizerResponse {
-    return user.id === server.user.id || user.role === 'admin'
+    return server.load('user').then(() => {
+      return user.id === server.user.id || user.role === 'admin'
+    })
   }
 }

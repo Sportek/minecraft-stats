@@ -67,7 +67,7 @@ const Home = () => {
               onSelectionChange={setSelectedCategories}
             />
           </div>
-          <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full truncate">
+          <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {serversToShow.length > 0 ? (
               serversToShow.map((server) => (
                 <ServerCard

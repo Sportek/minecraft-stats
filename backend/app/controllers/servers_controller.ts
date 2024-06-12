@@ -67,8 +67,7 @@ export default class ServersController {
   async update({ params, request, response, bouncer }: HttpContext) {
     const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories'])
     const validatedData = await UpdateServerValidator.validate(data)
-    const server = await Server.find(params.id)
-    if (!server) return response.notFound({ message: 'Server not found' })
+    const server = await Server.findByOrFail('id', params.id)
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
       return response.forbidden({ message: 'Unauthorized' })
     }

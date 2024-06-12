@@ -17,7 +17,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Minecraft-stats",
   description:
-    "Minecraft Stats est un service gratuit qui permet de répertorier les statistiques de connections des différents serveurs Minecraft existants. Vous pouvez ajouter facilement un serveur Minecraft et obtenir des statistiques de connections en temps réel.",
+    "Minecraft Stats is a free service that allows you to list the connection statistics of various existing Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.",
 };
 
 export default function RootLayout({

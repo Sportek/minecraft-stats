@@ -35,6 +35,11 @@ export const getServers = async () => {
   return response.json() as Promise<{ server: Server; stat: ServerStat; categories: Category[] }[]>;
 };
 
+export const getServer = async (serverId: number) => {
+  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`);
+  return response.json() as Promise<{ server: Server; stat: ServerStat; categories: Category[] }>;
+};
+
 export const getServerStats = async (
   serverId: number,
   fromDate: EpochTimeStamp,
@@ -58,4 +63,42 @@ export const getServerStats = async (
   }
 
   return response.json() as Promise<ServerStat[]>;
+};
+
+
+export const deleteServer = async (serverId: number, token: string) => {
+  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<Server>;
+};
+
+
+export const editServer = async (serverId: number, data: { name: string; address: string; port: number; categories: string[] }, token: string) => {
+  console.log(serverId, data, token);
+  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<Server>;
 };
