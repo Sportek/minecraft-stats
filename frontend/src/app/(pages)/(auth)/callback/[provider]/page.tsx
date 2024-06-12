@@ -13,7 +13,7 @@ const CallbackPage = () => {
   const code = useSearchParams().get("code");
 
   const { data, isLoading } = useSWR<{user: User, accessToken: AccessToken}>(`${getBaseUrl()}/callback/${provider}?code=${code}`, fetcher);
-  const { setUser, saveToken } = useAuth();
+  const { setUser, saveToken, setIsLoggedIn } = useAuth();
 
   const router = useRouter();
   const {toast} = useToast();
@@ -23,15 +23,17 @@ const CallbackPage = () => {
     if (data?.user?.username) {
       setUser(data.user);
       saveToken(data.accessToken.token);
+      setIsLoggedIn(true);
       router.push("/");
     } else {
       router.push("/login");
+      setIsLoggedIn(false);
       toast({
         title: "Failed to connect with " + provider,
         description: "Please try again",
       });
     }
-  }, [data, router, setUser, saveToken, toast, provider, isLoading]);
+  }, [data, router, setUser, saveToken, setIsLoggedIn, toast, provider, isLoading]);
 
   return (
     <div>

@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
-import { useServers } from "@/contexts/servers";
 import { deleteServer, editServer } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { Category, Server } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -20,14 +20,18 @@ import { z } from "zod";
 interface EditServerFormProps extends React.HTMLAttributes<HTMLFormElement> {
   server: Server;
   serverCategories: Category[];
+  updateServer: () => void;
 }
 
-const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, className, ...props }) => {
+const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, updateServer, className, ...props }) => {
   const { data, isLoading } = useSWR<Category[]>(`${getBaseUrl()}/categories`, fetcher);
 
   const categories = data || [];
 
   const { user, getToken } = useAuth();
+  
+  const router = useRouter();
+
 
  const formSchema = z
    .object({
@@ -86,6 +90,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, cla
         description: "Your server has been edited successfully",
         variant: "success",
       });
+      router.replace("/");
+      router.refresh();
     } catch (error: any) {
       toast({
         title: "Error while editing server",
@@ -104,6 +110,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, cla
         description: "Your server has been deleted successfully",
         variant: "success",
       });
+      router.replace("/");
+      router.refresh();
     } catch (error: any) {
       toast({
         title: "Error while deleting server",

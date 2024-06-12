@@ -80,12 +80,11 @@ export const deleteServer = async (serverId: number, token: string) => {
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<Server>;
+  return true;
 };
 
 
 export const editServer = async (serverId: number, data: { name: string; address: string; port: number; categories: string[] }, token: string) => {
-  console.log(serverId, data, token);
   const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
     method: "PUT",
     headers: {

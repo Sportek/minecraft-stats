@@ -71,7 +71,16 @@ export default class ServersController {
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
       return response.forbidden({ message: 'Unauthorized' })
     }
+
     const { categories, ...dataToUpdate } = validatedData
+
+    const successPing = await isPingPossible(
+      validatedData.address ?? server.address,
+      validatedData.port ?? server.port
+    )
+    if (!successPing) {
+      return response.badRequest({ message: 'Server is not reachable' })
+    }
 
     if (categories) {
       const categoriesToAttach = await Promise.all(
@@ -94,6 +103,7 @@ export default class ServersController {
     if (await bouncer.with(ServerPolicy).denies('destroy', server)) {
       return response.forbidden({ message: 'Unauthorized' })
     }
-    return server.delete()
+    await server.delete()
+    return response.noContent()
   }
 }
