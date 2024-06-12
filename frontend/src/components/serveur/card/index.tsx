@@ -16,7 +16,7 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 rounded-md shadow-sm h-fit justify-between transition-all duration-50 ease-in-out"
+      className="flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-fit justify-between transition-all duration-50 ease-in-out"
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
