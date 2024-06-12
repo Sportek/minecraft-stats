@@ -4,8 +4,10 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import { ResearchInput } from "@/components/research";
 import ServerCard from "@/components/serveur/card";
+import StatCard from "@/components/serveur/stat-card";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { Category, Server, ServerStat } from "@/types/server";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 
@@ -59,28 +61,37 @@ const Home = () => {
             <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
             <FancyMultiSelect
               title="Filter by categories"
-              elements={categories.data?.map((category) => ({ value: category.id.toString(), label: category.name })) ?? []}
+              elements={
+                categories.data?.map((category) => ({ value: category.id.toString(), label: category.name })) ?? []
+              }
               onSelectionChange={setSelectedCategories}
             />
           </div>
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full truncate">
             {serversToShow.length > 0 ? (
               serversToShow.map((server) => (
-                <ServerCard key={server.server.id} server={server.server} stat={server.stat} categories={server.categories} />
+                <ServerCard
+                  key={server.server.id}
+                  server={server.server}
+                  stat={server.stat}
+                  categories={server.categories}
+                />
               ))
             ) : (
               <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>
             )}
           </div>
-          <div className="bg-zinc-200 p-4 rounded-md shadow-sm w-full flex flex-col sm:flex-row gap-2 justify-around">
-            <div className="flex flex-row gap-2 items-center">
-              <div>Nombre de connectés total</div>
-              <div className="text-sm font-semibold">{data?.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0)}</div>
-            </div>
-            <div className="flex flex-row gap-2 items-center">
-              <div>Nombre de données</div>
-              <div className="text-sm font-semibold">{serversStats.data?.totalRecords}</div>
-            </div>
+          <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
+            <StatCard
+              title="Total amount of players"
+              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
+              icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
+            />
+            <StatCard
+              title="Amount of data"
+              value={serversStats.data?.totalRecords.toString() ?? "0"}
+              icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
+            />
           </div>
         </>
       )}

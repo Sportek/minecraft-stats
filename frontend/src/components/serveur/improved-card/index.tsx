@@ -1,4 +1,6 @@
 import { Category, Server, ServerStat } from "@/types/server"
+import StatCard from "../stat-card";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface ImprovedCardProps {
   server: Server,
@@ -28,29 +30,29 @@ const ImprovedCard = ({ server, stats, categories, isLoading }: ImprovedCardProp
 
 
   
-  return (
-    isLoading ? null : (
-      <div className="bg-zinc-200 rounded-md p-4 flex flex-col shadow-sm w-full">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-row items-center gap-4">
-          <div>Connected record</div>
-          <div className="text-sm font-semibold">{stats.reduce((acc, curr) => Math.max(acc, curr.playerCount), 0)}</div>
-        </div>
-        <div className="flex flex-row items-center gap-4">
-          <div>Number of connected on average</div>
-          <div className="text-sm font-semibold">{Math.round(stats.reduce((acc, curr) => acc + curr.playerCount, 0) / stats.length)}</div>
-        </div>
-        <div className="flex flex-row items-center gap-4">
-          <div>Median number of players</div>
-          <div className="text-sm font-semibold">{Math.round(calculateMedian(stats.map((stat) => stat.playerCount)))}</div>
-        </div>
-        <div className="flex flex-row items-center gap-4">
-          <div>Data registered since</div>
-          <div className="text-sm font-semibold">{new Date(getFirstStat().createdAt).toLocaleDateString()}</div>
-        </div>
-      </div>
+  return isLoading ? null : (
+    <div className="grid sm:grid-cols-2 gap-4">
+      <StatCard
+        title="Record of players"
+        value={stats.reduce((acc, curr) => Math.max(acc, curr.playerCount), 0).toString()}
+        icon={<Icon icon="mdi:crown" className="text-yellow-600 w-6 h-6"/>}
+      />
+      <StatCard
+        title="Number of connected on average"
+        value={Math.round(stats.reduce((acc, curr) => acc + curr.playerCount, 0) / stats.length).toString()}
+        icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6"/>}
+      />
+      <StatCard
+        title="Median number of players"
+        value={Math.round(calculateMedian(stats.map((stat) => stat.playerCount))).toString()}
+        icon={<Icon icon="mdi:chart-bar" className="text-orange-700 w-6 h-6"/>}
+      />
+      <StatCard
+        title="Data registered since"
+        value={new Date(getFirstStat().createdAt).toLocaleDateString()}
+        icon={<Icon icon="mdi:calendar" className="text-green-700 w-6 h-6"/>}
+      />
     </div>
-    )
   );
 }
 
