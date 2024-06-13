@@ -85,7 +85,7 @@ const Home = () => {
           <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
             <StatCard
               title="Total amount of players"
-              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
+              value={data?.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString() ?? "0"}
               icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
             />
             <StatCard
