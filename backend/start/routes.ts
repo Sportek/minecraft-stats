@@ -9,7 +9,6 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import { throttle } from './limiter.js'
 
 router
   .group(() => {
@@ -52,4 +51,3 @@ router
     router.get('/callback/discord', '#controllers/auth_controller.discordCallback')
   })
   .prefix('/api/v1')
-  .middleware(throttle)

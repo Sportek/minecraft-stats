@@ -47,7 +47,6 @@ jobs:
           envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
           envkey_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          envkey_LIMITER_STORE: database
           file_name: .env.production
 
       - name: Copier le fichier .env.production sur le serveur
