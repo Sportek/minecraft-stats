@@ -1,6 +1,6 @@
 "use client";
 
-import { fetcher, getBaseUrl } from "@/app/_cheatcode";
+import { fetcher } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import { ResearchInput } from "@/components/research";
 import ServerCard from "@/components/serveur/card";
@@ -34,7 +34,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (data) {
+    if (data && !isLoading && !categories.isLoading && !serversStats.isLoading) {
       const filteredData = data?.filter(
         (server) =>
           server.server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,13 +49,14 @@ const Home = () => {
 
       setServersToShow(sortedData ?? []);
     }
-  }, [data, searchTerm, selectedCategories]);
+  }, [data, searchTerm, selectedCategories, isLoading, categories.isLoading, serversStats.isLoading]);
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-      {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
       {error && <div>{error.message}</div>}
-      {data && (
+      {isLoading || categories.isLoading || serversStats.isLoading ? (
+        <Loader message="Loading..." />
+      ) : (
         <>
           <div className="bg-zinc-200 p-4 rounded-lg w-full flex gap-4">
             <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
