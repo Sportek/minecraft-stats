@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
 import { useRouter } from "next/navigation";
+import { extractVersions, formatVersion } from "@/utils/server-version";
 
 interface ServerCardProps {
   server: Server;
@@ -30,6 +31,8 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
       href={`/servers/${server.id}/${server.name}`}
       className="relative flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-fit justify-between transition-all duration-50 ease-in-out group"
     >
+      <div className="absolute top-[-8px] left-[-8px] bg-stats-blue-900 px-[5px] rounded-md z-10 text-sm font-semibold text-white">{formatVersion(extractVersions(server.version ?? ""))}</div>
+
       {
         canEdit() ? (
           <button className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 items-center justify-center hover:bg-zinc-400 hover:cursor-pointer" onClick={handleEdit}>

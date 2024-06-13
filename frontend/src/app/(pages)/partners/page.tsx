@@ -6,6 +6,7 @@ const partnersData = [
   { name: "GROUPEZ", url: "https://groupez.dev/" },
   { name: "SERVEUR MINECRAFT VOTE", url: "https://serveur-minecraft-vote.fr/" },
   { name: "MINECRAFT INVENTORY BUILDER", url: "https://minecraft-inventory-builder.com/" },
+  { name: "TOP MINECRAFT CLICK", url: "https://topminecraft.click/fr" },
 ];
 
 const Partners = () => {
