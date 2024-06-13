@@ -1,6 +1,6 @@
 "use client";
 
-import { fetcher } from "@/app/_cheatcode";
+import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import { ResearchInput } from "@/components/research";
 import ServerCard from "@/components/serveur/card";
@@ -34,7 +34,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (data && !isLoading && !categories.isLoading && !serversStats.isLoading) {
+    if (data) {
       const filteredData = data?.filter(
         (server) =>
           server.server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,14 +49,13 @@ const Home = () => {
 
       setServersToShow(sortedData ?? []);
     }
-  }, [data, searchTerm, selectedCategories, isLoading, categories.isLoading, serversStats.isLoading]);
+  }, [data, searchTerm, selectedCategories]);
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+      {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
       {error && <div>{error.message}</div>}
-      {isLoading || categories.isLoading || serversStats.isLoading ? (
-        <Loader message="Loading..." />
-      ) : (
+      {data && (
         <>
           <div className="bg-zinc-200 p-4 rounded-lg w-full flex gap-4">
             <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
@@ -85,7 +84,7 @@ const Home = () => {
           <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
             <StatCard
               title="Total amount of players"
-              value={data?.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString() ?? "0"}
+              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
               icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
             />
             <StatCard
