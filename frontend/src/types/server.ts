@@ -5,6 +5,7 @@ export interface Server {
   name: string;
   address: string;
   port: number;
+  version: string | null;
   imageUrl: string;
   user: User;
   createdAt: Date;
