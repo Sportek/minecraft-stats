@@ -56,7 +56,7 @@ const ServerPage = () => {
   useEffect(() => {
     setData(stats.map((stat) => ({
       playerCount: stat.playerCount,
-      date: stat.createdAt as unknown as string,
+      date: new Date(stat.createdAt).toLocaleDateString(),
     })));
 
   }, [stats, server.data?.server.name]);
