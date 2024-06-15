@@ -100,12 +100,12 @@ const ServerPage = () => {
         <title>{server.data?.server.name} - Statistics</title>
         <meta
           name="description"
-          content={`Discover the statistics and details of the server ${server.data?.server.name}.`}
+          content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
         />
         <meta property="og:title" content={`${server.data?.server.name} - Statistics`} />
         <meta
           property="og:description"
-          content={`Discover the statistics and details of the server ${server.data?.server.name}.`}
+          content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
         />
         <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.data?.server.imageUrl}`} />
         <meta property="og:url" content={`${window.location.origin}/servers/${serverId}`} />
