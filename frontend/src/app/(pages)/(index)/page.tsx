@@ -1,6 +1,6 @@
 "use client";
 
-import { fetcher, getBaseUrl } from "@/app/_cheatcode";
+import { fetcher } from "@/app/_cheatcode";
 import Loader from "@/components/loader";
 import { ResearchInput } from "@/components/research";
 import ServerCard from "@/components/serveur/card";

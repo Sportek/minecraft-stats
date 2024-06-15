@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import ImprovedCard from "@/components/serveur/improved-card";
+import Head from "next/head";
 
 const ServerPage = () => {
   const { serverId } = useParams();
@@ -95,6 +96,21 @@ const ServerPage = () => {
 
   return (
     <>
+      <Head>
+        <title>{server.data?.server.name} - Statistics</title>
+        <meta
+          name="description"
+          content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
+        />
+        <meta property="og:title" content={`${server.data?.server.name} - Statistics`} />
+        <meta
+          property="og:description"
+          content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
+        />
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.data?.server.imageUrl}`} />
+        <meta property="og:url" content={`${window.location.origin}/servers/${serverId}`} />
+        <meta property="og:type" content="website" />
+      </Head>
       {server.isLoading ? (
         <Loader message="Querying server..." />
       ) : (
@@ -108,17 +124,15 @@ const ServerPage = () => {
               <div style={{ height: "400px" }}>
                 <AgChartsReact options={options} />
               </div>
-              {
-                server.data ? (
-                  <ImprovedCard
-                    isLoading={isLoading}
-                    key={server.data?.server.name}
-                    server={server.data.server}
-                    stats={stats}
-                    categories={server.data.categories}
-                  />
-                ) : null
-              }
+              {server.data ? (
+                <ImprovedCard
+                  isLoading={isLoading}
+                  key={server.data?.server.name}
+                  server={server.data.server}
+                  stats={stats}
+                  categories={server.data.categories}
+                />
+              ) : null}
             </div>
           )}
         </div>

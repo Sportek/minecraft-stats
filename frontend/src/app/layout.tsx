@@ -15,7 +15,7 @@ import Metrics from "@/components/metrics";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Minecraft-stats",
+  title: "Minecraft-Stats: Minecraft Server Statistics and Tracking",
   description:
     "Minecraft Stats is a free service that allows you to list the connection statistics of various existing Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.",
 };
