@@ -34,7 +34,7 @@ const ServerPage = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
-  // const [options, setOptions] = useState<AgChartOptions>({});
+  
   const [data, setData] = useState<{ playerCount: number, date: string}[]>([]);
 
   useEffect(() => {
