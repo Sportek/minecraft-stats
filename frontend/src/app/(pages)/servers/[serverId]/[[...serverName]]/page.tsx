@@ -13,6 +13,7 @@ import useSWR from "swr";
 import ImprovedCard from "@/components/serveur/improved-card";
 import Head from "next/head";
 
+
 const ServerPage = () => {
   const { serverId } = useParams();
   const server = useSWR<{ server: Server; stat: ServerStat; categories: Category[] }, Error>(
@@ -108,7 +109,6 @@ const ServerPage = () => {
           content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
         />
         <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.data?.server.imageUrl}`} />
-        <meta property="og:url" content={`${window.location.origin}/servers/${serverId}`} />
         <meta property="og:type" content="website" />
       </Head>
       {server.isLoading ? (
