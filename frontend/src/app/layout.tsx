@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   title: "Minecraft-Stats: Minecraft Server Statistics and Tracking",
   description:
     "Minecraft Stats is a free service that allows you to list the connection statistics of various existing Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.",
+  openGraph: {
+    title: "Minecraft-Stats: Minecraft Server Statistics and Tracking",
+    description:
+      "Minecraft Stats is a free service that allows you to list the connection statistics of various existing Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.",
+    images: [{ url: "https://minecraft-stats.vercel.app/og-image.png" }],
+  },
 };
 
 export default function RootLayout({
