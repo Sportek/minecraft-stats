@@ -5,7 +5,7 @@ export const generateMetadata = async ({params}: {params: {serverId: string, ser
   const server = await getServer(Number(params.serverId));
   return Promise.resolve({
     title: server.server.name,
-    description: `${server.server.name} is a ${server.categories.join(", ")} server with currently ${server.stat.playerCount} online players.`,
+    description: `${server.server.name} is a ${server.categories.map(c => c.name).join(", ")} server with currently ${server.stat.playerCount} online players.`,
     openGraph: {
       images: [server.server.imageUrl],
     }
