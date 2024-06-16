@@ -42,7 +42,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
       await register(credentials.username, credentials.email, credentials.password);
       toast({
         title: "Registration successful",
-        description: "Your account has been created successfully",
+        description: "Your account has been created successfully, a mail has been sent to you to confirm your account",
         variant: "success",
       });
     } catch (error) {
