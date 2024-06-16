@@ -63,4 +63,4 @@ scheduler
       })
     )
   })
-  .everyTwoMinutes()
+  .everyTenMinutes()

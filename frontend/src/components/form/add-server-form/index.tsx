@@ -71,13 +71,13 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       form.reset();
       toast({
         title: "Server added",
-        description: "Your server has been added successfully",
+        description: "Your server has been added successfully, it will be available in a few minutes",
         variant: "success",
       });
     } catch (error: any) {
       toast({
         title: "Error while adding server",
-        description: error.message,
+        description: "The server is already registered",
         variant: "error",
       });
     }

@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 const ServerEditPage = () => {
   const { serverId } = useParams();
 
-  const [server, setServer] = useState<{ server: Server; stat: ServerStat; categories: Category[] }>();
+  const [server, setServer] = useState<{ server: Server; stat: ServerStat | null; categories: Category[] }>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 

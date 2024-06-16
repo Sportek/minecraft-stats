@@ -1,3 +1,11 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "Explore our detailed Terms of Service (CGU) to understand the conditions of access and use of our services, including Minecraft server statistics. Stay informed about user responsibilities, data collection, and privacy policies. Ensure compliance and secure your rights while using our platform.",
+};
+
 const CGU = () => {
   return (
     <div className="py-4">
