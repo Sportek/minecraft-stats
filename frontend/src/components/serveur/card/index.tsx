@@ -29,59 +29,62 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="relative flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-fit justify-between transition-all duration-50 ease-in-out group"
+      className="relative flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-full justify-between transition-all duration-50 ease-in-out group"
     >
-      <div className="absolute top-[-8px] left-[-8px] bg-stats-blue-900 px-[5px] rounded-md z-10 text-sm font-semibold text-white">{formatVersion(extractVersions(server.version ?? ""))}</div>
+      <div className="absolute top-[-8px] left-[-8px] bg-stats-blue-900 px-[5px] rounded-md z-10 text-sm font-semibold text-white">
+        {formatVersion(extractVersions(server.version ?? ""))}
+      </div>
 
-      {
-        canEdit() ? (
-          <button className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 items-center justify-center hover:bg-zinc-400 hover:cursor-pointer" onClick={handleEdit}>
-            <Icon icon="material-symbols:edit-outline" className="text-zinc-700" />
-          </button>
-        ) : null
-      }
-      <div className="flex flex-row items-center gap-4 w-full h-full flex-grow justify-between min-w-0">
-        <Avatar>
-          <AvatarImage
-            src={server.imageUrl ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}` : ""}
-            alt={server.name}
-          />
-          <AvatarFallback>
-            <NotFound className="text-stats-blue-950" />
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col flex-grow truncate">
-          <div className="text-xl font-semibold truncate flex gap-2">
-            <div>{server.name}</div>
-            <div className="flex flex-row items-center gap-4">
-              {categories.map((category) => (
-                <Badge key={category.id} className="text-xs" variant="secondary">
-                  {category.name}
-                </Badge>
-              ))}
+      {canEdit() ? (
+        <button
+          className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 items-center justify-center hover:bg-zinc-400 hover:cursor-pointer"
+          onClick={handleEdit}
+        >
+          <Icon icon="material-symbols:edit-outline" className="text-zinc-700" />
+        </button>
+      ) : null}
+      <div className="flex flex-col items-center gap-2 w-full h-full flex-grow justify-between min-w-0">
+        <div className="flex flex-row items-center gap-4 w-full">
+          <Avatar>
+            <AvatarImage
+              src={server.imageUrl ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}` : ""}
+              alt={server.name}
+            />
+            <AvatarFallback>
+              <NotFound className="text-stats-blue-950" />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col flex-grow truncate">
+            <div className="text-xl font-semibold truncate flex gap-2">
+              <div>{server.name}</div>
             </div>
+            <div className="text-sm text-zinc-700 truncate">{server?.address?.toUpperCase()}</div>
           </div>
-          <div className="text-sm text-zinc-700 truncate">{server?.address?.toUpperCase()}</div>
+          {stat ? (
+            <div className="flex flex-row items-center gap-2">
+              <div className="w-3 h-3 bg-green-300 rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
+              </div>
+              <div className="flex flex-col justify-center items-center">
+                <div>{stat.playerCount}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-row items-center gap-2">
+              <div className="w-3 h-3 bg-red-300 rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-red-500 rounded-full" />
+              </div>
+              <div className="text-red-500">Offline</div>
+            </div>
+          )}
         </div>
-        {stat ? (
-          <div className="flex flex-row items-center gap-4">
-            <div className="w-3 h-3 bg-green-300 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-green-500 rounded-full" />
-            </div>
-            <div className="flex flex-col justify-center items-center">
-              <div>{stat.playerCount}</div>
-              <hr className="w-full h-[1px] border border-zinc-700" />
-              <div>{stat.maxCount}</div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-row items-center gap-4">
-            <div className="w-3 h-3 bg-red-300 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-red-500 rounded-full" />
-            </div>
-            <div className="text-red-500">Offline</div>
-          </div>
-        )}
+        <div className="flex flex-row items-center gap-2 w-full">
+          {categories.map((category) => (
+            <Badge key={category.id} className="text-xs" variant="secondary">
+              {category.name}
+            </Badge>
+          ))}
+        </div>
       </div>
     </Link>
   );
