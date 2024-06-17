@@ -8,10 +8,10 @@ import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
 import { AgChartOptions } from "ag-charts-community";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import ImprovedCard from "@/components/serveur/improved-card";
-import Head from "next/head";
+import { Button } from "@/components/ui/button";
 
 
 const ServerPage = () => {
@@ -24,15 +24,18 @@ const ServerPage = () => {
     }
   );
 
-  const intervalType = {
-    "1 Day": Date.now() - 1000 * 60 * 60 * 24,
-    "1 Week": Date.now() - 1000 * 60 * 60 * 24 * 7,
-    "1 Month": Date.now() - 1000 * 60 * 60 * 24 * 30,
-    "6 Months": Date.now() - 1000 * 60 * 60 * 24 * 30 * 6,
-    "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
-  };
+  const intervalType = useMemo(() => {
+    return {
+      "1 Day": Date.now() - 1000 * 60 * 60 * 24,
+      "1 Week": Date.now() - 1000 * 60 * 60 * 24 * 7,
+      "1 Month": Date.now() - 1000 * 60 * 60 * 24 * 30,
+      "6 Months": Date.now() - 1000 * 60 * 60 * 24 * 30 * 6,
+      "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
+      "Everything": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12 * 5,
+    };
+  }, [])
 
-  const [intervalChoice, setIntervalChoice] = useState<number>(intervalType["1 Week"]);
+  const [intervalChoice, setIntervalChoice] = useState<keyof typeof intervalType>("1 Week");
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
@@ -40,7 +43,7 @@ const ServerPage = () => {
 
   useEffect(() => {
     function fetchServerStats() {
-      getServerStats(Number(serverId), intervalChoice, Date.now()).then((stats) => {
+      getServerStats(Number(serverId), intervalType[intervalChoice], Date.now()).then((stats) => {
         setStats(stats);
       });
     }
@@ -52,7 +55,7 @@ const ServerPage = () => {
     setInterval(() => {
       fetchServerStats();
     }, 1000 * 60 * 2);
-  }, [serverId, intervalChoice]);
+  }, [serverId, intervalChoice, intervalType]);
 
   useEffect(() => {
     setOptions({
@@ -97,20 +100,6 @@ const ServerPage = () => {
 
   return (
     <>
-      <Head>
-        <title>{server.data?.server.name} - Statistics</title>
-        <meta
-          name="description"
-          content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
-        />
-        <meta property="og:title" content={`${server.data?.server.name} - Statistics`} />
-        <meta
-          property="og:description"
-          content={`Discover the statistics and tracking details of the server ${server.data?.server.name}.`}
-        />
-        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.data?.server.imageUrl}`} />
-        <meta property="og:type" content="website" />
-      </Head>
       {server.isLoading ? (
         <Loader message="Querying server..." />
       ) : (
@@ -121,8 +110,18 @@ const ServerPage = () => {
           ) : (
             <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
               {getServerInformations()}
-              <div style={{ height: "400px" }}>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-row gap-4 flex-wrap">
+                  <Button onClick={() => setIntervalChoice("1 Day")} variant={intervalChoice === "1 Day" ? "default" : "outline"}>Last 24h</Button>
+                  <Button onClick={() => setIntervalChoice("1 Week")} variant={intervalChoice === "1 Week" ? "default" : "outline"}>Last 7 days</Button>
+                  <Button onClick={() => setIntervalChoice("1 Month")} variant={intervalChoice === "1 Month" ? "default" : "outline"}>Last 30 days</Button>
+                  <Button onClick={() => setIntervalChoice("6 Months")} variant={intervalChoice === "6 Months" ? "default" : "outline"}>Last 6 months</Button>
+                  <Button onClick={() => setIntervalChoice("1 Year")} variant={intervalChoice === "1 Year" ? "default" : "outline"}>Last 1 year</Button>
+                  <Button onClick={() => setIntervalChoice("Everything")} variant={intervalChoice === "Everything" ? "default" : "outline"}>Everything</Button>
+                </div>
+              <div style={{ height: "400px" }} className="shadow-md rounded-md">
                 <AgChartsReact options={options} />
+              </div>
               </div>
               {server.data ? (
                 <ImprovedCard
