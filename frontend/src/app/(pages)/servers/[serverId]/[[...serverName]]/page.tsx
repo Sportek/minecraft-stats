@@ -3,7 +3,7 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import { getServerStats } from "@/http/server";
 import { Category, Server, ServerStat } from "@/types/server";
 
-import Chart from 'react-apexcharts'
+import Chart from "react-apexcharts";
 
 import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import ImprovedCard from "@/components/serveur/improved-card";
 import Head from "next/head";
-
 
 const ServerPage = () => {
   const { serverId } = useParams();
@@ -36,8 +35,8 @@ const ServerPage = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
-  
-  const [data, setData] = useState<{ playerCount: number, date: string}[]>([]);
+
+  const [data, setData] = useState<{ playerCount: number; date: string }[]>([]);
 
   useEffect(() => {
     function fetchServerStats() {
@@ -56,11 +55,12 @@ const ServerPage = () => {
   }, [serverId, intervalChoice]);
 
   useEffect(() => {
-    setData(stats.map((stat) => ({
-      playerCount: stat.playerCount,
-      date: new Date(stat.createdAt).toLocaleDateString(),
-    })));
-
+    setData(
+      stats.map((stat) => ({
+        playerCount: stat.playerCount,
+        date: new Date(stat.createdAt).toLocaleDateString(),
+      }))
+    );
   }, [stats, server.data?.server.name]);
 
   const getServerInformations = () => {
@@ -78,30 +78,61 @@ const ServerPage = () => {
 
   const options: ApexCharts.ApexOptions = {
     chart: {
+      id: "area-datetime",
+      type: "area",
       height: 350,
-      type: "line",
       zoom: {
-        enabled: true,
+        autoScaleYaxis: true,
       },
+    },
+    colors: ["#0099FF"],
+    grid: {
+      strokeDashArray: 1,
+      borderColor: "#000F1A",
+      show: true,
+    },
+    annotations: {
+      xaxis: [
+        {
+          x: new Date(stats[0]?.createdAt).getTime(),
+          borderColor: "#999",
+          label: {
+            text: "Start",
+            orientation: "top",
+            style: {
+              color: "#fff",
+              fontWeight: "bold",
+              background: "#0099FF",
+              fontSize: "12px",
+            },
+          },
+        },
+      ],
     },
     dataLabels: {
       enabled: false,
     },
-    stroke: {
-      curve: "straight",
-    },
-    title: {
-      text: "Player Count",
-      align: "center",
-    },
-    grid: {
-      row: {
-        colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-        opacity: 0.5,
-      },
+    markers: {
+      size: 0,
     },
     xaxis: {
-      categories: data.map((d) => d.date),
+      type: "datetime",
+      min: new Date(stats[0]?.createdAt).getTime(),
+      tickAmount: 6,
+    },
+    tooltip: { 
+      x: {
+        format: "dd MMM yyyy HH:mm",
+      },
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.7,
+        opacityTo: 0.9,
+        stops: [0, 100],
+      },
     },
   };
 
@@ -109,12 +140,13 @@ const ServerPage = () => {
     options,
     series: [
       {
-        name: "Desktops",
-        data: data.map((d) => d.playerCount),
+        name: "Player Count",
+        data: stats.map((stat) => [new Date(stat.createdAt).getTime(), stat.playerCount]),
       },
     ],
   };
 
+  
   return (
     <>
       <Head>
@@ -143,7 +175,7 @@ const ServerPage = () => {
               {getServerInformations()}
               <div style={{ height: "400px" }}>
                 {/* <AgChartsReact options={options} /> */}
-                <Chart options={state.options} series={state.series} type="line" width="500" height="auto" />
+                <Chart options={state.options} series={state.series} type="area" width="500" height="auto" />
               </div>
               {server.data ? (
                 <ImprovedCard
