@@ -43,7 +43,7 @@ const ServerPage = () => {
 
   useEffect(() => {
     function fetchServerStats() {
-      getServerStats(Number(serverId), intervalType[intervalChoice], Date.now()).then((stats) => {
+      getServerStats(Number(serverId), intervalType[intervalChoice], Date.now(), "1 hour").then((stats) => {
         setStats(stats);
       });
     }
