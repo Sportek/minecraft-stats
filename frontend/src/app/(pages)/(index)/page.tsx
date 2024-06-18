@@ -59,13 +59,16 @@ const Home = () => {
         <>
           <div className="bg-zinc-200 p-4 rounded-lg w-full flex gap-4">
             <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
-            <FancyMultiSelect
-              title="Filter by categories"
-              elements={
-                categories.data?.map((category) => ({ value: category.id.toString(), label: category.name })) ?? []
-              }
-              onSelectionChange={setSelectedCategories}
-            />
+            <div className="flex flex-row gap-2 w-full items-center bg-white rounded-md px-3">
+              <Icon icon="material-symbols:filter-alt-outline" className="w-6 h-6" />
+              <FancyMultiSelect
+                title="Filter by categories"
+                elements={
+                  categories.data?.map((category) => ({ value: category.id.toString(), label: category.name })) ?? []
+                }
+                onSelectionChange={setSelectedCategories}
+              />
+            </div>
           </div>
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {serversToShow.length > 0 ? (

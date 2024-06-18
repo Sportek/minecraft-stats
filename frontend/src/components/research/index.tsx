@@ -11,7 +11,7 @@ const ResearchInput = React.forwardRef<HTMLInputElement, InputProps>(({ classNam
       <Icon icon="mdi:search" className="w-6 h-6" />
       <input
         type={type}
-        className={cn("flex h-10 w-full focus-visible:outline-none", className)}
+        className={cn("flex h-full w-full focus-visible:outline-none", className)}
         ref={ref}
         {...props}
       />

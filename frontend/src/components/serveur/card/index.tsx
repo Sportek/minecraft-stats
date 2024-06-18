@@ -7,6 +7,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
 import { useRouter } from "next/navigation";
 import { extractVersions, formatVersion } from "@/utils/server-version";
+import { useEffect, useState } from "react";
+import useMediaQuery from "../../../../hooks/useMediaQuery";
 
 interface ServerCardProps {
   server: Server;
@@ -31,9 +33,6 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
       href={`/servers/${server.id}/${server.name}`}
       className="relative flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-full justify-between transition-all duration-50 ease-in-out group"
     >
-      <div className="absolute top-[-8px] left-[-8px] bg-stats-blue-900 px-[5px] rounded-md z-10 text-sm font-semibold text-white">
-        {formatVersion(extractVersions(server.version ?? ""))}
-      </div>
 
       {canEdit() ? (
         <button
@@ -79,11 +78,15 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
           )}
         </div>
         <div className="flex flex-row items-center gap-2 w-full">
+            <Badge variant="secondary" className="bg-stats-blue-900 text-white hover:bg-stats-blue-950">
+              {formatVersion(extractVersions(server.version ?? ""))}
+            </Badge>
           {categories.map((category) => (
-            <Badge key={category.id} className="text-xs" variant="secondary">
+            <Badge key={category.id} className="text-xs text-nowrap" variant="secondary">
               {category.name}
             </Badge>
-          ))}
+          )).slice(0, 2)}
+          {categories.length > 2 ? <Badge className="text-xs text-nowrap" variant="secondary">+{categories.length - 2}</Badge> : null}
         </div>
       </div>
     </Link>
