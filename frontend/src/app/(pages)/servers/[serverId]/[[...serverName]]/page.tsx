@@ -93,6 +93,7 @@ const ServerPage = () => {
           server={server.data.server}
           stat={server.data.stat}
           categories={server.data.categories}
+          isFull={true}
         />
       </div>
     ) : null;

@@ -78,6 +78,7 @@ const Home = () => {
                   server={server.server}
                   stat={server.stat}
                   categories={server.categories}
+                  isFull={false}
                 />
               ))
             ) : (

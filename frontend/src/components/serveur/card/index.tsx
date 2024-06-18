@@ -12,8 +12,9 @@ interface ServerCardProps {
   server: Server;
   stat: ServerStat | null;
   categories: Category[];
+  isFull?: boolean;
 }
-const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
+const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
 
   const { user } = useAuth();
   const router = useRouter();
@@ -83,8 +84,8 @@ const ServerCard = ({ server, stat, categories }: ServerCardProps) => {
             <Badge key={category.id} className="text-xs text-nowrap" variant="secondary">
               {category.name}
             </Badge>
-          )).slice(0, 2)}
-          {categories.length > 2 ? <Badge className="text-xs text-nowrap" variant="secondary">+{categories.length - 2}</Badge> : null}
+          )).slice(0, isFull ? categories.length : 2)}
+          {!isFull && categories.length > 2 ? <Badge className="text-xs text-nowrap" variant="secondary">+{categories.length - 2}</Badge> : null}
         </div>
       </div>
     </Link>
