@@ -7,8 +7,6 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
 import { useRouter } from "next/navigation";
 import { extractVersions, formatVersion } from "@/utils/server-version";
-import { useEffect, useState } from "react";
-import useMediaQuery from "../../../../hooks/useMediaQuery";
 
 interface ServerCardProps {
   server: Server;
