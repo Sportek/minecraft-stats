@@ -13,7 +13,6 @@ import useSWR from "swr";
 import ImprovedCard from "@/components/serveur/improved-card";
 import { Button } from "@/components/ui/button";
 
-
 const ServerPage = () => {
   const { serverId } = useParams();
   const server = useSWR<{ server: Server; stat: ServerStat; categories: Category[] }, Error>(
@@ -24,18 +23,30 @@ const ServerPage = () => {
     }
   );
 
-  const intervalType = useMemo(() => {
+  const dataRangeIntervalTypes = useMemo(() => {
     return {
       "1 Day": Date.now() - 1000 * 60 * 60 * 24,
       "1 Week": Date.now() - 1000 * 60 * 60 * 24 * 7,
       "1 Month": Date.now() - 1000 * 60 * 60 * 24 * 30,
       "6 Months": Date.now() - 1000 * 60 * 60 * 24 * 30 * 6,
       "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
-      "Everything": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12 * 5,
+      Everything: Date.now() - 1000 * 60 * 60 * 24 * 30 * 12 * 5,
     };
-  }, [])
+  }, []);
 
-  const [intervalChoice, setIntervalChoice] = useState<keyof typeof intervalType>("1 Week");
+  const dataAggregationIntervalTypes = useMemo(() => {
+    return {
+      "30 Minutes": "30 minutes",
+      "1 Hour": "1 hour",
+      "2 Hours": "2 hours",
+      "6 Hours": "6 hours",
+      "1 Day": "1 day",
+      "1 Week": "1 week",
+    };
+  }, []);
+
+  const [dataRangeInterval, setDataRangeInterval] = useState<keyof typeof dataRangeIntervalTypes>("1 Week");
+  const [dataAggregationInterval, setDataAggregationInterval] = useState<keyof typeof dataAggregationIntervalTypes | undefined>(undefined);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
@@ -43,19 +54,26 @@ const ServerPage = () => {
 
   useEffect(() => {
     function fetchServerStats() {
-      getServerStats(Number(serverId), intervalType[intervalChoice], Date.now(), "1 hour").then((stats) => {
-        setStats(stats);
-      });
+      const interval = dataAggregationInterval ? dataAggregationIntervalTypes[dataAggregationInterval] : undefined;
+      getServerStats(Number(serverId), dataRangeIntervalTypes[dataRangeInterval], Date.now(), interval).then(
+        (stats) => {
+          setStats(stats);
+        }
+      );
     }
 
     setIsLoading(true);
     fetchServerStats();
     setIsLoading(false);
 
-    setInterval(() => {
+    const interval = setInterval(() => {
       fetchServerStats();
     }, 1000 * 60 * 2);
-  }, [serverId, intervalChoice, intervalType]);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [serverId, dataRangeInterval, dataRangeIntervalTypes, dataAggregationInterval, dataAggregationIntervalTypes]);
 
   useEffect(() => {
     setOptions({
@@ -73,6 +91,7 @@ const ServerPage = () => {
           },
           xKey: "time",
           yKey: "playerCount",
+          connectMissingData: false,
         },
       ],
       axes: [
@@ -114,18 +133,98 @@ const ServerPage = () => {
           ) : (
             <div className="w-full h-full flex flex-col flex-1 py-4 gap-4">
               {getServerInformations()}
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-row gap-4 flex-wrap">
-                  <Button onClick={() => setIntervalChoice("1 Day")} variant={intervalChoice === "1 Day" ? "default" : "outline"}>Last 24h</Button>
-                  <Button onClick={() => setIntervalChoice("1 Week")} variant={intervalChoice === "1 Week" ? "default" : "outline"}>Last 7 days</Button>
-                  <Button onClick={() => setIntervalChoice("1 Month")} variant={intervalChoice === "1 Month" ? "default" : "outline"}>Last 30 days</Button>
-                  <Button onClick={() => setIntervalChoice("6 Months")} variant={intervalChoice === "6 Months" ? "default" : "outline"}>Last 6 months</Button>
-                  <Button onClick={() => setIntervalChoice("1 Year")} variant={intervalChoice === "1 Year" ? "default" : "outline"}>Last 1 year</Button>
-                  <Button onClick={() => setIntervalChoice("Everything")} variant={intervalChoice === "Everything" ? "default" : "outline"}>Everything</Button>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row gap-2 flex-wrap">
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataRangeInterval("1 Day")}
+                    variant={dataRangeInterval === "1 Day" ? "default" : "outline"}
+                  >
+                    Last 24h
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataRangeInterval("1 Week")}
+                    variant={dataRangeInterval === "1 Week" ? "default" : "outline"}
+                  >
+                    Last 7 days
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataRangeInterval("1 Month")}
+                    variant={dataRangeInterval === "1 Month" ? "default" : "outline"}
+                  >
+                    Last 30 days
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataRangeInterval("6 Months")}
+                    variant={dataRangeInterval === "6 Months" ? "default" : "outline"}
+                  >
+                    Last 6 months
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataRangeInterval("1 Year")}
+                    variant={dataRangeInterval === "1 Year" ? "default" : "outline"}
+                  >
+                    Last 1 year
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataRangeInterval("Everything")}
+                    variant={dataRangeInterval === "Everything" ? "default" : "outline"}
+                  >
+                    Everything
+                  </Button>
                 </div>
-              <div style={{ height: "400px" }} className="shadow-md rounded-md">
-                <AgChartsReact options={options} />
-              </div>
+                <div className="flex flex-row gap-4 flex-wrap">
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataAggregationInterval(undefined)}
+                    variant={dataAggregationInterval === undefined ? "default" : "outline"}
+                  >
+                    None
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataAggregationInterval("30 Minutes")}
+                    variant={dataAggregationInterval === "30 Minutes" ? "default" : "outline"}
+                  >
+                    30 Minutes
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataAggregationInterval("1 Hour")}
+                    variant={dataAggregationInterval === "1 Hour" ? "default" : "outline"}
+                  >
+                    1 Hour
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataAggregationInterval("2 Hours")}
+                    variant={dataAggregationInterval === "2 Hours" ? "default" : "outline"}
+                  >
+                    2 Hours
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataAggregationInterval("6 Hours")}
+                    variant={dataAggregationInterval === "6 Hours" ? "default" : "outline"}
+                  >
+                    6 Hours
+                  </Button>
+                  <Button
+                    className="py-1 px-2 h-fit"
+                    onClick={() => setDataAggregationInterval("1 Week")}
+                    variant={dataAggregationInterval === "1 Week" ? "default" : "outline"}
+                  >
+                    1 Week
+                  </Button>
+                </div>
+                <div style={{ height: "400px" }} className="shadow-md rounded-md">
+                  <AgChartsReact options={options} />
+                </div>
               </div>
               {server.data ? (
                 <ImprovedCard

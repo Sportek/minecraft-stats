@@ -14,7 +14,6 @@ import useSWR from "swr";
 import { AgChartOptions } from "ag-charts-community";
 import { getServerStats } from "@/http/server";
 import { useFavorite } from "@/contexts/favorite";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const Home = () => {
@@ -134,7 +133,7 @@ const Home = () => {
         },
         xKey: "time",
         yKey: "playerCount",
-        lineDashOffset: 0,
+        connectMissingData: false,
         yName: server.serverName,
         data: server.stat.map((stat) => ({
           time: new Date(stat.createdAt),
