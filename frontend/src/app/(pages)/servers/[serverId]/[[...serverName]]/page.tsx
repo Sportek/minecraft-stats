@@ -68,6 +68,9 @@ const ServerPage = () => {
       })),
       series: [
         {
+          marker: {
+            enabled: false,
+          },
           xKey: "time",
           yKey: "playerCount",
         },
