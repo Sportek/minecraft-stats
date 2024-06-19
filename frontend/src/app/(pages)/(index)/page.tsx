@@ -118,6 +118,9 @@ const Home = () => {
       },
       series: serverStatisticsToShow.map((server) => ({
         type: "line",
+        marker: {
+          enabled: false,
+        },
         xKey: "time",
         yKey: "playerCount",
         lineDashOffset: 0,
