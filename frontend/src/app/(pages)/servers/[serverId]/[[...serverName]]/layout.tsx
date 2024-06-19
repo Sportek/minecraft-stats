@@ -1,3 +1,4 @@
+import { FavoriteProvider } from "@/contexts/favorite";
 import { getServer } from "@/http/server";
 import { Metadata } from "next";
 
@@ -15,7 +16,7 @@ export const generateMetadata = async ({params}: {params: {serverId: string, ser
 };
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+  return <FavoriteProvider>{children}</FavoriteProvider>;
 };
 
 export default Layout;

@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { AgChartOptions } from "ag-charts-community";
 import { getServerStats } from "@/http/server";
-import { useFavorite } from "@/contexts/favorite";
+import { FavoriteProvider, useFavorite } from "@/contexts/favorite";
 
 const Home = () => {
   const { data, error, isLoading } = useSWR<
@@ -144,57 +144,59 @@ const Home = () => {
   }, [serverStatisticsToShow]);
 
   return (
-    <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-      {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
-      {error && <div>{error.message}</div>}
-      {data && (
-        <>
-          <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
-            <StatCard
-              title="Total amount of players"
-              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
-              icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
-            />
-            <StatCard
-              title="Amount of data"
-              value={serversStats.data?.totalRecords.toString() ?? "0"}
-              icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
-            />
-          </div>
-          <div style={{ height: "400px" }} className="shadow-md rounded-md">
-            {options && <AgChartsReact options={options} />}
-          </div>
-          <div className="bg-zinc-200 p-4 rounded-lg w-full flex lg:flex-row flex-col gap-2 items-stretch">
-            <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
-            <div className="flex flex-row gap-2 w-full items-center bg-white rounded-md px-3">
-              <Icon icon="material-symbols:filter-alt-outline" className="w-6 h-6" />
-              <FancyMultiSelect
-                title="Filter by categories"
-                elements={
-                  categories.data?.map((category) => ({ value: category.id.toString(), label: category.name })) ?? []
-                }
-                onSelectionChange={setSelectedCategories}
+    <FavoriteProvider>
+      <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+        {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
+        {error && <div>{error.message}</div>}
+        {data && (
+          <>
+            <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
+              <StatCard
+                title="Total amount of players"
+                value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
+                icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
+              />
+              <StatCard
+                title="Amount of data"
+                value={serversStats.data?.totalRecords.toString() ?? "0"}
+                icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
               />
             </div>
-          </div>
-          <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            {serversToShow.length > 0 ? (
-              serversToShow.map((server) => (
-                <ServerCard
-                  key={server.server.id}
-                  server={server.server}
-                  stat={server.stat}
-                  categories={server.categories}
-                  isFull={false}
+            <div style={{ height: "400px" }} className="shadow-md rounded-md">
+              {options && <AgChartsReact options={options} />}
+            </div>
+            <div className="bg-zinc-200 p-4 rounded-lg w-full flex lg:flex-row flex-col gap-2 items-stretch">
+              <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
+              <div className="flex flex-row gap-2 w-full items-center bg-white rounded-md px-3">
+                <Icon icon="material-symbols:filter-alt-outline" className="w-6 h-6" />
+                <FancyMultiSelect
+                  title="Filter by categories"
+                  elements={
+                    categories.data?.map((category) => ({ value: category.id.toString(), label: category.name })) ?? []
+                  }
+                  onSelectionChange={setSelectedCategories}
                 />
-              ))
-            ) : (
-              <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>
-            )}
-          </div>
-        </>
-      )}
-    </main>
+              </div>
+            </div>
+            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              {serversToShow.length > 0 ? (
+                serversToShow.map((server) => (
+                  <ServerCard
+                    key={server.server.id}
+                    server={server.server}
+                    stat={server.stat}
+                    categories={server.categories}
+                    isFull={false}
+                  />
+                ))
+              ) : (
+                <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>
+              )}
+            </div>
+          </>
+        )}
+      </main>
+    </FavoriteProvider>
   );
 };
 export default Home;
