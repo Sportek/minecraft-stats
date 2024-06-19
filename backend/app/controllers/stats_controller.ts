@@ -3,14 +3,12 @@ import { StatValidator } from '#validators/stat'
 import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import Database from '@adonisjs/lucid/services/db'
-
 import { DateTime } from 'luxon'
 
 export default class StatsController {
   async index({ request, response }: HttpContext) {
     try {
       const validatedData = await StatValidator.validate({ ...request.params(), ...request.qs() })
-
       if (!validatedData.server_id) {
         throw new Exception('Server id is required', { status: 400 })
       }
@@ -34,15 +32,45 @@ export default class StatsController {
       }
 
       if (validatedData.interval) {
-        query = query
-          .select(Database.raw(`DATE_TRUNC('${validatedData.interval}', created_at) as interval`))
-          .select(Database.raw('AVG(player_count) as average_player_count'))
-          .groupBy('interval')
+        const rawQuery = `
+          WITH intervals AS (
+            SELECT generate_series(
+                (SELECT min(date_trunc('hour', created_at)) FROM server_stats),
+                (SELECT max(date_trunc('hour', created_at)) FROM server_stats),
+                interval '${validatedData.interval}'
+            ) AS interval_time
+          )
+          SELECT
+              i.interval_time AS created_at,
+              t.server_id,
+              ROUND(AVG(t.player_count)) AS player_count
+          FROM
+              intervals i
+          LEFT JOIN
+              server_stats t
+          ON
+              date_trunc('minute', t.created_at) = i.interval_time
+              AND t.server_id = ${validatedData.server_id}
+          GROUP BY
+              i.interval_time, t.server_id
+          ORDER BY
+              i.interval_time
+        `
+
+        const stats = await Database.rawQuery(rawQuery)
+        return response.status(200).json(
+          stats.rows.map((row: any) => ({
+            serverId: row.server_id,
+            createdAt: row.created_at,
+            playerCount: Number(row.player_count),
+          }))
+        )
       }
 
       const stats = await query.orderBy('created_at', 'asc')
       return response.status(200).json(stats)
     } catch (error) {
+      console.log(error)
       return response.status(500).json({ error: error.messages || 'Internal server error' })
     }
   }

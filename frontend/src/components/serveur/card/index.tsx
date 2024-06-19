@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
 import { useRouter } from "next/navigation";
 import { extractVersions, formatVersion } from "@/utils/server-version";
+import { useFavorite } from "@/contexts/favorite";
 
 interface ServerCardProps {
   server: Server;
@@ -21,6 +22,20 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
 
   const canEdit = () => user?.role === "admin" || server.user?.id === user?.id;
 
+  const { addFavorite, removeFavorite, favorites } = useFavorite();
+
+  const isFavorite = favorites.includes(server.id);
+
+  const toggleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    if (isFavorite) {
+      removeFavorite(server.id);
+    } else {
+      addFavorite(server.id);
+    }
+  };
+
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
@@ -32,7 +47,6 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
       href={`/servers/${server.id}/${server.name}`}
       className="relative flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-full justify-between transition-all duration-50 ease-in-out group"
     >
-
       {canEdit() ? (
         <button
           className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 items-center justify-center hover:bg-zinc-400 hover:cursor-pointer"
@@ -76,16 +90,33 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
             </div>
           )}
         </div>
-        <div className="flex flex-row items-center gap-2 w-full">
+        <div className="flex flex-row justify-between w-full">
+          <div className="flex flex-row items-center gap-1 truncate">
             <Badge variant="secondary" className="bg-stats-blue-900 text-white hover:bg-stats-blue-950">
               {formatVersion(extractVersions(server.version ?? ""))}
             </Badge>
-          {categories.map((category) => (
-            <Badge key={category.id} className="text-xs text-nowrap" variant="secondary">
-              {category.name}
-            </Badge>
-          )).slice(0, isFull ? categories.length : 2)}
-          {!isFull && categories.length > 2 ? <Badge className="text-xs text-nowrap" variant="secondary">+{categories.length - 2}</Badge> : null}
+            {categories
+              .map((category) => (
+                <Badge key={category.id} className="text-xs text-nowrap" variant="secondary">
+                  {category.name}
+                </Badge>
+              ))
+              .slice(0, isFull ? categories.length : 2)}
+            {!isFull && categories.length > 2 ? (
+              <Badge className="text-xs text-nowrap" variant="secondary">
+                +{categories.length - 2}
+              </Badge>
+            ) : null}
+          </div>
+          <button
+            className="flex items-center justify-center p-1 group hover:bg-yellow-50 rounded-full transition-all duration-50 ease-in-out"
+            onClick={toggleFavorite}
+          >
+            <Icon
+              icon={isFavorite ? "material-symbols:kid-star" : "material-symbols:kid-star-outline"}
+              className="text-yellow-500 w-5 h-5"
+            />
+          </button>
         </div>
       </div>
     </Link>

@@ -11,6 +11,7 @@ import CheatCodeComponent from "./_cheatcode";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Metrics from "@/components/metrics";
+import { FavoriteProvider } from "@/contexts/favorite";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({
         <SpeedInsights />
         <AuthProvider>
           <ServersProvider>
+            <FavoriteProvider>
             <CheatCodeComponent />
             <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
               This website is currently in beta mode. Please report any bug or issue you encounter.
@@ -48,8 +50,9 @@ export default function RootLayout({
             <div className="flex-1 flex flex-col items-center justify-center">
               <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
               <Metrics />
-            </div>
-            <Footer />
+              </div>
+              <Footer />
+            </FavoriteProvider>
           </ServersProvider>
         </AuthProvider>
       </body>
