@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { AgChartOptions } from "ag-charts-community";
 import { getServerStats } from "@/http/server";
+import { useFavorite } from "@/contexts/favorite";
 
 const Home = () => {
   const { data, error, isLoading } = useSWR<
@@ -36,38 +37,52 @@ const Home = () => {
     setSearchTerm(event.target.value);
   };
 
-  const [selectedServers, setSelectedServers] = useState<Server[]>([]);
+  const { favorites } = useFavorite();
 
   useEffect(() => {
     if (data) {
-      const filteredData = data?.filter(
-        (server) =>
-          server.server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          server.server.address.toLowerCase().includes(searchTerm.toLowerCase())
-      ).filter((server) => {
-        return selectedCategories.length === 0 || server.categories.some((category) => selectedCategories.includes(category.id.toString()));
-      });
+      const filteredData = data
+        ?.filter(
+          (server) =>
+            server.server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            server.server.address.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .filter((server) => {
+          return (
+            selectedCategories.length === 0 ||
+            server.categories.some((category) => selectedCategories.includes(category.id.toString()))
+          );
+        });
 
       const sortedData = filteredData?.toSorted((b, a) => {
         return (a.stat?.playerCount ?? 0) - (b.stat?.playerCount ?? 0);
       });
 
-      setServersToShow(sortedData ?? []);
+      const favoriteServers = sortedData.filter((server) => favorites.includes(server.server.id));
+      const nonFavoriteServers = sortedData.filter((server) => !favorites.includes(server.server.id));
+
+      setServersToShow([...favoriteServers, ...nonFavoriteServers]);
     }
-  }, [data, searchTerm, selectedCategories]);
+  }, [data, searchTerm, selectedCategories, favorites]);
 
   const [options, setOptions] = useState<AgChartOptions>();
   const [serverStatistics, setServerStatistics] = useState<{
     serverName: string;
+    serverId: number;
     stat: ServerStat[];
   }[]>([]);
   const [serversLoading, setServersLoading] = useState<boolean>(false);
+  const [serverStatisticsToShow, setServerStatisticsToShow] = useState<{
+    serverName: string;
+    serverId: number;
+    stat: ServerStat[];
+  }[]>([]);
 
 
    useEffect(() => {
-     async function fetchServerStats(serverId: string, serverName: string) {
-       const stats = await getServerStats(Number(serverId), Date.now() - 1000 * 60 * 60 * 24, Date.now());
-       return { serverName: serverName, stat: stats };
+     async function fetchServerStats(serverId: number, serverName: string) {
+       const stats = await getServerStats(serverId, Date.now() - 1000 * 60 * 60 * 24, Date.now());
+       return { serverName: serverName, serverId: serverId, stat: stats };
      }
 
      if (!data) return;
@@ -76,22 +91,32 @@ const Home = () => {
 
      (async () => {
        const statsData = await Promise.all(
-         data.map(async (server) => await fetchServerStats(server.server.id.toString(), server.server.name))
+         data.map(async (server) => await fetchServerStats(server.server.id, server.server.name))
        );
        setServerStatistics(statsData);
        setServersLoading(false);
      })();
    }, [data]);
 
+   useEffect(() => {
+
+    const selectedServers =
+      favorites.length > 0
+        ? favorites
+        : serverStatistics.slice(0, Math.min(serverStatistics.length, 5)).map((serv) => serv.serverId);
+
+    setServerStatisticsToShow(serverStatistics.filter((server) => selectedServers.includes(server.serverId)));
+   }, [serverStatistics, favorites]);
+
   useEffect(() => {
-    if (!serverStatistics) return;
+    if (!serverStatisticsToShow) return;
 
 
     setOptions({
       title: {
         text: "Multiple server statistics",
       },
-      series: serverStatistics.map((server) => ({
+      series: serverStatisticsToShow.map((server) => ({
         type: "line",
         xKey: "time",
         yKey: "playerCount",
@@ -116,7 +141,7 @@ const Home = () => {
         enabled: false,
       },
     });
-  }, [serverStatistics]);
+  }, [serverStatisticsToShow]);
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
@@ -139,7 +164,7 @@ const Home = () => {
           <div style={{ height: "400px" }} className="shadow-md rounded-md">
             {options && <AgChartsReact options={options} />}
           </div>
-          <div className="bg-zinc-200 p-4 rounded-lg w-full flex gap-4">
+          <div className="bg-zinc-200 p-4 rounded-lg w-full flex lg:flex-row flex-col gap-2 items-stretch">
             <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
             <div className="flex flex-row gap-2 w-full items-center bg-white rounded-md px-3">
               <Icon icon="material-symbols:filter-alt-outline" className="w-6 h-6" />
