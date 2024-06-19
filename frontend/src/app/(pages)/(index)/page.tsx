@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { AgChartOptions } from "ag-charts-community";
 import { getServerStats } from "@/http/server";
-import { FavoriteProvider, useFavorite } from "@/contexts/favorite";
+import { useFavorite } from "@/contexts/favorite";
 
 const Home = () => {
   const { data, error, isLoading } = useSWR<
@@ -144,7 +144,6 @@ const Home = () => {
   }, [serverStatisticsToShow]);
 
   return (
-    <FavoriteProvider>
       <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
         {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
         {error && <div>{error.message}</div>}
@@ -196,7 +195,6 @@ const Home = () => {
           </>
         )}
       </main>
-    </FavoriteProvider>
   );
 };
 export default Home;

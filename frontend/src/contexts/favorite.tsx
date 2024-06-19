@@ -20,11 +20,13 @@ export const useFavorite = () => {
 
 export const FavoriteProvider = ({ children }: { children: React.ReactNode }) => {
 
-  const loadFromLocalStorage = useCallback(() => {
-    const favorites = localStorage.getItem("favorites");
-    if (favorites) {
-      return JSON.parse(favorites);
-    }
+   const loadFromLocalStorage = useCallback(() => {
+     if (typeof window !== "undefined") {
+       const favorites = localStorage.getItem("favorites");
+       if (favorites) {
+         return JSON.parse(favorites);
+       }
+     }
     return [];
   }, []);
 

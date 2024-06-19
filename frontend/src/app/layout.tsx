@@ -40,6 +40,7 @@ export default function RootLayout({
         <SpeedInsights />
         <AuthProvider>
           <ServersProvider>
+            <FavoriteProvider>
             <CheatCodeComponent />
             <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
               This website is currently in beta mode. Please report any bug or issue you encounter.
@@ -51,6 +52,7 @@ export default function RootLayout({
               <Metrics />
               </div>
               <Footer />
+            </FavoriteProvider>
           </ServersProvider>
         </AuthProvider>
       </body>
