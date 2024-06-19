@@ -14,6 +14,8 @@ import useSWR from "swr";
 import { AgChartOptions } from "ag-charts-community";
 import { getServerStats } from "@/http/server";
 import { useFavorite } from "@/contexts/favorite";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Home = () => {
   const { data, error, isLoading } = useSWR<
@@ -37,6 +39,12 @@ const Home = () => {
     setSearchTerm(event.target.value);
   };
 
+  const [showZeroPlayer, setShowZeroPlayer] = useState<boolean>(false);
+
+  const handleShowZeroPlayerChange = (checked: boolean) => {
+    setShowZeroPlayer(checked);
+  };
+
   const { favorites } = useFavorite();
 
   useEffect(() => {
@@ -52,6 +60,9 @@ const Home = () => {
             selectedCategories.length === 0 ||
             server.categories.some((category) => selectedCategories.includes(category.id.toString()))
           );
+        })
+        .filter((server) => {
+          return showZeroPlayer ? true : server.stat?.playerCount !== 0;
         });
 
       const sortedData = filteredData?.toSorted((b, a) => {
@@ -63,7 +74,7 @@ const Home = () => {
 
       setServersToShow([...favoriteServers, ...nonFavoriteServers]);
     }
-  }, [data, searchTerm, selectedCategories, favorites]);
+  }, [data, searchTerm, selectedCategories, favorites, showZeroPlayer]);
 
   const [options, setOptions] = useState<AgChartOptions>();
   const [serverStatistics, setServerStatistics] = useState<{
@@ -147,27 +158,28 @@ const Home = () => {
   }, [serverStatisticsToShow]);
 
   return (
-      <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-        {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
-        {error && <div>{error.message}</div>}
-        {data && (
-          <>
-            <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
-              <StatCard
-                title="Total amount of players"
-                value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
-                icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
-              />
-              <StatCard
-                title="Amount of data"
-                value={serversStats.data?.totalRecords.toString() ?? "0"}
-                icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
-              />
-            </div>
-            <div style={{ height: "400px" }} className="shadow-md rounded-md">
-              {options && <AgChartsReact options={options} />}
-            </div>
-            <div className="bg-zinc-200 p-4 rounded-lg w-full flex lg:flex-row flex-col gap-2 items-stretch">
+    <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+      {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
+      {error && <div>{error.message}</div>}
+      {data && (
+        <>
+          <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
+            <StatCard
+              title="Total amount of players"
+              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
+              icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
+            />
+            <StatCard
+              title="Amount of data"
+              value={serversStats.data?.totalRecords.toString() ?? "0"}
+              icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
+            />
+          </div>
+          <div style={{ height: "400px" }} className="shadow-md rounded-md">
+            {options && <AgChartsReact options={options} />}
+          </div>
+          <div className="flex flex-col gap-2 bg-zinc-200 p-4 rounded-lg w-full">
+            <div className="flex lg:flex-row flex-col gap-2 items-stretch">
               <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
               <div className="flex flex-row gap-2 w-full items-center bg-white rounded-md px-3">
                 <Icon icon="material-symbols:filter-alt-outline" className="w-6 h-6" />
@@ -180,24 +192,32 @@ const Home = () => {
                 />
               </div>
             </div>
-            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              {serversToShow.length > 0 ? (
-                serversToShow.map((server) => (
-                  <ServerCard
-                    key={server.server.id}
-                    server={server.server}
-                    stat={server.stat}
-                    categories={server.categories}
-                    isFull={false}
-                  />
-                ))
-              ) : (
-                <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>
-              )}
+            <div className="flex flex-row gap-2 items-center justify-center">
+              <Checkbox
+                checked={showZeroPlayer}
+                onCheckedChange={handleShowZeroPlayerChange}
+              />
+              <label htmlFor="showZeroPlayer">Show servers with no players</label>
             </div>
-          </>
-        )}
-      </main>
+          </div>
+          <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+            {serversToShow.length > 0 ? (
+              serversToShow.map((server) => (
+                <ServerCard
+                  key={server.server.id}
+                  server={server.server}
+                  stat={server.stat}
+                  categories={server.categories}
+                  isFull={false}
+                />
+              ))
+            ) : (
+              <div className="w-full text-center md:col-span-2 lg:col-span-3">No servers found</div>
+            )}
+          </div>
+        </>
+      )}
+    </main>
   );
 };
 export default Home;
