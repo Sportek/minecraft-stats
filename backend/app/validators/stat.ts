@@ -6,6 +6,6 @@ export const StatValidator = vine.compile(
     exactTime: vine.number().optional(),
     fromDate: vine.number().optional(),
     toDate: vine.number().optional(),
-    interval: vine.string().optional(),
+    interval: vine.enum(['1 hour', '1 day', '2 hours', '6 hours', '1 week']).optional(),
   })
 )
