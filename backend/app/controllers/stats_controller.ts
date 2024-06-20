@@ -32,11 +32,13 @@ export default class StatsController {
       }
 
       if (validatedData.interval) {
+        const baseQuery = query.toQuery().replace(/^\s*select\s+\*\s+from\s+/i, '')
+
         const rawQuery = `
           WITH intervals AS (
             SELECT generate_series(
-                (SELECT min(date_trunc('hour', created_at)) FROM server_stats),
-                (SELECT max(date_trunc('hour', created_at)) FROM server_stats),
+                (SELECT min(date_trunc('hour', created_at)) FROM ${baseQuery}),
+                (SELECT max(date_trunc('hour', created_at)) FROM ${baseQuery}),
                 interval '${validatedData.interval}'
             ) AS interval_time
           )
