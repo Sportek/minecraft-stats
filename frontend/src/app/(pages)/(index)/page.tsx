@@ -9,12 +9,13 @@ import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { Category, Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { AgChartsReact } from "ag-charts-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { AgChartOptions } from "ag-charts-community";
 import { getServerStats } from "@/http/server";
 import { useFavorite } from "@/contexts/favorite";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 const Home = () => {
   const { data, error, isLoading } = useSWR<
@@ -88,10 +89,36 @@ const Home = () => {
     stat: ServerStat[];
   }[]>([]);
 
+  const dataRangeIntervalTypes = useMemo(() => {
+    return {
+      "1 Day": Date.now() - 1000 * 60 * 60 * 24,
+      "1 Week": Date.now() - 1000 * 60 * 60 * 24 * 7,
+      "1 Month": Date.now() - 1000 * 60 * 60 * 24 * 30,
+      "6 Months": Date.now() - 1000 * 60 * 60 * 24 * 30 * 6,
+      "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
+      Everything: Date.now() - 1000 * 60 * 60 * 24 * 30 * 12 * 5,
+    };
+  }, []);
+
+  const dataAggregationIntervalTypes = useMemo(() => {
+    return {
+      "30 Minutes": "30 minutes",
+      "1 Hour": "1 hour",
+      "2 Hours": "2 hours",
+      "6 Hours": "6 hours",
+      "1 Day": "1 day",
+      "1 Week": "1 week",
+    };
+  }, []);
+
+  const [dataRangeInterval, setDataRangeInterval] = useState<keyof typeof dataRangeIntervalTypes>("1 Day");
+  const [dataAggregationInterval, setDataAggregationInterval] =
+    useState<keyof typeof dataAggregationIntervalTypes>("1 Hour");
+
 
    useEffect(() => {
      async function fetchServerStats(serverId: number, serverName: string) {
-       const stats = await getServerStats(serverId, Date.now() - 1000 * 60 * 60 * 24, Date.now());
+       const stats = await getServerStats(serverId, dataRangeIntervalTypes[dataRangeInterval], Date.now(), dataAggregationIntervalTypes[dataAggregationInterval]);
        return { serverName: serverName, serverId: serverId, stat: stats };
      }
 
@@ -106,7 +133,7 @@ const Home = () => {
        setServerStatistics(statsData);
        setServersLoading(false);
      })();
-   }, [data]);
+   }, [data, dataRangeInterval, dataAggregationInterval, dataRangeIntervalTypes, dataAggregationIntervalTypes]);
 
    useEffect(() => {
 
@@ -174,6 +201,38 @@ const Home = () => {
               icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
             />
           </div>
+          <div className="flex flex-row gap-2 flex-wrap">
+            <Button
+              className="py-1 px-2 h-fit"
+              onClick={() => {
+                setDataRangeInterval("1 Day");
+                setDataAggregationInterval("1 Hour");
+              }}
+              variant={dataRangeInterval === "1 Day" ? "default" : "outline"}
+            >
+              Last 24h
+            </Button>
+            <Button
+              className="py-1 px-2 h-fit"
+              onClick={() => {
+                setDataRangeInterval("1 Week");
+                setDataAggregationInterval("6 Hours");
+              }}
+              variant={dataRangeInterval === "1 Week" ? "default" : "outline"}
+            >
+              Last 7 days
+            </Button>
+            <Button
+              className="py-1 px-2 h-fit"
+              onClick={() => {
+                setDataRangeInterval("1 Month");
+                setDataAggregationInterval("1 Day");
+              }}
+              variant={dataRangeInterval === "1 Month" ? "default" : "outline"}
+            >
+              Last 30 days
+            </Button>
+          </div>
           <div style={{ height: "400px" }} className="shadow-md rounded-md">
             {options && <AgChartsReact options={options} />}
           </div>
@@ -192,10 +251,7 @@ const Home = () => {
               </div>
             </div>
             <div className="flex flex-row gap-2 items-center justify-center">
-              <Checkbox
-                checked={showZeroPlayer}
-                onCheckedChange={handleShowZeroPlayerChange}
-              />
+              <Checkbox checked={showZeroPlayer} onCheckedChange={handleShowZeroPlayerChange} />
               <label htmlFor="showZeroPlayer">Show servers with no players</label>
             </div>
           </div>

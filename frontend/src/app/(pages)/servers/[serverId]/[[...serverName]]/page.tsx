@@ -216,10 +216,10 @@ const ServerPage = () => {
                   </Button>
                   <Button
                     className="py-1 px-2 h-fit"
-                    onClick={() => setDataAggregationInterval("1 Week")}
-                    variant={dataAggregationInterval === "1 Week" ? "default" : "outline"}
+                    onClick={() => setDataAggregationInterval("1 Day")}
+                    variant={dataAggregationInterval === "1 Day" ? "default" : "outline"}
                   >
-                    1 Week
+                    1 Day
                   </Button>
                 </div>
                 <div style={{ height: "400px" }} className="shadow-md rounded-md">
