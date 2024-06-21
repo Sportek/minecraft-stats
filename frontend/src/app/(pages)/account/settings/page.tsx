@@ -11,7 +11,7 @@ const SettingsPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full flex-1 py-8">
-      <div className="bg-zinc-100 shadow-md rounded-md p-4 w-full sm:w-fit gap-4 flex flex-col">
+      <div className="bg-zinc-100 dark:bg-zinc-800 shadow-md rounded-md p-4 w-full sm:w-fit gap-4 flex flex-col">
         <h1 className="text-2xl font-bold">Profil</h1>
         <div className="flex flex-col gap-2">
           <div className="text-xl font-semibold">Your informations</div>

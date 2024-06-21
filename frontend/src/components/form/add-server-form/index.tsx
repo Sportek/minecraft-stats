@@ -130,6 +130,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                       title="Select categories..."
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleSelectionChange}
+                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
                     />
                   </FormControl>
                   <FormMessage />

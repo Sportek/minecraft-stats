@@ -169,7 +169,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleSelectionChange}
                       defaultSelected={field.value.map((category) => ({ value: category, label: category }))}
-                      className="dark:bg-zinc-950 dark:text-white bg-zinc-100"
+                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
                     />
                   </FormControl>
                   <FormMessage />
