@@ -76,12 +76,14 @@ const Header = () => {
         <div className="flex flex-row items-center gap-4 w-full">
           <Avatar>
             <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
-            <AvatarFallback className="bg-stats-blue-900 text-stats-blue-0 text-sm font-semibold">
+            <AvatarFallback className="bg-stats-blue-900 text-stats-blue-0 dark:bg-stats-blue-1000 dark:text-stats-blue-0 text-sm font-semibold">
               {user?.username?.[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center gap-2">
-            <div className="font-semibold text-stats-blue-1050">{user?.username.toUpperCase()}</div>
+            <div className="font-semibold text-stats-blue-1050 dark:text-stats-blue-50">
+              {user?.username.toUpperCase()}
+            </div>
           </div>
         </div>
         <button
@@ -111,8 +113,8 @@ const Header = () => {
   const mobileMenu = () => {
     return (
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-zinc-100 dark:bg-zinc-900 flex flex-col items-center gap-4 z-50">
-        <div className="flex flex-row items-center p-4 bg-stats-blue-1050 dark:bg-stats-blue-50 w-full justify-between">
-          <Link href="/" className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center p-4 bg-stats-blue-1050 w-full justify-between">
+          <Link href="/" className="flex flex-row items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
             <div className="text-2xl font-bold">Minecraft Stats</div>
           </Link>
@@ -198,7 +200,7 @@ const Header = () => {
               href="/login"
               className={cn(
                 "text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out",
-                activeTab === "login" ? "bg-stats-blue-1000" : null
+                activeTab === "login" ? "bg-stats-blue-1000 dark:bg-stats-blue-50" : null
               )}
               onClick={() => setActiveTab("login")}
             >
