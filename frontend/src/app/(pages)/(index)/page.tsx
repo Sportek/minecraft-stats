@@ -17,27 +17,49 @@ import { useFavorite } from "@/contexts/favorite";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
-const Home = () => {
-  const { data, error, isLoading } = useSWR<
-    { server: Server; stat: ServerStat | null; categories: Category[] }[],
-    Error
-  >(`${process.env.NEXT_PUBLIC_API_URL}/servers`, fetcher, {
-    refreshInterval: 1000 * 60 * 2,
-  });
+export interface ServerData {
+  server: Server;
+  stat: ServerStat | null;
+  categories: Category[];
+}
 
-  const serversStats = useSWR<{totalRecords: number}>(`${process.env.NEXT_PUBLIC_API_URL}/website-stats`, fetcher, {
-    refreshInterval: 1000 * 60 * 2,
-  });
+const DATA_AGGREGATION_INTERVAL_TYPES = {
+  "30 Minutes": "30 minutes",
+  "1 Hour": "1 hour",
+  "2 Hours": "2 hours",
+  "6 Hours": "6 hours",
+  "1 Day": "1 day",
+  "1 Week": "1 week",
+};
+
+const Home = () => {
+  const { data, error, isLoading } = useSWR<ServerData[], Error>(
+    `${process.env.NEXT_PUBLIC_API_URL}/servers`,
+    fetcher,
+    {
+      refreshInterval: 1000 * 60 * 2,
+    }
+  );
+
+  const generalWebsiteStats = useSWR<{ totalRecords: number }>(
+    `${process.env.NEXT_PUBLIC_API_URL}/website-stats`,
+    fetcher,
+    {
+      refreshInterval: 1000 * 60 * 2,
+    }
+  );
 
   const categories = useSWR<Category[], Error>(`${process.env.NEXT_PUBLIC_API_URL}/categories`, fetcher);
 
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [serversToShow, setServersToShow] = useState<{ server: Server; stat: ServerStat | null; categories: Category[] }[]>([]);
+  const [serversToShow, setServersToShow] = useState<ServerData[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
+
+  const [serverToDisplayInGraph, setServerToDisplayInGraph] = useState<ServerData[]>([]);
 
   const [showZeroPlayer, setShowZeroPlayer] = useState<boolean>(false);
 
@@ -47,6 +69,11 @@ const Home = () => {
 
   const { favorites } = useFavorite();
 
+  // On filtre les serveurs en fonction de différents paramètres :
+  // - La recherche
+  // - Les catégories
+  // - Le nombre de joueurs
+  // - Les serveurs favoris
   useEffect(() => {
     if (data) {
       const filteredData = data
@@ -77,17 +104,13 @@ const Home = () => {
   }, [data, searchTerm, selectedCategories, favorites, showZeroPlayer]);
 
   const [options, setOptions] = useState<AgChartOptions>();
-  const [serverStatistics, setServerStatistics] = useState<{
-    serverName: string;
-    serverId: number;
-    stat: ServerStat[];
-  }[]>([]);
-  const [serversLoading, setServersLoading] = useState<boolean>(false);
-  const [serverStatisticsToShow, setServerStatisticsToShow] = useState<{
-    serverName: string;
-    serverId: number;
-    stat: ServerStat[];
-  }[]>([]);
+  const [serverStatistics, setServerStatistics] = useState<
+    {
+      serverName: string;
+      serverId: number;
+      stat: ServerStat[];
+    }[]
+  >([]);
 
   const dataRangeIntervalTypes = useMemo(() => {
     return {
@@ -100,60 +123,55 @@ const Home = () => {
     };
   }, []);
 
-  const dataAggregationIntervalTypes = useMemo(() => {
-    return {
-      "30 Minutes": "30 minutes",
-      "1 Hour": "1 hour",
-      "2 Hours": "2 hours",
-      "6 Hours": "6 hours",
-      "1 Day": "1 day",
-      "1 Week": "1 week",
-    };
-  }, []);
-
   const [dataRangeInterval, setDataRangeInterval] = useState<keyof typeof dataRangeIntervalTypes>("1 Day");
   const [dataAggregationInterval, setDataAggregationInterval] =
-    useState<keyof typeof dataAggregationIntervalTypes>("1 Hour");
+    useState<keyof typeof DATA_AGGREGATION_INTERVAL_TYPES>("1 Hour");
 
+  // On récupère les stats des serveurs sélectionnés
+  useEffect(() => {
+    async function fetchServerStats(serverId: number, serverName: string) {
+      const stats = await getServerStats(
+        serverId,
+        dataRangeIntervalTypes[dataRangeInterval],
+        Date.now(),
+        DATA_AGGREGATION_INTERVAL_TYPES[dataAggregationInterval]
+      );
+      return { serverName: serverName, serverId: serverId, stat: stats };
+    }
 
-   useEffect(() => {
-     async function fetchServerStats(serverId: number, serverName: string) {
-       const stats = await getServerStats(serverId, dataRangeIntervalTypes[dataRangeInterval], Date.now(), dataAggregationIntervalTypes[dataAggregationInterval]);
-       return { serverName: serverName, serverId: serverId, stat: stats };
-     }
+    (async () => {
+      const statsData = await Promise.all(
+        serverToDisplayInGraph.map(async (server) => await fetchServerStats(server.server.id, server.server.name))
+      );
+      setServerStatistics(statsData);
+    })();
+  }, [
+    serverToDisplayInGraph,
+    dataRangeInterval,
+    dataAggregationInterval,
+    dataRangeIntervalTypes,
+  ]);
 
-     if (!data) return;
-
-     setServersLoading(true);
-
-     (async () => {
-       const statsData = await Promise.all(
-         data.map(async (server) => await fetchServerStats(server.server.id, server.server.name))
-       );
-       setServerStatistics(statsData);
-       setServersLoading(false);
-     })();
-   }, [data, dataRangeInterval, dataAggregationInterval, dataRangeIntervalTypes, dataAggregationIntervalTypes]);
-
-   useEffect(() => {
-
-    const selectedServers =
+  // On récupère les serveurs à afficher dans le graphique
+  useEffect(() => {
+    if (!data) return;
+    const servers =
       favorites.length > 0
         ? favorites
-        : serverStatistics.slice(0, Math.min(serverStatistics.length, 5)).map((serv) => serv.serverId);
+        : data.slice(0, Math.min(data.length, 5)).map((server) => server.server.id);
+    setServerToDisplayInGraph(data.filter((server) => servers.includes(server.server.id)));
+  }, [favorites, data]);
 
-    setServerStatisticsToShow(serverStatistics.filter((server) => selectedServers.includes(server.serverId)));
-   }, [serverStatistics, favorites]);
 
+  // On crée les différentes options du graphique
   useEffect(() => {
-    if (!serverStatisticsToShow) return;
-
+    if (!serverStatistics) return;
 
     setOptions({
       title: {
         text: "Multiple server statistics",
       },
-      series: serverStatisticsToShow.map((server) => ({
+      series: serverStatistics.map((server) => ({
         type: "line",
         marker: {
           enabled: false,
@@ -181,11 +199,11 @@ const Home = () => {
         enabled: false,
       },
     });
-  }, [serverStatisticsToShow]);
+  }, [serverStatistics]);
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-      {isLoading || categories.isLoading || serversStats.isLoading ? <Loader message="Loading..." /> : null}
+      {isLoading || categories.isLoading || generalWebsiteStats.isLoading ? <Loader message="Loading..." /> : null}
       {error && <div>{error.message}</div>}
       {data && (
         <>
@@ -197,7 +215,7 @@ const Home = () => {
             />
             <StatCard
               title="Amount of data"
-              value={serversStats.data?.totalRecords.toString() ?? "0"}
+              value={generalWebsiteStats.data?.totalRecords.toString() ?? "0"}
               icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
             />
           </div>
