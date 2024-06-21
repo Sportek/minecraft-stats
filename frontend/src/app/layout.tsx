@@ -14,7 +14,7 @@ import Metrics from "@/components/metrics";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ThemeProvider } from "@/components/dark-mode/provider";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: {
