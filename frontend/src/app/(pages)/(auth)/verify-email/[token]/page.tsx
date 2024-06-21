@@ -31,7 +31,7 @@ const VerifyEmail = () => {
 
   return (
     <div className="flex flex-col items-center justify-center flex-1">
-      <div className="flex flex-col gap-4 bg-white p-4 rounded-md shadow-md">
+      <div className="flex flex-col gap-4 bg-white dark:bg-zinc-900 p-4 rounded-md shadow-md">
         <div className="text-2xl font-bold">Verify Email</div>
         <div className="text-lg">
           {isLoading && <div>Loading...</div>}

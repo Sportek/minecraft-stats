@@ -16,6 +16,7 @@ import { getServerStats } from "@/http/server";
 import { useFavorite } from "@/contexts/favorite";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export interface ServerData {
   server: Server;
@@ -162,6 +163,7 @@ const Home = () => {
     setServerToDisplayInGraph(data.filter((server) => servers.includes(server.server.id)));
   }, [favorites, data]);
 
+  const { resolvedTheme } = useTheme();
 
   // On crée les différentes options du graphique
   useEffect(() => {
@@ -195,11 +197,15 @@ const Home = () => {
           position: "left",
         },
       ],
+      theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
+      background: {
+        fill: resolvedTheme === "dark" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.5)",
+      },
       legend: {
         enabled: false,
       },
     });
-  }, [serverStatistics]);
+  }, [serverStatistics, resolvedTheme]);
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
@@ -211,12 +217,12 @@ const Home = () => {
             <StatCard
               title="Total amount of players"
               value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
-              icon={<Icon icon="mdi:account-multiple" className="text-blue-700 w-6 h-6" />}
+              icon={<Icon icon="mdi:account-multiple" className="text-blue-700 dark:text-blue-300 w-6 h-6" />}
             />
             <StatCard
               title="Amount of data"
               value={generalWebsiteStats.data?.totalRecords.toString() ?? "0"}
-              icon={<Icon icon="material-symbols:database" className="text-red-700 w-6 h-6" />}
+              icon={<Icon icon="material-symbols:database" className="text-red-700 dark:text-red-300 w-6 h-6" />}
             />
           </div>
           <div className="flex flex-row gap-2 flex-wrap">
@@ -254,10 +260,10 @@ const Home = () => {
           <div style={{ height: "400px" }} className="shadow-md rounded-md">
             {options && <AgChartsReact options={options} />}
           </div>
-          <div className="flex flex-col gap-2 bg-zinc-200 p-4 rounded-lg w-full">
+          <div className="flex flex-col gap-2 bg-zinc-200 dark:bg-zinc-800 p-4 rounded-lg w-full">
             <div className="flex lg:flex-row flex-col gap-2 items-stretch">
               <ResearchInput placeholder="Search a server" ref={searchRef} onChange={handleSearchChange} />
-              <div className="flex flex-row gap-2 w-full items-center bg-white rounded-md px-3">
+              <div className="flex flex-row gap-2 w-full items-center bg-white dark:bg-zinc-900 rounded-md px-3">
                 <Icon icon="material-symbols:filter-alt-outline" className="w-6 h-6" />
                 <FancyMultiSelect
                   title="Filter by categories"

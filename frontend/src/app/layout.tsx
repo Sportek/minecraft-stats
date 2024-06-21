@@ -12,6 +12,7 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Metrics from "@/components/metrics";
 import { FavoriteProvider } from "@/contexts/favorite";
+import { ThemeProvider } from "@/components/dark-mode/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,26 +36,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col bg-zinc-100 text-stats-blue-1050")}
+        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col bg-zinc-100 dark:bg-zinc-900 text-stats-blue-1050 dark:text-stats-blue-50")}
       >
         <SpeedInsights />
-        <AuthProvider>
-          <ServersProvider>
-            <FavoriteProvider>
-            <CheatCodeComponent />
-            <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
-              This website is currently in beta mode. Please report any bug or issue you encounter.
-            </div>
-            <Header />
-            <Toaster />
-            <div className="flex-1 flex flex-col items-center justify-center">
-              <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
-              <Metrics />
-              </div>
-              <Footer />
-            </FavoriteProvider>
-          </ServersProvider>
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <ServersProvider>
+              <FavoriteProvider>
+                <CheatCodeComponent />
+                <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
+                  This website is currently in beta mode. Please report any bug or issue you encounter.
+                </div>
+                <Header />
+                <Toaster />
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
+                  <Metrics />
+                </div>
+                <Footer />
+              </FavoriteProvider>
+            </ServersProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
