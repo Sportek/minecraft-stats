@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
 
-
 export const metadata: Metadata = {
   title: "Partners",
   description:
@@ -18,17 +17,15 @@ const partnersData = [
 
 const Partners = () => {
   return (
-    <div className="p-6 bg-gray-100 rounded-lg">
+    <div className="p-6 bg-gray-100 dark:bg-zinc-900 rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-4">Partners</h1>
-        <div className="flex flex-col gap-4">
-          {partnersData.map((partner) => (
+      <div className="flex flex-col gap-4">
+        {partnersData.map((partner) => (
           <Link href={partner.url} target="_blank" rel="noopener noreferrer" key={partner.url}>
-          <Button className="w-full">
-            {partner.name}
-          </Button>
+            <Button className="w-full">{partner.name}</Button>
           </Link>
         ))}
-        </div>
+      </div>
     </div>
   );
 };

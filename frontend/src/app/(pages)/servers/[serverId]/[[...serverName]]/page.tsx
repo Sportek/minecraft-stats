@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import ImprovedCard from "@/components/serveur/improved-card";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 const ServerPage = () => {
   const { serverId } = useParams();
@@ -51,6 +52,7 @@ const ServerPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
   const [options, setOptions] = useState<AgChartOptions>({});
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     function fetchServerStats() {
@@ -94,6 +96,10 @@ const ServerPage = () => {
           connectMissingData: false,
         },
       ],
+      theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
+      background: {
+        fill: resolvedTheme === "dark" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.5)",
+      },
       axes: [
         {
           type: "time",

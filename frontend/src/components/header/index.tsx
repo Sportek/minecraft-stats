@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { ModeToggle } from "../dark-mode/toggle";
 const Header = () => {
   const [activeTab, setActiveTab] = useState("all-servers");
   const { user, logout } = useAuth();
@@ -71,7 +72,7 @@ const Header = () => {
 
   const displayMobileUserSection = () => {
     return (
-      <div className="flex flex-col items-center gap-4 bg-zinc-200 p-4 rounded-md w-[90%]">
+      <div className="flex flex-col items-center gap-4 bg-zinc-200 dark:bg-zinc-800 p-4 rounded-md w-[90%]">
         <div className="flex flex-row items-center gap-4 w-full">
           <Avatar>
             <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
@@ -109,8 +110,8 @@ const Header = () => {
 
   const mobileMenu = () => {
     return (
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-zinc-100 flex flex-col items-center gap-4 z-50">
-        <div className="flex flex-row items-center p-4 bg-stats-blue-1050 w-full justify-between">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden bg-zinc-100 dark:bg-zinc-900 flex flex-col items-center gap-4 z-50">
+        <div className="flex flex-row items-center p-4 bg-stats-blue-1050 dark:bg-stats-blue-50 w-full justify-between">
           <Link href="/" className="flex flex-row items-center gap-2">
             <Image src={MinecraftStatsLogo} alt="logo" width={32} height={32} />
             <div className="text-2xl font-bold">Minecraft Stats</div>
@@ -127,20 +128,20 @@ const Header = () => {
         {user?.username ? (
           displayMobileUserSection()
         ) : (
-          <div className="flex flex-col items-center gap-4 w-[90%] bg-zinc-200 rounded-md text-stats-blue-1050">
+          <div className="flex flex-col items-center gap-4 w-[90%] bg-zinc-200 dark:bg-zinc-800 rounded-md text-stats-blue-1050 dark:text-stats-blue-50">
             <Link
               href="/login"
-              className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 text-stats-blue-1050 w-full text-center"
+              className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 dark:bg-zinc-800 text-stats-blue-1050 dark:text-stats-blue-50 w-full text-center"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               LOGIN
             </Link>
           </div>
         )}
-        <div className="flex flex-col items-center gap-4 w-[90%] bg-zinc-200 rounded-md text-stats-blue-1050">
+        <div className="flex flex-col items-center gap-4 w-[90%] bg-zinc-200 dark:bg-zinc-800 rounded-md text-stats-blue-1050 dark:text-stats-blue-50">
           <Link
             href="/"
-            className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 text-stats-blue-1050 w-full text-center"
+            className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 dark:bg-zinc-800 text-stats-blue-1050 dark:text-stats-blue-50 w-full text-center"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             ALL SERVERS
@@ -149,7 +150,7 @@ const Header = () => {
         <div className="flex flex-col items-center gap-4 w-[90%] ">
           <Link
             href="/api"
-            className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 text-stats-blue-1050 w-full text-center"
+            className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 dark:bg-zinc-800 text-stats-blue-1050 dark:text-stats-blue-50 w-full text-center"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             API
@@ -169,6 +170,7 @@ const Header = () => {
           </Link>
         </div>
         <div className="hidden flex-row items-center gap-8 md:flex">
+          <ModeToggle />
           <Link
             href="/"
             className={cn(

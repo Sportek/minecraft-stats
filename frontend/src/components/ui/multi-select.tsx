@@ -64,7 +64,7 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
   const selectables = elements.filter((element) => !selected.some((s) => s.value === element.value));
 
   return (
-    <Command onKeyDown={handleKeyDown} className={cn("overflow-visible bg-transparent h-full", className)}>
+    <Command onKeyDown={handleKeyDown} className={cn("overflow-visible bg-transparent h-full dark:bg-transparent", className)}>
       <div className="group rounded-md px-3 py-2 text-sm h-full w-full">
         <div className="flex flex-wrap gap-1">
           {selected.map((element) => {
@@ -103,7 +103,7 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
       <div className="relative">
         <CommandList>
           {open && selectables.length > 0 ? (
-            <div className="absolute top-0 z-20 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in bg-zinc-200">
+            <div className="absolute top-0 z-20 w-full rounded-md bg-popover text-popover-foreground shadow-md outline-none animate-in bg-zinc-200 dark:bg-zinc-900">
               <CommandGroup className="h-full overflow-auto">
                 {selectables.map((element) => {
                   return (

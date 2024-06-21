@@ -45,14 +45,14 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="relative flex flex-row items-center gap-4 bg-zinc-200 hover:bg-zinc-300 p-4 w-full rounded-md shadow-sm h-full justify-between transition-all duration-50 ease-in-out group"
+      className="relative flex flex-row items-center gap-4 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 p-4 w-full rounded-md shadow-sm h-full justify-between transition-all duration-50 ease-in-out group"
     >
       {canEdit() ? (
         <button
-          className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 items-center justify-center hover:bg-zinc-400 hover:cursor-pointer"
+          className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center hover:bg-zinc-400 dark:hover:bg-zinc-600 hover:cursor-pointer"
           onClick={handleEdit}
         >
-          <Icon icon="material-symbols:edit-outline" className="text-zinc-700" />
+          <Icon icon="material-symbols:edit-outline" className="text-zinc-700 dark:text-zinc-300" />
         </button>
       ) : null}
       <div className="flex flex-col items-center gap-2 w-full h-full flex-grow justify-between min-w-0">
@@ -63,19 +63,19 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
               alt={server.name}
             />
             <AvatarFallback>
-              <NotFound className="text-stats-blue-950" />
+              <NotFound className="text-stats-blue-950 dark:text-stats-blue-50" />
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col flex-grow truncate">
             <div className="text-xl font-semibold truncate flex gap-2">
               <div>{server.name}</div>
             </div>
-            <div className="text-sm text-zinc-700 truncate">{server?.address?.toUpperCase()}</div>
+            <div className="text-sm text-zinc-700 dark:text-zinc-300 truncate">{server?.address?.toUpperCase()}</div>
           </div>
           {stat ? (
             <div className="flex flex-row items-center gap-2">
-              <div className="w-3 h-3 bg-green-300 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full" />
+              <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
               </div>
               <div className="flex flex-col justify-center items-center">
                 <div>{stat.playerCount}</div>
@@ -83,16 +83,16 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
             </div>
           ) : (
             <div className="flex flex-row items-center gap-2">
-              <div className="w-3 h-3 bg-red-300 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-red-500 rounded-full" />
+              <div className="w-3 h-3 bg-red-300 dark:bg-red-700 rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-red-500 dark:bg-red-500 rounded-full" />
               </div>
-              <div className="text-red-500">Offline</div>
+              <div className="text-red-500 dark:text-red-300">Offline</div>
             </div>
           )}
         </div>
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row items-center gap-1 truncate">
-            <Badge variant="secondary" className="bg-stats-blue-900 text-white hover:bg-stats-blue-950">
+            <Badge variant="secondary" className="bg-stats-blue-900 dark:bg-stats-blue-950 text-white hover:bg-stats-blue-800 dark:hover:bg-stats-blue-800/80">
               {formatVersion(extractVersions(server.version ?? ""))}
             </Badge>
             {categories
@@ -109,7 +109,7 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
             ) : null}
           </div>
           <button
-            className="flex items-center justify-center p-1 group hover:bg-yellow-50 rounded-full transition-all duration-50 ease-in-out"
+            className="flex items-center justify-center p-1 group hover:bg-yellow-50 dark:hover:bg-yellow-900 rounded-full transition-all duration-50 ease-in-out"
             onClick={toggleFavorite}
           >
             <Icon
