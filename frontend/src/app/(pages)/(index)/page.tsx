@@ -215,14 +215,19 @@ const Home = () => {
         <>
           <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
             <StatCard
-              title="Total amount of players"
+              title="Total amount of online players"
               value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
               icon={<Icon icon="mdi:account-multiple" className="text-blue-700 dark:text-blue-300 w-6 h-6" />}
             />
             <StatCard
-              title="Amount of data"
+              title="Amount of rows data"
               value={generalWebsiteStats.data?.totalRecords.toString() ?? "0"}
               icon={<Icon icon="material-symbols:database" className="text-red-700 dark:text-red-300 w-6 h-6" />}
+            />
+            <StatCard
+              title="Amount of monitored servers"
+              value={data.length.toString()}
+              icon={<Icon icon="mdi:server" className="text-green-700 dark:text-green-300 w-6 h-6" />}
             />
           </div>
           <div className="flex flex-row gap-2 flex-wrap">
@@ -230,7 +235,7 @@ const Home = () => {
               className="py-1 px-2 h-fit"
               onClick={() => {
                 setDataRangeInterval("1 Day");
-                setDataAggregationInterval("1 Hour");
+                setDataAggregationInterval("30 Minutes");
               }}
               variant={dataRangeInterval === "1 Day" ? "default" : "outline"}
             >
@@ -240,7 +245,7 @@ const Home = () => {
               className="py-1 px-2 h-fit"
               onClick={() => {
                 setDataRangeInterval("1 Week");
-                setDataAggregationInterval("6 Hours");
+                setDataAggregationInterval("2 Hours");
               }}
               variant={dataRangeInterval === "1 Week" ? "default" : "outline"}
             >
@@ -250,7 +255,7 @@ const Home = () => {
               className="py-1 px-2 h-fit"
               onClick={() => {
                 setDataRangeInterval("1 Month");
-                setDataAggregationInterval("1 Day");
+                setDataAggregationInterval("6 Hours");
               }}
               variant={dataRangeInterval === "1 Month" ? "default" : "outline"}
             >
