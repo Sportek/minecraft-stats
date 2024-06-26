@@ -113,6 +113,8 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
           </div>
           <button
             className="flex items-center justify-center p-1 group hover:bg-yellow-50 dark:hover:bg-yellow-900 rounded-full transition-all duration-50 ease-in-out"
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            id={`favorite-button-${server.name}-${server.id}`}
             onClick={toggleFavorite}
           >
             <Icon

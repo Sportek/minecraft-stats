@@ -275,8 +275,15 @@ const Home = () => {
               </div>
             </div>
             <div className="flex flex-row gap-2 items-center justify-center">
-              <Checkbox checked={showZeroPlayer} onCheckedChange={handleShowZeroPlayerChange} />
-              <label htmlFor="showZeroPlayer">Show servers with no players</label>
+              <Checkbox
+                id="showZeroPlayer"
+                checked={showZeroPlayer}
+                onCheckedChange={handleShowZeroPlayerChange}
+                aria-labelledby="showZeroPlayerLabel"
+              />
+              <label id="showZeroPlayerLabel" htmlFor="showZeroPlayer">
+                Show servers with no players
+              </label>
             </div>
           </div>
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
