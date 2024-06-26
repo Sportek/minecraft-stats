@@ -1,13 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Category, Server, ServerStat } from "@/types/server";
-import Link from "next/link";
-import NotFound from "../not-found";
 import { Badge } from "@/components/ui/badge";
-import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
-import { useRouter } from "next/navigation";
-import { extractVersions, formatVersion } from "@/utils/server-version";
 import { useFavorite } from "@/contexts/favorite";
+import { Category, Server, ServerStat } from "@/types/server";
+import { extractVersions, formatVersion } from "@/utils/server-version";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import NotFound from "../not-found";
 
 interface ServerCardProps {
   server: Server;
@@ -16,7 +16,6 @@ interface ServerCardProps {
   isFull?: boolean;
 }
 const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
-
   const { user } = useAuth();
   const router = useRouter();
 
@@ -40,7 +39,7 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
     event.stopPropagation();
     event.preventDefault();
     router.push(`/servers/${server.id}/edit`);
-  }
+  };
 
   return (
     <Link
@@ -57,15 +56,16 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
       ) : null}
       <div className="flex flex-col items-center gap-2 w-full h-full flex-grow justify-between min-w-0">
         <div className="flex flex-row items-center gap-4 w-full">
-          <Avatar>
-            <AvatarImage
-              src={server.imageUrl ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}` : ""}
+          {server.imageUrl ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}`}
               alt={server.name}
+              width={48}
+              height={48}
             />
-            <AvatarFallback>
-              <NotFound className="text-stats-blue-950 dark:text-stats-blue-50" />
-            </AvatarFallback>
-          </Avatar>
+          ) : (
+            <NotFound className="text-stats-blue-950 dark:text-stats-blue-50 w-12 h-12" />
+          )}
           <div className="flex flex-col flex-grow truncate">
             <div className="text-xl font-semibold truncate flex gap-2">
               <div>{server.name}</div>
@@ -92,7 +92,10 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
         </div>
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row items-center gap-1 truncate">
-            <Badge variant="secondary" className="bg-stats-blue-900 dark:bg-stats-blue-950 text-white hover:bg-stats-blue-800 dark:hover:bg-stats-blue-800/80">
+            <Badge
+              variant="secondary"
+              className="bg-stats-blue-900 dark:bg-stats-blue-950 text-white hover:bg-stats-blue-800 dark:hover:bg-stats-blue-800/80"
+            >
               {formatVersion(extractVersions(server.version ?? ""))}
             </Badge>
             {categories
