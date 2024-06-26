@@ -30,31 +30,54 @@ const Footer = () => {
           </div>
           <div className="flex flex-col gap-4">
             <div className="text-md font-bold">RESSOURCES</div>
-            <div className="flex flex-col gap-4 text-sm">
-              <Link href="https://github.com/Sportek/minecraft-stats" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+            <div className="flex flex-col gap-2 text-sm *:py-1">
+              <Link
+                href="https://github.com/Sportek/minecraft-stats"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 GitHub
               </Link>
-              <Link href="/api" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+              <Link
+                href="/api"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 Access to API
               </Link>
-              <Link href="/partners" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+              <Link
+                href="/partners"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 Partners
               </Link>
             </div>
           </div>
           <div className="flex flex-col gap-4">
             <div className="text-md font-bold">OTHER</div>
-            <div className="flex flex-col gap-4 text-sm">
-              <Link href="https://discord.gg/Ru9fecKwPn" target="_blank" rel="noopener noreferrer" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+            <div className="flex flex-col gap-2 text-sm *:py-1">
+              <Link
+                href="https://discord.gg/Ru9fecKwPn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 Discord Server
               </Link>
-              <Link href="/cgu" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+              <Link
+                href="/cgu"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 Terms of Service
               </Link>
-              <Link href="/login" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+              <Link
+                href="/login"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 Login
               </Link>
-              <Link href="/sign-up" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+              <Link
+                href="/sign-up"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
                 Register
               </Link>
             </div>
@@ -78,11 +101,17 @@ const Footer = () => {
                   <Icon icon="ic:round-favorite" className="w-4 h-4" />
                 </motion.div>
                 <div>by</div>
-                <Link href="https://sportek.dev" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+                <Link
+                  href="https://sportek.dev"
+                  className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+                >
                   Sportek
                 </Link>
                 <div>aka</div>
-                <Link href="https://gabriel-landry.dev" className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300">
+                <Link
+                  href="https://gabriel-landry.dev"
+                  className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+                >
                   Gabriel Landry
                 </Link>
               </div>
