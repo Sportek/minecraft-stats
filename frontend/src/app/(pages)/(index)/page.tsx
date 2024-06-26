@@ -5,18 +5,18 @@ import Loader from "@/components/loader";
 import { ResearchInput } from "@/components/research";
 import ServerCard from "@/components/serveur/card";
 import StatCard from "@/components/serveur/stat-card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
+import { useFavorite } from "@/contexts/favorite";
+import { getServerStats } from "@/http/server";
 import { Category, Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { AgChartOptions } from "ag-charts-community";
 import { AgChartsReact } from "ag-charts-react";
+import { useTheme } from "next-themes";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
-import { AgChartOptions } from "ag-charts-community";
-import { getServerStats } from "@/http/server";
-import { useFavorite } from "@/contexts/favorite";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 
 export interface ServerData {
   server: Server;
@@ -146,20 +146,13 @@ const Home = () => {
       );
       setServerStatistics(statsData);
     })();
-  }, [
-    serverToDisplayInGraph,
-    dataRangeInterval,
-    dataAggregationInterval,
-    dataRangeIntervalTypes,
-  ]);
+  }, [serverToDisplayInGraph, dataRangeInterval, dataAggregationInterval, dataRangeIntervalTypes]);
 
   // On récupère les serveurs à afficher dans le graphique
   useEffect(() => {
     if (!data) return;
     const servers =
-      favorites.length > 0
-        ? favorites
-        : data.slice(0, Math.min(data.length, 5)).map((server) => server.server.id);
+      favorites.length > 0 ? favorites : data.slice(0, Math.min(data.length, 5)).map((server) => server.server.id);
     setServerToDisplayInGraph(data.filter((server) => servers.includes(server.server.id)));
   }, [favorites, data]);
 
@@ -209,7 +202,9 @@ const Home = () => {
 
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-      {isLoading || categories.isLoading || generalWebsiteStats.isLoading ? <Loader message="Loading..." /> : null}
+      {isLoading || categories.isLoading || generalWebsiteStats.isLoading ? (
+        <Loader message="Loading..." className="min-h-screen flex items-center justify-center" />
+      ) : null}
       {error && <div>{error.message}</div>}
       {data && (
         <>

@@ -1,9 +1,12 @@
-interface LoaderProps {
+import { HTMLAttributes } from "react";
+
+interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
   message: string;
+  className?: string;
 }
-const Loader = ({ message }: LoaderProps) => {
+const Loader = ({ message, className, ...props }: LoaderProps) => {
   return (
-    <>
+    <div className={className} {...props}>
       <style>
         {`
         .loader {
@@ -29,7 +32,7 @@ const Loader = ({ message }: LoaderProps) => {
         <div>{message}</div>
         <div className="loader" />
       </div>
-    </>
+    </div>
   );
 };
 

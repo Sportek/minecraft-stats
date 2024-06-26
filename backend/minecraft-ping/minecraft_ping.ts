@@ -14,6 +14,7 @@ export const isPingPossible = async (address: string, port: number = 25565) => {
     const data = await pingMinecraftJava(address, port)
     return !!data
   } catch (error) {
+    console.error(error)
     return false
   }
 }
