@@ -6,7 +6,7 @@ const nextConfig = {
       { hostname: "cdn.discordapp.com" },
       { hostname: "lh3.googleusercontent.com" },
       { hostname: "localhost" },
-      { hostname: "api.minecraftstats.fr" },
+      { hostname: "api.minecraft-stats.fr" },
       { hostname: "*.tenor.com" },
     ],
   },
