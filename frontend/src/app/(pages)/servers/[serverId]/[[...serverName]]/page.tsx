@@ -6,13 +6,13 @@ import { AgChartsReact } from "ag-charts-react";
 
 import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
+import ImprovedCard from "@/components/serveur/improved-card";
+import { Button } from "@/components/ui/button";
 import { AgChartOptions } from "ag-charts-community";
+import { useTheme } from "next-themes";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import ImprovedCard from "@/components/serveur/improved-card";
-import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 
 const ServerPage = () => {
   const { serverId } = useParams();
@@ -47,7 +47,9 @@ const ServerPage = () => {
   }, []);
 
   const [dataRangeInterval, setDataRangeInterval] = useState<keyof typeof dataRangeIntervalTypes>("1 Week");
-  const [dataAggregationInterval, setDataAggregationInterval] = useState<keyof typeof dataAggregationIntervalTypes | undefined>(undefined);
+  const [dataAggregationInterval, setDataAggregationInterval] = useState<
+    keyof typeof dataAggregationIntervalTypes | undefined
+  >(undefined);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
@@ -130,7 +132,7 @@ const ServerPage = () => {
   return (
     <>
       {server.isLoading ? (
-        <Loader message="Querying server..." />
+        <Loader message="Querying server..." className="min-h-screen" />
       ) : (
         <div className="flex flex-1 flex-col">
           {server.error ? <div className="text-red-500">{server.error.message}</div> : null}
