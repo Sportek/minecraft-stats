@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { HTMLAttributes } from "react";
 
 interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -6,7 +7,7 @@ interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
 }
 const Loader = ({ message, className, ...props }: LoaderProps) => {
   return (
-    <div className={className} {...props}>
+    <div className={cn("flex flex-col items-center gap-2", className)} {...props}>
       <style>
         {`
         .loader {
