@@ -8,6 +8,6 @@
 |
 | Pre-registered policies and abilities can be referenced as a string by their
 | name. Also they are must if want to perform authorization inside Edge
-| templates.
+| templates..
 |
 */
