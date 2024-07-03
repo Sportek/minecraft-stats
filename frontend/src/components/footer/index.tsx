@@ -9,7 +9,8 @@ import RestrictedWidthLayout from "../restricted-width-layout";
 import { Button } from "../ui/button";
 
 const Footer = () => {
-  const isMinecraftStatsDomain = typeof window !== "undefined" && window.location.hostname === "minecraft-stats.com";
+  const isMinecraftStatsDomain =
+    typeof window !== "undefined" && window.location.hostname.endsWith("minecraft-stats.com");
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 bg-zinc-200 dark:bg-stats-blue-1050">
