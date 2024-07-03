@@ -9,6 +9,8 @@ import RestrictedWidthLayout from "../restricted-width-layout";
 import { Button } from "../ui/button";
 
 const Footer = () => {
+  const isMinecraftStatsDomain = typeof window !== "undefined" && window.location.hostname === "minecraft-stats.com";
+
   return (
     <div className="flex flex-col items-center gap-4 py-4 bg-zinc-200 dark:bg-stats-blue-1050">
       <RestrictedWidthLayout className="gap-4 flex flex-col items-center justify-center">
@@ -115,6 +117,18 @@ const Footer = () => {
                   Gabriel Landry
                 </Link>
               </div>
+              {isMinecraftStatsDomain && (
+                <div>
+                  Donation of the current domain name by{" "}
+                  <Link
+                    href="https://pol.tf"
+                    className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+                  >
+                    Pol Marnette
+                  </Link>{" "}
+                  who had a similar project.
+                </div>
+              )}
             </div>
           </div>
         </div>
