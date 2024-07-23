@@ -48,6 +48,9 @@ scheduler
             server.imageUrl = `/images/servers/${imageName}`
           }
 
+          playerOnline = data.players.online
+          maxPlayer = data.players.max
+
           server.version = data.version.name
           await server.save()
           logger.info(`Updated server ${server.id}`)
