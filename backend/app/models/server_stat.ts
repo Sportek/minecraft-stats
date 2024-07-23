@@ -14,10 +14,10 @@ export default class ServerStat extends BaseModel {
   declare serverId: number
 
   @column()
-  declare playerCount: number
+  declare playerCount: number | null
 
   @column()
-  declare maxCount: number
+  declare maxCount: number | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

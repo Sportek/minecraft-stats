@@ -28,6 +28,9 @@ scheduler
     const servers = await Server.all()
     await Promise.all(
       servers.map(async (server) => {
+        let playerOnline: number | null = null
+        let maxPlayer: number | null = null
+
         try {
           const data = await pingMinecraftJava(server.address, server.port)
           if (!data) return
@@ -47,18 +50,17 @@ scheduler
 
           server.version = data.version.name
           await server.save()
-
+          logger.info(`Updated server ${server.id}`)
+        } catch (error) {
+          logger.error(`Failed to update server ${server.id}: ${error}`)
+        } finally {
           const stat = await ServerStat.create({
-            playerCount: data.players.online,
-            maxCount: data.players.max,
+            playerCount: playerOnline,
+            maxCount: maxPlayer,
           })
 
           stat.related('server').associate(server)
           await stat.save()
-
-          logger.info(`Updated server ${server.id}`)
-        } catch (error) {
-          logger.error(`Failed to update server ${server.id}: ${error}`)
         }
       })
     )

@@ -72,7 +72,7 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
             </div>
             <div className="text-sm text-zinc-700 dark:text-zinc-300 truncate">{server?.address?.toUpperCase()}</div>
           </div>
-          {stat ? (
+          {stat?.playerCount != null ? (
             <div className="flex flex-row items-center gap-2">
               <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
                 <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
