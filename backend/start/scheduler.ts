@@ -19,53 +19,65 @@ function saveBase64Image(base64Image: string, outputPath: string) {
   // Créer un buffer à partir de la chaîne base64
   const buffer = Buffer.from(base64Data, 'base64')
 
-  // Écrire le buffer dans un fichier
-  fs.writeFileSync(outputPath, buffer)
+  // Écrire le buffer dans un fichier avec l'option 'w' pour écraser les fichiers existants
+  fs.writeFileSync(outputPath, buffer, { flag: 'w' })
+}
+
+/**
+ * Met à jour les informations du serveur et enregistre les statistiques.
+ * @param server - Le serveur à mettre à jour.
+ * @param overwriteImage - Indique si l'image doit être écrasée.
+ */
+async function updateServerInfo(server: Server, overwriteImage = false) {
+  let playerOnline: number | null = null
+  let maxPlayer: number | null = null
+
+  try {
+    const data = await pingMinecraftJava(server.address, server.port)
+    if (!data) return
+
+    if (data.favicon && (overwriteImage || !server.imageUrl)) {
+      const filename = fileURLToPath(import.meta.url)
+      const pathDirname = dirname(filename)
+
+      const imageBase64 = data.favicon
+      const imagePath = path.join(pathDirname, '../public/images/servers')
+      const imageName = `${server.id}.png`
+      const imageFullPath = path.join(imagePath, imageName)
+      fs.mkdirSync(imagePath, { recursive: true })
+      saveBase64Image(imageBase64, imageFullPath)
+      server.imageUrl = `/images/servers/${imageName}`
+    }
+
+    playerOnline = data.players.online
+    maxPlayer = data.players.max
+
+    server.version = data.version.name
+    await server.save()
+    logger.info(`Updated server ${server.id}`)
+  } catch (error) {
+    logger.error(`Failed to update server ${server.id}: ${error}`)
+  } finally {
+    const stat = await ServerStat.create({
+      playerCount: playerOnline,
+      maxCount: maxPlayer,
+    })
+
+    stat.related('server').associate(server)
+    await stat.save()
+  }
 }
 
 scheduler
   .call(async () => {
     const servers = await Server.all()
-    await Promise.all(
-      servers.map(async (server) => {
-        let playerOnline: number | null = null
-        let maxPlayer: number | null = null
-
-        try {
-          const data = await pingMinecraftJava(server.address, server.port)
-          if (!data) return
-
-          if (!server.imageUrl && data.favicon) {
-            const filename = fileURLToPath(import.meta.url)
-            const pathDirname = dirname(filename)
-
-            const imageBase64 = data.favicon
-            const imagePath = path.join(pathDirname, '../public/images/servers')
-            const imageName = `${server.id}.png`
-            const imageFullPath = path.join(imagePath, imageName)
-            fs.mkdirSync(imagePath, { recursive: true })
-            saveBase64Image(imageBase64, imageFullPath)
-            server.imageUrl = `/images/servers/${imageName}`
-          }
-
-          playerOnline = data.players.online
-          maxPlayer = data.players.max
-
-          server.version = data.version.name
-          await server.save()
-          logger.info(`Updated server ${server.id}`)
-        } catch (error) {
-          logger.error(`Failed to update server ${server.id}: ${error}`)
-        } finally {
-          const stat = await ServerStat.create({
-            playerCount: playerOnline,
-            maxCount: maxPlayer,
-          })
-
-          stat.related('server').associate(server)
-          await stat.save()
-        }
-      })
-    )
+    await Promise.all(servers.map((server) => updateServerInfo(server, false)))
   })
   .everyTenMinutes()
+
+scheduler
+  .call(async () => {
+    const servers = await Server.all()
+    await Promise.all(servers.map((server) => updateServerInfo(server, true)))
+  })
+  .everySixHours()
