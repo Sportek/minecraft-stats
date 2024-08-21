@@ -17,6 +17,11 @@ services:
       test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE}', '-U', '${DB_USER}']
       retries: 3
       timeout: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   adonis_app:
     container_name: 'stats-backend-${APP_NAME}'
@@ -37,6 +42,11 @@ services:
       sh -c "node ace migration:run && node ace serve"
     networks:
       - sail
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   adonis_scheduler:
     container_name: 'stats-scheduler-${APP_NAME}'
@@ -55,6 +65,11 @@ services:
       - ./:/home/node/app
       - server-images:/home/node/app/public
       - /home/node/app/node_modules
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   sail:
