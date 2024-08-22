@@ -90,7 +90,7 @@ const Home = () => {
           );
         })
         .filter((server) => {
-          return showZeroPlayer ? true : server.stat?.playerCount !== 0 || server.stat?.playerCount !== null;
+          return showZeroPlayer ? true : server.stat?.playerCount;
         });
 
       const sortedData = filteredData?.toSorted((b, a) => {
