@@ -6,6 +6,7 @@ import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
+import pLimit from 'p-limit'
 
 /**
  * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
@@ -24,6 +25,27 @@ function saveBase64Image(base64Image: string, outputPath: string) {
 }
 
 /**
+ * Retente une fonction asynchrone plusieurs fois en cas d'échec.
+ * @param fn - La fonction asynchrone à exécuter.
+ * @param retries - Nombre de tentatives avant d'abandonner.
+ * @param delay - Temps d'attente entre chaque tentative (en ms).
+ * @returns Le résultat de la fonction si elle réussit.
+ */
+async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn()
+    } catch (error) {
+      if (attempt === retries) {
+        throw error // Relancer l'erreur après le dernier échec.
+      }
+      await new Promise((resolve) => setTimeout(resolve, delay))
+    }
+  }
+  throw new Error('Unreachable code') // Juste pour satisfaire TypeScript.
+}
+
+/**
  * Met à jour les informations du serveur et enregistre les statistiques.
  * @param server - Le serveur à mettre à jour.
  * @param overwriteImage - Indique si l'image doit être écrasée.
@@ -33,7 +55,8 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
   let maxPlayer: number | null = null
 
   try {
-    const data = await pingMinecraftJava(server.address, server.port)
+    // On fait des retry pour éviter les erreurs de connexion
+    const data = await retry(() => pingMinecraftJava(server.address, server.port), 3, 2000)
     if (!data) return
 
     if (data.favicon && (overwriteImage || !server.imageUrl)) {
@@ -68,10 +91,24 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
   }
 }
 
+/**
+ * Met à jour les serveurs par lots avec une limite de parallélisme.
+ */
+async function updateServersInBatches(batchSize = 10) {
+  const servers = await Server.all()
+
+  // Permet de limiter le nombre de tâches simultanées
+  const limit = pLimit(batchSize)
+
+  // Exécute les mises à jour en lots avec limite
+  await Promise.all(servers.map((server) => limit(() => updateServerInfo(server, false))))
+}
+
+// Planification avec les schedulers
+
 scheduler
   .call(async () => {
-    const servers = await Server.all()
-    await Promise.all(servers.map((server) => updateServerInfo(server, false)))
+    await updateServersInBatches(10)
   })
   .everyTenMinutes()
 
