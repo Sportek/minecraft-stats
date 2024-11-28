@@ -94,21 +94,30 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
 /**
  * Met à jour les serveurs par lots avec une limite de parallélisme.
  */
-async function updateServersInBatches(batchSize = 10) {
+async function updateServersInBatches(batchSize = 10, delayBetweenBatches = 10_000) {
   const servers = await Server.all()
 
   // Permet de limiter le nombre de tâches simultanées
   const limit = pLimit(batchSize)
 
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
   // Exécute les mises à jour en lots avec limite
-  await Promise.all(servers.map((server) => limit(() => updateServerInfo(server, false))))
+  for (let i = 0; i < servers.length; i += batchSize) {
+    const batch = servers.slice(i, i + batchSize)
+    await Promise.all(batch.map((server) => limit(() => updateServerInfo(server, false))))
+    if (i + batchSize < servers.length) {
+      await delay(delayBetweenBatches) // Attendre entre les lots
+    }
+  }
 }
 
 // Planification avec les schedulers
 
 scheduler
   .call(async () => {
-    await updateServersInBatches(10)
+    // 10 serveurs à la fois, avec un délai de 10 secondes entre chaque lot
+    await updateServersInBatches(10, 10_000)
   })
   .everyTenMinutes()
 
