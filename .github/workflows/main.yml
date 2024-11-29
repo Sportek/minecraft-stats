@@ -67,5 +67,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/minecraft-stats/website/backend
+            docker compose down
             docker compose --env-file .env.production build
             docker compose --env-file .env.production up -d
