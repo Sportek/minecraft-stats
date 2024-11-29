@@ -77,9 +77,11 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
 
     server.version = data.version.name
     await server.save()
-    logger.info(`Updated server ${server.id}`)
+    logger.info(`SCHEDULER: Updated server ${server.name} (${server.address}:${server.port})`)
   } catch (error) {
-    logger.error(`Failed to update server ${server.id}: ${error}`)
+    logger.error(
+      `SCHEDULER: Failed to update server ${server.name} (${server.address}:${server.port}): ${error.message}`
+    )
   } finally {
     const stat = await ServerStat.create({
       playerCount: playerOnline,
