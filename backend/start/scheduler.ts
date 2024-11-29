@@ -94,32 +94,30 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
 }
 
 /**
- * Met à jour les serveurs par lots avec une limite de parallélisme.
+ * Met à jour les serveurs par lots avec un espacement uniforme des requêtes.
  */
-async function updateServersInBatches(batchSize = 10, delayBetweenBatches = 10_000) {
+async function updateServersWithUniformSpacing(totalTime = 10 * 60 * 1000) {
+  // 10 minutes en millisecondes
   const servers = await Server.all()
+  const delayBetweenRequests = totalTime / servers.length
 
-  // Permet de limiter le nombre de tâches simultanées
-  const limit = pLimit(batchSize)
+  // Permet de limiter le nombre de tâches simultanées à 1 pour espacer les requêtes
+  const limit = pLimit(1)
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-  // Exécute les mises à jour en lots avec limite
-  for (let i = 0; i < servers.length; i += batchSize) {
-    const batch = servers.slice(i, i + batchSize)
-    await Promise.all(batch.map((server) => limit(() => updateServerInfo(server, false))))
-    if (i + batchSize < servers.length) {
-      await delay(delayBetweenBatches) // Attendre entre les lots
-    }
+  // Exécute les mises à jour avec un espacement uniforme
+  for (const server of servers) {
+    await limit(() => updateServerInfo(server, false))
+    await delay(delayBetweenRequests) // Attendre entre chaque requête
   }
 }
 
 // Planification avec les schedulers
-
 scheduler
   .call(async () => {
-    // 10 serveurs à la fois, avec un délai de 10 secondes entre chaque lot
-    await updateServersInBatches(10, 10_000)
+    // Espacer les requêtes uniformément sur 10 minutes
+    await updateServersWithUniformSpacing(10 * 60 * 1000)
   })
   .everyTenMinutes()
 
