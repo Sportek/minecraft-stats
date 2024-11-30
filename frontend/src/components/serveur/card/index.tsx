@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import NotFound from "../not-found";
 import { useCallback } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface ServerCardProps {
   server: Server;
@@ -27,12 +29,12 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
   const isFavorite = favorites.includes(server.id);
 
   const getFormattedTimeSinceLastOnline = useCallback(() => {
-    if (stat?.createdAt) {
+    if (server?.lastOnlineAt) {
       const millisecondsInADay = 1000 * 60 * 60 * 24;
       const millisecondsInAWeek = millisecondsInADay * 7;
       const millisecondsInAMonth = millisecondsInADay * 30;
 
-      const elapsedTime = Date.now() - new Date(stat.createdAt).getTime();
+      const elapsedTime = Date.now() - new Date(server.lastOnlineAt).getTime();
 
       if (elapsedTime >= millisecondsInAMonth) {
         const months = Math.floor(elapsedTime / millisecondsInAMonth);
@@ -46,7 +48,7 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
       }
     }
     return "never";
-  }, [stat?.createdAt]);
+  }, [server.lastOnlineAt]);
 
   const toggleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -106,13 +108,21 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <div className="flex flex-row items-center gap-2">
-                <div className="w-3 h-3 bg-red-300 dark:bg-red-700 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-red-500 dark:bg-red-500 rounded-full" />
-                </div>
-                <div className="text-red-500 dark:text-red-300">Offline</div>
-              </div>
-              <div>({getFormattedTimeSinceLastOnline()})</div>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex flex-row items-center gap-2">
+                      <div className="w-3 h-3 bg-red-300 dark:bg-red-700 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-red-500 dark:bg-red-500 rounded-full" />
+                      </div>
+                      <div className="text-red-500 dark:text-red-300">Offline</div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div>Last activity {getFormattedTimeSinceLastOnline()}</div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           )}
         </div>
