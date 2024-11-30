@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import NotFound from "../not-found";
+import { useCallback } from "react";
 
 interface ServerCardProps {
   server: Server;
@@ -24,6 +25,28 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
   const { addFavorite, removeFavorite, favorites } = useFavorite();
 
   const isFavorite = favorites.includes(server.id);
+
+  const getFormattedTimeSinceLastOnline = useCallback(() => {
+    if (stat?.createdAt) {
+      const millisecondsInADay = 1000 * 60 * 60 * 24;
+      const millisecondsInAWeek = millisecondsInADay * 7;
+      const millisecondsInAMonth = millisecondsInADay * 30;
+
+      const elapsedTime = Date.now() - new Date(stat.createdAt).getTime();
+
+      if (elapsedTime >= millisecondsInAMonth) {
+        const months = Math.floor(elapsedTime / millisecondsInAMonth);
+        return `${months} months`;
+      } else if (elapsedTime >= millisecondsInAWeek) {
+        const weeks = Math.floor(elapsedTime / millisecondsInAWeek);
+        return `${weeks} weeks`;
+      } else {
+        const days = Math.floor(elapsedTime / millisecondsInADay);
+        return `${days} days`;
+      }
+    }
+    return "never";
+  }, [stat?.createdAt]);
 
   const toggleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -82,11 +105,14 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
               </div>
             </div>
           ) : (
-            <div className="flex flex-row items-center gap-2">
-              <div className="w-3 h-3 bg-red-300 dark:bg-red-700 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-red-500 dark:bg-red-500 rounded-full" />
+            <div className="flex flex-col items-center">
+              <div className="flex flex-row items-center gap-2">
+                <div className="w-3 h-3 bg-red-300 dark:bg-red-700 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-red-500 dark:bg-red-500 rounded-full" />
+                </div>
+                <div className="text-red-500 dark:text-red-300">Offline</div>
               </div>
-              <div className="text-red-500 dark:text-red-300">Offline</div>
+              <div>({getFormattedTimeSinceLastOnline()})</div>
             </div>
           )}
         </div>

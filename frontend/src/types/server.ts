@@ -9,6 +9,7 @@ export interface Server {
   imageUrl: string;
   user: User;
   createdAt: Date;
+  lastOnlineAt: Date | null;
 }
 
 export interface ServerStat {

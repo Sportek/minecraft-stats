@@ -15,7 +15,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { AgChartOptions } from "ag-charts-community";
 import { AgChartsReact } from "ag-charts-react";
 import { useTheme } from "next-themes";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 
 export interface ServerData {
@@ -62,11 +62,19 @@ const Home = () => {
 
   const [serverToDisplayInGraph, setServerToDisplayInGraph] = useState<ServerData[]>([]);
 
-  const [showZeroPlayer, setShowZeroPlayer] = useState<boolean>(false);
+  const [showZeroPlayer, setShowZeroPlayer] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("showZeroPlayer") === "true" || false;
+    }
+    return false;
+  });
 
-  const handleShowZeroPlayerChange = (checked: boolean) => {
-    setShowZeroPlayer(checked);
-  };
+  const handleShowZeroPlayerChange = useCallback((value: boolean) => {
+    setShowZeroPlayer((prev) => {
+      localStorage.setItem("showZeroPlayer", value.toString());
+      return value;
+    });
+  }, []);
 
   const { favorites } = useFavorite();
 
@@ -94,7 +102,7 @@ const Home = () => {
         });
 
       const sortedData = filteredData?.toSorted((b, a) => {
-        return (a.stat?.playerCount ?? 0) - (b.stat?.playerCount ?? 0);
+        return (a.stat?.playerCount ?? -1) - (b.stat?.playerCount ?? -1);
       });
 
       const favoriteServers = sortedData.filter((server) => favorites.includes(server.server.id));
@@ -152,7 +160,13 @@ const Home = () => {
   useEffect(() => {
     if (!data) return;
     const servers =
-      favorites.length > 0 ? favorites : data.slice(0, Math.min(data.length, 5)).map((server) => server.server.id);
+      favorites.length > 0
+        ? favorites
+        // On affiche les 5 serveurs avec le plus de joueurs
+        : data
+            .toSorted((a, b) => (b.stat?.playerCount ?? -1) - (a.stat?.playerCount ?? -1))
+            .slice(0, Math.min(data.length, 5))
+            .map((server) => server.server.id);
     setServerToDisplayInGraph(data.filter((server) => servers.includes(server.server.id)));
   }, [favorites, data]);
 
