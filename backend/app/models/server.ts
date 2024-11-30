@@ -35,6 +35,9 @@ export default class Server extends BaseModel {
   @manyToMany(() => Category, { pivotTimestamps: true, pivotTable: 'server_categories' })
   declare categories: relations.ManyToMany<typeof Category>
 
+  @column.dateTime({ columnName: 'last_online_at' })
+  declare lastOnlineAt: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
