@@ -70,6 +70,18 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+  redis:
+    image: 'redis:latest'
+    container_name: 'stats-redis-${APP_NAME}'
+    networks:
+      - sail
+    volumes:
+      - redisdata:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   sail:
@@ -80,3 +92,5 @@ volumes:
     name: 'stats-pgsql-${APP_NAME}'
   server-images:
     name: 'stats-images-${APP_NAME}'
+  redisdata:
+    name: 'stats-redis-${APP_NAME}'
