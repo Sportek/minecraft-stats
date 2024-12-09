@@ -68,7 +68,7 @@
     "@swc/wasm": "^1.5.24",
     "@vinejs/vine": "^2.0.0",
     "adonisjs-scheduler": "^1.0.5",
-    "argon2": "^0.40.3",
+    "argon2": "^0.41.0",
     "edge.js": "^6.0.2",
     "jsonwebtoken": "^9.0.2",
     "leb128": "^0.0.5",
