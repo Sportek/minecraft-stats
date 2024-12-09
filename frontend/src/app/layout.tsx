@@ -44,9 +44,9 @@ export default function RootLayout({
             <ServersProvider>
               <FavoriteProvider>
                 <CheatCodeComponent />
-                <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
+                {/* <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
                   This website is currently in beta mode. Please report any bug or issue you encounter.
-                </div>
+                </div> */}
                 <Header />
                 <Toaster />
                 <div className="flex-1 flex flex-col items-center justify-center">

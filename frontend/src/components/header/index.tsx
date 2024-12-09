@@ -142,6 +142,16 @@ const Header = () => {
         )}
         <div className="flex flex-col items-center gap-4 w-[90%] bg-zinc-200 dark:bg-zinc-800 rounded-md text-stats-blue-1050 dark:text-stats-blue-50">
           <Link
+            href="/account/add-server"
+            className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 dark:bg-zinc-800 text-stats-blue-1050 dark:text-stats-blue-50 w-full text-center"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            ADD SERVER
+          </Link>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 w-[90%] bg-zinc-200 dark:bg-zinc-800 rounded-md text-stats-blue-1050 dark:text-stats-blue-50">
+          <Link
             href="/"
             className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 dark:bg-zinc-800 text-stats-blue-1050 dark:text-stats-blue-50 w-full text-center"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -173,6 +183,16 @@ const Header = () => {
         </div>
         <div className="hidden flex-row items-center gap-8 md:flex">
           <ModeToggle />
+          <Link
+            href="/account/add-server"
+            className={cn(
+              "text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-gradient-to-b from-stats-blue-700 to-stats-blue-800 text-stats-blue-0",
+              activeTab === "add-server" ? "from-stats-blue-800 to-stats-blue-900" : null
+            )}
+            onClick={() => setActiveTab("add-server")}
+          >
+            ADD YOUR SERVER
+          </Link>
           <Link
             href="/"
             className={cn(
