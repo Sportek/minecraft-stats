@@ -70,3 +70,4 @@ jobs:
             docker compose down
             docker compose --env-file .env.production build
             docker compose --env-file .env.production up -d
+            docker image prune -f
