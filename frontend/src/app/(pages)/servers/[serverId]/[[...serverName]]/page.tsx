@@ -16,13 +16,9 @@ import useSWR from "swr";
 
 const ServerPage = () => {
   const { serverId } = useParams();
-  const server = useSWR<{ server: Server; stat: ServerStat; categories: Category[] }, Error>(
-    `${getBaseUrl()}/servers/${serverId}`,
-    fetcher,
-    {
-      refreshInterval: 1000 * 60 * 2,
-    }
-  );
+  const server = useSWR<Server, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {  
+    refreshInterval: 1000 * 60 * 2,
+  });
 
   const dataRangeIntervalTypes = useMemo(() => {
     return {
@@ -82,7 +78,7 @@ const ServerPage = () => {
   useEffect(() => {
     setOptions({
       title: {
-        text: server.data?.server.name,
+        text: server.data?.name,
       },
       data: stats.map((stat) => ({
         time: new Date(stat.createdAt),
@@ -113,15 +109,15 @@ const ServerPage = () => {
         },
       ],
     });
-  }, [stats, server.data?.server.name]);
+  }, [stats, server.data?.name]);
 
   const getServerInformations = () => {
     return server?.data ? (
       <div className="flex flex-row flex-wrap gap-4 w-full">
         <ServerCard
-          key={server.data?.server.id}
-          server={server.data.server}
-          stat={server.data.stat}
+          key={server.data?.id}
+          server={server.data}
+          stat={server.data.stats[0]}
           categories={server.data.categories}
           isFull={true}
         />
@@ -237,8 +233,8 @@ const ServerPage = () => {
               {server.data ? (
                 <ImprovedCard
                   isLoading={isLoading}
-                  key={server.data?.server.name}
-                  server={server.data.server}
+                  key={server.data?.id}
+                  server={server.data}
                   stats={stats}
                   categories={server.data.categories}
                 />

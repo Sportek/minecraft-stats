@@ -18,12 +18,6 @@ import { useTheme } from "next-themes";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 
-export interface ServerData {
-  server: Server;
-  stat: ServerStat | null;
-  categories: Category[];
-}
-
 const DATA_AGGREGATION_INTERVAL_TYPES = {
   "30 Minutes": "30 minutes",
   "1 Hour": "1 hour",
@@ -34,7 +28,7 @@ const DATA_AGGREGATION_INTERVAL_TYPES = {
 };
 
 const Home = () => {
-  const { data, error, isLoading } = useSWR<ServerData[], Error>(
+  const { data, error, isLoading } = useSWR<Server[], Error>(
     `${process.env.NEXT_PUBLIC_API_URL}/servers`,
     fetcher,
     {
@@ -54,13 +48,13 @@ const Home = () => {
 
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [serversToShow, setServersToShow] = useState<ServerData[]>([]);
+  const [serversToShow, setServersToShow] = useState<Server[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const [serverToDisplayInGraph, setServerToDisplayInGraph] = useState<ServerData[]>([]);
+  const [serverToDisplayInGraph, setServerToDisplayInGraph] = useState<Server[]>([]);
 
   const [showZeroPlayer, setShowZeroPlayer] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -78,6 +72,10 @@ const Home = () => {
 
   const { favorites } = useFavorite();
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   // On filtre les serveurs en fonction de différents paramètres :
   // - La recherche
   // - Les catégories
@@ -88,8 +86,8 @@ const Home = () => {
       const filteredData = data
         ?.filter(
           (server) =>
-            server.server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            server.server.address.toLowerCase().includes(searchTerm.toLowerCase())
+            server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            server.address.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .filter((server) => {
           return (
@@ -98,15 +96,15 @@ const Home = () => {
           );
         })
         .filter((server) => {
-          return showZeroPlayer ? true : server.stat?.playerCount;
+          return showZeroPlayer ? true : server.stats[0]?.playerCount;
         });
 
       const sortedData = filteredData?.toSorted((b, a) => {
-        return (a.stat?.playerCount ?? -1) - (b.stat?.playerCount ?? -1);
+        return (a.stats[0]?.playerCount ?? -1) - (b.stats[0]?.playerCount ?? -1);
       });
 
-      const favoriteServers = sortedData.filter((server) => favorites.includes(server.server.id));
-      const nonFavoriteServers = sortedData.filter((server) => !favorites.includes(server.server.id));
+      const favoriteServers = sortedData.filter((server) => favorites.includes(server.id));
+      const nonFavoriteServers = sortedData.filter((server) => !favorites.includes(server.id));
 
       setServersToShow([...favoriteServers, ...nonFavoriteServers]);
     }
@@ -150,7 +148,7 @@ const Home = () => {
 
     (async () => {
       const statsData = await Promise.all(
-        serverToDisplayInGraph.map(async (server) => await fetchServerStats(server.server.id, server.server.name))
+        serverToDisplayInGraph.map(async (server) => await fetchServerStats(server.id, server.name))
       );
       setServerStatistics(statsData);
     })();
@@ -164,10 +162,10 @@ const Home = () => {
         ? favorites
         // On affiche les 5 serveurs avec le plus de joueurs
         : data
-            .toSorted((a, b) => (b.stat?.playerCount ?? -1) - (a.stat?.playerCount ?? -1))
+            .toSorted((a, b) => (b.stats[0]?.playerCount ?? -1) - (a.stats[0]?.playerCount ?? -1))
             .slice(0, Math.min(data.length, 5))
-            .map((server) => server.server.id);
-    setServerToDisplayInGraph(data.filter((server) => servers.includes(server.server.id)));
+            .map((server) => server.id);
+    setServerToDisplayInGraph(data.filter((server) => servers.includes(server.id)));
   }, [favorites, data]);
 
   const { resolvedTheme } = useTheme();
@@ -225,7 +223,7 @@ const Home = () => {
           <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
             <StatCard
               title="Total amount of online players"
-              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
+              value={data.reduce((acc, curr) => acc + (curr.stats[0]?.playerCount ?? 0), 0).toString()}
               icon={<Icon icon="mdi:account-multiple" className="text-blue-700 dark:text-blue-300 w-6 h-6" />}
             />
             <StatCard
@@ -304,9 +302,9 @@ const Home = () => {
             {serversToShow.length > 0 ? (
               serversToShow.map((server) => (
                 <ServerCard
-                  key={server.server.id}
-                  server={server.server}
-                  stat={server.stat}
+                  key={server.id}
+                  server={server}
+                  stat={server.stats[0]}
                   categories={server.categories}
                   isFull={false}
                 />

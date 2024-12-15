@@ -10,6 +10,8 @@ export interface Server {
   user: User;
   createdAt: Date;
   lastOnlineAt: Date | null;
+  stats: ServerStat[];
+  categories: Category[];
 }
 
 export interface ServerStat {
