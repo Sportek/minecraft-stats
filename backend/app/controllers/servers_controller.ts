@@ -1,21 +1,25 @@
-import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
 import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
 import Category from '#models/category'
+import ServerStat from '#models/server_stat'
 
 export default class ServersController {
   async index() {
-    const servers = await Server.query().preload('user')
+    const servers = await Server.query().preload('user').preload('categories')
+
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
-        const categories = await server.related('categories').query()
-        const stat = await this.getActualStats(server)
-        return { server, stat, categories }
+        const stat = await ServerStat.query()
+          .where('server_id', server.id)
+          .orderBy('created_at', 'desc')
+          .first()
+        return { ...server.toJSON(), stats: stat ? [stat] : [] }
       })
     )
+
     return serversWithStats
   }
 
@@ -48,20 +52,15 @@ export default class ServersController {
     return server
   }
 
-  private async getActualStats(server: Server) {
-    const stats = await ServerStat.query()
-      .where('server_id', server.id)
-      .orderBy('created_at', 'desc')
-      .first()
-    return stats
-  }
-
   async show({ params, response }: HttpContext) {
-    let server = await Server.query().where('id', params.id).preload('user').first()
+    let server = await Server.query()
+      .where('id', params.id)
+      .preload('user')
+      .preload('stats', (query) => query.orderBy('created_at', 'desc').limit(1))
+      .preload('categories')
+      .first()
     if (!server) return response.notFound({ message: 'Server not found' })
-    const stat = await this.getActualStats(server)
-    const categories = await server.related('categories').query()
-    return { server, stat, categories }
+    return server
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
