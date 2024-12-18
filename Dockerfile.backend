@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+# Créer un répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY backend/package*.json ./
+
+# Installer les dépendances en mode production
+RUN npm install --production
+
+# Copier le reste du code backend
+COPY backend/ .
+
+# Lance le scheduler + le serveur
+RUN chmod +x start.sh
+
+# Exposer le port du serveur (par exemple 3333)
+EXPOSE 3333
+
+# Lancer le script au démarrage
+CMD ["./start.sh"]

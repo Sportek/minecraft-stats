@@ -1,0 +1,24 @@
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copier et installer les dépendances
+COPY frontend/package*.json ./
+RUN npm install
+
+# Copier le reste du code et builder
+COPY frontend/ .
+RUN npm run build
+
+FROM node:18-alpine
+WORKDIR /app
+
+# Copier juste le build final et les deps de prod
+COPY frontend/package*.json ./
+RUN npm install --production
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Exposer le port (par défaut 3000 pour Next)
+EXPOSE 3000
+
+CMD ["npm", "start"]
