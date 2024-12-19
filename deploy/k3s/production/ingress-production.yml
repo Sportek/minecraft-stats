@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: production-ingress
   namespace: production
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
 spec:
   ingressClassName: traefik
   tls:
