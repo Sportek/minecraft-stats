@@ -11,6 +11,8 @@ spec:
     - hosts:
         - staging.minecraft-stats.com
         - staging.minecraft-stats.fr
+        - api.staging.minecraft-stats.com
+        - api.staging.minecraft-stats.fr
       secretName: minecraft-stats-staging-tls
   rules:
     - host: staging.minecraft-stats.com
@@ -23,13 +25,6 @@ spec:
                 name: frontend-service
                 port:
                   number: 3000
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 3333
     - host: staging.minecraft-stats.fr
       http:
         paths:
@@ -40,7 +35,20 @@ spec:
                 name: frontend-service
                 port:
                   number: 3000
-          - path: /api
+    - host: api.staging.minecraft-stats.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 3333
+    - host: api.staging.minecraft-stats.fr
+      http:
+        paths:
+          - path: /
             pathType: Prefix
             backend:
               service:
