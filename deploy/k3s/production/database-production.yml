@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-production
+  namespace: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-production-config
+            - secretRef:
+                name: postgres-production-secret
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 0.5
+            limits:
+              memory: 2Gi
+              cpu: 1
+              storage: 5Gi
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-production-pvc

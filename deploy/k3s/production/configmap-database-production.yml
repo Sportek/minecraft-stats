@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-production-config
+  namespace: production
+data:
+  POSTGRES_DB: minecraft_stats_prod
+  POSTGRES_USER: minecraft_stats_prod

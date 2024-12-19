@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-staging-config
+  namespace: staging
+data:
+  POSTGRES_DB: minecraft_stats_staging
+  POSTGRES_USER: minecraft_stats_staging
