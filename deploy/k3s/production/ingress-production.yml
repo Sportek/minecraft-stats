@@ -9,8 +9,8 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-      - minecraft-stats.com
-      - minecraft-stats.fr
+        - minecraft-stats.com
+        - minecraft-stats.fr
       secretName: minecraft-stats-prod-tls
   rules:
     - host: minecraft-stats.com

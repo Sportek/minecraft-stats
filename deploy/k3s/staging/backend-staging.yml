@@ -28,26 +28,31 @@ spec:
     spec:
       automountServiceAccountToken: false
       containers:
-      - name: backend
-        image: sportek/minecraft-stats-backend:staging
-        ports:
-        - containerPort: 3333
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-            ephemeral-storage: "1Gi"
-          limits:
-            cpu: "250m"
-            memory: "256Mi"
-            ephemeral-storage: "2Gi"
-        volumeMounts:
-          - name: data-storage
-            mountPath: /app/data
+        - name: backend
+          image: sportek/minecraft-stats-backend:staging
+          ports:
+            - containerPort: 3333
+          envFrom:
+            - configMapRef:
+                name: staging-backend-config
+            - secretRef:
+                name: staging-backend-secrets
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+              ephemeral-storage: "2Gi"
+          volumeMounts:
+            - name: data-storage
+              mountPath: /app/data
       volumes:
-      - name: data-storage
-        persistentVolumeClaim:
-          claimName: backend-pvc
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: backend-pvc
 ---
 apiVersion: v1
 kind: Service

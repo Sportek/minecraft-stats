@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: production-backend-config
+data:
+  APP_NAME: "prod"
+  PORT: "9000"
+  NODE_ENV: "production"
+  HOST: "0.0.0.0"
+  LOG_LEVEL: "info"
+  DB_HOST: "pgsql"
+  DB_PORT: "5432"
+  DB_USER: "minecraft_stats"
+  DB_DATABASE: "minecraft_stats"
+  WEBSITE_URL: "https://minecraft-stats.fr"
+  TZ: "UTC"

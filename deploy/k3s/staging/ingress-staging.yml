@@ -9,8 +9,8 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-      - staging.minecraft-stats.com
-      - staging.minecraft-stats.fr
+        - staging.minecraft-stats.com
+        - staging.minecraft-stats.fr
       secretName: minecraft-stats-staging-tls
   rules:
     - host: staging.minecraft-stats.com

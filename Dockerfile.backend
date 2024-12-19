@@ -1,22 +1,36 @@
-FROM node:18-alpine
+# Étape 1 : Builder
+FROM node:20 AS builder
 
-# Créer un répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances
-COPY backend/package*.json ./
+# Copier uniquement les fichiers nécessaires pour installer les dépendances
+COPY backend/package*.json ./backend/
 
-# Installer les dépendances en mode production
-RUN npm install --production
+# Installer toutes les dépendances (y compris devDependencies) pour le build
+WORKDIR /app/backend
+RUN npm ci
 
-# Copier le reste du code backend
-COPY backend/ .
+# Copier le reste du code source
+COPY backend .
 
-# Lance le scheduler + le serveur
-RUN chmod +x start.sh
+# Build le code TypeScript en JavaScript
+RUN npm run build
 
-# Exposer le port du serveur (par exemple 3333)
+# Étape 2 : Production
+FROM node:20 AS production
+
+WORKDIR /app/backend
+
+# Copier les fichiers nécessaires depuis l'étape builder
+COPY --from=builder /app/backend/build ./build
+COPY --from=builder /app/backend/package*.json ./build/
+
+# Installer uniquement les dépendances de production dans le dossier build
+WORKDIR /app/backend/build
+RUN npm ci --omit=dev
+
+# Expose le port utilisé par le backend
 EXPOSE 3333
 
-# Lancer le script au démarrage
-CMD ["./start.sh"]
+# Lancer le serveur en production
+CMD ["node", "bin/server.js"]
