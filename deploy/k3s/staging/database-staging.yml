@@ -18,15 +18,6 @@ spec:
           image: postgres:15
           ports:
             - containerPort: 5432
-          imagePullPolicy: Always
-          resources:
-            requests:
-              memory: 1Gi
-              cpu: 0.5
-            limits:
-              memory: 2Gi
-              cpu: 1
-              storage: 5Gi
           envFrom:
             - configMapRef:
                 name: postgres-staging-config
@@ -35,6 +26,13 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
