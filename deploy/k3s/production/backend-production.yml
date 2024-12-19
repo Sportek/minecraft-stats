@@ -32,7 +32,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: backend
-          image: sportek/minecraft-stats-backend:production
+          image: sportek/minecraft-stats-backend:production-1.0
           ports:
             - containerPort: 3333
           envFrom:
