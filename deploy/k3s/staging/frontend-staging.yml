@@ -18,6 +18,7 @@ spec:
       containers:
         - name: frontend
           image: sportek/minecraft-stats-frontend:staging
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           resources:

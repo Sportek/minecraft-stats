@@ -30,6 +30,7 @@ spec:
       containers:
         - name: backend
           image: sportek/minecraft-stats-backend:staging
+          imagePullPolicy: Always
           ports:
             - containerPort: 3333
           envFrom:
