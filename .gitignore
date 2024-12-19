@@ -1,0 +1,2 @@
+deploy/k3s/production/secrets-backend-production.yml
+deploy/k3s/staging/secrets-backend-staging.yml
