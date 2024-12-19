@@ -9,7 +9,7 @@ data:
   NODE_ENV: "production"
   HOST: "0.0.0.0"
   LOG_LEVEL: "info"
-  DB_HOST: postgres-staging
+  DB_HOST: "postgres-staging"
   DB_PORT: "5432"
   DB_USER: "minecraft_stats"
   DB_DATABASE: "minecraft_stats"

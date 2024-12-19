@@ -37,3 +37,19 @@ spec:
         - name: postgres-data
           persistentVolumeClaim:
             claimName: postgres-staging-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-staging
+  namespace: staging
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
