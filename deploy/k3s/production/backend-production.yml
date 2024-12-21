@@ -20,7 +20,7 @@ metadata:
   name: backend-deployment
   namespace: production
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend
