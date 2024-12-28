@@ -26,6 +26,7 @@ server.use([
   () => import('#middleware/container_bindings_middleware'),
   () => import('#middleware/force_json_response_middleware'),
   () => import('@adonisjs/cors/cors_middleware'),
+  () => import('#middleware/logger_middleware'),
   () => import('@adonisjs/static/static_middleware')
 ])
 
@@ -37,7 +38,6 @@ router.use([
   () => import('@adonisjs/core/bodyparser_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
   () => import('#middleware/initialize_bouncer_middleware'),
-  () => import('#middleware/logger_middleware')
 ])
 
 /**
