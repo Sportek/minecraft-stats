@@ -2,14 +2,14 @@
 import EditServerForm from "@/components/form/edit-server-form";
 import Loader from "@/components/loader";
 import { getServer } from "@/http/server";
-import { Category, Server, ServerStat } from "@/types/server";
+import { Server } from "@/types/server";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 const ServerEditPage = () => {
   const { serverId } = useParams();
 
-  const [server, setServer] = useState<{ server: Server; stat: ServerStat | null; categories: Category[] }>();
+  const [server, setServer] = useState<Server>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -17,7 +17,7 @@ const ServerEditPage = () => {
   const updateServer = useCallback(async () => {
     try {
       const server = await getServer(Number(serverId));
-      setServer(server);
+          setServer(server);
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -42,7 +42,7 @@ const ServerEditPage = () => {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-4">
               <div className="w-screen max-w-2xl">
-                <EditServerForm server={server.server} serverCategories={server.categories} updateServer={updateServer} />
+                <EditServerForm server={server} serverCategories={server.categories} updateServer={updateServer} />
               </div>
             </div>
           </div>

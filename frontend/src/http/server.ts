@@ -1,5 +1,5 @@
 import { getBaseUrl } from "@/app/_cheatcode";
-import { Category, Server, ServerStat } from "@/types/server";
+import { Server, ServerStat } from "@/types/server";
 import { getErrorMessage } from "./auth";
 
 export const addMinecraftServer = async (data: { name: string; address: string; port: number; categories: string[] }, token: string) => {
@@ -32,12 +32,12 @@ export const getServers = async () => {
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<{ server: Server; stat: ServerStat; categories: Category[] }[]>;
+  return response.json() as Promise<Server[]>;
 };
 
 export const getServer = async (serverId: number) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
-  return response.json() as Promise<{ server: Server; stat: ServerStat | null; categories: Category[] }>;
+  return response.json() as Promise<Server>;
 };
 
 export const getServerStats = async (

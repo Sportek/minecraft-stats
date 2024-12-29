@@ -65,7 +65,7 @@ export default class StatsController {
             serverId: row.server_id,
             createdAt: row.created_at,
             playerCount: Number(row.player_count),
-          })).filter((stat: any) => stat.playerCount !== 0) // On filtre les stats où le nombre de joueurs est 0
+          }))
         )
       }
 
