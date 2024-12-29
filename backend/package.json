@@ -12,7 +12,11 @@
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:docker": "docker build -t sportek/minecraft-stats-back:latest .",
+    "run:docker": "docker run -p 9000:9000 sportek/minecraft-stats-back:latest",
+    "start:docker": "docker compose --env-file ./.env.production up -d",
+    "stop:docker": "docker compose down"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
