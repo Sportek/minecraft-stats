@@ -51,5 +51,5 @@ jobs:
             DB_USER=${{ secrets.DB_USER }}
             EOL
             docker compose pull
-            docker compose up -d
+            docker compose --env-file .env.production up -d
             docker image prune -f
