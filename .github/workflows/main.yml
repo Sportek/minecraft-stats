@@ -44,6 +44,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/minecraft-stats/website/backend
+            cat > .env << EOL
+            APP_NAME=${{ vars.APP_NAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USER=${{ secrets.DB_USER }}
+            EOL
             docker compose pull
             docker compose up -d
             docker image prune -f
