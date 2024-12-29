@@ -28,8 +28,8 @@ jobs:
 
       - name: Construire et pousser l'image Docker
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/minecraft-stats-backend:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/minecraft-stats-backend:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest
 
   deploy:
     runs-on: ubuntu-latest
