@@ -1,73 +1,48 @@
-name: Deploy Minecraft-Stats Backend
+name: Déployer le backend de Minecraft-Stats
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Se connecter à Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Construire et pousser l'image Docker
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/minecraft-stats-backend:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/minecraft-stats-backend:latest
+
   deploy:
     runs-on: ubuntu-latest
-    environment: Production
+    needs: build-and-push-image
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install SSH
-        run: sudo apt-get install openssh-client
-
-      - name: Update repository on server
-        uses: appleboy/ssh-action@master
+      - name: Déployer via SSH
+        uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/minecraft-stats/website/backend
-            git pull origin main
-      - name: Create .env.production file with secrets
-        uses: SpicyPizza/create-envfile@v2.0
-        with:
-          envkey_APP_NAME: ${{ vars.APP_NAME }}
-          envkey_PORT: ${{ vars.PORT }}
-          envkey_APP_KEY: ${{ secrets.APP_KEY }}
-          envkey_NODE_ENV: development
-          envkey_DB_HOST: pgsql
-          envkey_DB_PORT: 5432
-          envkey_TZ: UTC
-          envkey_HOST: 0.0.0.0
-          envkey_LOG_LEVEL: info
-          envkey_DB_USER: ${{ secrets.DB_USER }}
-          envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          envkey_DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          envkey_RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          envkey_WEBSITE_URL: ${{ vars.WEBSITE_URL }}
-          envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
-          envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
-          envkey_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          file_name: .env.production
-
-      - name: Copier le fichier .env.production sur le serveur
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: .env.production
-          target: /home/minecraft-stats/website/backend/
-
-      - name: Use SSH to connect to server and run Docker Compose commands
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/minecraft-stats/website/backend
-            docker compose down
-            docker compose --env-file .env.production build
-            docker compose --env-file .env.production up -d
+            docker compose pull
+            docker compose up -d
             docker image prune -f
