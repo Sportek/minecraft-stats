@@ -28,6 +28,7 @@ jobs:
 
       - name: Construire et pousser l'image Docker
         run: |
+          cd backend
           docker build -t ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest .
           docker push ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest
 
