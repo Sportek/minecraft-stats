@@ -1,4 +1,3 @@
-# For more information: https://github.com/julien-r44/adonis-sail
 name: minecraft-stats
 services:
   pgsql:
@@ -25,17 +24,11 @@ services:
 
   adonis_app:
     container_name: 'stats-backend-${APP_NAME}'
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: 'sportek/minecraft-stats-back:latest'
     ports:
       - '9000:9000'
     env_file:
       - .env.production
-    volumes:
-      - ./:/home/node/app
-      - server-images:/home/node/app/public
-      - /home/node/app/node_modules
     depends_on:
       - pgsql
     command: >
@@ -50,9 +43,7 @@ services:
 
   adonis_scheduler:
     container_name: 'stats-scheduler-${APP_NAME}'
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: 'sportek/minecraft-stats-back:latest'
     env_file:
       - .env.production
     depends_on:
@@ -61,10 +52,6 @@ services:
     command: 'node ace scheduler:run'
     networks:
       - sail
-    volumes:
-      - ./:/home/node/app
-      - server-images:/home/node/app/public
-      - /home/node/app/node_modules
     logging:
       driver: "json-file"
       options:

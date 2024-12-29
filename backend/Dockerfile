@@ -7,6 +7,7 @@ WORKDIR /home/node/app
 COPY package.json ./
 RUN npm install
 
+# On copie le fichier .env.production dans le dossier app
 COPY .env.production /app/.env.production
 
 # On copie le reste du code
