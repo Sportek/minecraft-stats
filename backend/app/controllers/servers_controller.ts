@@ -7,15 +7,18 @@ import { CreateServerValidator, UpdateServerValidator } from '#validators/server
 import Category from '#models/category'
 
 export default class ServersController {
-  async index() {
-    const servers = await Server.query().preload('user')
+  async index({ logger }: HttpContext) {
+
+    const start = performance.now()
+    const servers = await Server.query().preload('user').preload('categories')
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
-        const categories = await server.related('categories').query()
         const stat = await this.getActualStats(server)
-        return { server, stat, categories }
+        return { server, stat, categories: server.categories }
       })
     )
+    const end = performance.now()
+    logger.info(`Access to db: ${end - start} ms`)
     return serversWithStats
   }
 
