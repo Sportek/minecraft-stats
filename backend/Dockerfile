@@ -13,7 +13,7 @@ COPY . .
 # La seule valeur qui importe, c'est NODE_ENV=production
 RUN echo "NODE_ENV=production" > .env && \
     echo "PORT=3333" >> .env && \
-    echo "APP_KEY=default_app_key" >> .env && \
+    echo "APP_KEY=QSKJDKOQWJDIQWJHDOIQWHJJDIQWUDHWIQDHIQHWID" >> .env && \
     echo "HOST=127.0.0.1" >> .env && \
     echo "LOG_LEVEL=info" >> .env && \
     echo "DB_HOST=localhost" >> .env && \
