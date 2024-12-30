@@ -70,6 +70,8 @@ services:
     - '9020:3000'
     volumes:
       - grafana-storage:/var/lib/grafana
+    networks:
+      - sail
 
   prometheus:
     image: prom/prometheus:latest
