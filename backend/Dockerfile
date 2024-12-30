@@ -9,6 +9,17 @@ RUN npm install
 # On copie le reste du code
 COPY . .
 
-# On génère la documentation Swagger
-RUN node ace docs:generate && \
-    cp swagger.yml build/
+# Ajouter un fichier .env temporaire
+RUN echo "DB_USER=default_user" > .env && \
+    echo "DB_DATABASE=default_db" >> .env && \
+    echo "RESEND_API_KEY=default_key" >> .env && \
+    echo "DISCORD_CLIENT_ID=default_client_id" >> .env && \
+    echo "DISCORD_CLIENT_SECRET=default_client_secret" >> .env && \
+    echo "GOOGLE_CLIENT_ID=default_google_id" >> .env && \
+    echo "GOOGLE_CLIENT_SECRET=default_google_secret" >> .env
+
+# Générer la documentation
+RUN node ace docs:generate && cp swagger.yml build/
+
+# Nettoyer le fichier .env temporaire
+RUN rm .env
