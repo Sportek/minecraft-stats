@@ -45,6 +45,8 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            cd /home/minecraft-stats/website
+            git pull origin main
             cd /home/minecraft-stats/website/backend
             cat > .env << EOL
             IMAGE_TAG=$GITHUB_SHA
