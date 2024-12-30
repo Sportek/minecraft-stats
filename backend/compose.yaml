@@ -40,6 +40,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    volumes:
+    - server-images:/home/node/app/public/images
 
   adonis_scheduler:
     container_name: 'stats-scheduler-${APP_NAME}'
@@ -57,6 +59,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    volumes:
+      - server-images:/home/node/app/public/images
 
 networks:
   sail:
@@ -67,3 +71,4 @@ volumes:
     name: 'stats-pgsql-${APP_NAME}'
   server-images:
     name: 'stats-images-${APP_NAME}'
+    driver: local
