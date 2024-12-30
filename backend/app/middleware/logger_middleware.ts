@@ -11,13 +11,15 @@ export default class LoggerMiddleware {
       
       const duration = Math.round(performance.now() - startTime)
 
-      ctx.logger.info(`${ctx.request.method()} ${ctx.request.ip()} ${ctx.request.url()} ${ctx.response.getStatus()} ${duration}ms`)
+      const realIp = ctx.request.header('CF-Connecting-IP') || ctx.request.ip();
+      ctx.logger.info(`[${realIp}] ${ctx.request.method()} ${ctx.request.url()} ${ctx.response.getStatus()} ${duration}ms`)
 
       return output
     } catch (error) {
 
       const duration = Math.round(performance.now() - startTime)
-      ctx.logger.error(`${ctx.request.method()} ${ctx.request.ip()} ${ctx.request.url()} ${error.status || 500} ${duration}ms ${error.name} ${error.message}`)
+      const realIp = ctx.request.header('CF-Connecting-IP') || ctx.request.ip();
+      ctx.logger.error(`[${realIp}] ${ctx.request.method()} ${ctx.request.url()} ${error.status || 500} ${duration}ms ${error.name} ${error.message}`)
     
       throw error
     }
