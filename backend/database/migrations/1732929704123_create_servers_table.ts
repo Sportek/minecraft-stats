@@ -1,5 +1,3 @@
-import Server from '#models/server'
-import ServerStat from '#models/server_stat'
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {

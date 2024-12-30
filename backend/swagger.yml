@@ -1,0 +1,932 @@
+openapi: "3.0.0"
+info:
+  title: "Minecraft Stats API"
+  version: "1.0.0"
+  description: ""
+components:
+  responses:
+    Forbidden:
+      description: "Access token is missing or invalid"
+    Accepted:
+      description: "The request was accepted"
+    Created:
+      description: "The resource has been created"
+    NotFound:
+      description: "The resource has been created"
+    NotAcceptable:
+      description: "The resource has been created"
+  securitySchemes:
+    BearerAuth:
+      type: "http"
+      scheme: "bearer"
+    BasicAuth:
+      type: "http"
+      scheme: "basic"
+    ApiKeyAuth:
+      type: "apiKey"
+      in: "header"
+      name: "X-API-Key"
+  schemas:
+    Any:
+      description: "Any JSON object not defined as schema"
+    Category:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 721
+        name:
+          type: "string"
+          example: "John Doe"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Category (Model)"
+    Server:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 381
+        name:
+          type: "string"
+          example: "John Doe"
+        address:
+          type: "string"
+          example: "1028 Farland Street"
+        port:
+          type: "number"
+          example: 830
+        version:
+          type: "string"
+          example: "Lorem Ipsum"
+        motd:
+          type: "string"
+          example: "Lorem Ipsum"
+        image_url:
+          type: "string"
+          example: "Lorem Ipsum"
+        user_id:
+          type: "number"
+          example: 709
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+        categories:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Category"
+            example: null
+        last_online_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Server (Model)"
+    ServerStat:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 573
+        server:
+          $ref: "#/components/schemas/Server"
+          example: null
+        server_id:
+          type: "number"
+          example: 172
+        player_count:
+          type: "number"
+          example: 323
+        max_count:
+          type: "number"
+          example: 298
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerStat (Model)"
+    User:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 50
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+        verified:
+          type: "boolean"
+          example: true
+        provider:
+          $ref: "#/components/schemas/'discord'"
+          example: null
+        role:
+          $ref: "#/components/schemas/'admin'"
+          example: null
+        avatar_url:
+          type: "string"
+          example: "Lorem Ipsum"
+        verification_token_expires:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "User (Model)"
+    PaginationMeta:
+      type: "object"
+      properties:
+        total:
+          type: "number"
+          example: 100
+          nullable: false
+        page:
+          type: "number"
+          example: 2
+          nullable: false
+        perPage:
+          type: "number"
+          example: 10
+          nullable: false
+        currentPage:
+          type: "number"
+          example: 3
+          nullable: false
+        lastPage:
+          type: "number"
+          example: 10
+          nullable: false
+        firstPage:
+          type: "number"
+          example: 1
+          nullable: false
+        lastPageUrl:
+          type: "string"
+          example: "/?page=10"
+          nullable: false
+        firstPageUrl:
+          type: "string"
+          example: "/?page=1"
+          nullable: false
+        nextPageUrl:
+          type: "string"
+          example: "/?page=6"
+          nullable: false
+        previousPageUrl:
+          type: "string"
+          example: "/?page=5"
+          nullable: false
+    CreateCategoryValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        name: "Lorem Ipsum"
+      description: "CreateCategoryValidator (Validator)"
+    CreateServerValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        address:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        port:
+          type: "number"
+          example: 1
+          maximum: 65535
+          minimum: 1
+          required: true
+        imageUrl:
+          type: "string"
+          example: "Lorem Ipsum"
+        categories:
+          type: "array"
+          items:
+            type: "number"
+            example: 36
+          required: true
+          properties:
+            items:
+              type: "string"
+              example: "Lorem Ipsum"
+        version:
+          type: "string"
+          example: "Lorem Ipsum"
+        motd:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        name: "Lorem Ipsum"
+        address: "Lorem Ipsum"
+        port: 1
+        imageUrl: "Lorem Ipsum"
+        categories:
+          - "Lorem Ipsum"
+        version: "Lorem Ipsum"
+        motd: "Lorem Ipsum"
+      description: "CreateServerValidator (Validator)"
+    UpdateServerValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+        address:
+          type: "string"
+          example: "Lorem Ipsum"
+        port:
+          type: "number"
+          example: 1
+          maximum: 65535
+          minimum: 1
+        imageUrl:
+          type: "string"
+          example: "Lorem Ipsum"
+        categories:
+          type: "array"
+          items:
+            type: "number"
+            example: 586
+          properties:
+            items:
+              type: "string"
+              example: "Lorem Ipsum"
+        version:
+          type: "string"
+          example: "Lorem Ipsum"
+        motd:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        name: "Lorem Ipsum"
+        address: "Lorem Ipsum"
+        port: 1
+        imageUrl: "Lorem Ipsum"
+        categories:
+          - "Lorem Ipsum"
+        version: "Lorem Ipsum"
+        motd: "Lorem Ipsum"
+      description: "UpdateServerValidator (Validator)"
+    StatValidator:
+      type: "object"
+      properties:
+        server_id:
+          type: "number"
+          example: 589
+          required: true
+        exactTime:
+          type: "number"
+          example: 402
+        fromDate:
+          type: "number"
+          example: 742
+        toDate:
+          type: "number"
+          example: 66
+        interval:
+          type: "number"
+          example: 2
+          choices:
+            - "30 minutes"
+            - "1 hour"
+            - "1 day"
+            - "2 hours"
+            - "6 hours"
+            - "1 week"
+      example:
+        server_id: 589
+        exactTime: 402
+        fromDate: 742
+        toDate: 66
+        interval: 2
+      description: "StatValidator (Validator)"
+    ChangePasswordValidator:
+      type: "object"
+      properties:
+        oldPassword:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+          maxLength: 72
+        newPassword:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+          maxLength: 72
+      example:
+        oldPassword: "Lorem Ipsum"
+        newPassword: "Lorem Ipsum"
+      description: "ChangePasswordValidator (Validator)"
+    CreateUserValidator:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 3
+          maxLength: 254
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          maxLength: 254
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+          maxLength: 72
+      example:
+        username: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "CreateUserValidator (Validator)"
+    LoginUserValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          maxLength: 254
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+          maxLength: 72
+      example:
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "LoginUserValidator (Validator)"
+    UpdateUserValidator:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+          minLength: 3
+          maxLength: 254
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 254
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          minLength: 8
+          maxLength: 72
+      example:
+        username: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "UpdateUserValidator (Validator)"
+    VerifyEmailValidator:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        token: "Lorem Ipsum"
+      description: "VerifyEmailValidator (Validator)"
+paths:
+  /api/v1/servers:
+    get:
+      summary: "Get a list of servers (index)"
+      description: "\n\n _app/controllers/servers_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/servers_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "SERVERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/servers/{id}:
+    get:
+      summary: "Get a single instance of servers (show)"
+      description: "\n\n _app/controllers/servers_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update servers (update)"
+      description: "\n\n _app/controllers/servers_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete servers (destroy)"
+      description: "\n\n _app/controllers/servers_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{server_id}/categories:
+    get:
+      summary: "Get a list of servers (index)"
+      description: "\n\n _app/controllers/server_categories_controller.ts_ - **index**"
+      parameters:
+        - in: "path"
+          name: "server_id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/server_categories_controller.ts_ - **store**"
+      parameters:
+        - in: "path"
+          name: "server_id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/servers/{server_id}/categories/{id}:
+    delete:
+      summary: "Delete servers (destroy)"
+      description: "\n\n _app/controllers/server_categories_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "server_id"
+          schema:
+            type: "string"
+          required: true
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/categories:
+    get:
+      summary: "Get a list of categories (index)"
+      description: "\n\n _app/controllers/categories_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "CATEGORIES"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/categories_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "CATEGORIES"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/categories/{id}:
+    get:
+      summary: "Get a single instance of categories (show)"
+      description: "\n\n _app/controllers/categories_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "CATEGORIES"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update categories (update)"
+      description: "\n\n _app/controllers/categories_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "CATEGORIES"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete categories (destroy)"
+      description: "\n\n _app/controllers/categories_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "CATEGORIES"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{server_id}/stats:
+    get:
+      summary: "Get a list of servers (index)"
+      description: "\n\n _app/controllers/stats_controller.ts_ - **index**"
+      parameters:
+        - in: "path"
+          name: "server_id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/users:
+    get:
+      summary: "Get a list of users (index)"
+      description: "\n\n _app/controllers/users_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "USERS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/users_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "USERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/users/{id}:
+    get:
+      summary: "Get a single instance of users (show)"
+      description: "\n\n _app/controllers/users_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "USERS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update users (update)"
+      description: "\n\n _app/controllers/users_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "USERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete users (destroy)"
+      description: "\n\n _app/controllers/users_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "USERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/website-stats:
+    get:
+      summary: "Get a list of website-stats (index)"
+      description: "\n\n _app/controllers/website_stats_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "WEBSITE-STATS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/login:
+    post:
+      summary: " (login)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **login**"
+      parameters: []
+      tags:
+        - "LOGIN"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/register:
+    post:
+      summary: " (register)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **register**"
+      parameters: []
+      tags:
+        - "REGISTER"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/verify-email:
+    post:
+      summary: " (verifyEmail)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **verifyEmail**"
+      parameters: []
+      tags:
+        - "VERIFY-EMAIL"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/me:
+    get:
+      summary: " (retrieveUser)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **retrieveUser**"
+      parameters: []
+      tags:
+        - "ME"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/change-password:
+    post:
+      summary: " (changePassword)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **changePassword**"
+      parameters: []
+      tags:
+        - "CHANGE-PASSWORD"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/login/{provider}:
+    get:
+      summary: " (providerLogin)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **providerLogin**"
+      parameters:
+        - in: "path"
+          name: "provider"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "LOGIN"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/callback/google:
+    get:
+      summary: " (googleCallback)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **googleCallback**"
+      parameters: []
+      tags:
+        - "CALLBACK"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/callback/discord:
+    get:
+      summary: " (discordCallback)"
+      description: "\n\n _app/controllers/auth_controller.ts_ - **discordCallback**"
+      parameters: []
+      tags:
+        - "CALLBACK"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+tags:
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
+  - name: "CATEGORIES"
+    description: "Everything related to CATEGORIES"
+  - name: "USERS"
+    description: "Everything related to USERS"
+  - name: "WEBSITE-STATS"
+    description: "Everything related to WEBSITE-STATS"
+  - name: "LOGIN"
+    description: "Everything related to LOGIN"
+  - name: "REGISTER"
+    description: "Everything related to REGISTER"
+  - name: "VERIFY-EMAIL"
+    description: "Everything related to VERIFY-EMAIL"
+  - name: "ME"
+    description: "Everything related to ME"
+  - name: "CHANGE-PASSWORD"
+    description: "Everything related to CHANGE-PASSWORD"
+  - name: "CALLBACK"
+    description: "Everything related to CALLBACK"

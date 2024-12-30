@@ -20,6 +20,12 @@ jobs:
       - name: Installer les dépendances
         run: npm ci
 
+      - name: Générer la documentation Swagger
+        run: |
+          cd backend
+          node ace docs:generate
+          cp swagger.yml build/
+
       - name: Se connecter à Docker Hub
         uses: docker/login-action@v3
         with:
