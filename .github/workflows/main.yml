@@ -18,7 +18,7 @@ jobs:
           node-version: 20
 
       - name: Installer les dépendances
-        run: npm ci
+        run: yarn install
 
       - name: Se connecter à Docker Hub
         uses: docker/login-action@v3

@@ -47,7 +47,8 @@ export default defineConfig({
       file: () => import('adonisjs-scheduler/scheduler_provider'),
       environment: ['console'],
     },
-    () => import('@adonisjs/static/static_provider')
+    () => import('@adonisjs/static/static_provider'),
+    () => import('@julr/adonisjs-prometheus/prometheus_provider')
   ],
 
   /*

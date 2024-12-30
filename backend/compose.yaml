@@ -61,6 +61,30 @@ services:
         max-file: "3"
     volumes:
       - server-images:/home/node/app/public/images
+  
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: 'grafana-${APP_NAME}'
+    restart: unless-stopped
+    ports:
+    - '9020:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: 'prometheus-${APP_NAME}'
+    volumes:
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+    networks:
+      - sail
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   sail:
@@ -72,3 +96,4 @@ volumes:
   server-images:
     name: 'stats-images-${APP_NAME}'
     driver: local
+  grafana-storage: {}

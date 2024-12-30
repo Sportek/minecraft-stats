@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'adonis_app'
+    static_configs:
+      - targets: ['stats-backend-${APP_NAME}:9000']

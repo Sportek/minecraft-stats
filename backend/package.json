@@ -68,6 +68,7 @@
     "@adonisjs/lucid": "^20.6.0",
     "@adonisjs/mail": "^9.2.1",
     "@adonisjs/static": "^1.1.1",
+    "@julr/adonisjs-prometheus": "^1.0.1",
     "@minescope/mineping": "^1.4.1",
     "@swc/wasm": "^1.5.24",
     "@vinejs/vine": "^2.0.0",
