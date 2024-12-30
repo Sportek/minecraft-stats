@@ -27,7 +27,9 @@ RUN echo "NODE_ENV=production" > .env && \
     echo "GOOGLE_CLIENT_SECRET=default_google_secret" >> .env
 
 # Générer la documentation
-RUN node ace docs:generate && cp swagger.yml build/
+RUN mkdir -p build && \
+    node ace docs:generate && \
+    cp swagger.yml build/
 
 # Nettoyer le fichier .env temporaire
 RUN rm .env
