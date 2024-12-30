@@ -18,7 +18,8 @@ export default class ServersController {
       })
     )
     const end = performance.now()
-    logger.info(`Access to db: ${end - start} ms`)
+    const duration = Math.round(end - start)
+    logger.info(`Retrieve servers: ${duration} ms`)
     return serversWithStats
   }
 
