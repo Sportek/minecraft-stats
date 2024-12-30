@@ -9,8 +9,16 @@ RUN npm install
 # On copie le reste du code
 COPY . .
 
-# Ajouter un fichier .env temporaire
-RUN echo "DB_USER=default_user" > .env && \
+# Étape pour générer un fichier .env temporaire (peu importe les valeurs ici)
+# La seule valeur qui importe, c'est NODE_ENV=production
+RUN echo "NODE_ENV=production" > .env && \
+    echo "PORT=3333" >> .env && \
+    echo "APP_KEY=default_app_key" >> .env && \
+    echo "HOST=127.0.0.1" >> .env && \
+    echo "LOG_LEVEL=info" >> .env && \
+    echo "DB_HOST=localhost" >> .env && \
+    echo "DB_PORT=5432" >> .env && \
+    echo "DB_USER=default_user" >> .env && \
     echo "DB_DATABASE=default_db" >> .env && \
     echo "RESEND_API_KEY=default_key" >> .env && \
     echo "DISCORD_CLIENT_ID=default_client_id" >> .env && \
