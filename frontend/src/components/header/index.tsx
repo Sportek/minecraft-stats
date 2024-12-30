@@ -161,7 +161,7 @@ const Header = () => {
         </div>
         <div className="flex flex-col items-center gap-4 w-[90%] ">
           <Link
-            href="/api"
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
             className="text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out bg-zinc-200 dark:bg-zinc-800 text-stats-blue-1050 dark:text-stats-blue-50 w-full text-center"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -204,7 +204,7 @@ const Header = () => {
             ALL SERVERS
           </Link>
           <Link
-            href="/api"
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
             className={cn(
               "text-sm font-bold p-2 rounded-md transition-all duration-200 ease-in-out",
               activeTab === "api" ? "bg-stats-blue-1000" : null
