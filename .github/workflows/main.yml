@@ -29,7 +29,9 @@ jobs:
       - name: Construire et pousser l'image Docker
         run: |
           cd backend
-          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest .
+          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:${GITHUB_SHA} .
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:${GITHUB_SHA}
+          docker tag ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:${GITHUB_SHA} ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest
           docker push ${{ vars.DOCKERHUB_USERNAME }}/minecraft-stats-back:latest
 
   deploy:
@@ -45,6 +47,7 @@ jobs:
           script: |
             cd /home/minecraft-stats/website/backend
             cat > .env << EOL
+            IMAGE_TAG=$GITHUB_SHA
             APP_NAME=${{ vars.APP_NAME }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_DATABASE=${{ secrets.DB_DATABASE }}

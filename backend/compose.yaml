@@ -24,7 +24,7 @@ services:
 
   adonis_app:
     container_name: 'stats-backend-${APP_NAME}'
-    image: 'sportek/minecraft-stats-back:latest'
+    image: "sportek/minecraft-stats-back:${IMAGE_TAG}"
     ports:
       - '9000:9000'
     env_file:
@@ -43,7 +43,7 @@ services:
 
   adonis_scheduler:
     container_name: 'stats-scheduler-${APP_NAME}'
-    image: 'sportek/minecraft-stats-back:latest'
+    image: "sportek/minecraft-stats-back:${IMAGE_TAG}"
     env_file:
       - .env.production
     depends_on:
