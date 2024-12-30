@@ -35,7 +35,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 721
+          example: 797
         name:
           type: "string"
           example: "John Doe"
@@ -54,7 +54,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 381
+          example: 137
         name:
           type: "string"
           example: "John Doe"
@@ -63,7 +63,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 830
+          example: 68
         version:
           type: "string"
           example: "Lorem Ipsum"
@@ -75,7 +75,7 @@ components:
           example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 709
+          example: 732
         user:
           $ref: "#/components/schemas/User"
           example: null
@@ -103,19 +103,19 @@ components:
       properties:
         id:
           type: "number"
-          example: 573
+          example: 99
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 172
+          example: 257
         player_count:
           type: "number"
-          example: 323
+          example: 31
         max_count:
           type: "number"
-          example: 298
+          example: 628
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -127,7 +127,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 50
+          example: 552
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -233,7 +233,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 36
+            example: 516
           required: true
           properties:
             items:
@@ -276,7 +276,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 586
+            example: 523
           properties:
             items:
               type: "string"
@@ -302,20 +302,20 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 589
+          example: 252
           required: true
         exactTime:
           type: "number"
-          example: 402
+          example: 693
         fromDate:
           type: "number"
-          example: 742
+          example: 471
         toDate:
           type: "number"
-          example: 66
+          example: 306
         interval:
           type: "number"
-          example: 2
+          example: 135
           choices:
             - "30 minutes"
             - "1 hour"
@@ -324,11 +324,11 @@ components:
             - "6 hours"
             - "1 week"
       example:
-        server_id: 589
-        exactTime: 402
-        fromDate: 742
-        toDate: 66
-        interval: 2
+        server_id: 252
+        exactTime: 693
+        fromDate: 471
+        toDate: 306
+        interval: 135
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -425,6 +425,19 @@ components:
         token: "Lorem Ipsum"
       description: "VerifyEmailValidator (Validator)"
 paths:
+  /metrics:
+    get:
+      summary: " (handle)"
+      description: "\n\n _C:\\Users\\gabla\\Desktop\\minecraft-stats\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**"
+      parameters: []
+      tags:
+        - ""
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
   /api/v1/servers:
     get:
       summary: "Get a list of servers (index)"
