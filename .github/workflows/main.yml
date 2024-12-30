@@ -55,6 +55,9 @@ jobs:
             DB_DATABASE=${{ secrets.DB_DATABASE }}
             DB_USER=${{ secrets.DB_USER }}
             EOL
+
+            echo "GITHUB_SHA: $GITHUB_SHA"
+            echo "APP_NAME: ${APP_NAME}"
             docker compose pull
             docker compose --env-file .env.production up -d
             docker image prune -f
