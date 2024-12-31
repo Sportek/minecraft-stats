@@ -34,7 +34,7 @@ services:
     depends_on:
       - pgsql
     command: >
-      sh -c "node ace migration:run && node ace serve"
+      sh -c "node ace migration:run --force && node ace serve"
     networks:
       - sail
     logging:
