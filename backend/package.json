@@ -75,6 +75,7 @@
     "adonis-autoswagger": "^3.64.0",
     "adonisjs-scheduler": "^1.0.5",
     "argon2": "^0.41.0",
+    "camelcase": "^8.0.0",
     "edge.js": "^6.0.2",
     "jsonwebtoken": "^9.0.2",
     "leb128": "^0.0.5",
