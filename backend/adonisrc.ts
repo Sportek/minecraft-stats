@@ -48,7 +48,8 @@ export default defineConfig({
       environment: ['console'],
     },
     () => import('@adonisjs/static/static_provider'),
-    () => import('@julr/adonisjs-prometheus/prometheus_provider')
+    () => import('@julr/adonisjs-prometheus/prometheus_provider'),
+    () => import('@adonisjs/limiter/limiter_provider')
   ],
 
   /*
