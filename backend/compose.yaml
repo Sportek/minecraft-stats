@@ -3,6 +3,7 @@ services:
   pgsql:
     image: 'postgres:15'
     container_name: 'stats-pgsql-${APP_NAME}'
+    restart: 'unless-stopped'
     environment:
       PGPASSWORD: '${DB_PASSWORD}'
       POSTGRES_DB: '${DB_DATABASE}'
@@ -25,6 +26,7 @@ services:
   adonis_app:
     container_name: 'stats-backend-${APP_NAME}'
     image: "sportek/minecraft-stats-back:${IMAGE_TAG:-latest}"
+    restart: 'unless-stopped'
     ports:
       - '9000:9000'
     env_file:
@@ -46,6 +48,7 @@ services:
   adonis_scheduler:
     container_name: 'stats-scheduler-${APP_NAME}'
     image: "sportek/minecraft-stats-back:${IMAGE_TAG:-latest}"
+    restart: 'unless-stopped'
     env_file:
       - .env.production
     depends_on:
@@ -65,7 +68,7 @@ services:
   grafana:
     image: grafana/grafana-enterprise
     container_name: 'grafana-${APP_NAME}'
-    restart: unless-stopped
+    restart: 'unless-stopped'
     ports:
     - '9020:3000'
     volumes:
@@ -76,6 +79,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: 'prometheus-${APP_NAME}'
+    restart: 'unless-stopped'
     volumes:
       - './prometheus.yml:/etc/prometheus/prometheus.yml'
     ports:
