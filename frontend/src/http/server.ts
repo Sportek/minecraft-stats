@@ -36,6 +36,7 @@ export const getServers = async () => {
 };
 
 export const getServer = async (serverId: number) => {
+  console.log("Fetch le serveur avec ", `${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`)
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
   return response.json() as Promise<{ server: Server; stat: ServerStat | null; categories: Category[] }>;
 };
