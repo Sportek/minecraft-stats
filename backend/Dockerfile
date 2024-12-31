@@ -25,7 +25,8 @@ RUN echo "NODE_ENV=production" > .env && \
     echo "DISCORD_CLIENT_ID=default_client_id" >> .env && \
     echo "DISCORD_CLIENT_SECRET=default_client_secret" >> .env && \
     echo "GOOGLE_CLIENT_ID=default_google_id" >> .env && \
-    echo "GOOGLE_CLIENT_SECRET=default_google_secret" >> .env
+    echo "GOOGLE_CLIENT_SECRET=default_google_secret" >> .env && \
+    echo "LIMITER_STORE=database" >> .env
 
 # Générer la documentation
 RUN mkdir -p build && \
