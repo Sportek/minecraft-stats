@@ -45,7 +45,7 @@ router
       .middleware(['destroy', 'store', 'update'], middleware.auth())
       .use('*', throttleLight('categories', 8))
 
-    router.resource('servers.stats', '#controllers/stats_controller').only(['index']).use('*', throttleLight('servers.stats', 8))
+    router.resource('servers.stats', '#controllers/stats_controller').only(['index']).use('*', throttleLight('servers.stats', 40))
 
     router
       .resource('users', '#controllers/users_controller')
