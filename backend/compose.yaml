@@ -38,10 +38,10 @@ services:
     networks:
       - sail
     logging:
-      driver: "json-file"
+      driver: loki
       options:
-        max-size: "10m"
-        max-file: "3"
+        loki-url: "http://loki-${APP_NAME}:3100/loki/api/v1/push"
+        loki-external-labels: "service=adonis_app"
     volumes:
     - server-images:/home/node/app/public/images
 
@@ -58,10 +58,10 @@ services:
     networks:
       - sail
     logging:
-      driver: "json-file"
+      driver: loki
       options:
-        max-size: "10m"
-        max-file: "3"
+        loki-url: "http://loki-${APP_NAME}:3100/loki/api/v1/push"
+        loki-external-labels: "service=adonis_scheduler"
     volumes:
       - server-images:/home/node/app/public/images
   
@@ -91,6 +91,25 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    
+  
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: 'loki-${APP_NAME}'
+    restart: 'unless-stopped'
+    ports:
+      - '3100:3100'
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - './loki-config.yaml:/etc/loki/local-config.yaml'
+      - 'loki-data:/loki'
+    networks:
+      - sail
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   sail:
@@ -102,4 +121,6 @@ volumes:
   server-images:
     name: 'stats-images-${APP_NAME}'
     driver: local
+  loki-data:
+    name: 'loki-data-${APP_NAME}'
   grafana-storage: {}
