@@ -61,10 +61,6 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
     }
   };
 
-  useEffect(() => {
-    console.log(server);
-  }, [server]);
-
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();

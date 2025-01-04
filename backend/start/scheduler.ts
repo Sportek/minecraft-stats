@@ -133,4 +133,4 @@ scheduler.call(async () => {
   await StatsService.calculateAndStoreGrowthStats()
   logger.info('SCHEDULER: Growth stats calculated and stored')
 })
-  .everyFiveMinutes()
+  .everySixHours()

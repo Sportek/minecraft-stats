@@ -3,7 +3,6 @@ import { Metadata } from "next";
 
 export const generateMetadata = async ({params}: {params: {serverId: string, serverName: string[]}}): Promise<Metadata> => {
   try {
-    console.log('Hello fetch server ici')
     const server = await getServer(Number(params.serverId));
     return Promise.resolve({
       title: server.server.name,

@@ -41,7 +41,7 @@ const Footer = () => {
                 GitHub
               </Link>
               <Link
-                href="/api"
+                href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api`}
                 className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
               >
                 Access to API
