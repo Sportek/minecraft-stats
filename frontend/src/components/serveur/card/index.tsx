@@ -1,24 +1,25 @@
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/auth";
 import { useFavorite } from "@/contexts/favorite";
-import { Category, Server, ServerStat } from "@/types/server";
+import { cn } from "@/lib/utils";
+import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { extractVersions, formatVersion } from "@/utils/server-version";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect } from "react";
 import NotFound from "../not-found";
-import { useCallback } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface ServerCardProps {
   server: Server;
   stat: ServerStat | null;
   categories: Category[];
+  growthStat: ServerGrowthStat | null;
   isFull?: boolean;
 }
-const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
+const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCardProps) => {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -60,10 +61,24 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
     }
   };
 
+  useEffect(() => {
+    console.log(server);
+  }, [server]);
+
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
     router.push(`/servers/${server.id}/edit`);
+  };
+
+  const getFormattedGrowth = (growth: number | null) => {
+    if (growth == null) {
+      return null;
+    }
+    if (growth >= 0) {
+      return `+${Math.round(growth * 100)}%`;
+    }
+    return `${Math.round((growth * 100))}%`;
   };
 
   return (
@@ -98,13 +113,18 @@ const ServerCard = ({ server, stat, categories, isFull }: ServerCardProps) => {
             <div className="text-sm text-zinc-700 dark:text-zinc-300 truncate">{server?.address?.toUpperCase()}</div>
           </div>
           {stat?.playerCount != null ? (
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-col items-end">
+              <div className="flex flex-row items-center gap-2">
               <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
                 <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
               </div>
               <div className="flex flex-col justify-center items-center">
-                <div>{stat.playerCount}</div>
+                <div>{new Intl.NumberFormat("en-US").format(stat.playerCount)}</div>
               </div>
+            </div>
+              {growthStat ? (
+                <div className={cn(growthStat.weeklyGrowth != null && growthStat.weeklyGrowth >= 0 ? "text-green-500" : "text-red-500", "text-xs")}>{getFormattedGrowth(growthStat.weeklyGrowth)}</div>
+              ) : null}
             </div>
           ) : (
             <div className="flex flex-col items-center">

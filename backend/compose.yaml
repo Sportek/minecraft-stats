@@ -51,15 +51,10 @@ services:
     networks:
       - sail
     logging:
-      driver: loki
+      driver: "json-file"
       options:
-        loki-url: "http://loki-${APP_NAME}:3100/loki/api/v1/push"
-        loki-external-labels: "service=adonis_app"
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
+        max-size: "10m"
+        max-file: "3"
     volumes:
     - server-images:/home/node/app/public/images
 
@@ -80,15 +75,10 @@ services:
     networks:
       - sail
     logging:
-      driver: loki
+      driver: "json-file"
       options:
-        loki-url: "http://loki-${APP_NAME}:3100/loki/api/v1/push"
-        loki-external-labels: "service=adonis_scheduler"
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - server-images:/home/node/app/public/images
     healthcheck:
@@ -191,6 +181,40 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  ##########################################################################
+  # Redis
+  ##########################################################################
+  redis:
+    image: redis:7.4.1-alpine
+    container_name: 'redis-${APP_NAME}'
+    restart: 'unless-stopped'
+    ports:
+      - '6379:6379'
+    # Commande pour activer l'append-only et définir un mot de passe
+    command: [
+      "redis-server",
+      "--appendonly", "yes",
+      "--requirepass", "${REDIS_PASSWORD}"
+    ]
+    environment:
+      # Par exemple, pour distinguer la config
+      REDIS_REPLICATION_MODE: standalone
+    networks:
+      - sail
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      # Vérifie si Redis répond à la commande 'PING'
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   sail:
@@ -206,4 +230,6 @@ volumes:
     name: 'loki-data-${APP_NAME}'
   promtail-data:
     name: 'promtail-data-${APP_NAME}'
+  redis-data:
+    name: 'redis-data-${APP_NAME}'
   grafana-storage: {}

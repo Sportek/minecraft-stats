@@ -1,12 +1,13 @@
 import Server from '#models/server'
 import ServerStat from '#models/server_stat'
+import StatsService from '#services/stat_service'
 import logger from '@adonisjs/core/services/logger'
 import scheduler from 'adonisjs-scheduler/services/main'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
 import pLimit from 'p-limit'
+import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
 
 /**
  * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
@@ -127,3 +128,9 @@ scheduler
     await Promise.all(servers.map((server) => updateServerInfo(server, true)))
   })
   .everySixHours()
+
+scheduler.call(async () => {
+  await StatsService.calculateAndStoreGrowthStats()
+  logger.info('SCHEDULER: Growth stats calculated and stored')
+})
+  .everyFiveMinutes()

@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { useFavorite } from "@/contexts/favorite";
 import { getServerStats } from "@/http/server";
-import { Category, Server, ServerStat } from "@/types/server";
+import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { AgChartOptions } from "ag-charts-community";
 import { AgChartsReact } from "ag-charts-react";
@@ -22,6 +22,7 @@ export interface ServerData {
   server: Server;
   stat: ServerStat | null;
   categories: Category[];
+  growthStat: ServerGrowthStat | null;
 }
 
 const DATA_AGGREGATION_INTERVAL_TYPES = {
@@ -224,18 +225,20 @@ const Home = () => {
         <>
           <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
             <StatCard
-              title="Total amount of online players"
-              value={data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0).toString()}
+              title="Total Online Players"
+              value={new Intl.NumberFormat("en-US").format(
+                data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0)
+              )}
               icon={<Icon icon="mdi:account-multiple" className="text-blue-700 dark:text-blue-300 w-6 h-6" />}
             />
             <StatCard
-              title="Amount of rows data"
-              value={generalWebsiteStats.data?.totalRecords.toString() ?? "0"}
+              title="Total Data Rows"
+              value={new Intl.NumberFormat("en-US").format(generalWebsiteStats.data?.totalRecords ?? 0)}
               icon={<Icon icon="material-symbols:database" className="text-red-700 dark:text-red-300 w-6 h-6" />}
             />
             <StatCard
-              title="Amount of monitored servers"
-              value={data.length.toString()}
+              title="Monitored Servers"
+              value={new Intl.NumberFormat("en-US").format(data.length)}
               icon={<Icon icon="mdi:server" className="text-green-700 dark:text-green-300 w-6 h-6" />}
             />
           </div>
@@ -308,6 +311,7 @@ const Home = () => {
                   server={server.server}
                   stat={server.stat}
                   categories={server.categories}
+                  growthStat={server.growthStat}
                   isFull={false}
                 />
               ))

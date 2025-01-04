@@ -1,25 +1,20 @@
+import Category from '#models/category'
 import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
+import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
-import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
-import Category from '#models/category'
 
 export default class ServersController {
-  async index({ logger }: HttpContext) {
-
-    const start = performance.now()
-    const servers = await Server.query().preload('user').preload('categories')
+  async index({ }: HttpContext) {
+    const servers = await Server.query().preload('user').preload('categories').preload('growthStat')
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
         const stat = await this.getActualStats(server)
-        return { server, stat, categories: server.categories }
+        return { server, stat, categories: server.categories, growthStat: server.growthStat }
       })
     )
-    const end = performance.now()
-    const duration = Math.round(end - start)
-    logger.info(`Retrieve servers: ${duration} ms`)
     return serversWithStats
   }
 
@@ -61,11 +56,10 @@ export default class ServersController {
   }
 
   async show({ params, response }: HttpContext) {
-    let server = await Server.query().where('id', params.id).preload('user').first()
+    let server = await Server.query().where('id', params.id).preload('user').preload('growthStat').preload('categories').first()
     if (!server) return response.notFound({ message: 'Server not found' })
     const stat = await this.getActualStats(server)
-    const categories = await server.related('categories').query()
-    return { server, stat, categories }
+    return { server, stat, categories: server.categories, growthStat: server.growthStat }
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
