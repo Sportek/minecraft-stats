@@ -49,7 +49,8 @@ export default defineConfig({
     },
     () => import('@adonisjs/static/static_provider'),
     () => import('@julr/adonisjs-prometheus/prometheus_provider'),
-    () => import('@adonisjs/limiter/limiter_provider')
+    () => import('@adonisjs/limiter/limiter_provider'),
+    () => import('@adonisjs/redis/redis_provider')
   ],
 
   /*

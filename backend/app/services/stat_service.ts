@@ -1,3 +1,4 @@
+import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
@@ -177,5 +178,60 @@ export default class StatsService {
     }
 
     return query.orderBy('created_at', 'asc')
+  }
+
+  public static async calculateAndStoreGrowthStats() {
+    const query = `
+      WITH weekly_data AS (
+        SELECT
+        server_id,
+        AVG(player_count) AS avg_weekly
+      FROM server_stats
+      WHERE created_at >= NOW() - INTERVAL '7 days'
+      GROUP BY server_id
+    ),
+    last_week_data AS (
+      SELECT
+        server_id,
+        AVG(player_count) AS avg_last_week
+      FROM server_stats
+      WHERE created_at >= NOW() - INTERVAL '14 days'
+        AND created_at < NOW() - INTERVAL '7 days'
+      GROUP BY server_id
+    ),
+    monthly_data AS (
+      SELECT
+        server_id,
+        AVG(player_count) AS avg_monthly
+      FROM server_stats
+      WHERE created_at >= NOW() - INTERVAL '30 days'
+      GROUP BY server_id
+    )
+    INSERT INTO server_growth_stats (server_id, weekly_growth, monthly_context_growth, last_updated)
+    SELECT
+      weekly_data.server_id,
+      CASE
+        WHEN last_week_data.avg_last_week IS NOT NULL AND last_week_data.avg_last_week > 0 THEN
+          ((weekly_data.avg_weekly - last_week_data.avg_last_week) / last_week_data.avg_last_week) * 100
+        ELSE NULL
+      END AS weekly_growth,
+      CASE
+        WHEN monthly_data.avg_monthly IS NOT NULL AND monthly_data.avg_monthly > 0 THEN
+          ((weekly_data.avg_weekly - monthly_data.avg_monthly) / monthly_data.avg_monthly) * 100
+        ELSE NULL
+      END AS monthly_context_growth,
+      NOW()
+    FROM weekly_data
+    LEFT JOIN last_week_data ON weekly_data.server_id = last_week_data.server_id
+    LEFT JOIN monthly_data ON weekly_data.server_id = monthly_data.server_id
+    ON CONFLICT (server_id) DO UPDATE
+    SET
+      weekly_growth = EXCLUDED.weekly_growth,
+      monthly_context_growth = EXCLUDED.monthly_context_growth,
+      last_updated = EXCLUDED.last_updated;
+  `
+
+    await Database.rawQuery(query)
+    logger.info('Growth stats updated successfully')
   }
 }

@@ -1,15 +1,13 @@
+import Category from '#models/category'
 import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
+import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
-import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
-import Category from '#models/category'
 
 export default class ServersController {
-  async index({ logger }: HttpContext) {
-
-    const start = performance.now()
+  async index({ }: HttpContext) {
     const servers = await Server.query().preload('user').preload('categories')
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
@@ -17,9 +15,6 @@ export default class ServersController {
         return { server, stat, categories: server.categories }
       })
     )
-    const end = performance.now()
-    const duration = Math.round(end - start)
-    logger.info(`Retrieve servers: ${duration} ms`)
     return serversWithStats
   }
 
