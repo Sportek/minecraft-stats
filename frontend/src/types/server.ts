@@ -20,6 +20,16 @@ export interface ServerStat {
   createdAt: Date;
 }
 
+export interface ServerGrowthStat {
+  serverId: number;
+  weeklyGrowth: number | null;
+  monthlyGrowth: number | null;
+  lastWeekAverage: number;
+  previousWeekAverage: number;
+  lastMonthAverage: number;
+  lastUpdated: Date;
+}
+
 export interface Category {
   id: number;
   name: string;

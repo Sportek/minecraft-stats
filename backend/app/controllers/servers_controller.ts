@@ -8,11 +8,11 @@ import Server from '../models/server.js'
 
 export default class ServersController {
   async index({ }: HttpContext) {
-    const servers = await Server.query().preload('user').preload('categories')
+    const servers = await Server.query().preload('user').preload('categories').preload('growthStat')
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
         const stat = await this.getActualStats(server)
-        return { server, stat, categories: server.categories }
+        return { server, stat, categories: server.categories, growthStat: server.growthStat }
       })
     )
     return serversWithStats

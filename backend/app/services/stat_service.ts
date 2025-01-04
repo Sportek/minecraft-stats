@@ -1,4 +1,5 @@
-import logger from '@adonisjs/core/services/logger'
+import Server from '#models/server'
+import ServerGrowthStat from '#models/server_growth_stat'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
@@ -181,57 +182,34 @@ export default class StatsService {
   }
 
   public static async calculateAndStoreGrowthStats() {
-    const query = `
-      WITH weekly_data AS (
-        SELECT
-        server_id,
-        AVG(player_count) AS avg_weekly
-      FROM server_stats
-      WHERE created_at >= NOW() - INTERVAL '7 days'
-      GROUP BY server_id
-    ),
-    last_week_data AS (
-      SELECT
-        server_id,
-        AVG(player_count) AS avg_last_week
-      FROM server_stats
-      WHERE created_at >= NOW() - INTERVAL '14 days'
-        AND created_at < NOW() - INTERVAL '7 days'
-      GROUP BY server_id
-    ),
-    monthly_data AS (
-      SELECT
-        server_id,
-        AVG(player_count) AS avg_monthly
-      FROM server_stats
-      WHERE created_at >= NOW() - INTERVAL '30 days'
-      GROUP BY server_id
-    )
-    INSERT INTO server_growth_stats (server_id, weekly_growth, monthly_context_growth, last_updated)
-    SELECT
-      weekly_data.server_id,
-      CASE
-        WHEN last_week_data.avg_last_week IS NOT NULL AND last_week_data.avg_last_week > 0 THEN
-          ((weekly_data.avg_weekly - last_week_data.avg_last_week) / last_week_data.avg_last_week) * 100
-        ELSE NULL
-      END AS weekly_growth,
-      CASE
-        WHEN monthly_data.avg_monthly IS NOT NULL AND monthly_data.avg_monthly > 0 THEN
-          ((weekly_data.avg_weekly - monthly_data.avg_monthly) / monthly_data.avg_monthly) * 100
-        ELSE NULL
-      END AS monthly_context_growth,
-      NOW()
-    FROM weekly_data
-    LEFT JOIN last_week_data ON weekly_data.server_id = last_week_data.server_id
-    LEFT JOIN monthly_data ON weekly_data.server_id = monthly_data.server_id
-    ON CONFLICT (server_id) DO UPDATE
-    SET
-      weekly_growth = EXCLUDED.weekly_growth,
-      monthly_context_growth = EXCLUDED.monthly_context_growth,
-      last_updated = EXCLUDED.last_updated;
-  `
+    const servers = await Server.query();
 
-    await Database.rawQuery(query)
-    logger.info('Growth stats updated successfully')
+    for (const server of servers) {
+      const lastWeekStats = await this.getStatsWithInterval(server.id, '1 week', DateTime.now().minus({ week: 1 }).toSQL())
+      const previousWeekStats = await this.getStatsWithInterval(server.id, '1 week', DateTime.now().minus({ week: 2 }).toSQL())
+      const lastMonthStats = await this.getStatsWithInterval(server.id, '1 month', DateTime.now().minus({ month: 1 }).toSQL())
+
+
+      const lastWeekAverage = Math.round(lastWeekStats.reduce((sum: number, stat: any) => sum + stat.player_count, 0) / lastWeekStats.length)
+      const previousWeekAverage = Math.round(previousWeekStats.reduce((sum: number, stat: any) => sum + stat.player_count, 0) / previousWeekStats.length)
+      const lastMonthAverage = Math.round(lastMonthStats.reduce((sum: number, stat: any) => sum + stat.player_count, 0) / lastMonthStats.length)
+
+      // On calcule le taux de croissance de la semaine dernière par rapport à la semaine d'avant
+      const weeklyGrowth = Math.round((lastWeekAverage - previousWeekAverage) / previousWeekAverage * 100) / 100
+
+      // On calcule le taux de croissance de la semaine dernière par rapport au mois dernier
+      const monthlyGrowth = Math.round((lastMonthAverage - lastWeekAverage) / lastWeekAverage * 100) / 100
+
+
+      await ServerGrowthStat.updateOrCreate({ serverId: server.id }, {
+        serverId: server.id,
+        weeklyGrowth: weeklyGrowth,
+        monthlyGrowth: monthlyGrowth,
+        lastWeekAverage: lastWeekAverage,
+        previousWeekAverage: previousWeekAverage,
+        lastMonthAverage: lastMonthAverage,
+        lastUpdated: DateTime.now(),
+      })
+    }
   }
 }
