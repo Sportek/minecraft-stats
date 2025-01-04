@@ -6,7 +6,7 @@ services:
   # PostgreSQL
   ##########################################################################
   pgsql:
-    image: 'postgres:15-alpine'
+    image: 'postgres:15'
     container_name: 'stats-pgsql-${APP_NAME}'
     restart: 'unless-stopped'
     environment:
