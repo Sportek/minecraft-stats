@@ -26,7 +26,10 @@ RUN echo "NODE_ENV=production" > .env && \
     echo "DISCORD_CLIENT_SECRET=default_client_secret" >> .env && \
     echo "GOOGLE_CLIENT_ID=default_google_id" >> .env && \
     echo "GOOGLE_CLIENT_SECRET=default_google_secret" >> .env && \
-    echo "LIMITER_STORE=database" >> .env
+    echo "LIMITER_STORE=database" >> .env && \
+    echo "REDIS_HOST=redis" >> .env && \
+    echo "REDIS_PORT=6379" >> .env && \
+    echo "REDIS_PASSWORD=temporary_password" >> .env
 
 # Générer la documentation
 RUN mkdir -p build && \
