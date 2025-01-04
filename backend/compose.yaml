@@ -51,15 +51,10 @@ services:
     networks:
       - sail
     logging:
-      driver: loki
+      driver: "json-file"
       options:
-        loki-url: "http://loki-${APP_NAME}:3100/loki/api/v1/push"
-        loki-external-labels: "service=adonis_app"
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
+        max-size: "10m"
+        max-file: "3"
     volumes:
     - server-images:/home/node/app/public/images
 
@@ -80,15 +75,10 @@ services:
     networks:
       - sail
     logging:
-      driver: loki
+      driver: "json-file"
       options:
-        loki-url: "http://loki-${APP_NAME}:3100/loki/api/v1/push"
-        loki-external-labels: "service=adonis_scheduler"
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - server-images:/home/node/app/public/images
     healthcheck:
@@ -190,8 +180,9 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-
+  ##########################################################################
+  # Redis
+  ##########################################################################
   redis:
     image: redis:7.4.1-alpine
     container_name: 'redis-${APP_NAME}'
