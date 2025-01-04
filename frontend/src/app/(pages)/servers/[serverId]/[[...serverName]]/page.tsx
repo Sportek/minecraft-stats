@@ -1,9 +1,10 @@
 "use client";
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import { getServerStats } from "@/http/server";
-import { Category, Server, ServerStat } from "@/types/server";
+import { ServerStat } from "@/types/server";
 import { AgChartsReact } from "ag-charts-react";
 
+import { ServerData } from "@/app/(pages)/(index)/page";
 import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
 import ImprovedCard from "@/components/serveur/improved-card";
@@ -16,7 +17,7 @@ import useSWR from "swr";
 
 const ServerPage = () => {
   const { serverId } = useParams();
-  const server = useSWR<{ server: Server; stat: ServerStat; categories: Category[] }, Error>(
+  const server = useSWR<ServerData, Error>(
     `${getBaseUrl()}/servers/${serverId}`,
     fetcher,
     {
@@ -123,6 +124,7 @@ const ServerPage = () => {
           server={server.data.server}
           stat={server.data.stat}
           categories={server.data.categories}
+          growthStat={server.data.growthStat}
           isFull={true}
         />
       </div>

@@ -56,11 +56,10 @@ export default class ServersController {
   }
 
   async show({ params, response }: HttpContext) {
-    let server = await Server.query().where('id', params.id).preload('user').first()
+    let server = await Server.query().where('id', params.id).preload('user').preload('growthStat').preload('categories').first()
     if (!server) return response.notFound({ message: 'Server not found' })
     const stat = await this.getActualStats(server)
-    const categories = await server.related('categories').query()
-    return { server, stat, categories }
+    return { server, stat, categories: server.categories, growthStat: server.growthStat }
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
