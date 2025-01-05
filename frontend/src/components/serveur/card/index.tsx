@@ -9,7 +9,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import NotFound from "../not-found";
 
 interface ServerCardProps {
@@ -111,15 +111,27 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
           {stat?.playerCount != null ? (
             <div className="flex flex-col items-end">
               <div className="flex flex-row items-center gap-2">
-              <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
+                <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
+                </div>
+                <div className="flex flex-col justify-center items-center">
+                  <div>{new Intl.NumberFormat("en-US").format(stat.playerCount)}</div>
+                </div>
               </div>
-              <div className="flex flex-col justify-center items-center">
-                <div>{new Intl.NumberFormat("en-US").format(stat.playerCount)}</div>
-              </div>
-            </div>
-              {growthStat ? (
-                <div className={cn(growthStat.weeklyGrowth != null && growthStat.weeklyGrowth >= 0 ? "text-green-500" : "text-red-500", "text-xs")}>{getFormattedGrowth(growthStat.weeklyGrowth)}</div>
+              {growthStat && growthStat.monthlyGrowth ? (
+                <div className="flex flex-row items-center gap-1">
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Icon icon="material-symbols:info-outline" className="text-zinc-700 dark:text-zinc-300 w-3 h-3" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-60">
+                        <div>This shows how the average player count this week compares to the average for the past 30 days. Positive values indicate growth.</div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <div className={cn(growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0 ? "text-green-500" : "text-red-500", "text-xs")}>{getFormattedGrowth(growthStat.monthlyGrowth)}</div>
+                </div>
               ) : null}
             </div>
           ) : (
