@@ -198,7 +198,7 @@ export default class StatsService {
       const weeklyGrowth = Math.round((lastWeekAverage - previousWeekAverage) / previousWeekAverage * 100) / 100
 
       // On calcule le taux de croissance de la semaine dernière par rapport au mois dernier
-      const monthlyGrowth = Math.round((lastMonthAverage - lastWeekAverage) / lastWeekAverage * 100) / 100
+      const monthlyGrowth = Math.round((lastWeekAverage - lastMonthAverage) / lastMonthAverage * 100) / 100
 
 
       await ServerGrowthStat.updateOrCreate({ serverId: server.id }, {
