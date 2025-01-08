@@ -10,6 +10,7 @@ const nextConfig = {
       { hostname: "api.minecraft-stats.fr" },
       { hostname: "*.tenor.com" },
     ],
+    formats: ["image/webp"],
   },
 };
 

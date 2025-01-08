@@ -9,7 +9,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import NotFound from "../not-found";
 
 interface ServerCardProps {
@@ -77,6 +77,11 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
     return `${Math.round((growth * 100))}%`;
   };
 
+  const imageUrlPng = `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}.png`;
+  const imageUrlWebP = `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}.webp`;
+
+  const [imageUrl, setImageUrl] = useState(imageUrlWebP);
+
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
@@ -94,10 +99,12 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
         <div className="flex flex-row items-center gap-4 w-full">
           {server.imageUrl ? (
             <Image
-              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${server.imageUrl}`}
+              src={imageUrl}
               alt={server.name}
               width={48}
               height={48}
+              quality={50}
+              onError={() => setImageUrl(imageUrlPng)}
             />
           ) : (
             <NotFound className="text-stats-blue-950 dark:text-stats-blue-50 w-12 h-12" />
