@@ -118,19 +118,36 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
                   <div>{new Intl.NumberFormat("en-US").format(stat.playerCount)}</div>
                 </div>
               </div>
-              {growthStat && growthStat.monthlyGrowth ? (
+              {growthStat?.monthlyGrowth ? (
                 <div className="flex flex-row items-center gap-1">
                   <TooltipProvider delayDuration={0}>
                     <Tooltip>
-                      <TooltipTrigger>
-                        <Icon icon="material-symbols:info-outline" className="text-zinc-700 dark:text-zinc-300 w-3 h-3" />
+                      <TooltipTrigger asChild>
+                        <span>
+                          <Icon
+                            icon="material-symbols:info-outline"
+                            className="text-zinc-700 dark:text-zinc-300 w-3 h-3"
+                          />
+                        </span>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-60">
-                        <div>This shows how the average player count this week compares to the average for the past 30 days. Positive values indicate growth.</div>
+                        <div>
+                          This shows how the average player count this week compares to the average for the past 30
+                          days. Positive values indicate growth.
+                        </div>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <div className={cn(growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0 ? "text-green-500" : "text-red-500", "text-xs")}>{getFormattedGrowth(growthStat.monthlyGrowth)}</div>
+                  <div
+                    className={cn(
+                      growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0
+                        ? "text-green-500"
+                        : "text-red-500",
+                      "text-xs"
+                    )}
+                  >
+                    {getFormattedGrowth(growthStat.monthlyGrowth)}
+                  </div>
                 </div>
               ) : null}
             </div>
