@@ -41,10 +41,10 @@ const Footer = () => {
                 GitHub
               </Link>
               <Link
-                href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api`}
+                href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
                 className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
               >
-                Access to API
+                API Documentation
               </Link>
               <Link
                 href="/partners"
