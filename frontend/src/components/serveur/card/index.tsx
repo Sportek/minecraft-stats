@@ -103,8 +103,12 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
               alt={server.name}
               width={48}
               height={48}
-              quality={50}
+              quality={75}
+              priority={false}
+              loading="lazy"
+              sizes="48px"
               onError={() => setImageUrl(imageUrlPng)}
+              className="object-cover rounded-md"
             />
           ) : (
             <NotFound className="text-stats-blue-950 dark:text-stats-blue-50 w-12 h-12" />

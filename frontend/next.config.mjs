@@ -11,6 +11,9 @@ const nextConfig = {
       { hostname: "*.tenor.com" },
     ],
     formats: ["image/webp"],
+    minimumCacheTTL: 2678400,
+    deviceSizes: [48, 96, 128, 256, 384, 512, 640, 750, 828, 1080, 1200],
+    imageSizes: [48, 96, 128, 256, 384],
   },
 };
 
