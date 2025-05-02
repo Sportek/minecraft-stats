@@ -14,7 +14,12 @@ import Metrics from "@/components/metrics";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ThemeProvider } from "@/components/dark-mode/provider";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["sans-serif"],
+  weight: ["400", "500", "700"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -44,9 +49,6 @@ export default function RootLayout({
             <ServersProvider>
               <FavoriteProvider>
                 <CheatCodeComponent />
-                {/* <div className="bg-gradient-to-br from-stats-blue-550 to-stats-blue-950 text-white text-center p-2">
-                  This website is currently in beta mode. Please report any bug or issue you encounter.
-                </div> */}
                 <Header />
                 <Toaster />
                 <div className="flex-1 flex flex-col items-center justify-center">

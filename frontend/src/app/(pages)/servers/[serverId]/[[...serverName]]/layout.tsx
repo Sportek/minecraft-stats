@@ -1,4 +1,5 @@
 import { getServer } from "@/http/server";
+import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
 
 export const generateMetadata = async ({params}: {params: {serverId: string, serverName: string[]}}): Promise<Metadata> => {
@@ -7,7 +8,7 @@ export const generateMetadata = async ({params}: {params: {serverId: string, ser
     return Promise.resolve({
       title: server.server.name,
     description: `${server.server.name} is a ${server.categories.map((c) => c.name).join(", ")} server with currently ${
-      server.stat?.playerCount ?? 0
+      getLastStat(server.stats).playerCount ?? 0
     } online players.`,
     openGraph: {
       images: [{ url: server.server.imageUrl }],

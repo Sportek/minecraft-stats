@@ -122,7 +122,7 @@ const ServerPage = () => {
         <ServerCard
           key={server.data?.server.id}
           server={server.data.server}
-          stat={server.data.stat}
+          stats={server.data.stats}
           categories={server.data.categories}
           growthStat={server.data.growthStat}
           isFull={true}

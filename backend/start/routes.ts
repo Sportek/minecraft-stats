@@ -13,21 +13,19 @@ import AutoSwagger from "adonis-autoswagger";
 import { middleware } from './kernel.js';
 import { throttleLight } from "./limiter.js";
 
-// returns swagger in YAML
 router.get("/swagger", async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger);
 });
 
-// Renders Swagger-UI and passes YAML-output of /swagger
 router.get("/docs", async () => {
-  // return AutoSwagger.default.ui("/swagger", swagger);
-  return AutoSwagger.default.scalar("/swagger"); // to use Scalar instead
-  // return AutoSwagger.default.rapidoc("/swagger", "view"); to use RapiDoc instead (pass "view" default, or "read" to change the render-style)
+  return AutoSwagger.default.scalar("/swagger");
 });
 
 router
   .group(() => {
     // Gestion des ressources
+    router.get('servers/paginate', '#controllers/servers_controller.paginate').use(throttleLight('servers.paginate', 16))
+
     router
       .resource('servers', '#controllers/servers_controller')
       .except(['create', 'edit'])

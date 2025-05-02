@@ -11,6 +11,7 @@ import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { useFavorite } from "@/contexts/favorite";
 import { getServerStats } from "@/http/server";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
+import { getLastStat } from "@/utils/stats";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { AgChartOptions } from "ag-charts-community";
 import { AgChartsReact } from "ag-charts-react";
@@ -20,7 +21,7 @@ import useSWR from "swr";
 
 export interface ServerData {
   server: Server;
-  stat: ServerStat | null;
+  stats: ServerStat[];
   categories: Category[];
   growthStat: ServerGrowthStat | null;
 }
@@ -99,11 +100,11 @@ const Home = () => {
           );
         })
         .filter((server) => {
-          return showZeroPlayer ? true : server.stat?.playerCount;
+          return showZeroPlayer ? true : getLastStat(server.stats).playerCount;
         });
 
       const sortedData = filteredData?.toSorted((b, a) => {
-        return (a.stat?.playerCount ?? -1) - (b.stat?.playerCount ?? -1);
+        return (getLastStat(a.stats).playerCount ?? -1) - (getLastStat(b.stats).playerCount ?? -1);
       });
 
       const favoriteServers = sortedData.filter((server) => favorites.includes(server.server.id));
@@ -118,7 +119,7 @@ const Home = () => {
     {
       serverName: string;
       serverId: number;
-      stat: ServerStat[];
+      stats: ServerStat[];
     }[]
   >([]);
 
@@ -146,7 +147,7 @@ const Home = () => {
         Date.now(),
         DATA_AGGREGATION_INTERVAL_TYPES[dataAggregationInterval]
       );
-      return { serverName: serverName, serverId: serverId, stat: stats };
+      return { serverName: serverName, serverId: serverId, stats: stats };
     }
 
     (async () => {
@@ -165,7 +166,7 @@ const Home = () => {
         ? favorites
         // On affiche les 5 serveurs avec le plus de joueurs
         : data
-            .toSorted((a, b) => (b.stat?.playerCount ?? -1) - (a.stat?.playerCount ?? -1))
+            .toSorted((a, b) => (getLastStat(b.stats).playerCount ?? -1) - (getLastStat(a.stats).playerCount ?? -1))
             .slice(0, Math.min(data.length, 5))
             .map((server) => server.server.id);
     setServerToDisplayInGraph(data.filter((server) => servers.includes(server.server.id)));
@@ -190,7 +191,7 @@ const Home = () => {
         yKey: "playerCount",
         connectMissingData: false,
         yName: server.serverName,
-        data: server.stat.map((stat) => ({
+        data: server.stats.map((stat) => ({
           time: new Date(stat.createdAt),
           playerCount: stat.playerCount,
         })),
@@ -225,19 +226,19 @@ const Home = () => {
         <>
           <div className="w-full flex flex-col sm:flex-row gap-2 justify-around">
             <StatCard
-              title="Total Online Players"
+              title="Online Players"
               value={new Intl.NumberFormat("en-US").format(
-                data.reduce((acc, curr) => acc + (curr.stat?.playerCount ?? 0), 0)
+                data.reduce((acc, curr) => acc + (getLastStat(curr.stats).playerCount ?? 0), 0)
               )}
               icon={<Icon icon="mdi:account-multiple" className="text-blue-700 dark:text-blue-300 w-6 h-6" />}
             />
             <StatCard
-              title="Total Data Rows"
+              title="Data Rows"
               value={new Intl.NumberFormat("en-US").format(generalWebsiteStats.data?.totalRecords ?? 0)}
               icon={<Icon icon="material-symbols:database" className="text-red-700 dark:text-red-300 w-6 h-6" />}
             />
             <StatCard
-              title="Monitored Servers"
+              title="Servers Monitored"
               value={new Intl.NumberFormat("en-US").format(data.length)}
               icon={<Icon icon="mdi:server" className="text-green-700 dark:text-green-300 w-6 h-6" />}
             />
@@ -309,7 +310,7 @@ const Home = () => {
                 <ServerCard
                   key={server.server.id}
                   server={server.server}
-                  stat={server.stat}
+                  stats={server.stats}
                   categories={server.categories}
                   growthStat={server.growthStat}
                   isFull={false}

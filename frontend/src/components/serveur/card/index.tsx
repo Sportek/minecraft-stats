@@ -11,15 +11,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import NotFound from "../not-found";
+import { getLastStat } from "@/utils/stats";
 
 interface ServerCardProps {
   server: Server;
-  stat: ServerStat | null;
+  stats: ServerStat[];
   categories: Category[];
   growthStat: ServerGrowthStat | null;
   isFull?: boolean;
 }
-const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCardProps) => {
+const ServerCard = ({ server, stats, categories, growthStat, isFull }: ServerCardProps) => {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -82,10 +83,12 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
 
   const [imageUrl, setImageUrl] = useState(imageUrlWebP);
 
+  console.log(stats);
+
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="relative flex flex-row items-center gap-4 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 p-4 w-full rounded-md shadow-sm h-full justify-between transition-all duration-50 ease-in-out group"
+      className="relative flex flex-row items-center gap-4 shadow-md bg-white dark:bg-zinc-950 p-4 w-full rounded-md h-full justify-between transition-all duration-50 ease-in-out group hover:bg-zinc-50 dark:hover:bg-zinc-900"
     >
       {canEdit() ? (
         <button
@@ -118,16 +121,16 @@ const ServerCard = ({ server, stat, categories, growthStat, isFull }: ServerCard
             <div className="text-xl font-semibold truncate flex gap-2">
               <div>{server.name}</div>
             </div>
-            <div className="text-sm text-zinc-700 dark:text-zinc-300 truncate">{server?.address?.toUpperCase()}</div>
+            <div className="text-sm text-zinc-700 dark:text-zinc-300 truncate">{server?.address?.toLowerCase()}</div>
           </div>
-          {stat?.playerCount != null ? (
+          {getLastStat(stats).playerCount != null ? (
             <div className="flex flex-col items-end">
               <div className="flex flex-row items-center gap-2">
                 <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
                   <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
                 </div>
                 <div className="flex flex-col justify-center items-center">
-                  <div>{new Intl.NumberFormat("en-US").format(stat.playerCount)}</div>
+                  <div>{new Intl.NumberFormat("en-US").format(getLastStat(stats).playerCount)}</div>
                 </div>
               </div>
               {growthStat?.monthlyGrowth ? (
