@@ -83,8 +83,6 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull }: ServerCar
 
   const [imageUrl, setImageUrl] = useState(imageUrlWebP);
 
-  console.log(stats);
-
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
