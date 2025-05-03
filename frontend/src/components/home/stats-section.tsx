@@ -71,12 +71,17 @@ const StatsSection = () => {
       <StatCard
         title="Total Data Rows"
         value={new Intl.NumberFormat("en-US").format(websiteStats.totalRecords)}
-        icon={<Icon icon="material-symbols:database" className="text-red-700 dark:text-red-300 w-6 h-6" />}
+        icon={
+          <Icon
+            icon="material-symbols:database-sharp"
+            className="w-6 h-6 text-stats-blue-600 dark:text-stats-blue-400"
+          />
+        }
       />
       <StatCard
         title="Monitored Servers"
         value={new Intl.NumberFormat("en-US").format(servers.length)}
-        icon={<Icon icon="mdi:server" className="text-green-700 dark:text-green-300 w-6 h-6" />}
+        icon={<Icon icon="mynaui:servers-solid" className="w-6 h-6 text-stats-blue-600 dark:text-stats-blue-400" />}
       />
     </div>
   );

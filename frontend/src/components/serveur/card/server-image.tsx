@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { useState } from "react";
 import NotFound from "../not-found";
+import { ProgressiveImage } from "@/components/ui/progressive-image";
 
 interface ServerImageProps {
   imageUrl: string;
@@ -17,18 +17,13 @@ const ServerImage = ({ imageUrl, name }: ServerImageProps) => {
   }
 
   return (
-    <Image
+    <ProgressiveImage
       src={currentImageUrl}
       alt={name}
       width={48}
       height={48}
-      quality={75}
-      priority={false}
-      loading="lazy"
-      sizes="48px"
-      onError={() => setCurrentImageUrl(imageUrlPng)}
       className="object-cover rounded-md"
-      unoptimized={true}
+      onError={() => setCurrentImageUrl(imageUrlPng)}
     />
   );
 };
