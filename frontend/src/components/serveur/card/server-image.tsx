@@ -1,6 +1,5 @@
-import { useState } from "react";
+import Image from "next/image";
 import NotFound from "../not-found";
-import { ProgressiveImage } from "@/components/ui/progressive-image";
 
 interface ServerImageProps {
   imageUrl: string;
@@ -10,20 +9,24 @@ interface ServerImageProps {
 const ServerImage = ({ imageUrl, name }: ServerImageProps) => {
   const imageUrlPng = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}.png`;
   const imageUrlWebP = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}.webp`;
-  const [currentImageUrl, setCurrentImageUrl] = useState(imageUrlWebP);
 
   if (!imageUrl) {
     return <NotFound className="text-stats-blue-950 dark:text-stats-blue-50 w-12 h-12" />;
   }
 
   return (
-    <ProgressiveImage
-      src={currentImageUrl}
+    <Image
+      src={imageUrlWebP}
       alt={name}
       width={48}
       height={48}
+      quality={75}
+      priority={true}
       className="object-cover rounded-md"
-      onError={() => setCurrentImageUrl(imageUrlPng)}
+      onError={(e) => {
+        const target = e.target as HTMLImageElement;
+        target.src = imageUrlPng;
+      }}
     />
   );
 };
