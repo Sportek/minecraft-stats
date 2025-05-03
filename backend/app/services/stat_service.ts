@@ -2,6 +2,7 @@ import Server from '#models/server'
 import ServerGrowthStat from '#models/server_growth_stat'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
+import { Exception } from '@adonisjs/core/exceptions'
 
 export default class StatsService {
 
@@ -24,7 +25,7 @@ export default class StatsService {
 
   /**
    * Cherche la donnée exacte, ou fait la moyenne entre la donnée
-   * juste avant et juste après si elle n’existe pas.
+   * juste avant et juste après si elle n'existe pas.
    */
   public static async getExactTimeRow(serverId: number, exactTime: DateTime) {
     const exactTimeSql = exactTime.toSQL()
@@ -43,11 +44,11 @@ export default class StatsService {
     const exactRow = await Database.rawQuery(exactRowQuery, [serverId, exactTimeSql])
 
     if (exactRow.rows.length > 0) {
-      // On a trouvé l’enregistrement exact
+      // On a trouvé l'enregistrement exact
       return exactRow.rows[0]
     }
 
-    // 2) Sinon, récupérer l’enregistrement juste avant et juste après
+    // 2) Sinon, récupérer l'enregistrement juste avant et juste après
     const rowBeforeQuery = `
       SELECT 
         server_id,
@@ -118,7 +119,7 @@ export default class StatsService {
   }
 
   /**
-   * Regroupe les stats en fonction d’un interval (ex: 1 hour, 30 minutes).
+   * Regroupe les stats en fonction d'un interval (ex: 1 hour, 30 minutes).
    */
   public static async getStatsWithInterval(
     serverId: number,
@@ -211,5 +212,158 @@ export default class StatsService {
         lastUpdated: DateTime.now(),
       })
     }
+  }
+
+  public static async getStats(params: {
+    server_id: number
+    exactTime?: number
+    fromDate?: number
+    toDate?: number
+    interval?: string
+  }) {
+    const serverId = params.server_id
+    if (!serverId) {
+      throw new Exception('Server id is required', { status: 400 })
+    }
+
+    // ---------------------------------------
+    // exactTime => on fait la logique dédiée
+    // ---------------------------------------
+    if (params.exactTime) {
+      const exactDateTime = DateTime.fromMillis(params.exactTime)
+      if (!exactDateTime.isValid) {
+        throw new Exception('Invalid exactTime format', { status: 400 })
+      }
+      const row = await this.getExactTimeRow(serverId, exactDateTime)
+      return row ? [this.convertToCamelCase(row)] : []
+    }
+
+    // ---------------------------------------
+    // fromDate / toDate => filtrage éventuel
+    // ---------------------------------------
+    let fromDateSql: string | undefined
+    let toDateSql: string | undefined
+
+    if (params.fromDate) {
+      const fromDateTime = DateTime.fromMillis(params.fromDate)
+      if (!fromDateTime.isValid) {
+        throw new Exception('Invalid fromDate format', { status: 400 })
+      }
+      fromDateSql = fromDateTime.toSQL()
+    }
+    if (params.toDate) {
+      const toDateTime = DateTime.fromMillis(params.toDate)
+      if (!toDateTime.isValid) {
+        throw new Exception('Invalid toDate format', { status: 400 })
+      }
+      toDateSql = toDateTime.toSQL()
+    }
+
+    // ---------------------------------------
+    // interval => regroupement
+    // ---------------------------------------
+    if (params.interval) {
+      const rows = await this.getStatsWithInterval(
+        serverId,
+        params.interval,
+        fromDateSql,
+        toDateSql
+      )
+
+      // // Optionnel : filtrer les rows où player_count = 0
+      // const filtered = rows.filter((row: any) => row.player_count > 0)
+
+      return rows.map(this.convertToCamelCase)
+    }
+
+    // ---------------------------------------
+    // Sinon => stats brutes
+    // ---------------------------------------
+    const results = await this.getRawStats(
+      serverId,
+      fromDateSql,
+      toDateSql
+    )
+    return results.map(this.convertToCamelCase)
+  }
+
+  public static async getGlobalStats(params: {
+    fromDate?: number
+    toDate?: number
+    interval?: string
+  }) {
+    let fromDateSql: string | undefined
+    let toDateSql: string | undefined
+
+    if (params.fromDate) {
+      const fromDateTime = DateTime.fromMillis(params.fromDate)
+      if (!fromDateTime.isValid) {
+        throw new Exception('Invalid fromDate format', { status: 400 })
+      }
+      fromDateSql = fromDateTime.toSQL()
+    }
+    if (params.toDate) {
+      const toDateTime = DateTime.fromMillis(params.toDate)
+      if (!toDateTime.isValid) {
+        throw new Exception('Invalid toDate format', { status: 400 })
+      }
+      toDateSql = toDateTime.toSQL()
+    }
+
+    // Construction de la clause WHERE pour le filtrage des dates
+    let whereClause = ''
+    if (fromDateSql && toDateSql) {
+      whereClause = `WHERE created_at BETWEEN :fromDate AND :toDate`
+    } else if (fromDateSql) {
+      whereClause = `WHERE created_at >= :fromDate`
+    } else if (toDateSql) {
+      whereClause = `WHERE created_at <= :toDate`
+    }
+
+    // Optimisation : Utilisation d'une seule requête avec des sous-requêtes pour éviter les calculs redondants
+    const rawQuery = `
+      WITH latest_stats AS (
+        SELECT DISTINCT ON (server_id, 
+          ${params.interval ? `
+            to_timestamp(
+              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              * ${this.intervalToSeconds(params.interval)}
+            )
+          ` : 'created_at'})
+          server_id,
+          ${params.interval ? `
+            to_timestamp(
+              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              * ${this.intervalToSeconds(params.interval)}
+            ) AS created_at,
+          ` : 'created_at,'}
+          player_count,
+          max_count
+        FROM server_stats
+        ${whereClause}
+        ORDER BY server_id, 
+          ${params.interval ? `
+            to_timestamp(
+              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              * ${this.intervalToSeconds(params.interval)}
+            )
+          ` : 'created_at'},
+          created_at DESC
+      )
+      SELECT 
+        created_at,
+        SUM(player_count)::int AS player_count,
+        SUM(max_count)::int AS max_count
+      FROM latest_stats
+      GROUP BY created_at
+      ORDER BY created_at
+    `
+
+    const bindings: any = {}
+    if (fromDateSql) bindings.fromDate = fromDateSql
+    if (toDateSql) bindings.toDate = toDateSql
+
+    const result = await Database.rawQuery(rawQuery, bindings)
+    return result.rows.map(this.convertToCamelCase)
   }
 }

@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url'
 import pLimit from 'p-limit'
 import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
 import sharp from 'sharp'
+import { DateTime } from 'luxon'
 
 /**
  * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
@@ -91,6 +92,9 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
     maxPlayer = data.players.max
 
     server.version = data.version.name
+    server.lastPlayerCount = playerOnline
+    server.lastMaxCount = maxPlayer
+    server.lastStatsAt = DateTime.now()
     await server.save()
     logger.info(`SCHEDULER: Updated server ${server.name} (${server.address}:${server.port})`)
   } catch (error) {

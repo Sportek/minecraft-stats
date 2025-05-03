@@ -32,12 +32,12 @@ export const getServers = async () => {
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<{ server: Server; stat: ServerStat; categories: Category[] }[]>;
+  return response.json() as Promise<{ server: Server; stats: ServerStat[]; categories: Category[] }[]>;
 };
 
 export const getServer = async (serverId: number) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
-  return response.json() as Promise<{ server: Server; stat: ServerStat | null; categories: Category[] }>;
+  return response.json() as Promise<{ server: Server; stats: ServerStat[]; categories: Category[] }>;
 };
 
 export const getServerStats = async (

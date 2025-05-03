@@ -13,26 +13,24 @@ import AutoSwagger from "adonis-autoswagger";
 import { middleware } from './kernel.js';
 import { throttleLight } from "./limiter.js";
 
-// returns swagger in YAML
 router.get("/swagger", async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger);
 });
 
-// Renders Swagger-UI and passes YAML-output of /swagger
 router.get("/docs", async () => {
-  // return AutoSwagger.default.ui("/swagger", swagger);
-  return AutoSwagger.default.scalar("/swagger"); // to use Scalar instead
-  // return AutoSwagger.default.rapidoc("/swagger", "view"); to use RapiDoc instead (pass "view" default, or "read" to change the render-style)
+  return AutoSwagger.default.scalar("/swagger");
 });
 
 router
   .group(() => {
     // Gestion des ressources
+    router.get('servers/paginate', '#controllers/servers_controller.paginate').use(throttleLight('servers.paginate', 50))
+
     router
       .resource('servers', '#controllers/servers_controller')
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
-      .use('*', throttleLight('servers', 8))
+      .use('*', throttleLight('servers', 35))
 
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
@@ -46,6 +44,8 @@ router
       .use('*', throttleLight('categories', 8))
 
     router.resource('servers.stats', '#controllers/stats_controller').only(['index']).use('*', throttleLight('servers.stats', 40))
+    
+    router.get('global-stats', '#controllers/stats_controller.globalStats').use(throttleLight('global-stats', 40))
 
     router
       .resource('users', '#controllers/users_controller')

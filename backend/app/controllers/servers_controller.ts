@@ -5,14 +5,15 @@ import { CreateServerValidator, UpdateServerValidator } from '#validators/server
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
+import StatsService from '#services/stat_service'
 
 export default class ServersController {
-  async index({ }: HttpContext) {
+  async index() {
     const servers = await Server.query().preload('user').preload('categories').preload('growthStat')
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
-        const stat = await this.getActualStats(server)
-        return { server, stat, categories: server.categories, growthStat: server.growthStat }
+        const stats = await this.getActualStats(server)
+        return { server, stats, categories: server.categories, growthStat: server.growthStat }
       })
     )
     return serversWithStats
@@ -47,19 +48,19 @@ export default class ServersController {
     return server
   }
 
-  private async getActualStats(server: Server) {
+  private async getActualStats(server: Server, amount: number = 1) {
     const stats = await ServerStat.query()
       .where('server_id', server.id)
       .orderBy('created_at', 'desc')
-      .first()
+      .limit(amount)
     return stats
   }
 
   async show({ params, response }: HttpContext) {
     let server = await Server.query().where('id', params.id).preload('user').preload('growthStat').preload('categories').first()
     if (!server) return response.notFound({ message: 'Server not found' })
-    const stat = await this.getActualStats(server)
-    return { server, stat, categories: server.categories, growthStat: server.growthStat }
+    const stats = await this.getActualStats(server)
+    return { server, stats, categories: server.categories, growthStat: server.growthStat }
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
@@ -103,5 +104,59 @@ export default class ServersController {
     }
     await server.delete()
     return response.noContent()
+  }
+
+  async paginate({ request }: HttpContext) {
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 10)
+    const categoryIds = request.input('categoryIds')
+    const search = request.input('search', '')
+
+    let query = Server.query()
+      .preload('user')
+      .preload('categories')
+      .preload('growthStat')
+      .orderByRaw('COALESCE(last_player_count, -1) DESC')
+      .orderBy('last_stats_at', 'desc')
+
+    if (search) {
+      query = query.where((builder) => {
+        builder
+          .whereILike('name', `%${search}%`)
+          .orWhereILike('address', `%${search}%`)
+      })
+    }
+
+    if (categoryIds) {
+      try {
+        const ids = categoryIds.split(',').map((id: string) => parseInt(id.trim(), 10)).filter((id: number) => !isNaN(id))
+        if (ids.length > 0) {
+          query = query.whereHas('categories', (builder) => {
+            builder.whereIn('categories.id', ids)
+          })
+        }
+      } catch (error) {
+        console.error('Error processing categoryIds:', error)
+      }
+    }
+
+    const servers = await query.paginate(page, limit)
+    
+    const serversWithStats = await Promise.all(
+      servers.map(async (server) => {
+        const lastStat = await this.getActualStats(server, 1)
+        const lastDayStats = await StatsService.getStats({
+          server_id: server.id,
+          fromDate: Date.now() - 24 * 60 * 60 * 1000,
+          toDate: Date.now(),
+        })
+        return { server, stats: [...lastStat, ...lastDayStats], categories: server.categories, growthStat: server.growthStat }
+      })
+    )
+
+    return {
+      data: serversWithStats,
+      meta: servers.getMeta()
+    }
   }
 }

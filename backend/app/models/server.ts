@@ -42,6 +42,15 @@ export default class Server extends BaseModel {
   @column.dateTime({ columnName: 'last_online_at' })
   declare lastOnlineAt: DateTime | null
 
+  @column()
+  declare lastPlayerCount: number | null
+
+  @column()
+  declare lastMaxCount: number | null
+
+  @column.dateTime({ columnName: 'last_stats_at' })
+  declare lastStatsAt: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
