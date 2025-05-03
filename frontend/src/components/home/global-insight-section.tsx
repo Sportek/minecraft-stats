@@ -106,7 +106,7 @@ const GlobalInsightSection = () => {
     <div className="w-full bg-white dark:bg-zinc-950 p-6 rounded-lg shadow-md">
       <div className="flex flex-col gap-4">
         <div className="flex flex-row justify-between items-center">
-          <h2 className="text-xl font-semibold">Overall Stats</h2>
+          <h2 className="text-xl font-semibold">Global Insight</h2>
           <div className="flex flex-row gap-4">
             <TimeRangeSelect
               value={dataRangeInterval}

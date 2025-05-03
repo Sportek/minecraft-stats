@@ -3,6 +3,7 @@
 import GlobalInsightSection from "@/components/home/global-insight-section";
 import HeroSection from "@/components/home/hero-section";
 import ServerCardsSection from "@/components/home/server-cards-section";
+import StatsSection from "@/components/home/stats-section";
 
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 
@@ -21,6 +22,7 @@ const Home = () => {
   return (
     <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
       <HeroSection />
+      <StatsSection />
       <GlobalInsightSection />
       <ServerCardsSection />
     </main>
