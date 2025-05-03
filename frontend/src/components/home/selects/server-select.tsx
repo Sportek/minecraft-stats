@@ -99,9 +99,7 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
         >
           {selectedServers.length === 0
             ? "All monitored servers"
-            : `${selectedServers.length} server${selectedServers.length > 1 ? "s" : ""} selected${
-                selectedServers.length > 1 ? "s" : ""
-              }`}
+            : `${selectedServers.length} server${selectedServers.length > 1 ? "s" : ""} selected`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
