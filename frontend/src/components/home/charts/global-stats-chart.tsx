@@ -1,9 +1,14 @@
 import { ServerStat } from "@/types/server";
 import { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
-import { AgCharts } from "ag-charts-react";
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { Server } from "../selects/server-select";
+import dynamic from 'next/dynamic';
+
+const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
+  ssr: false,
+  loading: () => <div className="h-72 w-full bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+});
 
 interface ChartDatum {
   time: Date;
