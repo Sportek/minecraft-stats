@@ -24,7 +24,7 @@ const ImprovedCard = ({ server, stats, categories, isLoading }: ImprovedCardProp
 
   
   return isLoading ? null : (
-    <div className="p-2 shadow-md rounded-md bg-white dark:bg-zinc-800 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-2 items-center">
         <Icon icon="material-symbols:info" className="text-zinc-500 dark:text-zinc-300 w-4 h-4" />
         <div>

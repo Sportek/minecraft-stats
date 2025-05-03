@@ -24,13 +24,13 @@ router.get("/docs", async () => {
 router
   .group(() => {
     // Gestion des ressources
-    router.get('servers/paginate', '#controllers/servers_controller.paginate').use(throttleLight('servers.paginate', 16))
+    router.get('servers/paginate', '#controllers/servers_controller.paginate').use(throttleLight('servers.paginate', 50))
 
     router
       .resource('servers', '#controllers/servers_controller')
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
-      .use('*', throttleLight('servers', 8))
+      .use('*', throttleLight('servers', 35))
 
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
@@ -44,6 +44,8 @@ router
       .use('*', throttleLight('categories', 8))
 
     router.resource('servers.stats', '#controllers/stats_controller').only(['index']).use('*', throttleLight('servers.stats', 40))
+    
+    router.get('global-stats', '#controllers/stats_controller.globalStats').use(throttleLight('global-stats', 40))
 
     router
       .resource('users', '#controllers/users_controller')

@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col bg-zinc-100 dark:bg-zinc-900 text-stats-blue-1050 dark:text-stats-blue-50")}
+        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col text-stats-blue-1050 dark:text-stats-blue-50 bg-stats-blue-50 dark:bg-stats-blue-1050")}
       >
         <SpeedInsights />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

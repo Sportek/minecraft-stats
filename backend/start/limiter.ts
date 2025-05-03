@@ -14,8 +14,7 @@ import limiter from '@adonisjs/limiter/services/main'
 const createLimiter = (key: string, requests: number, time: string, requestName: string) => {
 
   return limiter.define(key, (ctx) => {
-
-    const cloudflareIp = ctx.request.header('CF-Connecting-IP') || ctx.request.ip()
+    const cloudflareIp = ctx.request.header("CF-Connecting-IP") ?? ctx.request.ip();
 
     return limiter
       .allowRequests(requests)

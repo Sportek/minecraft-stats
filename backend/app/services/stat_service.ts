@@ -286,4 +286,84 @@ export default class StatsService {
     )
     return results.map(this.convertToCamelCase)
   }
+
+  public static async getGlobalStats(params: {
+    fromDate?: number
+    toDate?: number
+    interval?: string
+  }) {
+    let fromDateSql: string | undefined
+    let toDateSql: string | undefined
+
+    if (params.fromDate) {
+      const fromDateTime = DateTime.fromMillis(params.fromDate)
+      if (!fromDateTime.isValid) {
+        throw new Exception('Invalid fromDate format', { status: 400 })
+      }
+      fromDateSql = fromDateTime.toSQL()
+    }
+    if (params.toDate) {
+      const toDateTime = DateTime.fromMillis(params.toDate)
+      if (!toDateTime.isValid) {
+        throw new Exception('Invalid toDate format', { status: 400 })
+      }
+      toDateSql = toDateTime.toSQL()
+    }
+
+    // Construction de la clause WHERE pour le filtrage des dates
+    let whereClause = ''
+    if (fromDateSql && toDateSql) {
+      whereClause = `WHERE created_at BETWEEN :fromDate AND :toDate`
+    } else if (fromDateSql) {
+      whereClause = `WHERE created_at >= :fromDate`
+    } else if (toDateSql) {
+      whereClause = `WHERE created_at <= :toDate`
+    }
+
+    // Optimisation : Utilisation d'une seule requête avec des sous-requêtes pour éviter les calculs redondants
+    const rawQuery = `
+      WITH latest_stats AS (
+        SELECT DISTINCT ON (server_id, 
+          ${params.interval ? `
+            to_timestamp(
+              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              * ${this.intervalToSeconds(params.interval)}
+            )
+          ` : 'created_at'})
+          server_id,
+          ${params.interval ? `
+            to_timestamp(
+              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              * ${this.intervalToSeconds(params.interval)}
+            ) AS created_at,
+          ` : 'created_at,'}
+          player_count,
+          max_count
+        FROM server_stats
+        ${whereClause}
+        ORDER BY server_id, 
+          ${params.interval ? `
+            to_timestamp(
+              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              * ${this.intervalToSeconds(params.interval)}
+            )
+          ` : 'created_at'},
+          created_at DESC
+      )
+      SELECT 
+        created_at,
+        SUM(player_count)::int AS player_count,
+        SUM(max_count)::int AS max_count
+      FROM latest_stats
+      GROUP BY created_at
+      ORDER BY created_at
+    `
+
+    const bindings: any = {}
+    if (fromDateSql) bindings.fromDate = fromDateSql
+    if (toDateSql) bindings.toDate = toDateSql
+
+    const result = await Database.rawQuery(rawQuery, bindings)
+    return result.rows.map(this.convertToCamelCase)
+  }
 }

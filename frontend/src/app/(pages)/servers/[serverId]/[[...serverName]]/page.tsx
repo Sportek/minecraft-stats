@@ -126,6 +126,7 @@ const ServerPage = () => {
           categories={server.data.categories}
           growthStat={server.data.growthStat}
           isFull={true}
+          showChart={false}
         />
       </div>
     ) : null;
