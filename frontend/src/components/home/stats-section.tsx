@@ -3,7 +3,7 @@ import StatCard from "../serveur/stat-card";
 import { Server, ServerStat, Category, ServerGrowthStat } from "@/types/server";
 import { fetcher } from "@/app/_cheatcode";
 import useSWR from "swr";
-import Loader from "../loader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ServerData {
   server: Server;
@@ -34,7 +34,24 @@ const StatsSection = () => {
   );
 
   if (isServersLoading || isWebsiteStatsLoading) {
-    return <Loader message="Loading stats..." className="w-full h-32 flex items-center justify-center" />;
+    return (
+      <div className="w-full flex flex-col sm:flex-row gap-4 justify-around">
+        <div className="bg-white dark:bg-zinc-950 p-4 rounded-md shadow-md w-full flex flex-col gap-2">
+          <div className="flex flex-row gap-2 items-center">
+            <Skeleton className="w-6 h-6 rounded-full" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-7 w-20" />
+        </div>
+        <div className="bg-white dark:bg-zinc-950 p-4 rounded-md shadow-md w-full flex flex-col gap-2">
+          <div className="flex flex-row gap-2 items-center">
+            <Skeleton className="w-6 h-6 rounded-full" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-7 w-20" />
+        </div>
+      </div>
+    );
   }
 
   if (serversError || websiteStatsError) {

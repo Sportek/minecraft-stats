@@ -52,12 +52,10 @@ const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
     bottom: 0,
     left: 0,
   },
-  navigator: {
-    enabled: false,
-  },
   tooltip: {
     position: {
-      type: 'pointer',
+      anchorTo: 'pointer',
+      placement: 'top'
     }
   }
 };
