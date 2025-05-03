@@ -34,7 +34,7 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
   useEffect(() => {
     const fetchServers = async () => {
       try {
-        const response = await fetch('http://localhost:9000/api/v1/servers');
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/servers");
         if (!response.ok) throw new Error('Failed to fetch servers');
         const data = await response.json();
         
@@ -53,10 +53,6 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
     fetchServers();
   }, []);
 
-  useEffect(() => {
-    console.log(servers);
-  }, [servers]);
-
   const handleServerToggle = (serverId: number) => {
     const newSelection = selectedServers.includes(serverId)
       ? selectedServers.filter(id => id !== serverId)
@@ -64,8 +60,15 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
     onChange(newSelection);
   };
 
+  const normalizeString = (str: string) => {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  };
+
   const filteredServers = search.length > 0 
-    ? servers.filter(server => server.name.toLowerCase().includes(search.toLowerCase()))
+    ? servers.filter(server => normalizeString(server.name).includes(normalizeString(search)))
     : servers;
 
   // Trier les serveurs pour afficher d'abord les sélectionnés

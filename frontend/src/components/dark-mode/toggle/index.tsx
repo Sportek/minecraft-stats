@@ -3,10 +3,24 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function ModeToggle() {
   const { setTheme, theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const isLight = theme === "light";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <button className="p-2 text-zinc-900 dark:text-white focus:outline-none">
+        <span className="w-5 h-5" />
+      </button>
+    );
+  }
 
   return (
     <motion.button

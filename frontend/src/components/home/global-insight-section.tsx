@@ -45,7 +45,7 @@ const GlobalInsightSection = () => {
       // Récupérer les stats globales si aucun serveur n'est sélectionné
       if (selectedServers.length === 0) {
         const response = await fetch(
-          `http://localhost:9000/api/v1/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
+          `${process.env.NEXT_PUBLIC_API_URL}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
         );
         
         if (!response.ok) {
@@ -58,9 +58,8 @@ const GlobalInsightSection = () => {
       } else {
         // Récupérer les stats pour chaque serveur sélectionné
         const promises = selectedServers.map(async (serverId) => {
-          console.log('Fetching stats for server:', serverId);
           const response = await fetch(
-            `http://localhost:9000/api/v1/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
+            `${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
           );
           
           if (!response.ok) {
@@ -68,17 +67,15 @@ const GlobalInsightSection = () => {
           }
           
           const stats = await response.json();
-          console.log('Stats for server', serverId, ':', stats);
           
           // Récupérer les informations du serveur
-          const serverResponse = await fetch(`http://localhost:9000/api/v1/servers/${serverId}`);
+          const serverResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
           
           if (!serverResponse.ok) {
             throw new Error(`Failed to fetch server ${serverId}`);
           }
           
           const serverData = await serverResponse.json();
-          console.log('Server data:', serverData);
           
           return { 
             server: serverData.server,
@@ -87,7 +84,6 @@ const GlobalInsightSection = () => {
         });
 
         const results = await Promise.all(promises);
-        console.log('All server stats results:', results);
         setGlobalStats([]);
         setServerStats(results);
       }

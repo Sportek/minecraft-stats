@@ -41,7 +41,9 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
                 />
               </div>
             </div>
-            {showChart && <ServerChart stats={stats} />}
+            {showChart && (
+                <ServerChart stats={stats} />
+            )}
           </div>
         </div>
         <div className="flex flex-row justify-between w-full">

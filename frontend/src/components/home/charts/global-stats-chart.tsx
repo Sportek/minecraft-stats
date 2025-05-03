@@ -1,6 +1,6 @@
 import { ServerStat } from "@/types/server";
-import { AgAreaSeriesOptions, AgCartesianChartOptions } from "ag-charts-community";
-import { AgChartsReact } from "ag-charts-react";
+import { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
+import { AgCharts } from "ag-charts-react";
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { Server } from "../selects/server-select";
@@ -25,34 +25,84 @@ const COLORS = [
   { light: '#EA580C', dark: '#FB923C' }, // Orange
 ];
 
+const BASE_AXES: AgCartesianAxisOptions[] = [
+  {
+    type: 'time',
+    position: 'bottom',
+    label: {
+      format: '%d/%m %H:%M',
+    },
+    nice: false,
+    min: undefined,
+    max: undefined
+  } as AgTimeAxisOptions,
+  {
+    type: 'number',
+    position: 'left',
+  },
+];
+
+const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
+  container: undefined,
+  axes: BASE_AXES,
+  legend: {
+    enabled: true,
+    position: 'bottom',
+    spacing: 40
+  },
+  tooltip: {
+    position: {
+      type: 'pointer',
+    }
+  },
+  background: {
+    fill: 'transparent',
+  },
+  padding: {
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10
+  }
+};
+
+const createEmptyChartOptions = (theme: string | undefined): AgCartesianChartOptions => ({
+  ...BASE_CHART_OPTIONS,
+  data: [],
+  series: [],
+  theme: theme === 'dark' ? 'ag-default-dark' : 'ag-default',
+} as AgCartesianChartOptions);
+
+const createAreaSeries = (
+  xKey: string,
+  yKey: string,
+  yName: string,
+  color: { light: string; dark: string },
+  theme: string | undefined
+): AgAreaSeriesOptions => ({
+  type: 'area',
+  xKey,
+  yKey,
+  yName,
+  stroke: theme === 'dark' ? color.dark : color.light,
+  strokeWidth: 2,
+  marker: {
+    enabled: false,
+  },
+  fillOpacity: 0.1,
+  fill: theme === 'dark' ? color.dark : color.light,
+  interpolation: {
+    type: 'smooth'
+  },
+} as AgAreaSeriesOptions);
+
 export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading }: GlobalStatsChartProps) => {
   const { resolvedTheme } = useTheme();
 
   const options = useMemo(() => {
     // Vérifier si on a des données valides
     if (!Array.isArray(globalStats) && (!Array.isArray(serverStats) || serverStats.length === 0)) {
-      return {
-        autoSize: true,
-        data: [],
-        series: [],
-        axes: [
-          {
-            type: 'time',
-            position: 'bottom',
-            label: {
-              format: '%d/%m %H:%M',
-            },
-          },
-          {
-            type: 'number',
-            position: 'left',
-          },
-        ],
-        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        background: {
-          fill: 'transparent',
-        },
-      } as AgCartesianChartOptions;
+      return createEmptyChartOptions(resolvedTheme);
     }
 
     // Si on a des stats globales, les utiliser
@@ -62,78 +112,31 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
         playerCount: stat.playerCount ?? 0
       }));
 
+      // Calculer les dates min et max
+      const dates = data.map(d => d.time);
+      const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+      const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+
       return {
-        autoSize: true,
+        ...BASE_CHART_OPTIONS,
         data,
-        series: [{
-          type: 'area',
-          xKey: 'time',
-          yKey: 'playerCount',
-          yName: 'All monitored servers',
-          stroke: resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB',
-          strokeWidth: 2,
-          marker: {
-            enabled: false,
-          },
-          fillOpacity: 0.1,
-          fill: resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB',
-        }],
+        series: [createAreaSeries('time', 'playerCount', 'All monitored servers', COLORS[0], resolvedTheme)],
+        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
         axes: [
           {
-            type: 'time',
-            position: 'bottom',
-            label: {
-              format: '%d/%m %H:%M',
-            },
+            ...BASE_AXES[0],
+            min: minDate,
+            max: maxDate,
           },
-          {
-            type: 'number',
-            position: 'left',
-          },
-        ],
-        legend: {
-          enabled: true,
-          position: 'bottom',
-          toggleSeries: false
-        },
-        tooltip: {
-          tracking: true,
-          position: {
-            type: 'pointer',
-          }
-        },
-        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        background: {
-          fill: 'transparent',
-        },
+          BASE_AXES[1]
+        ]
       } as AgCartesianChartOptions;
     }
 
     // S'assurer que les stats du premier serveur existent pour les serveurs individuels
     const firstServerStats = serverStats[0]?.stats ?? [];
     if (firstServerStats.length === 0) {
-      return {
-        autoSize: true,
-        data: [],
-        series: [],
-        axes: [
-          {
-            type: 'time',
-            position: 'bottom',
-            label: {
-              format: '%d/%m %H:%M',
-            },
-          },
-          {
-            type: 'number',
-            position: 'left',
-          },
-        ],
-        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        background: {
-          fill: 'transparent',
-        },
-      } as AgCartesianChartOptions;
+      return createEmptyChartOptions(resolvedTheme);
     }
 
     // Préparer les données pour les serveurs individuels
@@ -143,7 +146,6 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
           time: new Date(stat.createdAt || Date.now())
         };
         
-        // Ajouter les données de chaque serveur
         serverStats.forEach(({ server, stats }) => {
           if (server && stats) {
             const matchingStat = stats.find(s => s?.createdAt === stat.createdAt);
@@ -154,95 +156,54 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
         return basePoint;
       });
 
-      // Créer une série pour chaque serveur
+      // Calculer les dates min et max pour les serveurs individuels
+      const dates = allData.map(d => d.time);
+      const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+      const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+
       const series = serverStats
         .filter(({ server, stats }) => server && stats && stats.length > 0)
         .map(({ server }, index) => {
           const colorIndex = index % COLORS.length;
-          const color = COLORS[colorIndex];
-          return {
-            type: 'area',
-            xKey: 'time',
-            yKey: `playerCount_${server.id}`,
-            yName: server.name || `Serveur ${server.id}`,
-            stroke: resolvedTheme === 'dark' ? color.dark : color.light,
-            strokeWidth: 2,
-            marker: {
-              enabled: false,
-            },
-            fillOpacity: 0.1,
-            fill: resolvedTheme === 'dark' ? color.dark : color.light,
-          };
+          return createAreaSeries(
+            'time',
+            `playerCount_${server.id}`,
+            server.name || `Serveur ${server.id}`,
+            COLORS[colorIndex],
+            resolvedTheme
+          );
         });
 
       return {
-        autoSize: true,
+        ...BASE_CHART_OPTIONS,
         data: allData,
         series,
+        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
         axes: [
           {
-            type: 'time',
-            position: 'bottom',
-            label: {
-              format: '%d/%m %H:%M',
-            },
+            ...BASE_AXES[0],
+            min: minDate,
+            max: maxDate,
           },
-          {
-            type: 'number',
-            position: 'left',
-          },
-        ],
-        legend: {
-          enabled: true,
-          position: 'bottom',
-          toggleSeries: false
-        },
-        tooltip: {
-          tracking: true,
-          position: {
-            type: 'pointer',
-          }
-        },
-        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        background: {
-          fill: 'transparent',
-        },
+          BASE_AXES[1]
+        ]
       } as AgCartesianChartOptions;
     } catch (error) {
       console.error('Error processing server stats:', error);
-      return {
-        autoSize: true,
-        data: [],
-        series: [],
-        axes: [
-          {
-            type: 'time',
-            position: 'bottom',
-            label: {
-              format: '%d/%m %H:%M',
-            },
-          },
-          {
-            type: 'number',
-            position: 'left',
-          },
-        ],
-        theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        background: {
-          fill: 'transparent',
-        },
-      } as AgCartesianChartOptions;
+      return createEmptyChartOptions(resolvedTheme);
     }
   }, [globalStats, serverStats, resolvedTheme]);
 
   return (
-    <div className="h-64 relative">
-      {isLoading && (
-        <div className="absolute inset-0 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
-      <AgChartsReact options={options} />
+    <div className="flex flex-col gap-2">
+      <div className="h-72 relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        <AgCharts options={options} />
+      </div>
     </div>
   );
 }; 
