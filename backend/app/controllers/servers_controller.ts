@@ -110,6 +110,7 @@ export default class ServersController {
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
     const categoryIds = request.input('categoryIds')
+    const search = request.input('search', '')
 
     let query = Server.query()
       .preload('user')
@@ -117,6 +118,14 @@ export default class ServersController {
       .preload('growthStat')
       .orderByRaw('COALESCE(last_player_count, -1) DESC')
       .orderBy('last_stats_at', 'desc')
+
+    if (search) {
+      query = query.where((builder) => {
+        builder
+          .whereILike('name', `%${search}%`)
+          .orWhereILike('address', `%${search}%`)
+      })
+    }
 
     if (categoryIds) {
       try {
