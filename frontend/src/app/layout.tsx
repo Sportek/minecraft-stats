@@ -22,6 +22,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://minecraft-stats.fr'),
   title: {
     template: "%s | Minecraft Stats",
     default: "Minecraft Stats",
