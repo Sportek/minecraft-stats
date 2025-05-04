@@ -13,6 +13,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Metrics from "@/components/metrics";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ThemeProvider } from "@/components/dark-mode/provider";
+import ClientLayout from "./client-layout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,25 +43,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col text-stats-blue-1050 dark:text-stats-blue-50 bg-stats-blue-50 dark:bg-stats-blue-1050")}
+        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col")}
       >
-        <SpeedInsights />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            <ServersProvider>
-              <FavoriteProvider>
-                <CheatCodeComponent />
-                <Header />
-                <Toaster />
-                <div className="flex-1 flex flex-col items-center justify-center">
-                  <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
-                  <Metrics />
-                </div>
-                <Footer />
-              </FavoriteProvider>
-            </ServersProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

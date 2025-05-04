@@ -72,7 +72,7 @@ const Header = () => {
   );
 
   return (
-    <header className="w-full relative">
+    <header className="w-full relative bg-stats-blue-50 dark:bg-stats-blue-1050">
       <RestrictedWidthLayout className="flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-2">
           <Image src={MinecraftStatsLogo} alt="Minecraft Stats Logo" width={32} height={32} />

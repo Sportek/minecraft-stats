@@ -13,7 +13,7 @@ const Footer = () => {
     typeof window !== "undefined" && window.location.hostname.endsWith("minecraft-stats.com");
 
   return (
-    <div className="flex flex-col items-center gap-4 py-4 ">
+    <div className="flex flex-col items-center gap-4 py-4 bg-stats-blue-50 dark:bg-stats-blue-1050">
       <RestrictedWidthLayout className="gap-4 flex flex-col items-center justify-center">
         <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
           <div className="flex flex-col items-center gap-4">
