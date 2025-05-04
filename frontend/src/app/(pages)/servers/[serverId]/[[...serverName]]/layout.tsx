@@ -2,7 +2,8 @@ import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
 
-export const generateMetadata = async ({params}: {params: {serverId: string, serverName: string[]}}): Promise<Metadata> => {
+export const generateMetadata = async (props: {params: Promise<{serverId: string, serverName: string[]}>}): Promise<Metadata> => {
+  const params = await props.params;
   try {
     const server = await getServer(Number(params.serverId));
     return Promise.resolve({

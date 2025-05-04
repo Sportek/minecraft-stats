@@ -8,7 +8,6 @@ import { generateTooltipHtml } from "./tooltip-chart";
 const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
   ssr: false,
   loading: () => <div className="h-[40px] w-full bg-zinc-100 dark:bg-zinc-800" />,
-  suspense: true
 });
 
 interface ServerChartProps {
