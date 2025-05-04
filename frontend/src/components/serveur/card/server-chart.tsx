@@ -3,6 +3,7 @@ import { AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } fr
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import dynamic from 'next/dynamic';
+import { generateTooltipHtml } from "./tooltip-chart";
 
 const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
   ssr: false,
@@ -20,6 +21,7 @@ const BASE_AXES: [AgTimeAxisOptions, AgCartesianAxisOptions] = [
     position: 'bottom',
     label: {
       enabled: false,
+      format: '%d/%m %H:%M'
     },
     line: {
       enabled: false,
@@ -27,7 +29,7 @@ const BASE_AXES: [AgTimeAxisOptions, AgCartesianAxisOptions] = [
     tick: {
       enabled: false,
     },
-    nice: false,
+    nice: false
   },
   {
     type: 'number',
@@ -95,25 +97,39 @@ const ServerChart = ({ stats }: ServerChartProps) => {
       data: sortedData,
       series: [
         {
-          type: 'area',
-          xKey: 'time',
-          yKey: 'playerCount',
-          yName: 'Online players',
-          stroke: resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB',
+          type: "area",
+          xKey: "time",
+          xName: "Time",
+          yKey: "playerCount",
+          yName: "Online players",
+          stroke: resolvedTheme === "dark" ? "#60A5FA" : "#2563EB",
           strokeWidth: 2,
           marker: {
             enabled: false,
           },
+          tooltip: {
+            enabled: true,
+            position: {
+              anchorTo: "pointer",
+              placement: "top",
+            },
+            renderer: ({ datum }: any) => {
+              return generateTooltipHtml(
+                { time: new Date(datum.time), playerCount: datum.playerCount },
+                { isDarkMode: resolvedTheme === "dark" }
+              );
+            },
+          },
           fillOpacity: 0.1,
-          fill: resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB',
+          fill: resolvedTheme === "dark" ? "#60A5FA" : "#2563EB",
           strokeOpacity: 1,
           interpolation: {
-            type: 'smooth'
-          }
+            type: "smooth",
+          },
         },
       ],
       axes: [timeAxis, BASE_AXES[1]],
-      theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
+      theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
     };
   }, [sortedData, resolvedTheme]);
 

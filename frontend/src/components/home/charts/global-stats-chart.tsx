@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { Server } from "../selects/server-select";
 import dynamic from 'next/dynamic';
+import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 
 const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
   ssr: false,
@@ -100,6 +101,19 @@ const createAreaSeries = (
   fill: theme === 'dark' ? color.dark : color.light,
   interpolation: {
     type: 'smooth'
+  },
+  tooltip: {
+    enabled: true,
+    position: {
+      anchorTo: 'pointer',
+      placement: 'top',
+    },
+    renderer: ({ datum }: any) => {
+      return generateTooltipHtml(
+        { time: new Date(datum.time), playerCount: datum[yKey] ?? 0 },
+        { isDarkMode: theme === 'dark' }
+      );
+    },
   },
 } as AgAreaSeriesOptions);
 

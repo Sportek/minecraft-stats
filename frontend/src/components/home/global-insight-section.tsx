@@ -33,7 +33,7 @@ const GlobalInsightSection = () => {
   }, []);
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
-  const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("2 Hours");
+  const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("30 Minutes");
 
   const fetchStats = async () => {
     setIsLoading(true);

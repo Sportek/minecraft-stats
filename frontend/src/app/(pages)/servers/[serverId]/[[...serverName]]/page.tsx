@@ -4,12 +4,11 @@ import { getServerStats } from "@/http/server";
 import { ServerStat } from "@/types/server";
 import { AgCharts } from "ag-charts-react";
 import { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
+import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 
 import { ServerData } from "@/app/(pages)/(index)/page";
-import Loader from "@/components/loader";
 import ServerCard from "@/components/serveur/card";
 import ImprovedCard from "@/components/serveur/improved-card";
-import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -76,6 +75,19 @@ const createAreaSeries = (
   fill: theme === 'dark' ? '#60A5FA' : '#2563EB',
   interpolation: {
     type: 'smooth'
+  },
+  tooltip: {
+    enabled: true,
+    position: {
+      anchorTo: 'pointer',
+      placement: 'top',
+    },
+    renderer: ({ datum }: any) => {
+      return generateTooltipHtml(
+        { time: new Date(datum.time), playerCount: datum.playerCount },
+        { isDarkMode: theme === 'dark' }
+      );
+    },
   },
 });
 
