@@ -1,19 +1,9 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
-import RestrictedWidthLayout from "@/components/restricted-width-layout";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/contexts/auth";
-import { ServersProvider } from "@/contexts/servers";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import CheatCodeComponent from "./_cheatcode";
 import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import Metrics from "@/components/metrics";
-import { FavoriteProvider } from "@/contexts/favorite";
-import { ThemeProvider } from "@/components/dark-mode/provider";
 import ClientLayout from "./client-layout";
+import UmamiScript from "@/components/umami-script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,6 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <UmamiScript />
+      </head>
       <body
         className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col")}
       >
