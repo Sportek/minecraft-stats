@@ -1,4 +1,3 @@
-
 import env from '#start/env'
 import { defineConfig } from '@julr/adonisjs-prometheus'
 import { httpCollector } from '@julr/adonisjs-prometheus/collectors/http_collector'

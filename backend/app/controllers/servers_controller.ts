@@ -57,7 +57,12 @@ export default class ServersController {
   }
 
   async show({ params, response }: HttpContext) {
-    let server = await Server.query().where('id', params.id).preload('user').preload('growthStat').preload('categories').first()
+    let server = await Server.query()
+      .where('id', params.id)
+      .preload('user')
+      .preload('growthStat')
+      .preload('categories')
+      .first()
     if (!server) return response.notFound({ message: 'Server not found' })
     const stats = await this.getActualStats(server)
     return { server, stats, categories: server.categories, growthStat: server.growthStat }
@@ -121,15 +126,16 @@ export default class ServersController {
 
     if (search) {
       query = query.where((builder) => {
-        builder
-          .whereILike('name', `%${search}%`)
-          .orWhereILike('address', `%${search}%`)
+        builder.whereILike('name', `%${search}%`).orWhereILike('address', `%${search}%`)
       })
     }
 
     if (categoryIds) {
       try {
-        const ids = categoryIds.split(',').map((id: string) => parseInt(id.trim(), 10)).filter((id: number) => !isNaN(id))
+        const ids = categoryIds
+          .split(',')
+          .map((id: string) => Number.parseInt(id.trim(), 10))
+          .filter((id: number) => !Number.isNaN(id))
         if (ids.length > 0) {
           query = query.whereHas('categories', (builder) => {
             builder.whereIn('categories.id', ids)
@@ -141,7 +147,7 @@ export default class ServersController {
     }
 
     const servers = await query.paginate(page, limit)
-    
+
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
         const lastStat = await this.getActualStats(server, 1)
@@ -150,13 +156,18 @@ export default class ServersController {
           fromDate: Date.now() - 24 * 60 * 60 * 1000,
           toDate: Date.now(),
         })
-        return { server, stats: [...lastStat, ...lastDayStats], categories: server.categories, growthStat: server.growthStat }
+        return {
+          server,
+          stats: [...lastStat, ...lastDayStats],
+          categories: server.categories,
+          growthStat: server.growthStat,
+        }
       })
     )
 
     return {
       data: serversWithStats,
-      meta: servers.getMeta()
+      meta: servers.getMeta(),
     }
   }
 }

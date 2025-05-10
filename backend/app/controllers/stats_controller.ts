@@ -4,7 +4,7 @@ import { GlobalStatValidator } from '#validators/global_stat'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class StatsController {
-  public async index({ request, response }: HttpContext) {
+  async index({ request, response }: HttpContext) {
     try {
       const validatedData = await StatValidator.validate({
         ...request.params(),

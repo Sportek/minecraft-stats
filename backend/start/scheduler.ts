@@ -77,13 +77,19 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
       const webpImageName = `${server.id}.webp`
       const webpImageFullPath = path.join(imagePath, webpImageName)
       const buffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64')
-      sharp(buffer).toFormat('webp').toFile(webpImageFullPath, (err) => {
-        if (err) {
-          logger.error(`SCHEDULER: Failed to generate webp image for server ${server.name} (${server.address}:${server.port}): ${err.message}`)
-        } else {
-          logger.info(`SCHEDULER: Generated webp image for server ${server.name} (${server.address}:${server.port})`)
-        }
-      })
+      sharp(buffer)
+        .toFormat('webp')
+        .toFile(webpImageFullPath, (err) => {
+          if (err) {
+            logger.error(
+              `SCHEDULER: Failed to generate webp image for server ${server.name} (${server.address}:${server.port}): ${err.message}`
+            )
+          } else {
+            logger.info(
+              `SCHEDULER: Generated webp image for server ${server.name} (${server.address}:${server.port})`
+            )
+          }
+        })
 
       server.imageUrl = `/images/servers/${server.id}`
     }
@@ -147,8 +153,9 @@ scheduler
   })
   .everySixHours()
 
-scheduler.call(async () => {
-  await StatsService.calculateAndStoreGrowthStats()
-  logger.info('SCHEDULER: Growth stats calculated and stored')
-})
+scheduler
+  .call(async () => {
+    await StatsService.calculateAndStoreGrowthStats()
+    logger.info('SCHEDULER: Growth stats calculated and stored')
+  })
   .everySixHours()

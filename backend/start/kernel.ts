@@ -27,7 +27,7 @@ server.use([
   () => import('#middleware/force_json_response_middleware'),
   () => import('@adonisjs/cors/cors_middleware'),
   () => import('#middleware/logger_middleware'),
-  () => import('@adonisjs/static/static_middleware')
+  () => import('@adonisjs/static/static_middleware'),
 ])
 
 /**

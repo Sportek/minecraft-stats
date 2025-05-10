@@ -18,4 +18,4 @@ export default class extends BaseSchema {
       table.dropColumn('last_stats_at')
     })
   }
-} 
+}

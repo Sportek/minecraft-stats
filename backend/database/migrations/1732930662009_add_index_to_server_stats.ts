@@ -14,4 +14,4 @@ export default class extends BaseSchema {
       table.dropIndex(['server_id', 'created_at'], 'server_stats_server_id_created_at_index')
     })
   }
-} 
+}
