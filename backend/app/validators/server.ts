@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { LanguageCode } from '../constants/languages.js'
 
 export enum ServerCategory {
   SURVIVAL = 'survival',
@@ -23,6 +24,7 @@ export const CreateServerValidator = vine.compile(
     categories: vine.array(vine.string()),
     version: vine.string().optional(),
     motd: vine.string().optional(),
+    languages: vine.array(vine.enum(Object.values(LanguageCode))),
   })
 )
 
@@ -35,5 +37,6 @@ export const UpdateServerValidator = vine.compile(
     categories: vine.array(vine.string()).optional(),
     version: vine.string().optional(),
     motd: vine.string().optional(),
+    languages: vine.array(vine.enum(Object.values(LanguageCode))).optional(),
   })
 )
