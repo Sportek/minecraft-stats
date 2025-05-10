@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import useSWR from "swr";
-import { Category } from "@/types/server";
+import { Category, Language } from "@/types/server";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,16 +30,19 @@ interface PaginatedResponse {
 const ServerCardsSection = () => {
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<number[]>([]);
   const debouncedSearch = useDebounce(search, 300);
 
   const { data: categories } = useSWR<Category[]>(`${process.env.NEXT_PUBLIC_API_URL}/categories`, fetcher);
+  const { data: languages } = useSWR<Language[]>(`${process.env.NEXT_PUBLIC_API_URL}/languages`, fetcher);
 
   const getKey = (pageIndex: number, previousPageData: PaginatedResponse | null) => {
     if (previousPageData && previousPageData.meta.currentPage >= previousPageData.meta.lastPage) return null;
   
     const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
     const categoriesParam = selectedCategories.length > 0 ? `&categoryIds=${selectedCategories.join(',')}` : '';
-    return `${process.env.NEXT_PUBLIC_API_URL}/servers/paginate?page=${pageIndex + 1}&limit=${PAGE_SIZE}${searchParam}${categoriesParam}`;
+    const languagesParam = selectedLanguages.length > 0 ? `&languageIds=${selectedLanguages.join(',')}` : '';
+    return `${process.env.NEXT_PUBLIC_API_URL}/servers/paginate?page=${pageIndex + 1}&limit=${PAGE_SIZE}${searchParam}${categoriesParam}${languagesParam}`;
   };
 
   const { data, setSize, isValidating, mutate } = useSWRInfinite<PaginatedResponse>(getKey, fetcher);
@@ -58,11 +61,19 @@ const ServerCardsSection = () => {
     );
   };
 
-  // Reset pagination when search or categories change
+  const toggleLanguage = (languageId: number) => {
+    setSelectedLanguages(prev => 
+      prev.includes(languageId) 
+        ? prev.filter(id => id !== languageId)
+        : [...prev, languageId]
+    );
+  };
+
+  // Reset pagination when search, categories or languages change
   useEffect(() => {
     setSize(1);
     mutate();
-  }, [debouncedSearch, selectedCategories, setSize, mutate]);
+  }, [debouncedSearch, selectedCategories, selectedLanguages, setSize, mutate]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -81,9 +92,10 @@ const ServerCardsSection = () => {
   const clearFilters = () => {
     setSearch("");
     setSelectedCategories([]);
+    setSelectedLanguages([]);
   };
 
-  const hasActiveFilters = search || selectedCategories.length > 0;
+  const hasActiveFilters = search || selectedCategories.length > 0 || selectedLanguages.length > 0;
 
   return (
     <div className="w-full space-y-6">
@@ -118,8 +130,9 @@ const ServerCardsSection = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <div className="text-sm text-zinc-500">Categories</div>
+            <div className="flex flex-row gap-4">
+              <div className="space-y-2">
+                <div className="text-sm text-zinc-500">Categories</div>
               <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
                 {categories?.map((category) => (
                   <Badge
@@ -141,6 +154,34 @@ const ServerCardsSection = () => {
                     </span>
                   </Badge>
                 ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="text-sm text-zinc-500">Languages</div>
+              <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
+                {languages?.map((language) => (
+                  <Badge
+                    key={language.id}
+                    variant="outline"
+                    className={cn(
+                      "cursor-pointer transition-all hover:scale-105",
+                      "hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                      selectedLanguages.includes(language.id) && "bg-primary/10 border-primary/50 text-primary"
+                    )}
+                    onClick={() => toggleLanguage(language.id)}
+                  >
+                    <span className="mr-1">{language.flag}</span>
+                    {language.name}
+                    <span className={cn(
+                      "inline-flex ml-1 transition-all",
+                      selectedLanguages.includes(language.id) ? "w-3 opacity-100" : "w-0 opacity-0"
+                    )}>
+                      <X className="h-3 w-3" />
+                    </span>
+                  </Badge>
+                ))}
+              </div>
               </div>
             </div>
           </div>
