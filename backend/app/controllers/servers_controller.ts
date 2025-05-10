@@ -6,10 +6,15 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
 import StatsService from '#services/stat_service'
+import Language from '#models/language'
 
 export default class ServersController {
   async index() {
-    const servers = await Server.query().preload('user').preload('categories').preload('growthStat')
+    const servers = await Server.query()
+      .preload('user')
+      .preload('categories')
+      .preload('growthStat')
+      .preload('languages')
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
         const stats = await this.getActualStats(server)
@@ -20,7 +25,7 @@ export default class ServersController {
   }
 
   async store({ request, auth, response }: HttpContext) {
-    const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories'])
+    const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories', 'languages'])
     const user = auth.user
     if (!user) {
       return response.unauthorized({ message: 'Unauthorized' })
@@ -33,7 +38,7 @@ export default class ServersController {
       return response.badRequest({ message: 'Server is not reachable' })
     }
 
-    const { categories, ...dataToCreate } = validatedData
+    const { categories, languages, ...dataToCreate } = validatedData
 
     const server = await Server.create(dataToCreate)
 
@@ -44,6 +49,15 @@ export default class ServersController {
     await server
       .related('categories')
       .attach(categoriesToAttach.filter((c) => c !== null).map((c) => c!.id))
+
+    const languagesToAttach = await Promise.all(
+      languages.map((code) => Language.findBy('code', code))
+    )
+
+    await server
+      .related('languages')
+      .attach(languagesToAttach.filter((l) => l !== null).map((l) => l!.id))
+
     await server.related('user').associate(user)
     return server
   }
@@ -57,21 +71,27 @@ export default class ServersController {
   }
 
   async show({ params, response }: HttpContext) {
-    let server = await Server.query().where('id', params.id).preload('user').preload('growthStat').preload('categories').first()
+    let server = await Server.query()
+      .where('id', params.id)
+      .preload('user')
+      .preload('growthStat')
+      .preload('categories')
+      .preload('languages')
+      .first()
     if (!server) return response.notFound({ message: 'Server not found' })
     const stats = await this.getActualStats(server)
     return { server, stats, categories: server.categories, growthStat: server.growthStat }
   }
 
   async update({ params, request, response, bouncer }: HttpContext) {
-    const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories'])
+    const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories', 'languages'])
     const validatedData = await UpdateServerValidator.validate(data)
     const server = await Server.findByOrFail('id', params.id)
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
       return response.forbidden({ message: 'Unauthorized' })
     }
 
-    const { categories, ...dataToUpdate } = validatedData
+    const { categories, languages, ...dataToUpdate } = validatedData
 
     const successPing = await isPingPossible(
       validatedData.address ?? server.address,
@@ -89,6 +109,16 @@ export default class ServersController {
       await server
         .related('categories')
         .sync(categoriesToAttach.filter((c) => c !== null).map((c) => c!.id))
+    }
+
+    if (languages) {
+      const languagesToAttach = await Promise.all(
+        languages.map((code) => Language.findBy('code', code))
+      )
+
+      await server
+        .related('languages')
+        .sync(languagesToAttach.filter((l) => l !== null).map((l) => l!.id))
     }
 
     return server.merge(dataToUpdate).save()
@@ -110,26 +140,29 @@ export default class ServersController {
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
     const categoryIds = request.input('categoryIds')
+    const languageIds = request.input('languageIds')
     const search = request.input('search', '')
 
     let query = Server.query()
       .preload('user')
       .preload('categories')
       .preload('growthStat')
+      .preload('languages')
       .orderByRaw('COALESCE(last_player_count, -1) DESC')
       .orderBy('last_stats_at', 'desc')
 
     if (search) {
       query = query.where((builder) => {
-        builder
-          .whereILike('name', `%${search}%`)
-          .orWhereILike('address', `%${search}%`)
+        builder.whereILike('name', `%${search}%`).orWhereILike('address', `%${search}%`)
       })
     }
 
     if (categoryIds) {
       try {
-        const ids = categoryIds.split(',').map((id: string) => parseInt(id.trim(), 10)).filter((id: number) => !isNaN(id))
+        const ids = categoryIds
+          .split(',')
+          .map((id: string) => Number.parseInt(id.trim(), 10))
+          .filter((id: number) => !Number.isNaN(id))
         if (ids.length > 0) {
           query = query.whereHas('categories', (builder) => {
             builder.whereIn('categories.id', ids)
@@ -140,8 +173,24 @@ export default class ServersController {
       }
     }
 
+    if (languageIds) {
+      try {
+        const ids = languageIds
+          .split(',')
+          .map((id: string) => Number.parseInt(id.trim(), 10))
+          .filter((id: number) => !Number.isNaN(id))
+        if (ids.length > 0) {
+          query = query.whereHas('languages', (builder) => {
+            builder.whereIn('languages.id', ids)
+          })
+        }
+      } catch (error) {
+        console.error('Error processing languageIds:', error)
+      }
+    }
+
     const servers = await query.paginate(page, limit)
-    
+
     const serversWithStats = await Promise.all(
       servers.map(async (server) => {
         const lastStat = await this.getActualStats(server, 1)
@@ -150,13 +199,18 @@ export default class ServersController {
           fromDate: Date.now() - 24 * 60 * 60 * 1000,
           toDate: Date.now(),
         })
-        return { server, stats: [...lastStat, ...lastDayStats], categories: server.categories, growthStat: server.growthStat }
+        return {
+          server,
+          stats: [...lastStat, ...lastDayStats],
+          categories: server.categories,
+          growthStat: server.growthStat,
+        }
       })
     )
 
     return {
       data: serversWithStats,
-      meta: servers.getMeta()
+      meta: servers.getMeta(),
     }
   }
 }

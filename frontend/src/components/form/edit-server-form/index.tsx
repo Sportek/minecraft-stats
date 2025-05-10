@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { deleteServer, editServer } from "@/http/server";
 import { cn } from "@/lib/utils";
-import { Category, Server } from "@/types/server";
+import { Category, Language, Server } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
@@ -28,6 +28,10 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
 
   const categories = data || [];
 
+  const { data: languagesData } = useSWR<Language[]>(`${getBaseUrl()}/languages`, fetcher);
+
+  const languages = languagesData || [];
+
   const { user, getToken } = useAuth();
   
   const router = useRouter();
@@ -39,6 +43,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
      address: z.string().min(1).trim(),
      port: z.string().min(1).max(5),
      categories: z.array(z.string()),
+     languages: z.array(z.string()),
    })
    .refine(
      (data) => {
@@ -67,6 +72,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       address: server.address,
       port: server.port.toString(),
       categories: serverCategories.map((category) => category.name),
+      languages: server.languages.map((language) => language.code),
     },
   });
 
@@ -77,8 +83,12 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
   }
 
 
-  const handleSelectionChange = (selected: string[]) => {
+  const handleCategorySelectionChange = (selected: string[]) => {
     form.setValue("categories", selected);
+  };
+
+  const handleLanguageSelectionChange = (selected: string[]) => {
+    form.setValue("languages", selected);
   };
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
@@ -167,8 +177,37 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                     <FancyMultiSelect
                       title="Select categories..."
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
-                      onSelectionChange={handleSelectionChange}
+                      onSelectionChange={handleCategorySelectionChange}
                       defaultSelected={field.value.map((category) => ({ value: category, label: category }))}
+                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="languages"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Languages</FormLabel>
+                  <FormDescription>The languages of the server</FormDescription>
+                  <FormControl>
+                    <FancyMultiSelect
+                      title="Select languages..."
+                      elements={languages.map((language) => ({
+                        value: language.code,
+                        label: `${language.flag} ${language.name}`
+                      }))}
+                      onSelectionChange={handleLanguageSelectionChange}
+                      defaultSelected={field.value.map((code) => {
+                        const language = languages.find((l) => l.code === code);
+                        return {
+                          value: code,
+                          label: language ? `${language.flag} ${language.name}` : code
+                        };
+                      })}
                       className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
                     />
                   </FormControl>

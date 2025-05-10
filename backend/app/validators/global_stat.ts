@@ -8,4 +8,4 @@ export const GlobalStatValidator = vine.compile(
       .enum(['30 minutes', '1 hour', '1 day', '2 hours', '6 hours', '1 week'])
       .optional(),
   })
-) 
+)

@@ -1,5 +1,14 @@
 import { User } from "./auth";
 
+export interface Language {
+  id: number;
+  code: string;
+  name: string;
+  flag: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Server {
   id: number;
   name: string;
@@ -10,6 +19,7 @@ export interface Server {
   user: User;
   createdAt: Date;
   lastOnlineAt: Date | null;
+  languages: Language[];
 }
 
 export interface ServerStat {
