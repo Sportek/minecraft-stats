@@ -40,6 +40,11 @@ router
       .use('*', throttleLight('servers.categories', 8))
 
     router
+      .resource('languages', '#controllers/languages_controller')
+      .only(['index'])
+      .use('*', throttleLight('languages', 8))
+
+    router
       .resource('categories', '#controllers/categories_controller')
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())

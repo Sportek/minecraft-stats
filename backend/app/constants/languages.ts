@@ -33,3 +33,21 @@ export const LANGUAGE_NAMES: Record<LanguageCode, string> = {
   [LanguageCode.ARABIC]: 'العربية',
   [LanguageCode.OTHER]: 'Autre',
 }
+
+export const LANGUAGE_FLAGS: Record<LanguageCode, string> = {
+  [LanguageCode.FRENCH]: '🇫🇷',
+  [LanguageCode.ENGLISH]: '🇬🇧',
+  [LanguageCode.SPANISH]: '🇪🇸',
+  [LanguageCode.GERMAN]: '🇩🇪',
+  [LanguageCode.ITALIAN]: '🇮🇹',
+  [LanguageCode.PORTUGUESE]: '🇵🇹',
+  [LanguageCode.RUSSIAN]: '🇷🇺',
+  [LanguageCode.CHINESE]: '🇨🇳',
+  [LanguageCode.JAPANESE]: '🇯🇵',
+  [LanguageCode.KOREAN]: '🇰🇷',
+  [LanguageCode.DUTCH]: '🇳🇱',
+  [LanguageCode.POLISH]: '🇵🇱',
+  [LanguageCode.TURKISH]: '🇹🇷',
+  [LanguageCode.ARABIC]: '🇸🇦',
+  [LanguageCode.OTHER]: '🌐',
+}
