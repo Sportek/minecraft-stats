@@ -7,13 +7,15 @@ export default class extends BaseSeeder {
   async run() {
     const now = DateTime.now()
 
-    const languages = Object.values(LanguageCode).map((code) => ({
-      code,
-      name: LANGUAGE_NAMES[code],
-      flag: LANGUAGE_FLAGS[code],
-      created_at: now,
-      updated_at: now,
-    }))
+    const languages = Object.values(LanguageCode)
+      .reverse()
+      .map((code) => ({
+        code,
+        name: LANGUAGE_NAMES[code],
+        flag: LANGUAGE_FLAGS[code],
+        created_at: now,
+        updated_at: now,
+      }))
 
     await Language.createMany(languages)
   }
