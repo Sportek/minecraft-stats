@@ -6,6 +6,7 @@ import ServerStatus from "./server-status";
 import ServerCategories from "./server-category";
 import ServerActions from "./server-action";
 import ServerChart from "./server-chart";
+import ServerLanguages from "./server-languages";
 
 interface ServerCardProps {
   server: Server;
@@ -25,8 +26,9 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
       <ServerActions server={server} />
       <div className="flex flex-col gap-4 w-full h-full min-w-0">
         <div className="flex flex-row gap-4 w-full">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex flex-col gap-2 items-center justify-center">
             <ServerImage imageUrl={server.imageUrl} name={server.name} />
+            <ServerLanguages languages={server.languages} className="flex flex-row gap-2 items-center justify-center" />
           </div>
           <div className="flex flex-col flex-grow gap-2 min-w-0">
             <div className="flex flex-row items-center w-full min-w-0">
