@@ -10,7 +10,7 @@ export const generateMetadata = async (props: {params: Promise<{serverId: string
       title: server.server.name,
     description: `${server.server.name} is a ${server.categories.map((c) => c.name).join(", ")} server with currently ${
       getLastStat(server.stats).playerCount ?? 0
-    } online players.`,
+    } online players and it is available in ${server.server.languages.map((l) => l.name).join(", ")}.`,
     openGraph: {
       images: [{ url: server.server.imageUrl }],
     },

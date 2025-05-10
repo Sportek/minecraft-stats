@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
+import { FancyMultiSelect } from "@/components/ui/fancy-multi-select";
 
 const PAGE_SIZE = 10;
 
@@ -120,68 +121,35 @@ const ServerCardsSection = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-              <Input
-                placeholder="Search servers by name or IP..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 transition-colors focus:bg-white dark:focus:bg-zinc-950"
-              />
-            </div>
+            <FancyMultiSelect
+              searchOnly
+              placeholder="Search servers by name or IP..."
+              onSearch={setSearch}
+              searchValue={search}
+              className="w-full"
+            />
 
             <div className="flex flex-row gap-4">
-              <div className="space-y-2">
-                <div className="text-sm text-zinc-500">Categories</div>
-              <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
-                {categories?.map((category) => (
-                  <Badge
-                    key={category.id}
-                    variant="outline"
-                    className={cn(
-                      "cursor-pointer transition-all hover:scale-105",
-                      "hover:bg-zinc-100 dark:hover:bg-zinc-800",
-                      selectedCategories.includes(category.id) && "bg-primary/10 border-primary/50 text-primary"
-                    )}
-                    onClick={() => toggleCategory(category.id)}
-                  >
-                    {category.name}
-                    <span className={cn(
-                      "inline-flex ml-1 transition-all",
-                      selectedCategories.includes(category.id) ? "w-3 opacity-100" : "w-0 opacity-0"
-                    )}>
-                      <X className="h-3 w-3" />
-                    </span>
-                  </Badge>
-                ))}
+              <div className="flex-1">
+                <FancyMultiSelect
+                  options={categories?.map(cat => ({ id: cat.id, name: cat.name })) ?? []}
+                  selectedIds={selectedCategories}
+                  onChange={setSelectedCategories}
+                  placeholder="Select categories"
+                  searchPlaceholder="Search categories..."
+                  emptyMessage="No categories found."
+                />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <div className="text-sm text-zinc-500">Languages</div>
-              <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
-                {languages?.map((language) => (
-                  <Badge
-                    key={language.id}
-                    variant="outline"
-                    className={cn(
-                      "cursor-pointer transition-all hover:scale-105",
-                      "hover:bg-zinc-100 dark:hover:bg-zinc-800",
-                      selectedLanguages.includes(language.id) && "bg-primary/10 border-primary/50 text-primary"
-                    )}
-                    onClick={() => toggleLanguage(language.id)}
-                  >
-                    <span className="mr-1">{language.flag}</span>
-                    {language.name}
-                    <span className={cn(
-                      "inline-flex ml-1 transition-all",
-                      selectedLanguages.includes(language.id) ? "w-3 opacity-100" : "w-0 opacity-0"
-                    )}>
-                      <X className="h-3 w-3" />
-                    </span>
-                  </Badge>
-                ))}
-              </div>
+              <div className="flex-1">
+                <FancyMultiSelect
+                  options={languages?.map(lang => ({ id: lang.id, name: lang.name, flag: lang.flag })) ?? []}
+                  selectedIds={selectedLanguages}
+                  onChange={setSelectedLanguages}
+                  placeholder="Select languages"
+                  searchPlaceholder="Search languages..."
+                  emptyMessage="No languages found."
+                />
               </div>
             </div>
           </div>
