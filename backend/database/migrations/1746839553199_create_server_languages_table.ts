@@ -4,6 +4,7 @@ export default class extends BaseSchema {
   protected tableName = 'server_languages'
 
   async up() {
+    await this.schema.dropTableIfExists(this.tableName)
     await this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.integer('server_id').unsigned().references('id').inTable('servers').onDelete('CASCADE')
