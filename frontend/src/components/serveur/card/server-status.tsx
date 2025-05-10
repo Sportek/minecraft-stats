@@ -43,72 +43,80 @@ const ServerStatus = ({ stats, growthStat, lastOnlineAt }: ServerStatusProps) =>
     return `${Math.round((growth * 100))}%`;
   };
 
-  const lastStat = getLastStat(stats);
-
-  if (lastStat.playerCount != null) {
+  if (!stats || stats.length === 0) {
     return (
       <div className="flex flex-col items-end">
         <div className="flex flex-row items-center gap-2">
-          <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
-            <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
+          <div className="w-3 h-3 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center">
+            <div className="w-2 h-2 bg-gray-500 dark:bg-gray-500 rounded-full" />
           </div>
           <div className="flex flex-col justify-center items-center">
-            <div>{new Intl.NumberFormat("en-US").format(lastStat.playerCount)}</div>
+            <div>N/A</div>
           </div>
         </div>
-        {growthStat?.monthlyGrowth != null && (
-          <div className="flex flex-row items-center gap-1">
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Icon
-                      icon="material-symbols:info-outline"
-                      className="text-zinc-700 dark:text-zinc-300 w-3 h-3"
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-60">
-                  <div>
-                    This shows how the average player count this week compares to the average for the past 30
-                    days. Positive values indicate growth.
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <div
-              className={cn(
-                growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0
-                  ? "text-green-500"
-                  : "text-red-500",
-                "text-xs"
-              )}
-            >
-              {getFormattedGrowth(growthStat.monthlyGrowth)}
-            </div>
+      </div>
+    );
+  }
+
+  const lastStat = getLastStat(stats);
+
+  if (!lastStat || lastStat.playerCount == null) {
+    return (
+      <div className="flex flex-col items-end">
+        <div className="flex flex-row items-center gap-2">
+          <div className="w-3 h-3 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center">
+            <div className="w-2 h-2 bg-gray-500 dark:bg-gray-500 rounded-full" />
           </div>
-        )}
+          <div className="flex flex-col justify-center items-center">
+            <div>N/A</div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger>
-            <div className="flex flex-row items-center gap-2">
-              <div className="w-3 h-3 bg-red-300 dark:bg-red-700 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-red-500 dark:bg-red-500 rounded-full" />
-              </div>
-              <div className="text-red-500 dark:text-red-300">Offline</div>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div>Last activity {getFormattedTimeSinceLastOnline()}</div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <div className="flex flex-col items-end">
+      <div className="flex flex-row items-center gap-2">
+        <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
+          <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
+        </div>
+        <div className="flex flex-col justify-center items-center">
+          <div>{new Intl.NumberFormat("en-US").format(lastStat.playerCount)}</div>
+        </div>
+      </div>
+      {growthStat?.monthlyGrowth != null && (
+        <div className="flex flex-row items-center gap-1">
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Icon
+                    icon="material-symbols:info-outline"
+                    className="text-zinc-700 dark:text-zinc-300 w-3 h-3"
+                  />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-60">
+                <div>
+                  This shows how the average player count this week compares to the average for the past 30
+                  days. Positive values indicate growth.
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <div
+            className={cn(
+              growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0
+                ? "text-green-500"
+                : "text-red-500",
+              "text-xs"
+            )}
+          >
+            {getFormattedGrowth(growthStat.monthlyGrowth)}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
