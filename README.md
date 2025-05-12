@@ -15,7 +15,7 @@ Minecraft-Stats is a website that allows you to track players amount statistics 
 - [ ] Add a way to get an API key sync to account
 - [ ] Add French translations
 - [X] Add security to the API (Rate limit)
-- [ ] Add possibility to find server by langage : FR / US / INTER / ALL
+- [X] Add possibility to find server by langage : FR / US / INTER / ALL
 - [ ] and more...
 
 You can contribute to the project by reporting issues, suggesting new features, or submitting pull requests on GitHub.
