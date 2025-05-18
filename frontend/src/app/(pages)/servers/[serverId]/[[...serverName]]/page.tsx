@@ -15,6 +15,8 @@ import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
 import { AggregationSelect, AggregationType } from "@/components/home/selects/aggregation-select";
+import Link from "next/link";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 const BASE_AXES: AgCartesianAxisOptions[] = [
   {
@@ -90,6 +92,33 @@ const createAreaSeries = (
     },
   },
 });
+
+const ServerNotFound = () => {
+  return (
+    <main className="flex-1 space-y-4 py-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+          <div className="bg-white dark:bg-zinc-950 rounded-lg shadow-md p-8 space-y-6 max-w-md w-full">
+            <div className="space-y-2 text-center">
+              <div className="w-16 h-16 mx-auto bg-stats-blue-600/10 dark:bg-stats-blue-400/10 rounded-full flex items-center justify-center">
+                <Icon icon="mdi:server-off" className="text-stats-blue-600 dark:text-stats-blue-400 w-8 h-8" />
+              </div>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Server Not Found</h2>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">The server you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+            </div>
+            <Link 
+              href="/"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-stats-blue-600 hover:bg-stats-blue-700 dark:bg-stats-blue-500 dark:hover:bg-stats-blue-600 rounded-md transition-colors"
+            >
+              <Icon icon="mdi:home" className="w-4 h-4" />
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+};
 
 const ServerPage = () => {
   const { serverId } = useParams();
@@ -183,6 +212,9 @@ const ServerPage = () => {
   }
 
   if (serverError) {
+    if (serverError.message.includes('404')) {
+      return <ServerNotFound />;
+    }
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-red-500">{serverError.message}</div>
@@ -190,8 +222,8 @@ const ServerPage = () => {
     );
   }
 
-  if (!serverData) {
-    return null;
+  if (!serverData?.server) {
+    return <ServerNotFound />;
   }
 
   return (
