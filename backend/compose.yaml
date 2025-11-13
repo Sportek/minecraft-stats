@@ -1,38 +1,6 @@
 name: minecraft-stats
 services:
   ##########################################################################
-  # PostgreSQL
-  ##########################################################################
-  pgsql:
-    image: "postgres:15"
-    container_name: "stats-pgsql-${APP_NAME}"
-    restart: "unless-stopped"
-    environment:
-      PGPASSWORD: "${DB_PASSWORD}"
-      POSTGRES_DB: "${DB_DATABASE}"
-      POSTGRES_USER: "${DB_USER}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-    volumes:
-      - "sailpgsql:/var/lib/postgresql/data"
-    networks:
-      - sail
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -q -d $${DB_DATABASE} -U $${DB_USER} || exit 1",
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  ##########################################################################
   # Backend
   ##########################################################################
   adonis_app:
