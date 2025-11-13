@@ -9,8 +9,6 @@ services:
     restart: "unless-stopped"
     ports:
       - "9000:9000"
-    depends_on:
-      - pgsql
     command: >
       sh -c "node ace migration:run --force && node ace serve"
     environment:
@@ -52,7 +50,6 @@ services:
     image: "sportek/minecraft-stats-back:${IMAGE_TAG:-latest}"
     restart: "unless-stopped"
     depends_on:
-      - pgsql
       - adonis_app
     command: "node ace scheduler:run"
     environment:
