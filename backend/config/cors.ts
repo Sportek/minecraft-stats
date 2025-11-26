@@ -1,7 +1,7 @@
 import { defineConfig } from '@adonisjs/cors'
 
 /**
- * Configuration options to tweak the CORS policy. The following
+ * Configuration options to tweak the  policy. The following
  * options are documented on the official documentation website.
  *
  * https://docs.adonisjs.com/guides/security/cors
