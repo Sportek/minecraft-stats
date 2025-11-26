@@ -72,6 +72,7 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - APP_NAME=${APP_NAME}
+      - WEBSITE_URL=${WEBSITE_URL}
     networks:
       - sail
     logging:
