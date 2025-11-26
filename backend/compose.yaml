@@ -222,7 +222,8 @@ services:
 
 networks:
   sail:
-    driver: bridge
+    external: true
+    name: dokploy-network
 
 volumes:
   sailpgsql:
