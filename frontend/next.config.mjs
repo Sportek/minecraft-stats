@@ -8,7 +8,10 @@ const nextConfig = {
       { hostname: "localhost" },
       { hostname: "127.0.0.1" },
       { hostname: "api.minecraft-stats.fr" },
+      { hostname: "api.minecraft-stats.com" },
       { hostname: "*.tenor.com" },
+      { hostname: "api-staging.minecraft-stats.fr" },
+      { hostname: "api-staging.minecraft-stats.com" },
     ],
     formats: ["image/webp"],
     minimumCacheTTL: 2678400,
@@ -25,7 +28,7 @@ const nextConfig = {
   },
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@iconify/react'],
+    optimizePackageImports: ["@iconify/react"],
   },
 };
 
