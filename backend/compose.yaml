@@ -139,7 +139,7 @@ services:
   ##########################################################################
   loki:
     image: grafana/loki:3.3.2
-    container_name: "loki"
+    container_name: "loki-${APP_NAME}"
     restart: "unless-stopped"
     ports:
       - "3100:3100"

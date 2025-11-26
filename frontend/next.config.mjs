@@ -12,6 +12,8 @@ const nextConfig = {
       { hostname: "*.tenor.com" },
       { hostname: "api-staging.minecraft-stats.fr" },
       { hostname: "api-staging.minecraft-stats.com" },
+      { hostname: "api-prod.minecraft-stats.fr" },
+      { hostname: "api-prod.minecraft-stats.com" },
     ],
     formats: ["image/webp"],
     minimumCacheTTL: 2678400,
