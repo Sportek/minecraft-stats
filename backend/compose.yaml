@@ -96,8 +96,6 @@ services:
     image: grafana/grafana-enterprise
     container_name: "grafana-${APP_NAME}"
     restart: "unless-stopped"
-    ports:
-      - "9020:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
     networks:
@@ -118,8 +116,6 @@ services:
     restart: "unless-stopped"
     volumes:
       - "./prometheus.yml:/etc/prometheus/prometheus.yml"
-    ports:
-      - "9090:9090"
     networks:
       - sail
     logging:
@@ -141,8 +137,6 @@ services:
     image: grafana/loki:3.3.2
     container_name: "loki-${APP_NAME}"
     restart: "unless-stopped"
-    ports:
-      - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - "./loki-config.yaml:/etc/loki/local-config.yaml"
@@ -189,8 +183,6 @@ services:
     image: redis:7.4.1-alpine
     container_name: "redis-${APP_NAME}"
     restart: "unless-stopped"
-    ports:
-      - "6379:6379"
     # Commande pour activer l'append-only et définir un mot de passe
     command:
       [
