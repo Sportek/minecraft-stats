@@ -2,7 +2,10 @@ import { getBaseUrl } from "@/app/_cheatcode";
 import { Category, Server, ServerStat } from "@/types/server";
 import { getErrorMessage } from "./auth";
 
-export const addMinecraftServer = async (data: { name: string; address: string; port: number; categories: string[] }, token: string) => {
+export const addMinecraftServer = async (
+  data: { name: string; address: string; port: number; categories: string[] },
+  token: string
+) => {
   const response = await fetch(`${getBaseUrl()}/servers`, {
     method: "POST",
     headers: {
@@ -37,6 +40,9 @@ export const getServers = async () => {
 
 export const getServer = async (serverId: number) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch server ${serverId}: ${response.status}`);
+  }
   return response.json() as Promise<{ server: Server; stats: ServerStat[]; categories: Category[] }>;
 };
 
@@ -47,7 +53,8 @@ export const getServerStats = async (
   interval?: string
 ) => {
   const response = await fetch(
-    `${getBaseUrl()}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}${interval ? `&interval=${interval}` : ""
+    `${getBaseUrl()}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}${
+      interval ? `&interval=${interval}` : ""
     }`,
     {
       headers: {
@@ -63,7 +70,6 @@ export const getServerStats = async (
 
   return response.json() as Promise<ServerStat[]>;
 };
-
 
 export const deleteServer = async (serverId: number, token: string) => {
   const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
@@ -82,8 +88,11 @@ export const deleteServer = async (serverId: number, token: string) => {
   return true;
 };
 
-
-export const editServer = async (serverId: number, data: { name: string; address: string; port: number; categories: string[] }, token: string) => {
+export const editServer = async (
+  serverId: number,
+  data: { name: string; address: string; port: number; categories: string[] },
+  token: string
+) => {
   const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
     method: "PUT",
     headers: {
