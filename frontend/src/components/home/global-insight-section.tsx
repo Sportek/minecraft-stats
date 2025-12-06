@@ -4,11 +4,15 @@ import { TimeRangeSelect, TimeRangeType } from "./selects/time-range-select";
 import { AggregationSelect, AggregationType } from "./selects/aggregation-select";
 import { GlobalStatsChart } from "./charts/global-stats-chart";
 import { Server, ServerSelect } from "./selects/server-select";
+import { CategorySelect } from "./selects/category-select";
+import { LanguageSelect } from "./selects/language-select";
 
 const GlobalInsightSection = () => {
   const [globalStats, setGlobalStats] = useState<ServerStat[]>([]);
   const [serverStats, setServerStats] = useState<{ server: Server; stats: ServerStat[] }[]>([]);
   const [selectedServers, setSelectedServers] = useState<number[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const dataRangeIntervalTypes = useMemo(() => {
@@ -44,9 +48,14 @@ const GlobalInsightSection = () => {
 
       // Récupérer les stats globales si aucun serveur n'est sélectionné
       if (selectedServers.length === 0) {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
-        );
+        let url = `${process.env.NEXT_PUBLIC_API_URL}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
+        if (selectedCategory) {
+          url += `&categoryId=${selectedCategory}`;
+        }
+        if (selectedLanguage) {
+          url += `&languageId=${selectedLanguage}`;
+        }
+        const response = await fetch(url);
         
         if (!response.ok) {
           throw new Error("Failed to fetch global stats");
@@ -96,14 +105,24 @@ const GlobalInsightSection = () => {
 
   useEffect(() => {
     fetchStats();
-  }, [dataRangeInterval, dataAggregationInterval, selectedServers]);
+  }, [dataRangeInterval, dataAggregationInterval, selectedServers, selectedCategory, selectedLanguage]);
 
   return (
     <div className="w-full bg-white dark:bg-zinc-950 p-6 rounded-lg shadow-md">
       <div className="flex flex-col gap-4">
         <div className="flex flex-row justify-between items-center">
           <h2 className="text-xl font-semibold">Global Insight</h2>
-          <div className="flex flex-row gap-4">
+          <div className="flex flex-row gap-4 flex-wrap">
+            <CategorySelect
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              disabled={isLoading || selectedServers.length > 0}
+            />
+            <LanguageSelect
+              value={selectedLanguage}
+              onChange={setSelectedLanguage}
+              disabled={isLoading || selectedServers.length > 0}
+            />
             <TimeRangeSelect
               value={dataRangeInterval}
               onChange={setDataRangeInterval}
