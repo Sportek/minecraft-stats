@@ -62,6 +62,9 @@ jobs:
     steps:
       - name: Trigger Dokploy deployment
         run: |
-          curl -X POST "${{ vars.DOKPLOY_WEBHOOK_URL }}" \
+          curl -X POST "https://dokploy.gablandry.com/api/compose.deploy" \
+            -H "Accept: application/json" \
             -H "Content-Type: application/json" \
+            -H "x-api-key: ${{ secrets.DOKPLOY_API_TOKEN }}" \
+            -d '{"composeId": "${{ vars.DOKPLOY_COMPOSE_ID }}"}' \
             --fail --silent --show-error
