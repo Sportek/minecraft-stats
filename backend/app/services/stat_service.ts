@@ -1,8 +1,8 @@
 import Server from '#models/server'
 import ServerGrowthStat from '#models/server_growth_stat'
+import { Exception } from '@adonisjs/core/exceptions'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
-import { Exception } from '@adonisjs/core/exceptions'
 
 export default class StatsService {
   static convertToCamelCase(input: {
@@ -276,7 +276,7 @@ export default class StatsService {
     }
 
     // ---------------------------------------
-    // interval => regroupement
+    //  interval => regroupement
     // ---------------------------------------
     if (params.interval) {
       const rows = await this.getStatsWithInterval(
