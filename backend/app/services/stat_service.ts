@@ -330,14 +330,16 @@ export default class StatsService {
 
     if (params.categoryId) {
       joins += `
-        INNER JOIN server_categories sc ON ss.server_id = sc.server_id AND sc.category_id = :categoryId
+        INNER JOIN server_categories sc ON ss.server_id = sc.server_id
       `
+      whereClauses.push(`sc.category_id = :categoryId`)
     }
 
     if (params.languageId) {
       joins += `
-        INNER JOIN server_languages sl ON ss.server_id = sl.server_id AND sl.language_id = :languageId
+        INNER JOIN server_languages sl ON ss.server_id = sl.server_id
       `
+      whereClauses.push(`sl.language_id = :languageId`)
     }
 
     // Construction de la clause WHERE pour le filtrage des dates
