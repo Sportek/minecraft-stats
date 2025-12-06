@@ -1,6 +1,7 @@
 import Server from '#models/server'
 import ServerGrowthStat from '#models/server_growth_stat'
 import { Exception } from '@adonisjs/core/exceptions'
+import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
@@ -309,7 +310,7 @@ export default class StatsService {
     let fromDateSql: string | undefined
     let toDateSql: string | undefined
 
-    console.log('Coucou')
+    logger.info('Fetching global stats with params:', params)
 
     if (params.fromDate) {
       const fromDateTime = DateTime.fromMillis(params.fromDate)
