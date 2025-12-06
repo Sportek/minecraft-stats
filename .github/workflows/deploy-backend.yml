@@ -61,10 +61,13 @@ jobs:
 
     steps:
       - name: Trigger Dokploy deployment
+        env:
+          DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
+          DOKPLOY_COMPOSE_ID: ${{ vars.DOKPLOY_COMPOSE_ID }}
         run: |
           curl -X POST "https://dokploy.gablandry.com/api/compose.deploy" \
             -H "Accept: application/json" \
             -H "Content-Type: application/json" \
-            -H "x-api-key: ${{ secrets.DOKPLOY_API_TOKEN }}" \
-            -d '{"composeId": "${{ vars.DOKPLOY_COMPOSE_ID }}"}' \
+            -H "x-api-key: ${DOKPLOY_API_TOKEN}" \
+            -d "{\"composeId\": \"${DOKPLOY_COMPOSE_ID}\"}" \
             --fail --silent --show-error
