@@ -51,7 +51,8 @@ export const generateMetadata = async (props: {
         canonical: `${baseUrl}/servers/${server.server.id}/${server.server.name}`,
       },
     };
-  } catch {
+  } catch (error) {
+    console.error("Erreur", error);
     return {
       title: "Server Not Found - Minecraft Server Stats",
       description:
