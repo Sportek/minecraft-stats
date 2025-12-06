@@ -1,8 +1,9 @@
 import Server from '#models/server'
 import ServerGrowthStat from '#models/server_growth_stat'
+import { Exception } from '@adonisjs/core/exceptions'
+import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
-import { Exception } from '@adonisjs/core/exceptions'
 
 export default class StatsService {
   static convertToCamelCase(input: {
@@ -276,7 +277,7 @@ export default class StatsService {
     }
 
     // ---------------------------------------
-    // interval => regroupement
+    //  interval => regroupement
     // ---------------------------------------
     if (params.interval) {
       const rows = await this.getStatsWithInterval(
@@ -299,9 +300,17 @@ export default class StatsService {
     return results.map(this.convertToCamelCase)
   }
 
-  static async getGlobalStats(params: { fromDate?: number; toDate?: number; interval?: string }) {
+  static async getGlobalStats(params: {
+    fromDate?: number
+    toDate?: number
+    interval?: string
+    categoryId?: number
+    languageId?: number
+  }) {
     let fromDateSql: string | undefined
     let toDateSql: string | undefined
+
+    logger.info('Fetching global stats with params:', params)
 
     if (params.fromDate) {
       const fromDateTime = DateTime.fromMillis(params.fromDate)
@@ -318,59 +327,79 @@ export default class StatsService {
       toDateSql = toDateTime.toSQL()
     }
 
-    // Construction de la clause WHERE pour le filtrage des dates
-    let whereClause = ''
-    if (fromDateSql && toDateSql) {
-      whereClause = `WHERE created_at BETWEEN :fromDate AND :toDate`
-    } else if (fromDateSql) {
-      whereClause = `WHERE created_at >= :fromDate`
-    } else if (toDateSql) {
-      whereClause = `WHERE created_at <= :toDate`
+    // Construction des JOINs pour les filtres catégorie/langue
+    let joins = ''
+    const whereClauses: string[] = []
+
+    if (params.categoryId) {
+      joins += `
+        INNER JOIN server_categories sc ON ss.server_id = sc.server_id
+      `
+      whereClauses.push(`sc.category_id = :categoryId`)
     }
+
+    if (params.languageId) {
+      joins += `
+        INNER JOIN server_languages sl ON ss.server_id = sl.server_id
+      `
+      whereClauses.push(`sl.language_id = :languageId`)
+    }
+
+    // Construction de la clause WHERE pour le filtrage des dates
+    if (fromDateSql && toDateSql) {
+      whereClauses.push(`ss.created_at BETWEEN :fromDate AND :toDate`)
+    } else if (fromDateSql) {
+      whereClauses.push(`ss.created_at >= :fromDate`)
+    } else if (toDateSql) {
+      whereClauses.push(`ss.created_at <= :toDate`)
+    }
+
+    const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
 
     // Optimisation : Utilisation d'une seule requête avec des sous-requêtes pour éviter les calculs redondants
     const rawQuery = `
       WITH latest_stats AS (
-        SELECT DISTINCT ON (server_id, 
+        SELECT DISTINCT ON (ss.server_id,
           ${
             params.interval
               ? `
             to_timestamp(
-              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              floor(extract(epoch from ss.created_at) / ${this.intervalToSeconds(params.interval)})
               * ${this.intervalToSeconds(params.interval)}
             )
           `
-              : 'created_at'
+              : 'ss.created_at'
           })
-          server_id,
+          ss.server_id,
           ${
             params.interval
               ? `
             to_timestamp(
-              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              floor(extract(epoch from ss.created_at) / ${this.intervalToSeconds(params.interval)})
               * ${this.intervalToSeconds(params.interval)}
             ) AS created_at,
           `
-              : 'created_at,'
+              : 'ss.created_at,'
           }
-          player_count,
-          max_count
-        FROM server_stats
+          ss.player_count,
+          ss.max_count
+        FROM server_stats ss
+        ${joins}
         ${whereClause}
-        ORDER BY server_id, 
+        ORDER BY ss.server_id,
           ${
             params.interval
               ? `
             to_timestamp(
-              floor(extract(epoch from created_at) / ${this.intervalToSeconds(params.interval)}) 
+              floor(extract(epoch from ss.created_at) / ${this.intervalToSeconds(params.interval)})
               * ${this.intervalToSeconds(params.interval)}
             )
           `
-              : 'created_at'
+              : 'ss.created_at'
           },
-          created_at DESC
+          ss.created_at DESC
       )
-      SELECT 
+      SELECT
         created_at,
         SUM(player_count)::int AS player_count,
         SUM(max_count)::int AS max_count
@@ -382,6 +411,8 @@ export default class StatsService {
     const bindings: any = {}
     if (fromDateSql) bindings.fromDate = fromDateSql
     if (toDateSql) bindings.toDate = toDateSql
+    if (params.categoryId) bindings.categoryId = params.categoryId
+    if (params.languageId) bindings.languageId = params.languageId
 
     const result = await Database.rawQuery(rawQuery, bindings)
     return result.rows.map(this.convertToCamelCase)
