@@ -6,6 +6,7 @@ services:
   adonis_app:
     container_name: "stats-backend-${APP_NAME}"
     image: "sportek/minecraft-stats-back:${IMAGE_TAG:-latest}"
+    pull_policy: always
     restart: "unless-stopped"
     command: >
       sh -c "node ace migration:run --force && node ace serve"
@@ -47,6 +48,7 @@ services:
   adonis_scheduler:
     container_name: "stats-scheduler-${APP_NAME}"
     image: "sportek/minecraft-stats-back:${IMAGE_TAG:-latest}"
+    pull_policy: always
     restart: "unless-stopped"
     depends_on:
       - adonis_app
