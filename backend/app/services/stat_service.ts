@@ -309,6 +309,8 @@ export default class StatsService {
     let fromDateSql: string | undefined
     let toDateSql: string | undefined
 
+    console.log('Coucou')
+
     if (params.fromDate) {
       const fromDateTime = DateTime.fromMillis(params.fromDate)
       if (!fromDateTime.isValid) {
