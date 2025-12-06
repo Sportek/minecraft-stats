@@ -10,7 +10,6 @@ import { AuthProvider } from "@/contexts/auth";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ServersProvider } from "@/contexts/servers";
 import { useEffect, useState } from "react";
-import CheatCodeComponent from "./_cheatcode";
 
 export default function ClientLayout({
   children,
@@ -32,7 +31,6 @@ export default function ClientLayout({
       <AuthProvider>
         <ServersProvider>
           <FavoriteProvider>
-            <CheatCodeComponent />
             <Header />
             <Toaster />
             <div className="flex-1 flex flex-col items-center justify-center text-stats-blue-1050 dark:text-stats-blue-50 bg-stats-blue-50 dark:bg-stats-blue-1050">

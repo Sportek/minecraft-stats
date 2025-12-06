@@ -39,7 +39,7 @@ export const getServers = async () => {
 };
 
 export const getServer = async (serverId: number) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
+  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`);
   if (!response.ok) {
     throw new Error(`Failed to fetch server ${serverId}: ${response.status}`);
   }

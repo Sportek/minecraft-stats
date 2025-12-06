@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable standalone output for optimized Docker builds
+  output: "standalone",
+
   images: {
     remotePatterns: [
       { hostname: "avatars.githubusercontent.com" },
@@ -24,7 +27,6 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
