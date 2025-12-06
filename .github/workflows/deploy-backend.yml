@@ -65,11 +65,9 @@ jobs:
           DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
           DOKPLOY_COMPOSE_ID: ${{ vars.DOKPLOY_COMPOSE_ID }}
         run: |
-          echo "Compose ID: ${DOKPLOY_COMPOSE_ID}"
-          echo "Token length: ${#DOKPLOY_API_TOKEN}"
           curl -X POST "https://dokploy.gablandry.com/api/compose.deploy" \
             -H "Accept: application/json" \
             -H "Content-Type: application/json" \
             -H "x-api-key: ${DOKPLOY_API_TOKEN}" \
             -d "{\"composeId\": \"${DOKPLOY_COMPOSE_ID}\"}" \
-            --show-error -v
+            --fail --silent --show-error
