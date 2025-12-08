@@ -87,7 +87,7 @@ const AdminPostsPage = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Gestion des Articles</h1>
         <Link
-          href="/account/admin/posts/new"
+          href="/admin/posts/new"
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
@@ -179,7 +179,7 @@ const AdminPostsPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
                       <Link
-                        href={`/account/admin/posts/${post.id}/edit`}
+                        href={`/admin/posts/${post.id}/edit`}
                         className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                         title="Éditer"
                       >

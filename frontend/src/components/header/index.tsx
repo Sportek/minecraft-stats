@@ -63,6 +63,9 @@ const Header = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add Server</DropdownMenuItem>
+        {user?.role === 'admin' && (
+          <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage Blog</DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-red-500">
           Logout
@@ -83,6 +86,7 @@ const Header = () => {
           <ModeToggle />
           <NavLink href="/account/add-server" label="Add Your Server" />
           <NavLink href="/" label="All Servers" />
+          <NavLink href="/blog" label="Blog" />
           <NavLink href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`} label="API" />
           {user?.username ? displayUserMenu() : <NavLink href="/login" label="Login" />}
         </div>
@@ -134,34 +138,48 @@ const Header = () => {
           )}
 
           <div className="py-2">
-            <MobileNavLink 
-              href="/account/add-server" 
+            <MobileNavLink
+              href="/account/add-server"
               label="Add Your Server"
               icon="material-symbols:add-circle-outline"
-              onClick={() => setIsMobileMenuOpen(false)} 
+              onClick={() => setIsMobileMenuOpen(false)}
             />
-            <MobileNavLink 
-              href="/" 
+            <MobileNavLink
+              href="/"
               label="All Servers"
               icon="material-symbols:list"
-              onClick={() => setIsMobileMenuOpen(false)} 
+              onClick={() => setIsMobileMenuOpen(false)}
             />
-            <MobileNavLink 
-              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`} 
+            <MobileNavLink
+              href="/blog"
+              label="Blog"
+              icon="material-symbols:article"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <MobileNavLink
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
               label="API"
               icon="material-symbols:api"
-              onClick={() => setIsMobileMenuOpen(false)} 
+              onClick={() => setIsMobileMenuOpen(false)}
             />
 
             {user?.username ? (
               <>
                 <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-2" />
-                <MobileNavLink 
-                  href="/account/settings" 
+                <MobileNavLink
+                  href="/account/settings"
                   label="Profile Settings"
                   icon="material-symbols:settings-outline"
-                  onClick={() => setIsMobileMenuOpen(false)} 
+                  onClick={() => setIsMobileMenuOpen(false)}
                 />
+                {user?.role === 'admin' && (
+                  <MobileNavLink
+                    href="/admin/posts"
+                    label="Manage Blog"
+                    icon="material-symbols:article-outline"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  />
+                )}
                 <button 
                   onClick={() => {
                     logout();

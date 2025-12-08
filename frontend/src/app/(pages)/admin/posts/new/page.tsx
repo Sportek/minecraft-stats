@@ -48,7 +48,7 @@ const NewPostPage = () => {
         },
         token
       )
-      router.push('/account/admin/posts')
+      router.push('/admin/posts')
     } catch (error) {
       console.error('Failed to create post:', error)
       alert('Échec de la création de l\'article')
@@ -61,7 +61,7 @@ const NewPostPage = () => {
     <div className="container mx-auto p-8 max-w-5xl">
       <div className="mb-6">
         <Link
-          href="/account/admin/posts"
+          href="/admin/posts"
           className="text-blue-500 hover:text-blue-600 flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -143,7 +143,7 @@ const NewPostPage = () => {
             {loading ? 'Création...' : 'Créer l\'article'}
           </button>
           <Link
-            href="/account/admin/posts"
+            href="/admin/posts"
             className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 px-6 py-2 rounded-md"
           >
             Annuler
