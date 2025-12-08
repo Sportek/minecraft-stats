@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import HeroSection from "@/components/home/hero-section";
+import { WebsiteStructuredData, OrganizationStructuredData } from "@/components/seo/structured-data";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 
 const StatsSection = dynamic(() => import("@/components/home/stats-section"), {
@@ -33,18 +34,22 @@ export interface ServerData {
 
 const Home = () => {
   return (
-    <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
-      <HeroSection />
-      <Suspense>
-        <StatsSection />
-      </Suspense>
-      <Suspense>
-        <GlobalInsightSection />
-      </Suspense>
-      <Suspense>
-        <ServerCardsSection />
-      </Suspense>
-    </main>
+    <>
+      <WebsiteStructuredData />
+      <OrganizationStructuredData />
+      <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+        <HeroSection />
+        <Suspense>
+          <StatsSection />
+        </Suspense>
+        <Suspense>
+          <GlobalInsightSection />
+        </Suspense>
+        <Suspense>
+          <ServerCardsSection />
+        </Suspense>
+      </main>
+    </>
   );
 };
 

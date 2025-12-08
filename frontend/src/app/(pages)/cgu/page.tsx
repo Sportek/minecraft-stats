@@ -1,9 +1,26 @@
 import { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
+
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: "Terms of Service & Privacy Policy",
   description:
-    "Explore our detailed Terms of Service (CGU) to understand the conditions of access and use of our services, including Minecraft server statistics. Stay informed about user responsibilities, data collection, and privacy policies. Ensure compliance and secure your rights while using our platform.",
+    "Read our Terms of Service and Privacy Policy to understand how we collect and use data, your rights under GDPR, and the conditions for using Minecraft Stats platform.",
+  keywords: "terms of service, privacy policy, CGU, GDPR, data protection, minecraft stats legal",
+  openGraph: {
+    title: "Terms of Service & Privacy Policy - Minecraft Stats",
+    description:
+      "Detailed Terms of Service and Privacy Policy for Minecraft Stats platform. Learn about user responsibilities, data collection, and privacy protection.",
+    type: "website",
+    url: `${baseUrl}/cgu`,
+  },
+  alternates: {
+    canonical: `${baseUrl}/cgu`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const CGU = () => {
