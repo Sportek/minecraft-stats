@@ -107,7 +107,7 @@ function extractDomainKey(hostname: string): string | null {
  * Use this in Client Components where headers() is not available
  */
 export function getClientDomainConfig(): DomainConfig {
-  if (typeof window === "undefined") {
+  if (globalThis.window === undefined) {
     // SSR initial render - use environment variables
     return {
       baseUrl: process.env.NEXT_PUBLIC_BASE_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].baseUrl,
@@ -116,11 +116,11 @@ export function getClientDomainConfig(): DomainConfig {
     };
   }
 
-  const hostname = window.location.hostname;
+  const hostname = globalThis.window.location.hostname;
 
   // Handle localhost/development environment
   if (isLocalhost(hostname)) {
-    return getLocalhostConfig(window.location.origin);
+    return getLocalhostConfig(globalThis.window.location.origin);
   }
 
   // Try to find matching domain configuration
@@ -131,7 +131,7 @@ export function getClientDomainConfig(): DomainConfig {
 
   // Fallback for unknown domains - use environment variables
   return {
-    baseUrl: window.location.origin,
+    baseUrl: globalThis.window.location.origin,
     apiUrl: process.env.NEXT_PUBLIC_API_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].apiUrl,
     backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].backendUrl,
   };
@@ -159,5 +159,5 @@ export function getClientBackendUrl(): string {
 }
 
 // Re-export domain config for use in other modules
-export { DOMAIN_CONFIG, DEFAULT_DOMAIN, extractDomainKey, isLocalhost, getLocalhostConfig };
-export type { DomainKey, DomainConfig };
+export { DEFAULT_DOMAIN, DOMAIN_CONFIG, extractDomainKey, getLocalhostConfig, isLocalhost };
+export type { DomainConfig, DomainKey };
