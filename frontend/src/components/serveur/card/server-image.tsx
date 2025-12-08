@@ -1,5 +1,6 @@
 import Image from "next/image";
 import NotFound from "../not-found";
+import { getClientBackendUrl } from "@/lib/domain";
 
 interface ServerImageProps {
   imageUrl: string;
@@ -7,8 +8,9 @@ interface ServerImageProps {
 }
 
 const ServerImage = ({ imageUrl, name }: ServerImageProps) => {
-  const imageUrlPng = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}.png`;
-  const imageUrlWebP = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}.webp`;
+  const backendUrl = getClientBackendUrl();
+  const imageUrlPng = `${backendUrl}${imageUrl}.png`;
+  const imageUrlWebP = `${backendUrl}${imageUrl}.webp`;
 
   if (!imageUrl) {
     return <NotFound className="text-stats-blue-950 dark:text-stats-blue-50 w-12 h-12" />;

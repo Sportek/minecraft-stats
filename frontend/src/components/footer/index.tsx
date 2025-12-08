@@ -7,10 +7,12 @@ import Image from "next/image";
 import Link from "next/link";
 import RestrictedWidthLayout from "../restricted-width-layout";
 import { Button } from "../ui/button";
+import { getClientBackendUrl } from "@/lib/domain";
 
 const Footer = () => {
   const isMinecraftStatsDomain =
     typeof window !== "undefined" && window.location.hostname.endsWith("minecraft-stats.com");
+  const backendUrl = getClientBackendUrl();
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 bg-stats-blue-50 dark:bg-stats-blue-1050">
@@ -41,7 +43,7 @@ const Footer = () => {
                 GitHub
               </Link>
               <Link
-                href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
+                href={`${backendUrl}/docs`}
                 className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
               >
                 API Documentation

@@ -6,6 +6,7 @@ import { GlobalStatsChart } from "./charts/global-stats-chart";
 import { Server, ServerSelect } from "./selects/server-select";
 import { CategorySelect } from "./selects/category-select";
 import { LanguageSelect } from "./selects/language-select";
+import { getClientApiUrl } from "@/lib/domain";
 
 const GlobalInsightSection = () => {
   const [globalStats, setGlobalStats] = useState<ServerStat[]>([]);
@@ -14,6 +15,7 @@ const GlobalInsightSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const apiUrl = getClientApiUrl();
 
   const dataRangeIntervalTypes = useMemo(() => {
     return {
@@ -48,7 +50,7 @@ const GlobalInsightSection = () => {
 
       // Récupérer les stats globales si aucun serveur n'est sélectionné
       if (selectedServers.length === 0) {
-        let url = `${process.env.NEXT_PUBLIC_API_URL}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
+        let url = `${apiUrl}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
         if (selectedCategory) {
           url += `&categoryId=${selectedCategory}`;
         }
@@ -56,11 +58,11 @@ const GlobalInsightSection = () => {
           url += `&languageId=${selectedLanguage}`;
         }
         const response = await fetch(url);
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch global stats");
         }
-        
+
         const data = await response.json();
         setGlobalStats(data);
         setServerStats([]);
@@ -68,17 +70,17 @@ const GlobalInsightSection = () => {
         // Récupérer les stats pour chaque serveur sélectionné
         const promises = selectedServers.map(async (serverId) => {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
+            `${apiUrl}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
           );
-          
+
           if (!response.ok) {
             throw new Error(`Failed to fetch stats for server ${serverId}`);
           }
-          
+
           const stats = await response.json();
-          
+
           // Récupérer les informations du serveur
-          const serverResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`);
+          const serverResponse = await fetch(`${apiUrl}/servers/${serverId}`);
           
           if (!serverResponse.ok) {
             throw new Error(`Failed to fetch server ${serverId}`);

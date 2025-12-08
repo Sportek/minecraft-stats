@@ -14,6 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getClientApiUrl } from "@/lib/domain";
 
 export interface Server {
   id: number;
@@ -30,11 +31,12 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
   const [open, setOpen] = useState(false);
   const [servers, setServers] = useState<Server[]>([]);
   const [search, setSearch] = useState("");
+  const apiUrl = getClientApiUrl();
 
   useEffect(() => {
     const fetchServers = async () => {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/servers");
+        const response = await fetch(apiUrl + "/servers");
         if (!response.ok) throw new Error('Failed to fetch servers');
         const data = await response.json();
         

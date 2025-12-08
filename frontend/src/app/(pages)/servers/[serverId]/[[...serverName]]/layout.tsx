@@ -1,24 +1,34 @@
 import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
+import { getDomainConfig } from "@/lib/domain-server";
 export const dynamic = "force-dynamic";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.com";
 export const generateMetadata = async (props: {
   params: Promise<{ serverId: string; serverName: string[] }>;
 }): Promise<Metadata> => {
   const params = await props.params;
+  const { baseUrl, backendUrl } = await getDomainConfig();
   try {
     const server = await getServer(Number(params.serverId));
     const lastStat = getLastStat(server.stats);
     const playerCount = lastStat.playerCount ?? 0;
     const categories = server.categories.map((c) => c.name).join(", ");
     const languages = server.server.languages.map((l) => l.name).join(", ");
-    const imageUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}${server.server.imageUrl}.webp`;
+    const imageUrl = `${backendUrl}${server.server.imageUrl}.webp`;
+
+    // Create a clean slug for the canonical URL
+    const slug = server.server.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const title = `${server.server.name} - Minecraft Server Stats & Analytics`;
+    const description = `Track ${server.server.name}, a ${categories} Minecraft server with ${playerCount} players online. Real-time statistics, player count graphs, and growth trends. Languages: ${languages}.`;
 
     return {
-      title: `${server.server.name} - Minecraft Server Stats`,
-      description: `${server.server.name} is a ${categories} Minecraft server with ${playerCount} online players. Available in ${languages}. Track player count, growth, and server statistics.`,
+      title,
+      description,
       keywords: [
         "minecraft server",
         server.server.name,
@@ -26,29 +36,46 @@ export const generateMetadata = async (props: {
         "player count",
         "server stats",
         "minecraft statistics",
+        "minecraft analytics",
+        "server monitoring",
       ].join(", "),
+      authors: [{ name: "Minecraft Stats" }],
       openGraph: {
-        title: `${server.server.name} - Minecraft Server Stats`,
-        description: `${server.server.name} is a ${categories} Minecraft server with ${playerCount} online players. Available in ${languages}.`,
+        title,
+        description,
         type: "website",
+        url: `${baseUrl}/servers/${server.server.id}/${slug}`,
         images: [
           {
             url: imageUrl,
             width: 1200,
             height: 630,
-            alt: `${server.server.name} Minecraft Server`,
+            alt: `${server.server.name} Minecraft Server Statistics`,
           },
         ],
-        siteName: "Minecraft Server Stats",
+        siteName: "Minecraft Stats",
+        locale: "en_US",
       },
       twitter: {
         card: "summary_large_image",
-        title: `${server.server.name} - Minecraft Server Stats`,
-        description: `${server.server.name} is a ${categories} Minecraft server with ${playerCount} online players.`,
+        title,
+        description,
         images: [imageUrl],
+        creator: "@MinecraftStats",
       },
       alternates: {
-        canonical: `${baseUrl}/servers/${server.server.id}/${server.server.name}`,
+        canonical: `${baseUrl}/servers/${server.server.id}/${slug}`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
     };
   } catch (error) {
@@ -62,7 +89,11 @@ export const generateMetadata = async (props: {
         description:
           "The requested Minecraft server could not be found. Browse other Minecraft servers and their statistics.",
         type: "website",
-        siteName: "Minecraft Server Stats",
+        siteName: "Minecraft Stats",
+      },
+      robots: {
+        index: false,
+        follow: true,
       },
     };
   }

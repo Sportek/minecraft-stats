@@ -1,9 +1,30 @@
 import { Metadata } from "next";
+import { getDomainConfig } from "@/lib/domain-server";
+import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Terms of Service",
-  description:
-    "Explore our detailed Terms of Service (CGU) to understand the conditions of access and use of our services, including Minecraft server statistics. Stay informed about user responsibilities, data collection, and privacy policies. Ensure compliance and secure your rights while using our platform.",
+export const generateMetadata = async (): Promise<Metadata> => {
+  const { baseUrl } = await getDomainConfig();
+
+  return {
+    title: "Terms of Service & Privacy Policy",
+    description:
+      "Read our Terms of Service and Privacy Policy to understand how we collect and use data, your rights under GDPR, and the conditions for using Minecraft Stats platform.",
+    keywords: "terms of service, privacy policy, CGU, GDPR, data protection, minecraft stats legal",
+    openGraph: {
+      title: "Terms of Service & Privacy Policy - Minecraft Stats",
+      description:
+        "Detailed Terms of Service and Privacy Policy for Minecraft Stats platform. Learn about user responsibilities, data collection, and privacy protection.",
+      type: "website",
+      url: `${baseUrl}/cgu`,
+    },
+    alternates: {
+      canonical: `${baseUrl}/cgu`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 };
 
 const CGU = () => {
@@ -29,9 +50,9 @@ const CGU = () => {
         <p>
           Les présentes Conditions Générales d&apos;Utilisation (CGU) ont pour objet de définir les conditions
           d&apos;accès et d&apos;utilisation des services de statistiques proposés gratuitement sur le site{" "}
-          <a href="https://minecraft-stats.fr" className="text-blue-500">
+          <Link href="/" className="text-blue-500">
             Minecraft-Stats
-          </a>
+          </Link>
           . Toute inscription ou utilisation du site implique l&apos;acceptation sans réserve des présentes CGU.
         </p>
       </section>
