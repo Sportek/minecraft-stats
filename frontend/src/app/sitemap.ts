@@ -1,7 +1,5 @@
 import { MetadataRoute } from 'next';
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://minecraft-stats.fr';
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.minecraft-stats.fr/api/v1';
+import { getDomainConfig } from '@/lib/domain-server';
 
 interface Server {
   id: number;
@@ -9,9 +7,9 @@ interface Server {
   updatedAt: string;
 }
 
-async function getAllServers(): Promise<Server[]> {
+async function getAllServers(apiUrl: string): Promise<Server[]> {
   try {
-    const response = await fetch(`${API_URL}/servers`, {
+    const response = await fetch(`${apiUrl}/servers`, {
       next: { revalidate: 3600 }, // Revalidate every hour
     });
 
@@ -33,24 +31,25 @@ async function getAllServers(): Promise<Server[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const servers = await getAllServers();
+  const { baseUrl, apiUrl } = await getDomainConfig();
+  const servers = await getAllServers(apiUrl);
 
   // Static routes
   const routes: MetadataRoute.Sitemap = [
     {
-      url: BASE_URL,
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'hourly',
       priority: 1,
     },
     {
-      url: `${BASE_URL}/partners`,
+      url: `${baseUrl}/partners`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,
     },
     {
-      url: `${BASE_URL}/cgu`,
+      url: `${baseUrl}/cgu`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.3,
@@ -65,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .replace(/(^-|-$)/g, '');
 
     return {
-      url: `${BASE_URL}/servers/${server.id}/${slug}`,
+      url: `${baseUrl}/servers/${server.id}/${slug}`,
       lastModified: new Date(server.updatedAt),
       changeFrequency: 'daily' as const,
       priority: 0.8,

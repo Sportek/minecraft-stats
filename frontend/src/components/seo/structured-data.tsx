@@ -1,5 +1,6 @@
 import { Category, Server } from "@/types/server";
 import Script from "next/script";
+import { getClientDomainConfig } from "@/lib/domain";
 
 interface ServerStructuredDataProps {
   server: Server;
@@ -16,8 +17,7 @@ export function ServerStructuredData({
   maxPlayers = 0,
   lastStatsAt,
 }: Readonly<ServerStructuredDataProps>) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "https://api.minecraft-stats.fr";
+  const { baseUrl, backendUrl } = getClientDomainConfig();
 
   const slug = server.name
     .toLowerCase()
@@ -87,7 +87,7 @@ interface WebsiteStructuredDataProps {
 }
 
 export function WebsiteStructuredData({ totalServers, totalPlayers }: WebsiteStructuredDataProps = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
+  const { baseUrl } = getClientDomainConfig();
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -142,7 +142,7 @@ interface OrganizationStructuredDataProps {
 }
 
 export function OrganizationStructuredData({ name = "Minecraft Stats" }: OrganizationStructuredDataProps = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
+  const { baseUrl } = getClientDomainConfig();
 
   const structuredData = {
     "@context": "https://schema.org",

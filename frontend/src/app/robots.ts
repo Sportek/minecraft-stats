@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next';
+import { getDomainConfig } from '@/lib/domain-server';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://minecraft-stats.fr';
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const { baseUrl } = await getDomainConfig();
 
-export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
@@ -35,6 +36,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: '/',
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
