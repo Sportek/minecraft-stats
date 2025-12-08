@@ -52,24 +52,24 @@ const EditPostPage = () => {
   }, [token, postId])
 
   if (!user) {
-    return <div className="p-8">Chargement...</div>
+    return <div className="p-8">Loading...</div>
   }
 
   if (user.role !== 'admin') {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-bold text-red-500">Accès refusé</h1>
-        <p>Vous devez être administrateur pour accéder à cette page.</p>
+        <h1 className="text-2xl font-bold text-red-500">Access Denied</h1>
+        <p>You must be an administrator to access this page.</p>
       </div>
     )
   }
 
   if (fetching) {
-    return <div className="p-8">Chargement de l'article...</div>
+    return <div className="p-8">Loading article...</div>
   }
 
   if (!post) {
-    return <div className="p-8">Article introuvable</div>
+    return <div className="p-8">Article not found</div>
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,7 +92,7 @@ const EditPostPage = () => {
       router.push('/admin/posts')
     } catch (error) {
       console.error('Failed to update post:', error)
-      alert('Échec de la mise à jour de l\'article')
+      alert('Failed to update article')
     } finally {
       setLoading(false)
     }
@@ -106,16 +106,16 @@ const EditPostPage = () => {
           className="text-blue-500 hover:text-blue-600 flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à la liste
+          Back to List
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-6">Éditer l'Article</h1>
+      <h1 className="text-3xl font-bold mb-6">Edit Article</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-2">
-            Titre *
+            Title *
           </label>
           <input
             type="text"
@@ -124,7 +124,7 @@ const EditPostPage = () => {
             onChange={(e) => setTitle(e.target.value)}
             required
             className="w-full px-4 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700"
-            placeholder="Titre de l'article"
+            placeholder="Article title"
           />
         </div>
 
@@ -138,13 +138,13 @@ const EditPostPage = () => {
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
             className="w-full px-4 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700"
-            placeholder="mon-article-super-cool"
+            placeholder="my-awesome-article"
           />
         </div>
 
         <div>
           <label htmlFor="excerpt" className="block text-sm font-medium mb-2">
-            Résumé (optionnel)
+            Summary (optional)
           </label>
           <textarea
             id="excerpt"
@@ -152,13 +152,13 @@ const EditPostPage = () => {
             onChange={(e) => setExcerpt(e.target.value)}
             rows={3}
             className="w-full px-4 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700"
-            placeholder="Court résumé de l'article..."
+            placeholder="Short summary of the article..."
           />
         </div>
 
         <div>
           <label htmlFor="coverImage" className="block text-sm font-medium mb-2">
-            Image de couverture (URL, optionnel)
+            Cover Image (URL, optional)
           </label>
           <input
             type="text"
@@ -171,7 +171,7 @@ const EditPostPage = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Contenu *</label>
+          <label className="block text-sm font-medium mb-2">Content *</label>
           <TiptapEditor content={content} onChange={setContent} />
         </div>
 
@@ -181,13 +181,13 @@ const EditPostPage = () => {
             disabled={loading || !title || !content}
             className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-6 py-2 rounded-md"
           >
-            {loading ? 'Mise à jour...' : 'Mettre à jour'}
+            {loading ? 'Updating...' : 'Update'}
           </button>
           <Link
             href="/admin/posts"
             className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 px-6 py-2 rounded-md"
           >
-            Annuler
+            Cancel
           </Link>
         </div>
       </form>

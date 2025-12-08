@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   } catch (error) {
     return {
-      title: 'Article non trouvé - Minecraft Stats',
-      description: 'L\'article demandé n\'existe pas',
+      title: 'Article not found - Minecraft Stats',
+      description: 'The requested article does not exist',
     }
   }
 }
@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: Props) {
             className="text-blue-500 hover:text-blue-600 flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour au blog
+            Back to Blog
           </Link>
         </div>
 
@@ -82,7 +82,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
             <span>•</span>
             <time dateTime={post.publishedAt?.toString()}>
-              {new Date(post.publishedAt!).toLocaleDateString('fr-FR', {
+              {new Date(post.publishedAt!).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -112,7 +112,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Publié le {new Date(post.publishedAt!).toLocaleDateString('fr-FR')}
+                Published on {new Date(post.publishedAt!).toLocaleDateString('en-US')}
               </p>
             </div>
             <Link
@@ -120,7 +120,7 @@ export default async function BlogPostPage({ params }: Props) {
               className="text-blue-500 hover:text-blue-600 flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Tous les articles
+              All Articles
             </Link>
           </div>
         </footer>
@@ -129,16 +129,16 @@ export default async function BlogPostPage({ params }: Props) {
   } catch (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-bold mb-4">Article non trouvé</h1>
+        <h1 className="text-3xl font-bold mb-4">Article Not Found</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-8">
-          L'article que vous recherchez n'existe pas ou a été supprimé.
+          The article you are looking for does not exist or has been deleted.
         </p>
         <Link
           href="/blog"
           className="text-blue-500 hover:text-blue-600 flex items-center gap-2 justify-center"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour au blog
+          Back to Blog
         </Link>
       </div>
     )

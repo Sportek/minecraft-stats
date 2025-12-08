@@ -4,7 +4,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Blog - Minecraft Stats',
-  description: 'Découvrez les derniers articles et actualités sur Minecraft Stats',
+  description: 'Discover the latest articles and news about Minecraft Stats',
 }
 
 export default async function BlogPage() {
@@ -16,8 +16,8 @@ export default async function BlogPage() {
 
       {posts.data.length === 0 ? (
         <div className="text-center py-16 text-gray-500">
-          <p className="text-xl">Aucun article pour le moment.</p>
-          <p className="mt-2">Revenez bientôt pour découvrir nos articles !</p>
+          <p className="text-xl">No articles at the moment.</p>
+          <p className="mt-2">Check back soon to discover our articles!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -44,8 +44,8 @@ export default async function BlogPage() {
                   </p>
                 )}
                 <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                  <span>Par {post.author.username}</span>
-                  <span>{new Date(post.publishedAt!).toLocaleDateString('fr-FR')}</span>
+                  <span>By {post.author.username}</span>
+                  <span>{new Date(post.publishedAt!).toLocaleDateString('en-US')}</span>
                 </div>
               </div>
             </Link>
