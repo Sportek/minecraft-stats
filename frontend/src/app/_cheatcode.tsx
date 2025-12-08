@@ -1,6 +1,8 @@
 // This file provides utility functions for API calls
 // Compatible with both Client-Side Rendering (CSR) and Server-Side Rendering (SSR)
 
+import { getClientApiUrl } from "@/lib/domain";
+
 export const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then((res) => res.json());
 
 /**
@@ -10,8 +12,8 @@ export const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).
 export const getBaseUrl = (): string => {
   // 1. Check if we're in the browser (client-side)
   if (globalThis.window !== undefined) {
-    // Client-side: use the public API URL
-    return process.env.NEXT_PUBLIC_API_URL || "https://api.minecraft-stats.fr/api/v1";
+    // Client-side: use domain-aware API URL
+    return getClientApiUrl();
   }
 
   // 2. Server-side (SSR/Docker/generateMetadata)

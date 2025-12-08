@@ -4,6 +4,7 @@ import { Server, ServerStat, Category, ServerGrowthStat } from "@/types/server";
 import { fetcher } from "@/app/_cheatcode";
 import useSWR from "swr";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getClientApiUrl } from "@/lib/domain";
 
 interface ServerData {
   server: Server;
@@ -17,8 +18,10 @@ interface ServerData {
 }
 
 const StatsSection = () => {
+  const apiUrl = getClientApiUrl();
+
   const { data: servers, error: serversError, isLoading: isServersLoading } = useSWR<ServerData[]>(
-    `${process.env.NEXT_PUBLIC_API_URL}/servers`,
+    `${apiUrl}/servers`,
     fetcher,
     {
       refreshInterval: 1000 * 60 * 2, // Rafraîchir toutes les 2 minutes
@@ -26,7 +29,7 @@ const StatsSection = () => {
   );
 
   const { data: websiteStats, error: websiteStatsError, isLoading: isWebsiteStatsLoading } = useSWR<{ totalRecords: number }>(
-    `${process.env.NEXT_PUBLIC_API_URL}/website-stats`,
+    `${apiUrl}/website-stats`,
     fetcher,
     {
       refreshInterval: 1000 * 60 * 2,

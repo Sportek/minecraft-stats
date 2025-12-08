@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { FancyMultiSelect } from "@/components/ui/fancy-multi-select";
+import { getClientApiUrl } from "@/lib/domain";
 
 const PAGE_SIZE = 10;
 
@@ -33,17 +34,18 @@ const ServerCardsSection = () => {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<number[]>([]);
   const debouncedSearch = useDebounce(search, 300);
+  const apiUrl = getClientApiUrl();
 
-  const { data: categories } = useSWR<Category[]>(`${process.env.NEXT_PUBLIC_API_URL}/categories`, fetcher);
-  const { data: languages } = useSWR<Language[]>(`${process.env.NEXT_PUBLIC_API_URL}/languages`, fetcher);
+  const { data: categories } = useSWR<Category[]>(`${apiUrl}/categories`, fetcher);
+  const { data: languages } = useSWR<Language[]>(`${apiUrl}/languages`, fetcher);
 
   const getKey = (pageIndex: number, previousPageData: PaginatedResponse | null) => {
     if (previousPageData && previousPageData.meta.currentPage >= previousPageData.meta.lastPage) return null;
-  
+
     const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
     const categoriesParam = selectedCategories.length > 0 ? `&categoryIds=${selectedCategories.join(',')}` : '';
     const languagesParam = selectedLanguages.length > 0 ? `&languageIds=${selectedLanguages.join(',')}` : '';
-    return `${process.env.NEXT_PUBLIC_API_URL}/servers/paginate?page=${pageIndex + 1}&limit=${PAGE_SIZE}${searchParam}${categoriesParam}${languagesParam}`;
+    return `${apiUrl}/servers/paginate?page=${pageIndex + 1}&limit=${PAGE_SIZE}${searchParam}${categoriesParam}${languagesParam}`;
   };
 
   const { data, setSize, isValidating, mutate } = useSWRInfinite<PaginatedResponse>(getKey, fetcher);

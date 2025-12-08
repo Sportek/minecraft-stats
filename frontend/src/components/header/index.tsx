@@ -19,11 +19,13 @@ import {
 import { ModeToggle } from "../dark-mode/toggle";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
+import { getClientBackendUrl } from "@/lib/domain";
 
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const backendUrl = getClientBackendUrl();
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link 
@@ -83,7 +85,7 @@ const Header = () => {
           <ModeToggle />
           <NavLink href="/account/add-server" label="Add Your Server" />
           <NavLink href="/" label="All Servers" />
-          <NavLink href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`} label="API" />
+          <NavLink href={`${backendUrl}/docs`} label="API" />
           {user?.username ? displayUserMenu() : <NavLink href="/login" label="Login" />}
         </div>
 
@@ -146,8 +148,8 @@ const Header = () => {
               icon="material-symbols:list"
               onClick={() => setIsMobileMenuOpen(false)} 
             />
-            <MobileNavLink 
-              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`} 
+            <MobileNavLink
+              href={`${backendUrl}/docs`}
               label="API"
               icon="material-symbols:api"
               onClick={() => setIsMobileMenuOpen(false)} 
