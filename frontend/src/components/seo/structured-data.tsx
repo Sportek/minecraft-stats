@@ -1,26 +1,12 @@
-import Script from 'next/script';
-
-interface Server {
-  id: number;
-  name: string;
-  address: string;
-  port: number;
-  imageUrl: string;
-  version?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-}
+import { Category, Server } from "@/types/server";
+import Script from "next/script";
 
 interface ServerStructuredDataProps {
   server: Server;
   categories: Category[];
   playerCount: number;
   maxPlayers?: number;
+  lastStatsAt?: Date;
 }
 
 export function ServerStructuredData({
@@ -28,32 +14,33 @@ export function ServerStructuredData({
   categories,
   playerCount,
   maxPlayers = 0,
-}: ServerStructuredDataProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://minecraft-stats.fr';
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'https://api.minecraft-stats.fr';
+  lastStatsAt,
+}: Readonly<ServerStructuredDataProps>) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "https://api.minecraft-stats.fr";
 
   const slug = server.name
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replaceAll(/[^a-z0-9]+/g, "-")
+    .replaceAll(/(^-|-$)/g, "");
 
   const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
+    "@context": "https://schema.org",
+    "@type": "WebPage",
     name: `${server.name} - Minecraft Server Stats`,
     description: `Statistics and analytics for ${server.name} Minecraft server. Currently ${playerCount} players online.`,
     url: `${baseUrl}/servers/${server.id}/${slug}`,
     image: `${backendUrl}${server.imageUrl}.webp`,
     datePublished: server.createdAt,
-    dateModified: server.updatedAt,
+    dateModified: lastStatsAt ?? server.createdAt,
     mainEntity: {
-      '@type': 'Game',
+      "@type": "Game",
       name: server.name,
-      applicationCategory: 'Game Server',
-      gamePlatform: 'Minecraft',
+      applicationCategory: "Game Server",
+      gamePlatform: "Minecraft",
       genre: categories.map((c) => c.name),
       numberOfPlayers: {
-        '@type': 'QuantitativeValue',
+        "@type": "QuantitativeValue",
         value: playerCount,
         maxValue: maxPlayers || undefined,
       },
@@ -61,22 +48,22 @@ export function ServerStructuredData({
       image: `${backendUrl}${server.imageUrl}.webp`,
     },
     breadcrumb: {
-      '@type': 'BreadcrumbList',
+      "@type": "BreadcrumbList",
       itemListElement: [
         {
-          '@type': 'ListItem',
+          "@type": "ListItem",
           position: 1,
-          name: 'Home',
+          name: "Home",
           item: baseUrl,
         },
         {
-          '@type': 'ListItem',
+          "@type": "ListItem",
           position: 2,
-          name: 'Servers',
+          name: "Servers",
           item: `${baseUrl}/servers`,
         },
         {
-          '@type': 'ListItem',
+          "@type": "ListItem",
           position: 3,
           name: server.name,
           item: `${baseUrl}/servers/${server.id}/${slug}`,
@@ -99,33 +86,30 @@ interface WebsiteStructuredDataProps {
   totalPlayers?: number;
 }
 
-export function WebsiteStructuredData({
-  totalServers,
-  totalPlayers,
-}: WebsiteStructuredDataProps = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://minecraft-stats.fr';
+export function WebsiteStructuredData({ totalServers, totalPlayers }: WebsiteStructuredDataProps = {}) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
 
   const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Minecraft Stats',
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Minecraft Stats",
     description:
-      'Track and analyze Minecraft server statistics. Monitor player counts, growth trends, and server performance in real-time.',
+      "Track and analyze Minecraft server statistics. Monitor player counts, growth trends, and server performance in real-time.",
     url: baseUrl,
     potentialAction: {
-      '@type': 'SearchAction',
+      "@type": "SearchAction",
       target: {
-        '@type': 'EntryPoint',
+        "@type": "EntryPoint",
         urlTemplate: `${baseUrl}/search?q={search_term_string}`,
       },
-      'query-input': 'required name=search_term_string',
+      "query-input": "required name=search_term_string",
     },
     publisher: {
-      '@type': 'Organization',
-      name: 'Minecraft Stats',
+      "@type": "Organization",
+      name: "Minecraft Stats",
       url: baseUrl,
       logo: {
-        '@type': 'ImageObject',
+        "@type": "ImageObject",
         url: `${baseUrl}/images/minecraft-stats/logo.svg`,
       },
     },
@@ -135,9 +119,11 @@ export function WebsiteStructuredData({
   if (totalServers || totalPlayers) {
     Object.assign(structuredData, {
       about: {
-        '@type': 'Thing',
-        name: 'Minecraft Server Statistics',
-        description: `Tracking ${totalServers || 'multiple'} Minecraft servers with ${totalPlayers || 'thousands of'} players.`,
+        "@type": "Thing",
+        name: "Minecraft Server Statistics",
+        description: `Tracking ${totalServers || "multiple"} Minecraft servers with ${
+          totalPlayers || "thousands of"
+        } players.`,
       },
     });
   }
@@ -155,14 +141,12 @@ interface OrganizationStructuredDataProps {
   name?: string;
 }
 
-export function OrganizationStructuredData({
-  name = 'Minecraft Stats',
-}: OrganizationStructuredDataProps = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://minecraft-stats.fr';
+export function OrganizationStructuredData({ name = "Minecraft Stats" }: OrganizationStructuredDataProps = {}) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://minecraft-stats.fr";
 
   const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
+    "@context": "https://schema.org",
+    "@type": "Organization",
     name,
     url: baseUrl,
     logo: `${baseUrl}/images/minecraft-stats/logo.svg`,
@@ -172,8 +156,8 @@ export function OrganizationStructuredData({
       // 'https://github.com/yourusername/minecraft-stats',
     ],
     contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'Customer Support',
+      "@type": "ContactPoint",
+      contactType: "Customer Support",
       url: baseUrl,
     },
   };
