@@ -1,5 +1,6 @@
 import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
+import env from '#start/env'
 import {
   ChangePasswordValidator,
   CreateUserValidator,
@@ -27,7 +28,7 @@ export default class AuthController {
   async verifyEmail({ request, response }: HttpContext) {
     const data = request.only(['token'])
     const validatedUserData = await VerifyEmailValidator.validate(data)
-    const jwtToken = jwt.verify(validatedUserData.token, process.env.JWT_SECRET as string) as {
+    const jwtToken = jwt.verify(validatedUserData.token, env.get('APP_KEY')) as {
       email: string
       verificationToken: string
     }
@@ -53,7 +54,7 @@ export default class AuthController {
     const newUser = await User.create(validatedUserData)
     const jwtToken = jwt.sign(
       { email: newUser.email, verificationToken: newUser.verificationToken },
-      process.env.JWT_SECRET as string
+      env.get('APP_KEY')
     )
     await mail.sendLater(new VerifyENotification(newUser, jwtToken))
     return response.ok(newUser)
