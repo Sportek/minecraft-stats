@@ -52,7 +52,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@iconify/react": "^4.1.1",
+    "@iconify/react": "^6.0.2",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
     "@types/react": "19.1.2",
