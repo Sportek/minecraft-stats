@@ -21,6 +21,11 @@ const ServerCardsSection = dynamic(() => import("@/components/home/server-cards-
   ssr: false
 });
 
+const LatestArticlesSection = dynamic(() => import("@/components/home/latest-articles-section"), {
+  loading: () => <div className="w-full h-[300px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
+  ssr: false
+});
+
 export interface ServerData {
   server: Server;
   stats: ServerStat[];
@@ -44,6 +49,9 @@ const Home = () => {
         </Suspense>
         <Suspense>
           <GlobalInsightSection />
+        </Suspense>
+        <Suspense>
+          <LatestArticlesSection />
         </Suspense>
         <Suspense>
           <ServerCardsSection />
