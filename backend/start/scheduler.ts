@@ -94,8 +94,8 @@ async function updateServerInfo(server: Server, overwriteImage = false) {
       server.imageUrl = `/images/servers/${server.id}`
     }
 
-    playerOnline = data.players.online
-    maxPlayer = data.players.max
+    playerOnline = data.players?.online ?? 0
+    maxPlayer = data.players?.max ?? 0
 
     server.version = data.version.name
     server.lastPlayerCount = playerOnline
