@@ -75,8 +75,11 @@ const Header = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add Server</DropdownMenuItem>
-        {user?.role === "admin" && (
+        {(user?.role === "admin" || user?.role === "writer") && (
           <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage Blog</DropdownMenuItem>
+        )}
+        {user?.role === "admin" && (
+          <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage Users</DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-red-500">
@@ -180,11 +183,19 @@ const Header = () => {
                   icon="material-symbols:settings-outline"
                   onClick={() => setIsMobileMenuOpen(false)}
                 />
-                {user?.role === "admin" && (
+                {(user?.role === "admin" || user?.role === "writer") && (
                   <MobileNavLink
                     href="/admin/posts"
                     label="Manage Blog"
                     icon="material-symbols:article-outline"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  />
+                )}
+                {user?.role === "admin" && (
+                  <MobileNavLink
+                    href="/admin/users"
+                    label="Manage Users"
+                    icon="material-symbols:group"
                     onClick={() => setIsMobileMenuOpen(false)}
                   />
                 )}

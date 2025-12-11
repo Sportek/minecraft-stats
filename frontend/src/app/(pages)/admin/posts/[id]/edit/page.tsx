@@ -59,12 +59,12 @@ const EditPostPage = () => {
     );
   }
 
-  if (user.role !== "admin") {
+  if (user.role !== "admin" && user.role !== "writer") {
     return (
-      <div className="min-h-screenflex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-500 mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-slate-400">You must be an administrator to access this page.</p>
+          <p className="text-gray-600 dark:text-slate-400">You must be a writer or administrator to access this page.</p>
         </div>
       </div>
     );

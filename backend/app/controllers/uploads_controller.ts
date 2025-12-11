@@ -4,6 +4,7 @@ import { cuid } from '@adonisjs/core/helpers'
 import sharp from 'sharp'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import PostPolicy from '#policies/post_policy'
 
 export default class UploadsController {
   /**
@@ -11,7 +12,15 @@ export default class UploadsController {
    * Accepts: image/jpeg, image/png, image/webp
    * Returns: URL to the uploaded image
    */
-  async uploadImage({ request, response }: HttpContext) {
+  async uploadImage({ request, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
+    if (await bouncer.with(PostPolicy).denies('manage')) {
+      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+    }
     const image = request.file('image', {
       size: '5mb',
       extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],

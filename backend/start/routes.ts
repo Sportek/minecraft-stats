@@ -97,15 +97,13 @@ router
       .use(throttleLight('discord-callback', 5))
 
     // Blog - Posts publics
-    router
-      .get('posts', '#controllers/posts_controller.index')
-      .use(throttleLight('posts.index', 50))
+    router.get('posts', '#controllers/posts_controller.index').use(throttleLight('posts.index', 50))
 
     router
       .get('posts/:slug', '#controllers/posts_controller.show')
       .use(throttleLight('posts.show', 50))
 
-    // Blog - Admin posts management
+    // Blog - Posts management (writers and admins via policy)
     router
       .group(() => {
         router
@@ -126,16 +124,22 @@ router
         router
           .post('posts/:id/unpublish', '#controllers/posts_controller.unpublish')
           .use(throttleLight('admin.posts.unpublish', 20))
+
+        // User management (admin only via policy)
+        router
+          .get('users', '#controllers/users_controller.adminIndex')
+          .use(throttleLight('admin.users.index', 20))
+        router
+          .patch('users/:id/role', '#controllers/users_controller.updateRole')
+          .use(throttleLight('admin.users.updateRole', 10))
       })
       .prefix('admin')
       .use(middleware.auth())
-      .use(middleware.admin())
 
-    // Blog - Image uploads (admin only)
+    // Blog - Image uploads (writers and admins via policy)
     router
       .post('uploads/image', '#controllers/uploads_controller.uploadImage')
       .use(middleware.auth())
-      .use(middleware.admin())
       .use(throttleLight('uploads.image', 10))
   })
   .prefix('/api/v1')

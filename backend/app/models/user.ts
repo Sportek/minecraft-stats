@@ -30,7 +30,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare provider: 'discord' | 'google' | null
 
   @column()
-  declare role: 'admin' | 'user'
+  declare role: 'admin' | 'writer' | 'user'
 
   @column()
   declare avatarUrl: string | null

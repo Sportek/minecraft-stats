@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Post from '#models/post'
 import { CreatePostValidator, UpdatePostValidator } from '#validators/post'
 import { DateTime } from 'luxon'
+import PostPolicy from '#policies/post_policy'
 
 export default class PostsController {
   /**
@@ -40,9 +41,18 @@ export default class PostsController {
   }
 
   /**
-   * List all posts for admin (includes drafts)
+   * List all posts for writers/admins (includes drafts)
    */
-  async adminIndex({ request, response }: HttpContext) {
+  async adminIndex({ request, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
+    if (await bouncer.with(PostPolicy).denies('manage')) {
+      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+    }
+
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
     const status = request.input('status', 'all') // all, published, draft
@@ -50,6 +60,11 @@ export default class PostsController {
     const query = Post.query().preload('author', (query) => {
       query.select('id', 'username', 'avatarUrl')
     })
+
+    // Writers can only see their own posts, admins can see all
+    if (user.role === 'writer') {
+      query.where('user_id', user.id)
+    }
 
     if (status === 'published') {
       query.where('published', true)
@@ -63,13 +78,16 @@ export default class PostsController {
   }
 
   /**
-   * Create a new post (admin only)
+   * Create a new post (writers and admins)
    */
-  async store({ request, auth, response }: HttpContext) {
+  async store({ request, auth, response, bouncer }: HttpContext) {
     const user = auth.user
-
     if (!user) {
       return response.unauthorized({ error: 'Unauthorized' })
+    }
+
+    if (await bouncer.with(PostPolicy).denies('manage')) {
+      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
     }
 
     const data = await request.validateUsing(CreatePostValidator)
@@ -86,10 +104,20 @@ export default class PostsController {
   }
 
   /**
-   * Update a post (admin only)
+   * Update a post (writers can update their own, admins can update any)
    */
-  async update({ params, request, response }: HttpContext) {
+  async update({ params, request, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
     const post = await Post.findOrFail(params.id)
+
+    if (await bouncer.with(PostPolicy).denies('update', post)) {
+      return response.forbidden({ error: 'Access denied. You can only update your own posts.' })
+    }
+
     const data = await request.validateUsing(UpdatePostValidator)
 
     post.merge(data)
@@ -101,20 +129,39 @@ export default class PostsController {
   }
 
   /**
-   * Delete a post (admin only)
+   * Delete a post (writers can delete their own, admins can delete any)
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
     const post = await Post.findOrFail(params.id)
+
+    if (await bouncer.with(PostPolicy).denies('destroy', post)) {
+      return response.forbidden({ error: 'Access denied. You can only delete your own posts.' })
+    }
+
     await post.delete()
 
     return response.noContent()
   }
 
   /**
-   * Publish a post (admin only)
+   * Publish a post (writers can publish their own, admins can publish any)
    */
-  async publish({ params, response }: HttpContext) {
+  async publish({ params, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
     const post = await Post.findOrFail(params.id)
+
+    if (await bouncer.with(PostPolicy).denies('publish', post)) {
+      return response.forbidden({ error: 'Access denied. You can only publish your own posts.' })
+    }
 
     post.published = true
     post.publishedAt = DateTime.now()
@@ -126,10 +173,19 @@ export default class PostsController {
   }
 
   /**
-   * Unpublish a post (admin only)
+   * Unpublish a post (writers can unpublish their own, admins can unpublish any)
    */
-  async unpublish({ params, response }: HttpContext) {
+  async unpublish({ params, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
     const post = await Post.findOrFail(params.id)
+
+    if (await bouncer.with(PostPolicy).denies('publish', post)) {
+      return response.forbidden({ error: 'Access denied. You can only unpublish your own posts.' })
+    }
 
     post.published = false
     post.publishedAt = null
