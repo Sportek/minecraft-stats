@@ -251,23 +251,23 @@
     abstract-logging "^2.0.1"
     pino "^10.1.0"
 
-"@adonisjs/lucid@^20.6.0":
-  version "20.6.0"
-  resolved "https://registry.yarnpkg.com/@adonisjs/lucid/-/lucid-20.6.0.tgz#8fbb7d639b1e565b2e35ce46fca654ba25ac1eb0"
-  integrity sha512-LTHc3xjGukjEcy0972l4DUkmlnhXuzvlMGt7zqyfbbn4XmRk6b6RczYPhjUEVqUvNzx845L7RnqTJ8mblHHnmQ==
+"@adonisjs/lucid@^21.8.1":
+  version "21.8.1"
+  resolved "https://registry.yarnpkg.com/@adonisjs/lucid/-/lucid-21.8.1.tgz#e29d5e04c1804d85fe568989ea7fbabf4892904e"
+  integrity sha512-L0QOZoIzVkdDpAxj71B60KAwgEoO7VpQkIkYwInPbznH4ypCw6J9f5Foqkxnl6RkFgRBnpziW73T9eUEk6SMqg==
   dependencies:
-    "@adonisjs/presets" "^2.4.0"
-    "@faker-js/faker" "^8.4.1"
-    "@poppinss/hooks" "^7.2.3"
-    "@poppinss/macroable" "^1.0.2"
-    "@poppinss/utils" "^6.7.3"
+    "@adonisjs/presets" "^2.6.4"
+    "@faker-js/faker" "^9.9.0"
+    "@poppinss/hooks" "^7.3.0"
+    "@poppinss/macroable" "^1.1.0"
+    "@poppinss/utils" "^6.10.1"
     fast-deep-equal "^3.1.3"
     igniculus "^1.5.0"
     kleur "^4.1.5"
     knex "^3.1.0"
-    knex-dynamic-connection "^3.1.1"
+    knex-dynamic-connection "^3.2.0"
     pretty-hrtime "^1.0.3"
-    qs "^6.12.1"
+    qs "^6.14.0"
     slash "^5.1.0"
     tarn "^3.0.2"
 
@@ -286,7 +286,7 @@
     ical-generator "^7.0.0"
     nodemailer "^6.9.13"
 
-"@adonisjs/presets@^2.4.0", "@adonisjs/presets@^2.6.4":
+"@adonisjs/presets@^2.6.4":
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/@adonisjs/presets/-/presets-2.6.4.tgz#24eb6d0413c9ec3281ad918a8474121ac3e7fd1b"
   integrity sha512-WvzWouziX88GMoGBLDobGRaSktWfz+fRqADJyhJd7+l0M2VMm5NF0LvAXbV8lMBLtBCicOxk973bJ9Kmyfy3qQ==
@@ -540,10 +540,10 @@
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
 
-"@faker-js/faker@^8.4.1":
-  version "8.4.1"
-  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-8.4.1.tgz#5d5e8aee8fce48f5e189bf730ebd1f758f491451"
-  integrity sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==
+"@faker-js/faker@^9.9.0":
+  version "9.9.0"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-9.9.0.tgz#3ad015fbbaaae7af3149555e0f22b4b30134c69d"
+  integrity sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"
@@ -941,12 +941,7 @@
   resolved "https://registry.yarnpkg.com/@poppinss/exception/-/exception-1.2.2.tgz#8d30d42e126c54fe84e997433e4dcac610090743"
   integrity sha512-m7bpKCD4QMlFCjA/nKTs23fuvoVFoA83brRKmObCUNmi/9tVu8Ve3w4YQAnJu4q3Tjf5fr685HYIC/IA2zHRSg==
 
-"@poppinss/hooks@^7.2.3", "@poppinss/hooks@^7.2.4":
-  version "7.2.5"
-  resolved "https://registry.yarnpkg.com/@poppinss/hooks/-/hooks-7.2.5.tgz#16cdfe96750fb9bf8572212a24b14533aed9db4b"
-  integrity sha512-mxORKQ5CFzQNi6yK3zwCGWfGS507w23IhV3kFq42QzWlv/vpvf4aMJDbtfMCR5p52ghVoe0d1wmgp77ak2ORhQ==
-
-"@poppinss/hooks@^7.2.5":
+"@poppinss/hooks@^7.2.3", "@poppinss/hooks@^7.2.4", "@poppinss/hooks@^7.2.5", "@poppinss/hooks@^7.3.0":
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/@poppinss/hooks/-/hooks-7.3.0.tgz#763b45cc421df49a033509a373167a554bda1c65"
   integrity sha512-/H35z/bWqHg7085QOxWUDYMidx6Kl6b8kIyzIXlRYzWvsk1xm9hQOlXWdWEYch+Gmn8eL7tThx59MBj8BLxDrQ==
@@ -4301,7 +4296,7 @@ kleur@^4.1.5:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-4.1.5.tgz#95106101795f7050c6c650f350c683febddb1780"
   integrity sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==
 
-knex-dynamic-connection@^3.1.1:
+knex-dynamic-connection@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/knex-dynamic-connection/-/knex-dynamic-connection-3.2.0.tgz#0fc0348e4cd2a90a3d6d334a58b689d83bfa579c"
   integrity sha512-+j6KeUSim0FR8EobOqA1a/TZbN9mahjzHzJgOfQVkv6PUnSqJp70c/5n63M2YVNgNHETyBIUhV8stuQ0T/mG3g==
@@ -5685,7 +5680,7 @@ pure-conditions@^1.2.1:
   resolved "https://registry.yarnpkg.com/pure-conditions/-/pure-conditions-1.2.1.tgz#de3717e2bd9b6eae07b6c68257cfa3332818ffef"
   integrity sha512-MKk7sKQiR3Fe3bL/QedUZ1eVoNO0xpOCyiTGdVrK+4ZCDa9TgwNp6D/U1FthjhVGS9a857BS84WncvZvOYECUw==
 
-qs@^6.11.0, qs@^6.12.1, qs@^6.14.0:
+qs@^6.11.0, qs@^6.14.0:
   version "6.14.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.0.tgz#c63fa40680d2c5c941412a0e899c89af60c0a930"
   integrity sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==
