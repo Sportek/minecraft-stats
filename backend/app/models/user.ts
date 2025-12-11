@@ -2,9 +2,11 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { randomBytes } from 'node:crypto'
+import Post from '#models/post'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -28,7 +30,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare provider: 'discord' | 'google' | null
 
   @column()
-  declare role: 'admin' | 'user'
+  declare role: 'admin' | 'writer' | 'user'
 
   @column()
   declare avatarUrl: string | null
@@ -47,6 +49,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+
+  @hasMany(() => Post)
+  declare posts: HasMany<typeof Post>
 
   static readonly accessTokens = DbAccessTokensProvider.forModel(User, {
     expiresIn: '30 days',
