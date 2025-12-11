@@ -1,93 +1,89 @@
-'use client'
+"use client";
 
-import { useAuth } from '@/contexts/auth'
-import { getAdminPosts, updatePost } from '@/http/post'
-import { TiptapEditor } from '@/components/blog/tiptap-editor'
-import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import Link from 'next/link'
-import { ChevronLeft } from 'lucide-react'
-import { Post } from '@/types/post'
+import { TiptapEditor } from "@/components/blog/tiptap-editor";
+import { useAuth } from "@/contexts/auth";
+import { getAdminPosts, updatePost } from "@/http/post";
+import { Post } from "@/types/post";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const EditPostPage = () => {
-  const { user, getToken } = useAuth()
-  const token = getToken()
-  const router = useRouter()
-  const params = useParams()
-  const postId = parseInt(params.id as string)
+  const { user, getToken } = useAuth();
+  const token = getToken();
+  const router = useRouter();
+  const params = useParams();
+  const postId = Number.parseInt(params.id as string);
 
-  const [post, setPost] = useState<Post | null>(null)
-  const [title, setTitle] = useState('')
-  const [slug, setSlug] = useState('')
-  const [content, setContent] = useState('')
-  const [excerpt, setExcerpt] = useState('')
-  const [coverImage, setCoverImage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [fetching, setFetching] = useState(true)
+  const [post, setPost] = useState<Post | null>(null);
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [content, setContent] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [coverImage, setCoverImage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    if (!token) return
+    if (!token) return;
 
     const fetchPost = async () => {
       try {
-        setFetching(true)
-        const response = await getAdminPosts(token, 1, 100)
-        const foundPost = response.data.find((p) => p.id === postId)
+        setFetching(true);
+        const response = await getAdminPosts(token, 1, 100);
+        const foundPost = response.data.find((p) => p.id === postId);
         if (foundPost) {
-          setPost(foundPost)
-          setTitle(foundPost.title)
-          setSlug(foundPost.slug)
-          setContent(foundPost.content)
-          setExcerpt(foundPost.excerpt || '')
-          setCoverImage(foundPost.coverImage || '')
+          setPost(foundPost);
+          setTitle(foundPost.title);
+          setSlug(foundPost.slug);
+          setContent(foundPost.content);
+          setExcerpt(foundPost.excerpt || "");
+          setCoverImage(foundPost.coverImage || "");
         }
       } catch (error) {
-        console.error('Failed to fetch post:', error)
+        console.error("Failed to fetch post:", error);
       } finally {
-        setFetching(false)
+        setFetching(false);
       }
-    }
+    };
 
-    fetchPost()
-  }, [token, postId])
+    fetchPost();
+  }, [token, postId]);
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg text-gray-900 dark:text-white">Loading...</div>
       </div>
-    )
+    );
   }
 
-  if (user.role !== 'admin') {
+  if (user.role !== "admin") {
     return (
-      <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050 flex items-center justify-center">
+      <div className="min-h-screenflex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-500 mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-slate-400">
-            You must be an administrator to access this page.
-          </p>
+          <p className="text-gray-600 dark:text-slate-400">You must be an administrator to access this page.</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (fetching) {
     return (
-      <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg text-gray-900 dark:text-white">Loading article...</div>
       </div>
-    )
+    );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Article Not Found</h1>
-          <p className="text-gray-600 dark:text-slate-400 mb-6">
-            The article you are looking for does not exist.
-          </p>
+          <p className="text-gray-600 dark:text-slate-400 mb-6">The article you are looking for does not exist.</p>
           <Link
             href="/admin/posts"
             className="inline-flex items-center gap-2 text-stats-blue-600 hover:text-stats-blue-700 dark:text-stats-blue-400 dark:hover:text-stats-blue-300"
@@ -97,15 +93,15 @@ const EditPostPage = () => {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!token) return
+    e.preventDefault();
+    if (!token) return;
 
     try {
-      setLoading(true)
+      setLoading(true);
       await updatePost(
         postId,
         {
@@ -116,18 +112,18 @@ const EditPostPage = () => {
           coverImage: coverImage || undefined,
         },
         token
-      )
-      router.push('/admin/posts')
+      );
+      router.push("/admin/posts");
     } catch (error) {
-      console.error('Failed to update post:', error)
-      alert('Failed to update article')
+      console.error("Failed to update post:", error);
+      alert("Failed to update article");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-4xl animate-in fade-in slide-in-from-bottom-2 duration-300">
         <Link
           href="/admin/posts"
@@ -170,9 +166,7 @@ const EditPostPage = () => {
 
           {/* Summary Input */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
-              Summary (optional)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">Summary (optional)</label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
@@ -210,7 +204,7 @@ const EditPostPage = () => {
               type="submit"
               className="bg-stats-blue-600 hover:bg-stats-blue-500 text-white px-6 py-2.5 rounded-md font-medium transition-all shadow-lg shadow-stats-blue-900/20"
             >
-              {loading ? 'Updating...' : 'Update Article'}
+              {loading ? "Updating..." : "Update Article"}
             </button>
             <Link
               href="/admin/posts"
@@ -222,7 +216,7 @@ const EditPostPage = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditPostPage
+export default EditPostPage;

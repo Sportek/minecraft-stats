@@ -1,29 +1,29 @@
 "use client";
 
-import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
 import HeroSection from "@/components/home/hero-section";
-import { WebsiteStructuredData, OrganizationStructuredData } from "@/components/seo/structured-data";
+import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/seo/structured-data";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
 const StatsSection = dynamic(() => import("@/components/home/stats-section"), {
   loading: () => <div className="w-full h-[100px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false
+  ssr: false,
 });
 
 const GlobalInsightSection = dynamic(() => import("@/components/home/global-insight-section"), {
   loading: () => <div className="w-full h-[400px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false
+  ssr: false,
 });
 
 const ServerCardsSection = dynamic(() => import("@/components/home/server-cards-section"), {
   loading: () => <div className="w-full h-[200px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false
+  ssr: false,
 });
 
 const LatestArticlesSection = dynamic(() => import("@/components/home/latest-articles-section"), {
   loading: () => <div className="w-full h-[300px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false
+  ssr: false,
 });
 
 export interface ServerData {
@@ -48,10 +48,10 @@ const Home = () => {
           <StatsSection />
         </Suspense>
         <Suspense>
-          <GlobalInsightSection />
+          <LatestArticlesSection />
         </Suspense>
         <Suspense>
-          <LatestArticlesSection />
+          <GlobalInsightSection />
         </Suspense>
         <Suspense>
           <ServerCardsSection />

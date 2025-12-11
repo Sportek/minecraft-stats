@@ -1,25 +1,25 @@
-import { getPosts } from '@/http/post'
-import Link from 'next/link'
-import { Metadata } from 'next'
-import { Calendar } from 'lucide-react'
+import { getPosts } from "@/http/post";
+import { Calendar } from "lucide-react";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: 'Blog - Minecraft Stats',
-  description: 'Latest news, server spotlights, and development updates.',
-}
+  title: "Blog - Minecraft Stats",
+  description: "Latest news, server spotlights, and development updates.",
+};
 
 export default async function BlogPage() {
-  const posts = await getPosts(1, 20)
-  const publishedArticles = posts.data
-  const featuredArticle = publishedArticles[0]
-  const remainingArticles = publishedArticles.slice(1)
+  const posts = await getPosts(1, 20);
+  const publishedArticles = posts.data;
+  const featuredArticle = publishedArticles[0];
+  const remainingArticles = publishedArticles.slice(1);
 
   return (
-    <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 animate-in fade-in duration-500 space-y-10">
-
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-200 dark:border-stats-blue-800/50 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight mb-2">Blog</h1>
             <p className="text-gray-600 dark:text-slate-400 max-w-xl">
@@ -36,16 +36,16 @@ export default async function BlogPage() {
           <>
             {/* Featured Article - Immersive Hero Style */}
             {featuredArticle && (
-              <section
-                className="group relative h-[450px] w-full rounded-2xl overflow-hidden border border-gray-200 dark:border-stats-blue-800 cursor-pointer shadow-2xl"
-              >
+              <section className="group relative h-[450px] w-full rounded-2xl overflow-hidden cursor-pointer shadow-2xl">
                 <Link href={`/blog/${featuredArticle.slug}`} className="block h-full">
                   {/* Background Image */}
                   <div className="absolute inset-0">
-                    <img
-                      src={featuredArticle.coverImage || 'https://picsum.photos/seed/default/800/400'}
+                    <Image
+                      src={featuredArticle.coverImage || `https://picsum.photos/seed/${featuredArticle.slug}/800/400`}
                       alt={featuredArticle.title}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                      unoptimized
+                      fill
                     />
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-stats-blue-1050 via-stats-blue-1050/60 to-transparent dark:from-[#0B1221] dark:via-[#0B1221]/60" />
@@ -63,7 +63,7 @@ export default async function BlogPage() {
                       </span>
                     </div>
 
-                    <h2 className="text-3xl md:text-5xl font-black text-white mb-4 leading-tight drop-shadow-lg max-w-4xl">
+                    <h2 className="text-3xl md:text-5xl font-black text-white mb-4 leading-tight max-w-4xl">
                       {featuredArticle.title}
                     </h2>
 
@@ -99,14 +99,17 @@ export default async function BlogPage() {
                     <Link
                       key={post.id}
                       href={`/blog/${post.slug}`}
-                      className="group bg-white dark:bg-stats-blue-1000 border border-gray-200 dark:border-stats-blue-800 rounded-lg overflow-hidden hover:shadow-xl transition-all"
+                      className="group bg-white dark:bg-stats-blue-1000 rounded-lg overflow-hidden hover:shadow-xl transition-all"
                     >
                       {post.coverImage && (
                         <div className="aspect-video w-full overflow-hidden">
-                          <img
+                          <Image
                             src={post.coverImage}
                             alt={post.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            unoptimized
+                            width={800}
+                            height={400}
                           />
                         </div>
                       )}
@@ -115,9 +118,7 @@ export default async function BlogPage() {
                           {post.title}
                         </h3>
                         {post.excerpt && (
-                          <p className="text-gray-600 dark:text-slate-400 mb-4 line-clamp-2 text-sm">
-                            {post.excerpt}
-                          </p>
+                          <p className="text-gray-600 dark:text-slate-400 mb-4 line-clamp-2 text-sm">{post.excerpt}</p>
                         )}
                         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
                           <div className="flex items-center gap-1">
@@ -129,9 +130,9 @@ export default async function BlogPage() {
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             <span>
-                              {new Date(post.publishedAt!).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
+                              {new Date(post.publishedAt!).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
                               })}
                             </span>
                           </div>
@@ -146,5 +147,5 @@ export default async function BlogPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

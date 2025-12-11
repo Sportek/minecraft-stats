@@ -1,61 +1,59 @@
-'use client'
+"use client";
 
-import { useAuth } from '@/contexts/auth'
-import { createPost } from '@/http/post'
-import { TiptapEditor } from '@/components/blog/tiptap-editor'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ChevronLeft } from 'lucide-react'
+import { TiptapEditor } from "@/components/blog/tiptap-editor";
+import { useAuth } from "@/contexts/auth";
+import { createPost } from "@/http/post";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const NewPostPage = () => {
-  const { user, getToken } = useAuth()
-  const token = getToken()
-  const router = useRouter()
-  const [title, setTitle] = useState('')
-  const [slug, setSlug] = useState('')
-  const [content, setContent] = useState('')
-  const [excerpt, setExcerpt] = useState('')
-  const [coverImage, setCoverImage] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { user, getToken } = useAuth();
+  const token = getToken();
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [content, setContent] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [coverImage, setCoverImage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg text-gray-900 dark:text-white">Loading...</div>
       </div>
-    )
+    );
   }
 
-  if (user.role !== 'admin') {
+  if (user.role !== "admin") {
     return (
-      <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-500 mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-slate-400">
-            You must be an administrator to access this page.
-          </p>
+          <p className="text-gray-600 dark:text-slate-400">You must be an administrator to access this page.</p>
         </div>
       </div>
-    )
+    );
   }
 
   const generateSlug = () => {
     if (title) {
       const newSlug = title
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '')
-      setSlug(newSlug)
+        .replaceAll(/[^a-z0-9]+/g, "-")
+        .replaceAll(/(^-|-$)+/g, "");
+      setSlug(newSlug);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!token) return
+    e.preventDefault();
+    if (!token) return;
 
     try {
-      setLoading(true)
+      setLoading(true);
       await createPost(
         {
           title,
@@ -65,18 +63,18 @@ const NewPostPage = () => {
           coverImage: coverImage || undefined,
         },
         token
-      )
-      router.push('/admin/posts')
+      );
+      router.push("/admin/posts");
     } catch (error) {
-      console.error('Failed to create post:', error)
-      alert('Failed to create article')
+      console.error("Failed to create post:", error);
+      alert("Failed to create article");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-stats-blue-0 dark:bg-stats-blue-1050">
+    <div className="min-h-screen ">
       <div className="container mx-auto px-4 py-8 max-w-4xl animate-in fade-in slide-in-from-bottom-2 duration-300">
         <Link
           href="/admin/posts"
@@ -120,9 +118,7 @@ const NewPostPage = () => {
 
           {/* Summary Input */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
-              Summary (optional)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">Summary (optional)</label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
@@ -160,7 +156,7 @@ const NewPostPage = () => {
               type="submit"
               className="bg-stats-blue-600 hover:bg-stats-blue-500 text-white px-6 py-2.5 rounded-md font-medium transition-all shadow-lg shadow-stats-blue-900/20"
             >
-              {loading ? 'Publishing...' : 'Publish Article'}
+              {loading ? "Publishing..." : "Publish Article"}
             </button>
             <Link
               href="/admin/posts"
@@ -172,7 +168,7 @@ const NewPostPage = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NewPostPage
+export default NewPostPage;
