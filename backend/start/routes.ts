@@ -95,5 +95,51 @@ router
     router
       .get('/callback/discord', '#controllers/auth_controller.discordCallback')
       .use(throttleLight('discord-callback', 5))
+
+    // Blog - Posts publics
+    router.get('posts', '#controllers/posts_controller.index').use(throttleLight('posts.index', 50))
+
+    router
+      .get('posts/:slug', '#controllers/posts_controller.show')
+      .use(throttleLight('posts.show', 50))
+
+    // Blog - Posts management (writers and admins via policy)
+    router
+      .group(() => {
+        router
+          .get('posts', '#controllers/posts_controller.adminIndex')
+          .use(throttleLight('admin.posts.index', 20))
+        router
+          .post('posts', '#controllers/posts_controller.store')
+          .use(throttleLight('admin.posts.store', 20))
+        router
+          .put('posts/:id', '#controllers/posts_controller.update')
+          .use(throttleLight('admin.posts.update', 20))
+        router
+          .delete('posts/:id', '#controllers/posts_controller.destroy')
+          .use(throttleLight('admin.posts.destroy', 20))
+        router
+          .post('posts/:id/publish', '#controllers/posts_controller.publish')
+          .use(throttleLight('admin.posts.publish', 20))
+        router
+          .post('posts/:id/unpublish', '#controllers/posts_controller.unpublish')
+          .use(throttleLight('admin.posts.unpublish', 20))
+
+        // User management (admin only via policy)
+        router
+          .get('users', '#controllers/users_controller.adminIndex')
+          .use(throttleLight('admin.users.index', 20))
+        router
+          .patch('users/:id/role', '#controllers/users_controller.updateRole')
+          .use(throttleLight('admin.users.updateRole', 10))
+      })
+      .prefix('admin')
+      .use(middleware.auth())
+
+    // Blog - Image uploads (writers and admins via policy)
+    router
+      .post('uploads/image', '#controllers/uploads_controller.uploadImage')
+      .use(middleware.auth())
+      .use(throttleLight('uploads.image', 10))
   })
   .prefix('/api/v1')

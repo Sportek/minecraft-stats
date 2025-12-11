@@ -28,17 +28,27 @@ const Header = () => {
   const backendUrl = getClientBackendUrl();
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
-    <Link 
-      href={href} 
+    <Link
+      href={href}
       className="text-sm font-medium text-zinc-900 dark:text-white hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors"
     >
       {label}
     </Link>
   );
 
-  const MobileNavLink = ({ href, label, onClick, icon }: { href: string; label: string; onClick?: () => void; icon?: string }) => (
-    <Link 
-      href={href} 
+  const MobileNavLink = ({
+    href,
+    label,
+    onClick,
+    icon,
+  }: {
+    href: string;
+    label: string;
+    onClick?: () => void;
+    icon?: string;
+  }) => (
+    <Link
+      href={href}
       className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors w-full"
       onClick={onClick}
     >
@@ -65,6 +75,12 @@ const Header = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add Server</DropdownMenuItem>
+        {(user?.role === "admin" || user?.role === "writer") && (
+          <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage Blog</DropdownMenuItem>
+        )}
+        {user?.role === "admin" && (
+          <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage Users</DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-red-500">
           Logout
@@ -85,11 +101,12 @@ const Header = () => {
           <ModeToggle />
           <NavLink href="/account/add-server" label="Add Your Server" />
           <NavLink href="/" label="All Servers" />
+          <NavLink href="/blog" label="Blog" />
           <NavLink href={`${backendUrl}/docs`} label="API" />
           {user?.username ? displayUserMenu() : <NavLink href="/login" label="Login" />}
         </div>
 
-        <button 
+        <button
           className="md:hidden flex items-center justify-center w-10 h-10 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >
@@ -101,14 +118,14 @@ const Header = () => {
         </button>
       </RestrictedWidthLayout>
 
-      <div 
+      <div
         className={cn(
           "fixed inset-0 z-50 bg-black/20 dark:bg-black/40 backdrop-blur-sm md:hidden transition-opacity duration-200",
           isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setIsMobileMenuOpen(false)}
       >
-        <div 
+        <div
           className={cn(
             "absolute inset-x-0 top-[73px] bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 shadow-lg transition-all duration-200",
             isMobileMenuOpen ? "translate-y-0" : "-translate-y-8"
@@ -119,7 +136,9 @@ const Header = () => {
             <div className="px-4 py-3 flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={user.avatarUrl ?? ""} alt={user.username} />
-                <AvatarFallback className="bg-stats-blue-900 text-white text-sm">{user.username[0].toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="bg-stats-blue-900 text-white text-sm">
+                  {user.username[0].toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <p className="text-sm font-medium text-zinc-900 dark:text-white">{user.username}</p>
@@ -136,39 +155,55 @@ const Header = () => {
           )}
 
           <div className="py-2">
-            <MobileNavLink 
-              href="/account/add-server" 
+            <MobileNavLink
+              href="/account/add-server"
               label="Add Your Server"
               icon="material-symbols:add-circle-outline"
-              onClick={() => setIsMobileMenuOpen(false)} 
-            />
-            <MobileNavLink 
-              href="/" 
-              label="All Servers"
-              icon="material-symbols:list"
-              onClick={() => setIsMobileMenuOpen(false)} 
+              onClick={() => setIsMobileMenuOpen(false)}
             />
             <MobileNavLink
-              href={`${backendUrl}/docs`}
+              href="/"
+              label="All Servers"
+              icon="material-symbols:list"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <MobileNavLink
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
               label="API"
               icon="material-symbols:api"
-              onClick={() => setIsMobileMenuOpen(false)} 
+              onClick={() => setIsMobileMenuOpen(false)}
             />
 
             {user?.username ? (
               <>
                 <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-2" />
-                <MobileNavLink 
-                  href="/account/settings" 
+                <MobileNavLink
+                  href="/account/settings"
                   label="Profile Settings"
                   icon="material-symbols:settings-outline"
-                  onClick={() => setIsMobileMenuOpen(false)} 
+                  onClick={() => setIsMobileMenuOpen(false)}
                 />
-                <button 
+                {(user?.role === "admin" || user?.role === "writer") && (
+                  <MobileNavLink
+                    href="/admin/posts"
+                    label="Manage Blog"
+                    icon="material-symbols:article-outline"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  />
+                )}
+                {user?.role === "admin" && (
+                  <MobileNavLink
+                    href="/admin/users"
+                    label="Manage Users"
+                    icon="material-symbols:group"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  />
+                )}
+                <button
                   onClick={() => {
                     logout();
                     setIsMobileMenuOpen(false);
-                  }} 
+                  }}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors w-full"
                 >
                   <Icon icon="material-symbols:logout" className="w-5 h-5" />
@@ -178,11 +213,11 @@ const Header = () => {
             ) : (
               <>
                 <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-2" />
-                <MobileNavLink 
-                  href="/login" 
+                <MobileNavLink
+                  href="/login"
                   label="Login"
                   icon="material-symbols:login"
-                  onClick={() => setIsMobileMenuOpen(false)} 
+                  onClick={() => setIsMobileMenuOpen(false)}
                 />
               </>
             )}
