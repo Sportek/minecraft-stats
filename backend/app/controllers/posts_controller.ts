@@ -1,8 +1,8 @@
-import type { HttpContext } from '@adonisjs/core/http'
 import Post from '#models/post'
-import { CreatePostValidator, UpdatePostValidator } from '#validators/post'
-import { DateTime } from 'luxon'
 import PostPolicy from '#policies/post_policy'
+import { CreatePostValidator, UpdatePostValidator } from '#validators/post'
+import type { HttpContext } from '@adonisjs/core/http'
+import { DateTime } from 'luxon'
 
 export default class PostsController {
   /**
@@ -32,8 +32,8 @@ export default class PostsController {
     const post = await Post.query()
       .where('slug', params.slug)
       .where('published', true)
-      .preload('author', (query) => {
-        query.select('id', 'username', 'avatarUrl')
+      .preload('author', (val) => {
+        val.select('id', 'username', 'avatarUrl')
       })
       .firstOrFail()
 
@@ -57,8 +57,8 @@ export default class PostsController {
     const limit = request.input('limit', 20)
     const status = request.input('status', 'all') // all, published, draft
 
-    const query = Post.query().preload('author', (query) => {
-      query.select('id', 'username', 'avatarUrl')
+    const query = Post.query().preload('author', (authorQuery) => {
+      authorQuery.select('id', 'username', 'avatarUrl')
     })
 
     // Writers can only see their own posts, admins can see all
