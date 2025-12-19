@@ -1,0 +1,6 @@
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "https-sonarqube-gablandry-com",
+    "projectKey": "Sportek_minecraft-stats_840a371f-d9a6-4e91-9a67-c3946aa39547"
+  }
+}
