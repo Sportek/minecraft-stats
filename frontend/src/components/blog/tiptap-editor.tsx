@@ -74,7 +74,23 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
     },
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[500px] p-4",
+        class: [
+          "prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[500px] p-6",
+          "prose-headings:font-bold prose-headings:tracking-tight",
+          "prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4",
+          "prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-slate-700 prose-h2:pb-2",
+          "prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3",
+          "prose-p:leading-8 prose-p:mb-6",
+          "prose-a:text-stats-blue-600 dark:prose-a:text-stats-blue-400 prose-a:font-medium prose-a:no-underline hover:prose-a:underline",
+          "prose-strong:font-bold",
+          "prose-img:rounded-xl prose-img:shadow-xl prose-img:border prose-img:border-gray-200 dark:prose-img:border-stats-blue-800",
+          "prose-blockquote:border-l-stats-blue-500 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-slate-900/30 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic",
+          "prose-ul:list-disc prose-ul:pl-6",
+          "prose-ol:list-decimal prose-ol:pl-6",
+          "prose-li:mb-2",
+          "prose-code:bg-gray-100 dark:prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none",
+          "prose-pre:bg-gray-100 dark:prose-pre:bg-slate-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-slate-700 prose-pre:rounded-lg",
+        ].join(" "),
       },
     },
   });
@@ -134,15 +150,15 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden">
-      {/* Toolbar (inchangée) */}
-      <div className="border-b bg-gray-50 dark:bg-gray-800 p-2 flex flex-wrap gap-1">
+    <div className="border border-gray-300 dark:border-stats-blue-700 rounded-lg overflow-hidden">
+      {/* Toolbar */}
+      <div className="border-b border-gray-300 dark:border-stats-blue-700 bg-gray-50 dark:bg-stats-blue-900 p-2 flex flex-wrap gap-1">
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("bold") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("bold") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Bold"
         >
@@ -152,8 +168,8 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("italic") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("italic") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Italic"
         >
@@ -163,8 +179,8 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("strike") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("strike") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Strikethrough"
         >
@@ -174,19 +190,19 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           type="button"
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor.can().chain().focus().toggleCode().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("code") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("code") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Code"
         >
           <Code className="w-4 h-4" />
         </button>
-        <div className="w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+        <div className="w-px bg-gray-300 dark:bg-stats-blue-700 mx-1" />
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("heading", { level: 1 }) ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("heading", { level: 1 }) ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Heading 1"
         >
@@ -195,8 +211,8 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("heading", { level: 2 }) ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("heading", { level: 2 }) ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Heading 2"
         >
@@ -205,19 +221,19 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("heading", { level: 3 }) ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("heading", { level: 3 }) ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Heading 3"
         >
           <Heading3 className="w-4 h-4" />
         </button>
-        <div className="w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+        <div className="w-px bg-gray-300 dark:bg-stats-blue-700 mx-1" />
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("bulletList") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("bulletList") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Bullet List"
         >
@@ -226,8 +242,8 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("orderedList") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("orderedList") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Numbered List"
         >
@@ -236,19 +252,19 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("blockquote") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("blockquote") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Quote"
         >
           <Quote className="w-4 h-4" />
         </button>
-        <div className="w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+        <div className="w-px bg-gray-300 dark:bg-stats-blue-700 mx-1" />
         <button
           type="button"
           onClick={setLink}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${
-            editor.isActive("link") ? "bg-gray-300 dark:bg-gray-600" : ""
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 ${
+            editor.isActive("link") ? "bg-gray-300 dark:bg-stats-blue-700" : ""
           }`}
           title="Link"
         >
@@ -257,17 +273,17 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
         <button
           type="button"
           onClick={addImage}
-          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800"
           title="Image"
         >
           <ImageIcon className="w-4 h-4" />
         </button>
-        <div className="w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+        <div className="w-px bg-gray-300 dark:bg-stats-blue-700 mx-1" />
         <button
           type="button"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().chain().focus().undo().run()}
-          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800"
           title="Undo"
         >
           <Undo className="w-4 h-4" />
@@ -276,13 +292,13 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           type="button"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().chain().focus().redo().run()}
-          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800"
           title="Redo"
         >
           <Redo className="w-4 h-4" />
         </button>
       </div>
-      <EditorContent editor={editor} className="bg-white dark:bg-gray-900" />
+      <EditorContent editor={editor} className="bg-white dark:bg-stats-blue-950 min-h-[500px]" />
     </div>
   );
 }
