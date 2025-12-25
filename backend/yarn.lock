@@ -1548,15 +1548,17 @@ adonis-sail@^1.0.0:
   dependencies:
     "@poppinss/utils" "^6.7.0"
 
-adonisjs-scheduler@^1.0.5:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/adonisjs-scheduler/-/adonisjs-scheduler-1.0.8.tgz#e89d9370d537cdf90d855cf3f8c7c7663f399c01"
-  integrity sha512-hh2Vy5+I4Vp17qtfGEFHPaFuCCu/0HyWpRAXzG56QkgMiIhumPs95IDp5115saOmlCXDphtlp/gPet0q2aMaTA==
+adonisjs-scheduler@^2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/adonisjs-scheduler/-/adonisjs-scheduler-2.6.4.tgz#61e16fcad77c72343da4213623bce3530efdd644"
+  integrity sha512-Z3fj58DSw3edcZS742GUMfWaL74CpQyN20W4IIPi0QpIf0FciDvQiM7iatzdqFvd92g/Z9lbVSdh/ZZaFyu9kw==
   dependencies:
     async-lock "^1.4.1"
     chokidar "^4.0.2"
+    cron-parser "^5.0.4"
+    luxon "^3.5.0"
     node-cron "^3.0.2"
-    node-cron-expression "^1.3.1"
+    string-width "^7.2.0"
 
 ajv@^6.12.4:
   version "6.12.6"
@@ -2177,6 +2179,13 @@ create-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
+
+cron-parser@^5.0.4:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/cron-parser/-/cron-parser-5.4.0.tgz#5bb9cd9bc3c14971d179aff2d4cc41053e302b0e"
+  integrity sha512-HxYB8vTvnQFx4dLsZpGRa0uHp6X3qIzS3ZJgJ9v6l/5TJMgeWQbLkR5yiJ5hOxGbc9+jCADDnydIe15ReLZnJA==
+  dependencies:
+    luxon "^3.7.1"
 
 cross-spawn@^7.0.3, cross-spawn@^7.0.6:
   version "7.0.6"
@@ -3798,7 +3807,7 @@ lru-cache@^10.0.1, lru-cache@^10.2.0:
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.4.3.tgz#410fc8a17b70e598013df257c2446b7f3383f119"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
 
-luxon@^3.7.2:
+luxon@^3.5.0, luxon@^3.7.1, luxon@^3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.7.2.tgz#d697e48f478553cca187a0f8436aff468e3ba0ba"
   integrity sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==
@@ -4325,11 +4334,6 @@ node-addon-api@^8.1.0:
   version "8.3.1"
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-8.3.1.tgz#53bc8a4f8dbde3de787b9828059da94ba9fd4eed"
   integrity sha512-lytcDEdxKjGJPTLEfW4mYMigRezMlyJY8W4wxJK8zE533Jlb8L8dRuObJFWg2P+AuOIxoCgKF+2Oq4d4Zd0OUA==
-
-node-cron-expression@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/node-cron-expression/-/node-cron-expression-1.3.1.tgz#c3cd144db00bfbbee945154fd80e4be05685ff7e"
-  integrity sha512-HHAKtP3b7IEr9BbfeU2lpF6Gj7i7pcEj/+LmSL6XSHYQxxjJhVUSxt/igOeiR2hdC5RMAvHu4rF67ugF2jT6IQ==
 
 node-cron@^3.0.2:
   version "3.0.3"
