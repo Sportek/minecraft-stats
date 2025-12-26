@@ -3,6 +3,7 @@ import { Calendar, ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { BlogPostStructuredData } from "@/components/seo/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -48,6 +49,24 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
 
     return (
       <div className="min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+        {/* Structured Data for SEO */}
+        <BlogPostStructuredData
+          post={{
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            excerpt: post.excerpt || undefined,
+            content: post.content,
+            coverImage: post.coverImage || undefined,
+            publishedAt: post.publishedAt?.toString() || post.createdAt.toString(),
+            updatedAt: post.updatedAt?.toString() || post.createdAt.toString(),
+            author: {
+              name: post.author.username,
+              email: post.author.email,
+            },
+          }}
+        />
+
         {/* Navigation */}
         <div className="container mx-auto px-4 py-6 max-w-4xl">
           <Link

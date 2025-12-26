@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./client-layout";
 import UmamiScript from "@/components/umami-script";
-import { getDomainConfig } from "@/lib/domain-server";
+import { getDomainConfig, getAlternateLanguages, getCurrentLocale } from "@/lib/domain-server";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,6 +15,8 @@ const inter = Inter({
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const { baseUrl } = await getDomainConfig();
+  const locale = await getCurrentLocale();
+  const alternateLanguages = getAlternateLanguages();
 
   return {
     metadataBase: new URL(baseUrl),
@@ -61,7 +63,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
           type: "image/webp",
         },
       ],
-      locale: "en_US",
+      locale: locale.replace("-", "_"), // OpenGraph uses underscore format
     },
     twitter: {
       card: "summary_large_image",
@@ -84,23 +86,53 @@ export const generateMetadata = async (): Promise<Metadata> => {
     },
     alternates: {
       canonical: baseUrl,
+      languages: alternateLanguages,
     },
     verification: {
-      // Add verification codes when you have them
+      // ============================================================
+      // IMPORTANT: Add your verification codes here
+      // ============================================================
+      //
+      // Google Search Console:
+      // 1. Go to https://search.google.com/search-console
+      // 2. Add your property (minecraft-stats.fr and minecraft-stats.com separately)
+      // 3. Choose "HTML tag" verification method
+      // 4. Copy the content value from the meta tag
+      // 5. Uncomment and paste below:
       // google: 'your-google-verification-code',
-      // yandex: 'your-yandex-verification-code',
+      //
+      // Bing Webmaster Tools:
+      // 1. Go to https://www.bing.com/webmasters
+      // 2. Add your site
+      // 3. Choose "HTML Meta Tag" verification
+      // 4. Copy the content value
+      // 5. Uncomment and paste below:
       // bing: 'your-bing-verification-code',
+      //
+      // Yandex Webmaster (optional, for Russian traffic):
+      // 1. Go to https://webmaster.yandex.com
+      // 2. Add your site
+      // 3. Choose "Meta tag" verification
+      // 4. Copy the content value
+      // 5. Uncomment and paste below:
+      // yandex: 'your-yandex-verification-code',
+      //
+      // After adding codes, redeploy and verify in each console.
+      // ============================================================
     },
   };
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getCurrentLocale();
+  const htmlLang = locale.split("-")[0]; // Extract language code (fr or en)
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={htmlLang} suppressHydrationWarning>
       <head>
         <UmamiScript />
         <link rel="icon" href="/favicon.ico" sizes="any" />
