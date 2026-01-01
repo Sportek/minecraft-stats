@@ -9,7 +9,7 @@ import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 import { ServerData } from "@/app/(pages)/(index)/page";
 import ServerCard from "@/components/serveur/card";
 import ImprovedCard from "@/components/serveur/improved-card";
-import { ServerStructuredData } from "@/components/seo/structured-data";
+import { ServerStructuredData, ServerFAQStructuredData } from "@/components/seo/structured-data";
 import { useTheme } from "next-themes";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -234,6 +234,11 @@ const ServerPage = () => {
         categories={serverData.categories}
         playerCount={serverData.lastPlayerCount ?? 0}
         maxPlayers={serverData.lastMaxCount ?? undefined}
+      />
+      <ServerFAQStructuredData
+        server={serverData.server}
+        currentPlayers={serverData.lastPlayerCount ?? 0}
+        maxPlayers={serverData.lastMaxCount ?? 0}
       />
       <div className="flex flex-col gap-4">
         <ServerCard

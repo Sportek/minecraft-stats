@@ -68,3 +68,28 @@ export async function getBackendUrl(): Promise<string> {
   const config = await getDomainConfig();
   return config.backendUrl;
 }
+
+/**
+ * Gets all alternate language URLs for hreflang tags
+ * Returns a map of locale to URL
+ */
+export function getAlternateLanguages(pathname: string = ""): Record<string, string> {
+  return {
+    "fr-FR": `https://minecraft-stats.fr${pathname}`,
+    "en-US": `https://minecraft-stats.com${pathname}`,
+    "x-default": `https://minecraft-stats.com${pathname}`, // Default for unmatched locales
+  };
+}
+
+/**
+ * Detects the current locale based on the domain
+ */
+export async function getCurrentLocale(): Promise<string> {
+  const { baseUrl } = await getDomainConfig();
+
+  if (baseUrl.includes("minecraft-stats.fr")) {
+    return "fr-FR";
+  }
+
+  return "en-US"; // Default to English
+}
