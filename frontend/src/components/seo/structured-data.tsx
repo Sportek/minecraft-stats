@@ -1,6 +1,6 @@
+import { getClientDomainConfig } from "@/lib/domain";
 import { Category, Server } from "@/types/server";
 import Script from "next/script";
-import { getClientDomainConfig } from "@/lib/domain";
 
 interface ServerStructuredDataProps {
   server: Server;
@@ -190,7 +190,7 @@ interface BlogPostStructuredDataProps {
   post: BlogPost;
 }
 
-export function BlogPostStructuredData({ post }: BlogPostStructuredDataProps) {
+export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredDataProps>) {
   const { baseUrl } = getClientDomainConfig();
 
   const structuredData = {
@@ -198,9 +198,7 @@ export function BlogPostStructuredData({ post }: BlogPostStructuredDataProps) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt || post.content.substring(0, 160),
-    image: post.coverImage
-      ? `${baseUrl}${post.coverImage}`
-      : `${baseUrl}/images/minecraft-stats/og-image.webp`,
+    image: post.coverImage ? `${baseUrl}${post.coverImage}` : `${baseUrl}/images/minecraft-stats/og-image.webp`,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt || post.publishedAt,
     author: {
@@ -247,14 +245,12 @@ export function ServerFAQStructuredData({
   server,
   currentPlayers = 0,
   maxPlayers = 0,
-}: ServerFAQStructuredDataProps) {
-  const { baseUrl } = getClientDomainConfig();
-
+}: Readonly<ServerFAQStructuredDataProps>) {
   const faqItems = [
     {
       question: `How do I join the ${server.name} Minecraft server?`,
-      answer: `To join ${server.name}, launch Minecraft and use the server address: ${server.ip}${
-        server.port !== 25565 ? `:${server.port}` : ""
+      answer: `To join ${server.name}, launch Minecraft and use the server address: ${server.address}${
+        server.port == 25565 ? "" : `:${server.port}`
       }. Click "Multiplayer" in the main menu, then "Add Server", paste the address, and click "Done" to save. Then select the server and click "Join Server" to connect.`,
     },
     {
