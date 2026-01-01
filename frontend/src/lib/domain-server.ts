@@ -42,6 +42,7 @@ export async function getDomainConfig(): Promise<DomainConfig> {
     baseUrl: process.env.NEXT_PUBLIC_BASE_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].baseUrl,
     apiUrl: process.env.NEXT_PUBLIC_API_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].apiUrl,
     backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].backendUrl,
+    googleSearchId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS || DOMAIN_CONFIG[DEFAULT_DOMAIN].googleSearchId,
   };
 }
 
