@@ -747,10 +747,10 @@
     youch "^3.3.3"
     youch-terminal "^2.2.3"
 
-"@japa/plugin-adonisjs@^3.0.1":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@japa/plugin-adonisjs/-/plugin-adonisjs-3.0.2.tgz#8b044910c6656726f72a5641a14ec23658009740"
-  integrity sha512-yrIif8YYcV4GPXygIm/ndULid/6gIJ/NcylDaAsCw/iKPooU+sgUcZjYWe9AO04xuUJ5nFCvzsM/7q1yP7lxNg==
+"@japa/plugin-adonisjs@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@japa/plugin-adonisjs/-/plugin-adonisjs-4.0.0.tgz#8ddb55134509d99a250e14e59d7e745443adf16d"
+  integrity sha512-M2LUtHhKr4KgBfX73tDHNCD1IOmcXp9dvC+AinmRxsggIFnarsClcfjT/sXc3uNzjZW7Lk31LvcH76AxJHBmJQ==
 
 "@japa/runner@^3.1.4":
   version "3.1.4"
