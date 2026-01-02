@@ -1,7 +1,6 @@
 import Server from '#models/server'
 import ServerStat from '#models/server_stat'
 import Database from '@adonisjs/lucid/services/db'
-import { DateTime } from 'luxon'
 
 /**
  * Service to handle placeholder replacement in blog posts
@@ -15,7 +14,7 @@ import { DateTime } from 'luxon'
  * - PLAYER_COUNT_MEDIAN: Median player count
  * - SERVER_VERSION: Server version
  * - DATA_SINCE_DATE: Date since data collection started
- * - OFFICIAL_WEBSITE: Server official website (domain only)
+ * - ADDRESS: Server address
  */
 export default class PlaceholderService {
   /**
@@ -61,9 +60,7 @@ export default class PlaceholderService {
   /**
    * Preload server data for multiple servers at once
    */
-  private static async preloadServerData(
-    serverIds: number[]
-  ): Promise<Map<number, ServerData>> {
+  private static async preloadServerData(serverIds: number[]): Promise<Map<number, ServerData>> {
     const serversData = new Map<number, ServerData>()
 
     for (const serverId of serverIds) {
@@ -116,14 +113,14 @@ export default class PlaceholderService {
         serversData.set(serverId, {
           exists: true,
           server,
-          latestStat,
-          firstStat,
-          peakHigh,
-          peakLow,
+          latestStat: latestStat ?? undefined,
+          firstStat: firstStat ?? undefined,
+          peakHigh: peakHigh ?? undefined,
+          peakLow: peakLow ?? undefined,
           average: stats?.avg_players || 0,
           median: stats?.median_players || 0,
         })
-      } catch (error) {
+      } catch {
         serversData.set(serverId, { exists: false })
       }
     }
@@ -139,7 +136,7 @@ export default class PlaceholderService {
     serverId: number,
     data?: ServerData
   ): Promise<string> {
-    if (!data || !data.exists) {
+    if (!data?.exists) {
       return `[Server ${serverId} not found]`
     }
 
@@ -160,7 +157,7 @@ export default class PlaceholderService {
         return String(data.median)
 
       case 'SERVER_VERSION':
-        return data.server.version || 'Unknown'
+        return data.server?.version || 'Unknown'
 
       case 'DATA_SINCE_DATE':
         if (data.firstStat) {
@@ -168,21 +165,11 @@ export default class PlaceholderService {
         }
         return 'N/A'
 
-      case 'OFFICIAL_WEBSITE':
-        if (!data.server.websiteUrl) {
+      case 'ADDRESS':
+        if (!data.server?.address) {
           return 'N/A'
         }
-        try {
-          const url = new URL(data.server.websiteUrl)
-          // Extract main domain (e.g., "example.com" from "subdomain.example.com")
-          const parts = url.hostname.split('.')
-          if (parts.length >= 2) {
-            return `${parts[parts.length - 2]}.${parts[parts.length - 1]}`
-          }
-          return url.hostname
-        } catch {
-          return data.server.websiteUrl
-        }
+        return data.server.address
 
       default:
         return `[Unknown placeholder: ${placeholderName}]`
