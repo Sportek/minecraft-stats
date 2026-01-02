@@ -1,38 +1,60 @@
 "use client";
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
+import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 import { getServerStats } from "@/http/server";
 import { ServerStat } from "@/types/server";
+import {
+  AgAreaSeriesOptions,
+  AgCartesianAxisOptions,
+  AgCartesianChartOptions,
+  AgTimeAxisOptions,
+} from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
-import { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
-import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 
 import { ServerData } from "@/app/(pages)/(index)/page";
+import { AggregationSelect, AggregationType } from "@/components/home/selects/aggregation-select";
+import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
+import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
 import ServerCard from "@/components/serveur/card";
 import ImprovedCard from "@/components/serveur/improved-card";
-import { ServerStructuredData, ServerFAQStructuredData } from "@/components/seo/structured-data";
-import { useTheme } from "next-themes";
-import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
-import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
-import { AggregationSelect, AggregationType } from "@/components/home/selects/aggregation-select";
-import Link from "next/link";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { startTransition, useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
+
+const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
+  "1 Day": 1000 * 60 * 60 * 24,
+  "1 Week": 1000 * 60 * 60 * 24 * 7,
+  "1 Month": 1000 * 60 * 60 * 24 * 30,
+  "6 Months": 1000 * 60 * 60 * 24 * 30 * 6,
+  "1 Year": 1000 * 60 * 60 * 24 * 30 * 12,
+};
+
+const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
+  "30 Minutes": "30 minutes",
+  "1 Hour": "1 hour",
+  "2 Hours": "2 hours",
+  "6 Hours": "6 hours",
+  "1 Day": "1 day",
+  "1 Week": "1 week",
+};
 
 const BASE_AXES: AgCartesianAxisOptions[] = [
   {
-    type: 'time',
-    position: 'bottom',
+    type: "time",
+    position: "bottom",
     label: {
-      format: '%d/%m %H:%M',
+      format: "%d/%m %H:%M",
     },
     nice: false,
     min: undefined,
-    max: undefined
+    max: undefined,
   } as AgTimeAxisOptions,
   {
-    type: 'number',
-    position: 'left',
+    type: "number",
+    position: "left",
   },
 ];
 
@@ -44,19 +66,19 @@ const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
   },
   tooltip: {
     position: {
-      anchorTo: 'pointer',
-      placement: 'top'
-    }
+      anchorTo: "pointer",
+      placement: "top",
+    },
   },
   background: {
-    fill: 'transparent',
+    fill: "transparent",
   },
   padding: {
     top: 10,
     right: 10,
     bottom: 0,
-    left: 10
-  }
+    left: 10,
+  },
 };
 
 const createAreaSeries = (
@@ -65,30 +87,30 @@ const createAreaSeries = (
   yName: string,
   theme: string | undefined
 ): AgAreaSeriesOptions => ({
-  type: 'area',
+  type: "area",
   xKey,
   yKey,
   yName,
-  stroke: theme === 'dark' ? '#60A5FA' : '#2563EB',
+  stroke: theme === "dark" ? "#60A5FA" : "#2563EB",
   strokeWidth: 2,
   marker: {
     enabled: false,
   },
   fillOpacity: 0.1,
-  fill: theme === 'dark' ? '#60A5FA' : '#2563EB',
+  fill: theme === "dark" ? "#60A5FA" : "#2563EB",
   interpolation: {
-    type: 'smooth'
+    type: "smooth",
   },
   tooltip: {
     enabled: true,
     position: {
-      anchorTo: 'pointer',
-      placement: 'top',
+      anchorTo: "pointer",
+      placement: "top",
     },
     renderer: ({ datum }: any) => {
       return generateTooltipHtml(
         { time: new Date(datum.time), playerCount: datum.playerCount },
-        { isDarkMode: theme === 'dark' }
+        { isDarkMode: theme === "dark" }
       );
     },
   },
@@ -105,9 +127,11 @@ const ServerNotFound = () => {
                 <Icon icon="mdi:server-off" className="text-stats-blue-600 dark:text-stats-blue-400 w-8 h-8" />
               </div>
               <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Server Not Found</h2>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">The server you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                The server you&apos;re looking for doesn&apos;t exist or has been removed.
+              </p>
             </div>
-            <Link 
+            <Link
               href="/"
               className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-stats-blue-600 hover:bg-stats-blue-700 dark:bg-stats-blue-500 dark:hover:bg-stats-blue-600 rounded-md transition-colors"
             >
@@ -123,72 +147,57 @@ const ServerNotFound = () => {
 
 const ServerPage = () => {
   const { serverId } = useParams();
-  const { data: serverData, error: serverError, isLoading: isServerLoading } = useSWR<ServerData, Error>(
-    `${getBaseUrl()}/servers/${serverId}`,
-    fetcher,
-    {
-      refreshInterval: 1000 * 60 * 2,
-    }
-  );
-
-  const dataRangeIntervalTypes = useMemo(() => ({
-    "1 Day": Date.now() - 1000 * 60 * 60 * 24,
-    "1 Week": Date.now() - 1000 * 60 * 60 * 24 * 7,
-    "1 Month": Date.now() - 1000 * 60 * 60 * 24 * 30,
-    "6 Months": Date.now() - 1000 * 60 * 60 * 24 * 30 * 6,
-    "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
-  } as const), []);
-
-  const dataAggregationIntervalTypes = useMemo(() => ({
-    "30 Minutes": "30 minutes",
-    "1 Hour": "1 hour",
-    "2 Hours": "2 hours",
-    "6 Hours": "6 hours",
-    "1 Day": "1 day",
-    "1 Week": "1 week",
-  } as const), []);
+  const {
+    data: serverData,
+    error: serverError,
+    isLoading: isServerLoading,
+  } = useSWR<ServerData, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {
+    refreshInterval: 1000 * 60 * 2,
+  });
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("1 Hour");
   const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<ServerStat[]>([]);
-  const [options, setOptions] = useState<AgCartesianChartOptions>({});
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     async function fetchServerStats() {
-      const interval = dataAggregationInterval ? dataAggregationIntervalTypes[dataAggregationInterval] : undefined;
+      const now = Date.now();
+      const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
+      const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
       const newStats = await getServerStats(
-        Number(serverId), 
-        dataRangeIntervalTypes[dataRangeInterval], 
-        Date.now(), 
+        Number(serverId),
+        fromDate,
+        now,
         interval
       );
       setStats(newStats);
     }
 
-    setIsStatsLoading(true);
+    startTransition(() => {
+      setIsStatsLoading(true);
+    });
     fetchServerStats().finally(() => setIsStatsLoading(false));
 
-    const interval = setInterval(fetchServerStats, 1000 * 60 * 2);
-    return () => clearInterval(interval);
-  }, [serverId, dataRangeInterval, dataRangeIntervalTypes, dataAggregationInterval, dataAggregationIntervalTypes]);
+    const intervalId = setInterval(fetchServerStats, 1000 * 60 * 2);
+    return () => clearInterval(intervalId);
+  }, [serverId, dataRangeInterval, dataAggregationInterval]);
 
-  useEffect(() => {
+  const options = useMemo((): AgCartesianChartOptions => {
     const data = stats.map((stat) => ({
       time: new Date(stat.createdAt),
       playerCount: stat.playerCount,
     }));
 
-    // Calculer les dates min et max
-    const dates = data.map(d => d.time);
-    const minDate = dates.length > 0 ? Math.min(...dates.map(d => d.getTime())) : undefined;
-    const maxDate = dates.length > 0 ? Math.max(...dates.map(d => d.getTime())) : undefined;
+    const dates = data.map((d) => d.time);
+    const minDate = dates.length > 0 ? Math.min(...dates.map((d) => d.getTime())) : undefined;
+    const maxDate = dates.length > 0 ? Math.max(...dates.map((d) => d.getTime())) : undefined;
 
-    setOptions({
+    return {
       ...BASE_CHART_OPTIONS,
       data,
-      series: [createAreaSeries('time', 'playerCount', 'Online players', resolvedTheme)],
+      series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme)],
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
       axes: [
         {
@@ -196,9 +205,9 @@ const ServerPage = () => {
           min: minDate,
           max: maxDate,
         } as AgTimeAxisOptions,
-        BASE_AXES[1]
-      ]
-    });
+        BASE_AXES[1],
+      ],
+    };
   }, [stats, resolvedTheme]);
 
   if (isServerLoading) {
@@ -213,7 +222,7 @@ const ServerPage = () => {
   }
 
   if (serverError) {
-    if (serverError.message.includes('404')) {
+    if (serverError.message.includes("404")) {
       return <ServerNotFound />;
     }
     return (
@@ -255,11 +264,7 @@ const ServerPage = () => {
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-lg font-semibold">Player Count History</h2>
               <div className="flex flex-row gap-4">
-                <TimeRangeSelect
-                  value={dataRangeInterval}
-                  onChange={setDataRangeInterval}
-                  disabled={isStatsLoading}
-                />
+                <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={isStatsLoading} />
                 <AggregationSelect
                   value={dataAggregationInterval}
                   onChange={setDataAggregationInterval}

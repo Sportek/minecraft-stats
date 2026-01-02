@@ -53,7 +53,7 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
       }
     };
     fetchServers();
-  }, []);
+  }, [apiUrl]);
 
   const handleServerToggle = (serverId: number) => {
     const newSelection = selectedServers.includes(serverId)

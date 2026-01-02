@@ -1,5 +1,5 @@
 import { ServerStat } from "@/types/server";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TimeRangeSelect, TimeRangeType } from "./selects/time-range-select";
 import { AggregationSelect, AggregationType } from "./selects/aggregation-select";
 import { GlobalStatsChart } from "./charts/global-stats-chart";
@@ -7,6 +7,23 @@ import { Server, ServerSelect } from "./selects/server-select";
 import { CategorySelect } from "./selects/category-select";
 import { LanguageSelect } from "./selects/language-select";
 import { getClientApiUrl } from "@/lib/domain";
+
+const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
+  "1 Day": 1000 * 60 * 60 * 24,
+  "1 Week": 1000 * 60 * 60 * 24 * 7,
+  "1 Month": 1000 * 60 * 60 * 24 * 30,
+  "6 Months": 1000 * 60 * 60 * 24 * 30 * 6,
+  "1 Year": 1000 * 60 * 60 * 24 * 30 * 12,
+};
+
+const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
+  "30 Minutes": "30 minutes",
+  "1 Hour": "1 hour",
+  "2 Hours": "2 hours",
+  "6 Hours": "6 hours",
+  "1 Day": "1 day",
+  "1 Week": "1 week",
+};
 
 const GlobalInsightSection = () => {
   const [globalStats, setGlobalStats] = useState<ServerStat[]>([]);
@@ -17,36 +34,16 @@ const GlobalInsightSection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const apiUrl = getClientApiUrl();
 
-  const dataRangeIntervalTypes = useMemo(() => {
-    return {
-      "1 Day": Date.now() - 1000 * 60 * 60 * 24,
-      "1 Week": Date.now() - 1000 * 60 * 60 * 24 * 7,
-      "1 Month": Date.now() - 1000 * 60 * 60 * 24 * 30,
-      "6 Months": Date.now() - 1000 * 60 * 60 * 24 * 30 * 6,
-      "1 Year": Date.now() - 1000 * 60 * 60 * 24 * 30 * 12,
-    };
-  }, []);
-
-  const dataAggregationIntervalTypes = useMemo(() => {
-    return {
-      "30 Minutes": "30 minutes",
-      "1 Hour": "1 hour",
-      "2 Hours": "2 hours",
-      "6 Hours": "6 hours",
-      "1 Day": "1 day",
-      "1 Week": "1 week",
-    };
-  }, []);
-
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("30 Minutes");
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setIsLoading(true);
     try {
-      const interval = dataAggregationInterval ? dataAggregationIntervalTypes[dataAggregationInterval] : undefined;
-      const fromDate = dataRangeIntervalTypes[dataRangeInterval];
-      const toDate = Date.now();
+      const now = Date.now();
+      const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
+      const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
+      const toDate = now;
 
       // Récupérer les stats globales si aucun serveur n'est sélectionné
       if (selectedServers.length === 0) {
@@ -103,11 +100,11 @@ const GlobalInsightSection = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [apiUrl, dataAggregationInterval, dataRangeInterval, selectedCategory, selectedLanguage, selectedServers]);
 
   useEffect(() => {
     fetchStats();
-  }, [dataRangeInterval, dataAggregationInterval, selectedServers, selectedCategory, selectedLanguage]);
+  }, [fetchStats]);
 
   return (
     <div className="w-full bg-white dark:bg-zinc-950 p-6 rounded-lg shadow-md">
