@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { Markdown } from "tiptap-markdown";
+import { PlaceholderPicker } from "./placeholder-picker";
 
 interface TiptapEditorProps {
   content: string;
@@ -144,6 +145,14 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
 
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
+
+  const insertPlaceholder = useCallback(
+    (placeholder: string) => {
+      if (!editor) return;
+      editor.chain().focus().insertContent(placeholder).run();
+    },
+    [editor]
+  );
 
   if (!editor) {
     return null;
@@ -278,6 +287,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
         >
           <ImageIcon className="w-4 h-4" />
         </button>
+        <PlaceholderPicker onInsert={insertPlaceholder} />
         <div className="w-px bg-gray-300 dark:bg-stats-blue-700 mx-1" />
         <button
           type="button"

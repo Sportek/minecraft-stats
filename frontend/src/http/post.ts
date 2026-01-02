@@ -168,3 +168,54 @@ export const uploadImage = async (file: File, token: string) => {
 
   return response.json() as Promise<{ url: string }>
 }
+
+// Placeholders
+
+export const getPlaceholders = async () => {
+  const response = await fetch(`${getBaseUrl()}/posts/placeholders/list`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return response.json() as Promise<PlaceholderInfo[]>
+}
+
+export const previewPlaceholder = async (
+  placeholderName: string,
+  serverId: number,
+  token: string
+) => {
+  const response = await fetch(`${getBaseUrl()}/admin/posts/placeholders/preview`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ placeholderName, serverId }),
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return response.json() as Promise<{
+    placeholder: string
+    value: string
+    serverId: number
+    placeholderName: string
+  }>
+}
+
+export interface PlaceholderInfo {
+  name: string
+  description: string
+  example: string
+}

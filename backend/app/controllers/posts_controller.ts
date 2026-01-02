@@ -1,5 +1,6 @@
 import Post from '#models/post'
 import PostPolicy from '#policies/post_policy'
+import PlaceholderService from '#services/placeholder_service'
 import { CreatePostValidator, UpdatePostValidator } from '#validators/post'
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
@@ -36,6 +37,9 @@ export default class PostsController {
         val.select('id', 'username', 'avatarUrl')
       })
       .firstOrFail()
+
+    // Replace placeholders in content
+    post.content = await PlaceholderService.replacePlaceholders(post.content)
 
     return response.ok(post)
   }
@@ -194,5 +198,43 @@ export default class PostsController {
     await post.load('author')
 
     return response.ok(post)
+  }
+
+  /**
+   * Get available placeholders (public)
+   */
+  async getPlaceholders({ response }: HttpContext) {
+    const placeholders = PlaceholderService.getAvailablePlaceholders()
+    return response.ok(placeholders)
+  }
+
+  /**
+   * Preview placeholder value for a specific server (writers and admins)
+   */
+  async previewPlaceholder({ request, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
+    if (await bouncer.with(PostPolicy).denies('manage')) {
+      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+    }
+
+    const { placeholderName, serverId } = request.only(['placeholderName', 'serverId'])
+
+    if (!placeholderName || !serverId) {
+      return response.badRequest({ error: 'placeholderName and serverId are required' })
+    }
+
+    const placeholder = `%${placeholderName}_${serverId}%`
+    const result = await PlaceholderService.replacePlaceholders(placeholder)
+
+    return response.ok({
+      placeholder,
+      value: result,
+      serverId: Number.parseInt(serverId),
+      placeholderName,
+    })
   }
 }
