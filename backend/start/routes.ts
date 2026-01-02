@@ -103,6 +103,11 @@ router
       .get('posts/:slug', '#controllers/posts_controller.show')
       .use(throttleLight('posts.show', 50))
 
+    // Blog - Placeholders (public)
+    router
+      .get('posts/placeholders/list', '#controllers/posts_controller.getPlaceholders')
+      .use(throttleLight('posts.placeholders.list', 20))
+
     // Blog - Posts management (writers and admins via policy)
     router
       .group(() => {
@@ -124,6 +129,11 @@ router
         router
           .post('posts/:id/unpublish', '#controllers/posts_controller.unpublish')
           .use(throttleLight('admin.posts.unpublish', 20))
+
+        // Placeholders preview (writers and admins)
+        router
+          .post('posts/placeholders/preview', '#controllers/posts_controller.previewPlaceholder')
+          .use(throttleLight('admin.posts.placeholders.preview', 20))
 
         // User management (admin only via policy)
         router
