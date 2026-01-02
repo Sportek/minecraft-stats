@@ -1,6 +1,7 @@
 import UmamiScript from "@/components/umami-script";
 import { getAlternateLanguages, getCurrentLocale, getDomainConfig } from "@/lib/domain-server";
 import { cn } from "@/lib/utils";
+import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import ClientLayout from "./client-layout";
@@ -104,6 +105,7 @@ export default async function RootLayout({
 
   return (
     <html lang={htmlLang} suppressHydrationWarning>
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER} />
       <head>
         <UmamiScript />
         <link rel="icon" href="/favicon.ico" sizes="any" />
