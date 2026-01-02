@@ -482,10 +482,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@eslint/js@9.39.1":
-  version "9.39.1"
-  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.39.1.tgz#0dd59c3a9f40e3f1882975c321470969243e0164"
-  integrity sha512-S26Stp4zCy88tH94QbBv3XCuzRQiZ9yXofEILmglYTh/Ug/a9/umqvgFtYBAo3Lp0nsI/5/qH1CCrbdK3AP1Tw==
+"@eslint/js@9.39.2":
+  version "9.39.2"
+  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.39.2.tgz#2d4b8ec4c3ea13c1b3748e0c97ecd766bdd80599"
+  integrity sha512-q1mjIoW1VX4IvSocvM/vbTiveKC4k9eLrajNEuSsmjymSDEbpGddtpfOoN7YGAqBK3NG+uqo8ia4PDTt8buCYA==
 
 "@eslint/object-schema@^2.1.7":
   version "2.1.7"
@@ -747,10 +747,10 @@
     youch "^3.3.3"
     youch-terminal "^2.2.3"
 
-"@japa/plugin-adonisjs@^3.0.1":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@japa/plugin-adonisjs/-/plugin-adonisjs-3.0.2.tgz#8b044910c6656726f72a5641a14ec23658009740"
-  integrity sha512-yrIif8YYcV4GPXygIm/ndULid/6gIJ/NcylDaAsCw/iKPooU+sgUcZjYWe9AO04xuUJ5nFCvzsM/7q1yP7lxNg==
+"@japa/plugin-adonisjs@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@japa/plugin-adonisjs/-/plugin-adonisjs-4.0.0.tgz#8ddb55134509d99a250e14e59d7e745443adf16d"
+  integrity sha512-M2LUtHhKr4KgBfX73tDHNCD1IOmcXp9dvC+AinmRxsggIFnarsClcfjT/sXc3uNzjZW7Lk31LvcH76AxJHBmJQ==
 
 "@japa/runner@^3.1.4":
   version "3.1.4"
@@ -1548,15 +1548,17 @@ adonis-sail@^1.0.0:
   dependencies:
     "@poppinss/utils" "^6.7.0"
 
-adonisjs-scheduler@^1.0.5:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/adonisjs-scheduler/-/adonisjs-scheduler-1.0.8.tgz#e89d9370d537cdf90d855cf3f8c7c7663f399c01"
-  integrity sha512-hh2Vy5+I4Vp17qtfGEFHPaFuCCu/0HyWpRAXzG56QkgMiIhumPs95IDp5115saOmlCXDphtlp/gPet0q2aMaTA==
+adonisjs-scheduler@^2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/adonisjs-scheduler/-/adonisjs-scheduler-2.6.4.tgz#61e16fcad77c72343da4213623bce3530efdd644"
+  integrity sha512-Z3fj58DSw3edcZS742GUMfWaL74CpQyN20W4IIPi0QpIf0FciDvQiM7iatzdqFvd92g/Z9lbVSdh/ZZaFyu9kw==
   dependencies:
     async-lock "^1.4.1"
     chokidar "^4.0.2"
+    cron-parser "^5.0.4"
+    luxon "^3.5.0"
     node-cron "^3.0.2"
-    node-cron-expression "^1.3.1"
+    string-width "^7.2.0"
 
 ajv@^6.12.4:
   version "6.12.6"
@@ -2178,6 +2180,13 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
+cron-parser@^5.0.4:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/cron-parser/-/cron-parser-5.4.0.tgz#5bb9cd9bc3c14971d179aff2d4cc41053e302b0e"
+  integrity sha512-HxYB8vTvnQFx4dLsZpGRa0uHp6X3qIzS3ZJgJ9v6l/5TJMgeWQbLkR5yiJ5hOxGbc9+jCADDnydIe15ReLZnJA==
+  dependencies:
+    luxon "^3.7.1"
+
 cross-spawn@^7.0.3, cross-spawn@^7.0.6:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
@@ -2241,14 +2250,7 @@ debug@4.3.4:
   dependencies:
     ms "2.1.2"
 
-debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.0.tgz#2b3f2aea2ffeb776477460267377dc8710faba8a"
-  integrity sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==
-  dependencies:
-    ms "^2.1.3"
-
-debug@^4.3.7, debug@^4.4.1, debug@^4.4.3:
+debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.3.7, debug@^4.4.1, debug@^4.4.3:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.3.tgz#c6ae432d9bd9662582fce08709b038c58e9e3d6a"
   integrity sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==
@@ -2686,10 +2688,10 @@ eslint-visitor-keys@^4.2.1:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-4.2.1.tgz#4cfea60fe7dd0ad8e816e1ed026c1d5251b512c1"
   integrity sha512-Uhdk5sfqcee/9H/rCOJikYz67o0a2Tw2hGRPOG2Y1R2dg7brRe1uG0yaNQDHu+TO/uQPF/5eCapvYSmHUjt7JQ==
 
-eslint@^9.39.1:
-  version "9.39.1"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-9.39.1.tgz#be8bf7c6de77dcc4252b5a8dcb31c2efff74a6e5"
-  integrity sha512-BhHmn2yNOFA9H9JmmIVKJmd288g9hrVRDkdoIgRCRuSySRUHH7r/DI6aAXW9T1WwUuY3DFgrcaqB+deURBLR5g==
+eslint@^9.39.2:
+  version "9.39.2"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-9.39.2.tgz#cb60e6d16ab234c0f8369a3fe7cc87967faf4b6c"
+  integrity sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==
   dependencies:
     "@eslint-community/eslint-utils" "^4.8.0"
     "@eslint-community/regexpp" "^4.12.1"
@@ -2697,7 +2699,7 @@ eslint@^9.39.1:
     "@eslint/config-helpers" "^0.4.2"
     "@eslint/core" "^0.17.0"
     "@eslint/eslintrc" "^3.3.1"
-    "@eslint/js" "9.39.1"
+    "@eslint/js" "9.39.2"
     "@eslint/plugin-kit" "^0.4.1"
     "@humanfs/node" "^0.16.6"
     "@humanwhocodes/module-importer" "^1.0.1"
@@ -3333,15 +3335,10 @@ ignore@^5.2.0:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.2.tgz#3cd40e729f3643fd87cb04e50bf0eb722bc596f5"
   integrity sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==
 
-ignore@^7.0.0:
+ignore@^7.0.0, ignore@^7.0.3:
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-7.0.5.tgz#4cb5f6cd7d4c7ab0365738c7aea888baa6d7efd9"
   integrity sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==
-
-ignore@^7.0.3:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-7.0.4.tgz#a12c70d0f2607c5bf508fb65a40c75f037d7a078"
-  integrity sha512-gJzzk+PQNznz8ysRrC0aOkBNVRBDtE1n53IqyqEf3PXrYwomFs5q4pGMizBMJF+ykh03insJ27hB8gSrD2Hn8A==
 
 import-fresh@^3.2.1:
   version "3.3.1"
@@ -3798,7 +3795,7 @@ lru-cache@^10.0.1, lru-cache@^10.2.0:
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.4.3.tgz#410fc8a17b70e598013df257c2446b7f3383f119"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
 
-luxon@^3.7.2:
+luxon@^3.5.0, luxon@^3.7.1, luxon@^3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.7.2.tgz#d697e48f478553cca187a0f8436aff468e3ba0ba"
   integrity sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==
@@ -4325,11 +4322,6 @@ node-addon-api@^8.1.0:
   version "8.3.1"
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-8.3.1.tgz#53bc8a4f8dbde3de787b9828059da94ba9fd4eed"
   integrity sha512-lytcDEdxKjGJPTLEfW4mYMigRezMlyJY8W4wxJK8zE533Jlb8L8dRuObJFWg2P+AuOIxoCgKF+2Oq4d4Zd0OUA==
-
-node-cron-expression@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/node-cron-expression/-/node-cron-expression-1.3.1.tgz#c3cd144db00bfbbee945154fd80e4be05685ff7e"
-  integrity sha512-HHAKtP3b7IEr9BbfeU2lpF6Gj7i7pcEj/+LmSL6XSHYQxxjJhVUSxt/igOeiR2hdC5RMAvHu4rF67ugF2jT6IQ==
 
 node-cron@^3.0.2:
   version "3.0.3"
@@ -4927,9 +4919,9 @@ pure-conditions@^1.2.1:
   integrity sha512-MKk7sKQiR3Fe3bL/QedUZ1eVoNO0xpOCyiTGdVrK+4ZCDa9TgwNp6D/U1FthjhVGS9a857BS84WncvZvOYECUw==
 
 qs@^6.11.2, qs@^6.14.0:
-  version "6.14.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.0.tgz#c63fa40680d2c5c941412a0e899c89af60c0a930"
-  integrity sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==
+  version "6.14.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.1.tgz#a41d85b9d3902f31d27861790506294881871159"
+  integrity sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==
   dependencies:
     side-channel "^1.1.0"
 

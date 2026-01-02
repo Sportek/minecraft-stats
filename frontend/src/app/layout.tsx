@@ -1,10 +1,10 @@
+import UmamiScript from "@/components/umami-script";
+import { getAlternateLanguages, getCurrentLocale, getDomainConfig } from "@/lib/domain-server";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import ClientLayout from "./client-layout";
-import UmamiScript from "@/components/umami-script";
-import { getDomainConfig } from "@/lib/domain-server";
+import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,7 +14,9 @@ const inter = Inter({
 });
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const { baseUrl } = await getDomainConfig();
+  const { baseUrl, googleSearchId } = await getDomainConfig();
+  const locale = await getCurrentLocale();
+  const alternateLanguages = getAlternateLanguages();
 
   return {
     metadataBase: new URL(baseUrl),
@@ -61,7 +63,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
           type: "image/webp",
         },
       ],
-      locale: "en_US",
+      locale: locale.replace("-", "_"), // OpenGraph uses underscore format
     },
     twitter: {
       card: "summary_large_image",
@@ -84,34 +86,31 @@ export const generateMetadata = async (): Promise<Metadata> => {
     },
     alternates: {
       canonical: baseUrl,
+      languages: alternateLanguages,
     },
     verification: {
-      // Add verification codes when you have them
-      // google: 'your-google-verification-code',
-      // yandex: 'your-yandex-verification-code',
-      // bing: 'your-bing-verification-code',
+      google: googleSearchId,
     },
   };
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getCurrentLocale();
+  const htmlLang = locale.split("-")[0];
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={htmlLang} suppressHydrationWarning>
       <head>
         <UmamiScript />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/images/minecraft-stats/logo.svg" />
       </head>
-      <body
-        className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col")}
-      >
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+      <body className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col")}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

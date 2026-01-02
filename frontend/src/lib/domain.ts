@@ -7,6 +7,7 @@ interface DomainConfig {
   baseUrl: string;
   apiUrl: string;
   backendUrl: string;
+  googleSearchId: string;
 }
 
 /**
@@ -17,11 +18,13 @@ const PRODUCTION_DOMAINS: Record<string, DomainConfig> = {
     baseUrl: "https://minecraft-stats.fr",
     apiUrl: "https://api.minecraft-stats.fr/api/v1",
     backendUrl: "https://api.minecraft-stats.fr",
+    googleSearchId: "rPOmHlpxWYk2GB-JvfPLqXzQd70qIF5sYUD",
   },
   "minecraft-stats.com": {
     baseUrl: "https://minecraft-stats.com",
     apiUrl: "https://api.minecraft-stats.com/api/v1",
     backendUrl: "https://api.minecraft-stats.com",
+    googleSearchId: "d3DLQBKxdDNI68eEXzuiaYPKzRhfxj",
   },
 };
 
@@ -33,11 +36,13 @@ const STAGING_DOMAINS: Record<string, DomainConfig> = {
     baseUrl: "https://staging.minecraft-stats.fr",
     apiUrl: "https://api-staging.minecraft-stats.fr/api/v1",
     backendUrl: "https://api-staging.minecraft-stats.fr",
+    googleSearchId: "rPOmHlpxWYk2GB-JvfPLqXzQd70qIF5sYUD",
   },
   "staging.minecraft-stats.com": {
     baseUrl: "https://staging.minecraft-stats.com",
     apiUrl: "https://api-staging.minecraft-stats.com/api/v1",
     backendUrl: "https://api-staging.minecraft-stats.com",
+    googleSearchId: "d3DLQBKxdDNI68eEXzuiaYPKzRhfxj",
   },
 };
 
@@ -77,6 +82,7 @@ function getLocalhostConfig(origin?: string): DomainConfig {
     baseUrl: origin || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
     apiUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000/api/v1",
     backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:9000",
+    googleSearchId: "d3DLQBKxdDNI68eEXzuiaYPKzRhfxj",
   };
 }
 
@@ -113,6 +119,7 @@ export function getClientDomainConfig(): DomainConfig {
       baseUrl: process.env.NEXT_PUBLIC_BASE_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].baseUrl,
       apiUrl: process.env.NEXT_PUBLIC_API_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].apiUrl,
       backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].backendUrl,
+      googleSearchId: DOMAIN_CONFIG[DEFAULT_DOMAIN].googleSearchId,
     };
   }
 
@@ -134,6 +141,7 @@ export function getClientDomainConfig(): DomainConfig {
     baseUrl: globalThis.window.location.origin,
     apiUrl: process.env.NEXT_PUBLIC_API_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].apiUrl,
     backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].backendUrl,
+    googleSearchId: DOMAIN_CONFIG[DEFAULT_DOMAIN].googleSearchId,
   };
 }
 
