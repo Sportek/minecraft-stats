@@ -217,9 +217,9 @@ export default class PlaceholderService {
         example: '%DATA_SINCE_DATE_125%',
       },
       {
-        name: 'OFFICIAL_WEBSITE',
-        description: 'Server official website (domain only)',
-        example: '%OFFICIAL_WEBSITE_125%',
+        name: 'ADDRESS',
+        description: 'Server address',
+        example: '%ADDRESS_125%',
       },
     ]
   }
