@@ -70,9 +70,9 @@
     basic-auth "^2.0.1"
 
 "@adonisjs/bodyparser@^10.1.0":
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/@adonisjs/bodyparser/-/bodyparser-10.1.1.tgz#2afe13d3cf03a9a2828744d6e30f71d5cd8bb936"
-  integrity sha512-XZYKamLOswCdhsqEY/o4+QvEEnNq+d9xyahuToIQvtyz6aq6kIOVEBGwwCofiWBxcW4ppDV9IfHzWEAof5f91w==
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@adonisjs/bodyparser/-/bodyparser-10.1.2.tgz#28fa57fcd7ac7098a154b1027fc7ec9e02a000ac"
+  integrity sha512-Lp419XmpMOq878Ee9V1Iqu2vGHEFBMUrUK3A3Fz3/dCP70E40esRf7wzTvRe+YZfXqQLaz1XCE0xfy3lj9wA9Q==
   dependencies:
     "@paralleldrive/cuid2" "^2.2.2"
     "@poppinss/macroable" "^1.1.0"
