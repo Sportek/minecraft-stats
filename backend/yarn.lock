@@ -19,13 +19,13 @@
     youch "^3.3.4"
     youch-terminal "^2.2.3"
 
-"@adonisjs/ally@^5.0.2":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@adonisjs/ally/-/ally-5.1.0.tgz#2a4174bd7a56ca7c32fb1cc15e23001fe60e94cb"
-  integrity sha512-Zr+ScZJAH6i5N80cZUjLWX9yLsNQu8qK/syfcEK4XKBaX8watlUseN2xPMTr5dds/3CsqIBYI83Rpvv7dlvddQ==
+"@adonisjs/ally@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@adonisjs/ally/-/ally-5.1.1.tgz#ead50c8ca10af454c4511405947635766a15cc82"
+  integrity sha512-Uu+g5y7jnmMP0iXhPYTx9caJnovp+CTqxDN6XpyuLQGVZjNr9fqbPeaBVs1/jTAVSAtpv4UrHsb+827XXd24Jw==
   dependencies:
-    "@poppinss/oauth-client" "^7.0.0"
-    "@poppinss/utils" "^6.9.2"
+    "@poppinss/oauth-client" "^7.0.1"
+    "@poppinss/utils" "^6.10.1"
 
 "@adonisjs/application@^8.4.2":
   version "8.4.2"
@@ -919,7 +919,7 @@
     "@sindresorhus/is" "^7.0.2"
     supports-color "^10.0.0"
 
-"@poppinss/exception@^1.1.0", "@poppinss/exception@^1.2.0":
+"@poppinss/exception@^1.1.0":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@poppinss/exception/-/exception-1.2.1.tgz#8a5f2120fabb64a99772166d537d8a97490209ff"
   integrity sha512-aQypoot0HPSJa6gDPEPTntc1GT6QINrSbgRlRhadGW2WaYqUK3tK4Bw9SBMZXhmxd3GeAlZjVcODHgiu+THY7A==
@@ -928,6 +928,11 @@
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@poppinss/exception/-/exception-1.2.2.tgz#8d30d42e126c54fe84e997433e4dcac610090743"
   integrity sha512-m7bpKCD4QMlFCjA/nKTs23fuvoVFoA83brRKmObCUNmi/9tVu8Ve3w4YQAnJu4q3Tjf5fr685HYIC/IA2zHRSg==
+
+"@poppinss/exception@^1.2.2":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@poppinss/exception/-/exception-1.2.3.tgz#b713855e6c9fe2110fea0949455c50828145e64a"
+  integrity sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==
 
 "@poppinss/hooks@^7.2.3", "@poppinss/hooks@^7.2.4", "@poppinss/hooks@^7.2.5", "@poppinss/hooks@^7.3.0":
   version "7.3.0"
@@ -965,13 +970,13 @@
     safe-buffer "5.2.1"
     uid-safe "2.1.5"
 
-"@poppinss/oauth-client@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@poppinss/oauth-client/-/oauth-client-7.0.0.tgz#465985406cdecb410e11655dd77d4d7d394a2cf3"
-  integrity sha512-oBWcbLDJxh+WSlSfM093u3Usw6qCa8HKAd1kFqNKY2LdK+4l5iqv6w2iTaSsiQFbACNgIS3VNIB1yQcmI1FI6w==
+"@poppinss/oauth-client@^7.0.1":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@poppinss/oauth-client/-/oauth-client-7.0.2.tgz#654250408412dbe4345e6046ad0742ce89c6dbcf"
+  integrity sha512-7zFnfGtd7oLb9Ox9Kz77QwU8t4IV8PdHIicSkLgXGis1ZfLb/853dm+26xz0dPo0qZCJvbBVelgmDvm+JFMhQw==
   dependencies:
-    "@poppinss/exception" "^1.2.0"
-    ky "^1.7.4"
+    "@poppinss/exception" "^1.2.2"
+    ky "^1.14.1"
 
 "@poppinss/object-builder@^1.1.0":
   version "1.1.0"
@@ -3668,10 +3673,10 @@ knex@^3.1.0:
     tarn "^3.0.2"
     tildify "2.0.0"
 
-ky@^1.7.4:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/ky/-/ky-1.8.1.tgz#b1adaa473bc30aced2bab4c408ec177b78d198f0"
-  integrity sha512-7Bp3TpsE+L+TARSnnDpk3xg8Idi8RwSLdj6CMbNWoOARIrGrbuLGusV0dYwbZOm4bB3jHNxSw8Wk/ByDqJEnDw==
+ky@^1.14.1:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/ky/-/ky-1.14.1.tgz#16f20b3bf3939abcc04e2a9613f47360fe5f64c9"
+  integrity sha512-hYje4L9JCmpEQBtudo+v52X5X8tgWXUYyPcxKSuxQNboqufecl9VMWjGiucAFH060AwPXHZuH+WB2rrqfkmafw==
 
 leb128@^0.0.5:
   version "0.0.5"
