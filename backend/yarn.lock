@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@adobe/css-tools@^4.4.4":
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.4.4.tgz#2856c55443d3d461693f32d2b96fb6ea92e1ffa9"
+  integrity sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==
+
 "@adonisjs/ace@^13.4.0":
   version "13.4.0"
   resolved "https://registry.yarnpkg.com/@adonisjs/ace/-/ace-13.4.0.tgz#69ba593b58f5535f36dff784ae31862ff767cf2a"
@@ -293,12 +298,12 @@
   dependencies:
     "@poppinss/utils" "^6.7.3"
 
-"@adonisjs/prettier-config@^1.3.0":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@adonisjs/prettier-config/-/prettier-config-1.4.4.tgz#e76a2d27863140cc1255b9e88d7a565a8228da21"
-  integrity sha512-rL7JVPyMcQyQKVIt4U4DC0zO9sjcPnepLTx859b47HtHTrQTuDi8/uSqEL//vhAmqlvNuQg0FBgnPJ1eEDbiAA==
+"@adonisjs/prettier-config@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@adonisjs/prettier-config/-/prettier-config-1.4.5.tgz#99e3790e35f22bdb30297a69fa8e390959d55bad"
+  integrity sha512-UOYmJQeOhWRIWE2v/cXmpMPq2Its5lOpNeJ+nr79yASAVFVtlDE5qdHicMgVdTbFPWFgHzmU8icVk6YmaOnSXg==
   dependencies:
-    prettier-plugin-edgejs "^1.0.0"
+    prettier-plugin-edgejs "^1.0.1"
 
 "@adonisjs/redis@^9.1.0":
   version "9.2.0"
@@ -1682,11 +1687,6 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
-atob@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
-  integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
-
 atomic-sleep@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/atomic-sleep/-/atomic-sleep-1.0.0.tgz#eb85b77a601fc932cfe432c5acd364a9e2c9075b"
@@ -2212,15 +2212,6 @@ css-what@^6.1.0:
   resolved "https://registry.yarnpkg.com/css-what/-/css-what-6.1.0.tgz#fb5effcf76f1ddea2c81bdfaa4de44e79bac70f4"
   integrity sha512-HTUrgRJ7r4dsZKU6GjmpfRK1O76h97Z8MfS1G0FozR+oF2kG6Vfe8JE6zwrkbxigziPHinCJ+gCPjA9EaBDtRw==
 
-css@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/css/-/css-3.0.0.tgz#4447a4d58fdd03367c516ca9f64ae365cee4aa5d"
-  integrity sha512-DG9pFfwOrzc+hawpmqX/dHYHJG+Bsdb0klhyi1sDneOgGOXy9wQIC8hzyVp1e4NRYDBdxcylvywPkkXCHAzTyQ==
-  dependencies:
-    inherits "^2.0.4"
-    source-map "^0.6.1"
-    source-map-resolve "^0.6.0"
-
 data-uri-to-buffer@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-2.0.2.tgz#d296973d5a4897a5dbe31716d118211921f04770"
@@ -2256,11 +2247,6 @@ debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.3.7, debug@^4.4
   integrity sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==
   dependencies:
     ms "^2.1.3"
-
-decode-uri-component@^0.2.0:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.2.tgz#e69dbe25d37941171dd540e024c444cd5188e1e9"
-  integrity sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==
 
 decompress-response@^6.0.0:
   version "6.0.0"
@@ -2474,10 +2460,10 @@ edge.js@^6.0.2:
     property-information "^6.5.0"
     stringify-attributes "^4.0.0"
 
-edgejs-parser@^0.2.14:
-  version "0.2.14"
-  resolved "https://registry.yarnpkg.com/edgejs-parser/-/edgejs-parser-0.2.14.tgz#cc023fcafddd6d0862fd53b44c445ffdaba8b7e1"
-  integrity sha512-Qlx1U4bm+3mXwijEGIZBf5RdJpxQUB8AQ8yoSRAatQoHzTX+IW8L3RwKMV99Zw+9LDZI+rMGjBq9xLHUQNMAPw==
+edgejs-parser@^0.2.18:
+  version "0.2.18"
+  resolved "https://registry.yarnpkg.com/edgejs-parser/-/edgejs-parser-0.2.18.tgz#f4f7cc2bc38616d788858b9a72b4e7312d9a2f76"
+  integrity sha512-O1Xg3ISESg2bl8DqP5q3x1b88cqTSgLmEBqNhGH482JdAIexDY7gh7FA9Y5kHOFwRNsTLFoziwQou0lprJ1MYQ==
   dependencies:
     chevrotain "^11.0.3"
 
@@ -3369,7 +3355,7 @@ inflation@^2.1.0:
   resolved "https://registry.yarnpkg.com/inflation/-/inflation-2.1.0.tgz#9214db11a47e6f756d111c4f9df96971c60f886c"
   integrity sha512-t54PPJHG1Pp7VQvxyVCJ9mBbjG3Hqryges9bXoOO6GExCPa+//i/d5GSuFtpx3ALLd7lgIAur6zrIlBQyJuMlQ==
 
-inherits@2.0.4, inherits@^2.0.4, inherits@~2.0.4:
+inherits@2.0.4, inherits@~2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
@@ -4824,17 +4810,17 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier-plugin-edgejs@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/prettier-plugin-edgejs/-/prettier-plugin-edgejs-1.0.0.tgz#76ac5656d0f504bcc22d9a5e48f832778eee43ef"
-  integrity sha512-MUlHVU3OM8AGznwRlYm0Ah0ckX2NCx0A+VoA2Dgl4bce4aGkaPT9JDZN88no6xLrUNbKsukkjk4KMfREPXf47A==
+prettier-plugin-edgejs@^1.0.1:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/prettier-plugin-edgejs/-/prettier-plugin-edgejs-1.0.6.tgz#567051e4e308a2ed0523308cb476c34361e5f07e"
+  integrity sha512-RZ3xPEiHfw6ca/YzfKmu6rSOviheC9THfGlqg7rs8srbr1RugJQ8k3KmjLHH1oXadQBzZeIeZ3d25Dhs+fe4UA==
   dependencies:
-    css "^3.0.0"
-    edgejs-parser "^0.2.14"
-    prettier "^3.4.2"
+    "@adobe/css-tools" "^4.4.4"
+    edgejs-parser "^0.2.18"
+    prettier "^3.6.2"
     uglify-js "^3.19.2"
 
-prettier@^3.4.2, prettier@^3.7.4:
+prettier@^3.6.2, prettier@^3.7.4:
   version "3.7.4"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.7.4.tgz#d2f8335d4b1cec47e1c8098645411b0c9dff9c0f"
   integrity sha512-v6UNi1+3hSlVvv8fSaoUbggEM5VErKmmpGA7Pl3HF8V6uKY7rvClBOJlH6yNwQtfTueNkGVpOv/mtWL9L4bgRA==
@@ -5346,14 +5332,6 @@ sonic-boom@^4.0.1:
   integrity sha512-INb7TM37/mAcsGmc9hyyI6+QR3rR1zVRu36B0NeGXKnOOLiZOfER5SA+N7X7k3yUYRzLWafduTDvJAfDswwEww==
   dependencies:
     atomic-sleep "^1.0.0"
-
-source-map-resolve@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/source-map-resolve/-/source-map-resolve-0.6.0.tgz#3d9df87e236b53f16d01e58150fc7711138e5ed2"
-  integrity sha512-KXBr9d/fO/bWo97NXsPIAW1bFSBOuCnjbNTBMO7N59hsv5i9yzRDfcYwwt0l04+VqnKC+EwzvJZIP/qkuMgR/w==
-  dependencies:
-    atob "^2.1.2"
-    decode-uri-component "^0.2.0"
 
 source-map@^0.6.1, source-map@~0.6.0:
   version "0.6.1"
