@@ -33,7 +33,7 @@
     "@tiptap/starter-kit": "^3.14.0",
     "ag-charts-community": "^11.2.4",
     "ag-charts-react": "^11.2.4",
-    "ag-grid-react": "^33.2.4",
+    "ag-grid-react": "^35.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
