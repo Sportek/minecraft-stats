@@ -74,7 +74,7 @@
     "@julr/adonisjs-prometheus": "^1.0.1",
     "@minescope/mineping": "^2.0.0",
     "@swc/wasm": "^1.5.24",
-    "@vinejs/vine": "^2.0.0",
+    "@vinejs/vine": "^4.2.0",
     "adonis-autoswagger": "^3.64.0",
     "adonisjs-scheduler": "^2.6.4",
     "argon2": "^0.41.0",
