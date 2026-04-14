@@ -21,41 +21,41 @@ import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { getClientBackendUrl } from "@/lib/domain";
 
+const NavLink = ({ href, label }: { href: string; label: string }) => (
+  <Link
+    href={href}
+    className="text-sm font-medium text-zinc-900 dark:text-white hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors"
+  >
+    {label}
+  </Link>
+);
+
+const MobileNavLink = ({
+  href,
+  label,
+  onClick,
+  icon,
+}: {
+  href: string;
+  label: string;
+  onClick?: () => void;
+  icon?: string;
+}) => (
+  <Link
+    href={href}
+    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors w-full"
+    onClick={onClick}
+  >
+    {icon && <Icon icon={icon} className="w-5 h-5" />}
+    {label}
+  </Link>
+);
+
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const backendUrl = getClientBackendUrl();
-
-  const NavLink = ({ href, label }: { href: string; label: string }) => (
-    <Link
-      href={href}
-      className="text-sm font-medium text-zinc-900 dark:text-white hover:text-zinc-500 dark:hover:text-zinc-400 transition-colors"
-    >
-      {label}
-    </Link>
-  );
-
-  const MobileNavLink = ({
-    href,
-    label,
-    onClick,
-    icon,
-  }: {
-    href: string;
-    label: string;
-    onClick?: () => void;
-    icon?: string;
-  }) => (
-    <Link
-      href={href}
-      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors w-full"
-      onClick={onClick}
-    >
-      {icon && <Icon icon={icon} className="w-5 h-5" />}
-      {label}
-    </Link>
-  );
 
   const displayUserMenu = () => (
     <DropdownMenu>

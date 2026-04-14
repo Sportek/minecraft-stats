@@ -68,6 +68,12 @@ const Footer = () => {
                 Discord Server
               </Link>
               <Link
+                href="/about"
+                className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+              >
+                About
+              </Link>
+              <Link
                 href="/cgu"
                 className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
               >

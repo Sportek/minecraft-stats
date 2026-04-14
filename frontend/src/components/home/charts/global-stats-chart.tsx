@@ -127,10 +127,12 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
 
     // Si on a des stats globales, les utiliser
     if (globalStats.length > 0) {
-      const data = globalStats.map(stat => ({
-        time: new Date(stat.createdAt || Date.now()),
-        playerCount: stat.playerCount ?? 0
-      }));
+      const data = globalStats
+        .filter(stat => stat.createdAt)
+        .map(stat => ({
+          time: new Date(stat.createdAt),
+          playerCount: stat.playerCount ?? 0
+        }));
 
       // Calculer les dates min et max
       const dates = data.map(d => d.time);
@@ -161,10 +163,12 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
 
     // Préparer les données pour les serveurs individuels
     try {
-      const allData = firstServerStats.map((stat: ServerStat) => {
-        const basePoint: ChartDatum = {
-          time: new Date(stat.createdAt || Date.now())
-        };
+      const allData = firstServerStats
+        .filter((stat: ServerStat) => stat.createdAt)
+        .map((stat: ServerStat) => {
+          const basePoint: ChartDatum = {
+            time: new Date(stat.createdAt)
+          };
         
         serverStats.forEach(({ server, stats }) => {
           if (server && stats) {

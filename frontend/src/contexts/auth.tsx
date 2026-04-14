@@ -3,7 +3,7 @@ import { getBaseUrl } from "@/app/_cheatcode";
 import { changeUserPassword, getUser, loginUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 interface AuthContextProps {
   user: User | null;
@@ -120,7 +120,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [router]);
 
   useEffect(() => {
-    fetchUser();
+    startTransition(() => {
+      fetchUser();
+    });
   }, [fetchUser]);
 
   const contextValue = useMemo(() => {

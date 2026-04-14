@@ -1,10 +1,10 @@
 import { headers } from "next/headers";
 import {
-  DOMAIN_CONFIG,
   DEFAULT_DOMAIN,
+  DOMAIN_CONFIG,
   extractDomainKey,
-  isLocalhost,
   getLocalhostConfig,
+  isLocalhost,
   type DomainConfig,
 } from "./domain";
 
@@ -42,7 +42,7 @@ export async function getDomainConfig(): Promise<DomainConfig> {
     baseUrl: process.env.NEXT_PUBLIC_BASE_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].baseUrl,
     apiUrl: process.env.NEXT_PUBLIC_API_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].apiUrl,
     backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || DOMAIN_CONFIG[DEFAULT_DOMAIN].backendUrl,
-    googleSearchId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS || DOMAIN_CONFIG[DEFAULT_DOMAIN].googleSearchId,
+    googleSearchId: process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER || DOMAIN_CONFIG[DEFAULT_DOMAIN].googleSearchId,
   };
 }
 

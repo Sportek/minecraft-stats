@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/auth";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ServersProvider } from "@/contexts/servers";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 
 export default function ClientLayout({
   children,
@@ -19,7 +19,9 @@ export default function ClientLayout({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    startTransition(() => {
+      setMounted(true);
+    });
   }, []);
 
   if (!mounted) {

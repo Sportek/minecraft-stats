@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, startTransition } from "react";
 import { Skeleton } from "../ui/skeleton";
 
 const HeroSection = () => {
@@ -8,7 +8,9 @@ const HeroSection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setIsLoaded(true);
+    startTransition(() => {
+      setIsLoaded(true);
+    });
   }, []);
 
   const scrollToServerCards = () => {
