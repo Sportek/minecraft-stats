@@ -1,6 +1,6 @@
 import Server from '#models/server'
 import ServerCategoryPolicy from '#policies/server_category_policy'
-import { HttpContext } from '@adonisjs/core/http'
+import { type HttpContext } from '@adonisjs/core/http'
 
 export default class ServerCategoriesController {
   async index({ request, response }: HttpContext) {

@@ -31,10 +31,5 @@ export default defineConfig({
    * Feel free to remove collectors that you
    * don't want to use
    */
-  collectors: [
-    httpCollector(),
-    mailCollector(),
-    lucidCollector(),
-    systemCollector(),
-  ],
+  collectors: [httpCollector(), mailCollector(), lucidCollector(), systemCollector()],
 })

@@ -4,10 +4,7 @@ import { indexPolicies } from '@adonisjs/bouncer'
 
 export default defineConfig({
   hooks: {
-    init: [
-      indexEntities(),
-      indexPolicies(),
-    ],
+    init: [indexEntities(), indexPolicies()],
   },
 
   /*

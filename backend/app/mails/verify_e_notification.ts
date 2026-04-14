@@ -1,4 +1,4 @@
-import User from '#models/user'
+import type User from '#models/user'
 import { BaseMail } from '@adonisjs/mail'
 
 export default class VerifyENotification extends BaseMail {

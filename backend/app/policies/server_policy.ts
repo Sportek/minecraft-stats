@@ -1,7 +1,7 @@
-import Server from '#models/server'
-import User from '#models/user'
+import type Server from '#models/server'
+import type User from '#models/user'
 import { BasePolicy } from '@adonisjs/bouncer'
-import { AuthorizerResponse } from '@adonisjs/bouncer/types'
+import { type AuthorizerResponse } from '@adonisjs/bouncer/types'
 
 export default class ServerPolicy extends BasePolicy {
   async destroy(user: User, server: Server): Promise<AuthorizerResponse> {
