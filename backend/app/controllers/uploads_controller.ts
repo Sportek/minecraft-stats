@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import { cuid } from '@adonisjs/core/helpers'
+import { randomUUID } from 'node:crypto'
 import sharp from 'sharp'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -35,7 +35,7 @@ export default class UploadsController {
     }
 
     // Generate unique filename
-    const fileName = `${cuid()}.webp`
+    const fileName = `${randomUUID()}.webp`
     const uploadsPath = app.makePath('public/images/blog')
     const filePath = path.join(uploadsPath, fileName)
 

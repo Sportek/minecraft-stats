@@ -2,7 +2,6 @@ import env from '#start/env'
 import { defineConfig } from '@julr/adonisjs-prometheus'
 import { httpCollector } from '@julr/adonisjs-prometheus/collectors/http_collector'
 import { mailCollector } from '@julr/adonisjs-prometheus/collectors/mail_collector'
-import { cacheCollector } from '@julr/adonisjs-prometheus/collectors/cache_collector'
 import { lucidCollector } from '@julr/adonisjs-prometheus/collectors/lucid_collector'
 import { systemCollector } from '@julr/adonisjs-prometheus/collectors/system_collector'
 
@@ -36,7 +35,6 @@ export default defineConfig({
     httpCollector(),
     mailCollector(),
     lucidCollector(),
-    cacheCollector(),
     systemCollector(),
   ],
 })
