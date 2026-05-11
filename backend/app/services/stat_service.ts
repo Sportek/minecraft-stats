@@ -229,8 +229,16 @@ export default class StatsService {
 
   /**
    * Récupère les stats brutes (avec éventuellement un filtrage fromDate/toDate).
+   * Refuse les appels sans plage temporelle pour éviter de scanner toute la table.
    */
   static async getRawStats(serverId: number, fromDateSql?: string, toDateSql?: string) {
+    if (!fromDateSql && !toDateSql) {
+      throw new Exception(
+        'fromDate (or interval) is required when fetching raw stats — refusing to scan the full table',
+        { status: 400, code: 'E_STATS_MISSING_RANGE' }
+      )
+    }
+
     const query = Database.from('server_stats').select('*').where('server_id', serverId)
 
     if (fromDateSql && toDateSql) {
