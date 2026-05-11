@@ -191,22 +191,44 @@ export default class ServersController {
 
     const servers = await query.paginate(page, limit)
 
-    const serversWithStats = await Promise.all(
-      servers.map(async (server) => {
-        const lastStat = await this.getActualStats(server, 1)
-        const lastDayStats = await StatsService.getStats({
-          server_id: server.id,
-          fromDate: Date.now() - 24 * 60 * 60 * 1000,
-          toDate: Date.now(),
-        })
-        return {
-          server,
-          stats: [...lastStat, ...lastDayStats],
-          categories: server.categories,
-          growthStat: server.growthStat,
-        }
-      })
-    )
+    const now = Date.now()
+    const fromDate = now - 24 * 60 * 60 * 1000
+
+    const serverIds = servers.map((s) => s.id)
+    const statsByServer = await StatsService.getStatsBatch({
+      serverIds,
+      fromDate,
+      toDate: now,
+      interval: '1 hour',
+    })
+
+    const serversWithStats = servers.map((server) => {
+      const bucketed = (statsByServer.get(server.id) ?? []).map((row) => ({
+        serverId: server.id,
+        createdAt: row.created_at,
+        playerCount: row.player_count,
+        maxCount: row.max_count,
+      }))
+
+      const lastStat =
+        server.lastStatsAt !== null && server.lastPlayerCount !== null
+          ? [
+              {
+                serverId: server.id,
+                createdAt: server.lastStatsAt,
+                playerCount: server.lastPlayerCount,
+                maxCount: server.lastMaxCount,
+              },
+            ]
+          : []
+
+      return {
+        server,
+        stats: [...lastStat, ...bucketed],
+        categories: server.categories,
+        growthStat: server.growthStat,
+      }
+    })
 
     return {
       data: serversWithStats,

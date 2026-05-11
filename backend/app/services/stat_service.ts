@@ -159,6 +159,75 @@ export default class StatsService {
   }
 
   /**
+   * Regroupe les stats par intervalle pour plusieurs serveurs en une seule requête.
+   * Retourne un Map<serverId, stats[]> pour répartition côté Node.
+   */
+  static async getStatsBatch(params: {
+    serverIds: number[]
+    fromDate: number
+    toDate: number
+    interval: string
+  }): Promise<Map<number, Array<{ created_at: DateTime; player_count: number; max_count: number }>>> {
+    const intervalSeconds = this.intervalToSeconds(params.interval)
+    const fromDateSql = DateTime.fromMillis(params.fromDate).toSQL()
+    const toDateSql = DateTime.fromMillis(params.toDate).toSQL()
+
+    const result = new Map<
+      number,
+      Array<{ created_at: DateTime; player_count: number; max_count: number }>
+    >()
+
+    if (params.serverIds.length === 0 || !fromDateSql || !toDateSql) {
+      return result
+    }
+
+    const rawQuery = `
+      SELECT
+        server_id,
+        to_timestamp(
+          floor(extract(epoch from created_at) / ${intervalSeconds})
+          * ${intervalSeconds}
+        ) AS created_at,
+        round(AVG(player_count))::int AS player_count,
+        round(AVG(max_count))::int AS max_count
+      FROM server_stats
+      WHERE server_id = ANY(:serverIds)
+        AND created_at BETWEEN :fromDate AND :toDate
+      GROUP BY server_id, 2
+      ORDER BY server_id, 2
+    `
+
+    const rows = (
+      await Database.rawQuery(rawQuery, {
+        serverIds: params.serverIds,
+        fromDate: fromDateSql,
+        toDate: toDateSql,
+      })
+    ).rows as Array<{
+      server_id: number
+      created_at: string | Date
+      player_count: number
+      max_count: number
+    }>
+
+    for (const id of params.serverIds) result.set(id, [])
+    for (const row of rows) {
+      const arr = result.get(row.server_id) ?? []
+      arr.push({
+        created_at:
+          row.created_at instanceof Date
+            ? DateTime.fromJSDate(row.created_at)
+            : DateTime.fromSQL(row.created_at),
+        player_count: row.player_count,
+        max_count: row.max_count,
+      })
+      result.set(row.server_id, arr)
+    }
+
+    return result
+  }
+
+  /**
    * Récupère les stats brutes (avec éventuellement un filtrage fromDate/toDate).
    */
   static async getRawStats(serverId: number, fromDateSql?: string, toDateSql?: string) {
