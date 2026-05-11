@@ -155,7 +155,11 @@ scheduler
 
 scheduler
   .call(async () => {
+    const start = Date.now()
+    const serverCount = (await Server.query().count('* as total'))[0].$extras.total
     await StatsService.calculateAndStoreGrowthStats()
-    logger.info('SCHEDULER: Growth stats calculated and stored')
+    logger.info(
+      `SCHEDULER: growth_stats job completed in ${Date.now() - start}ms for ${serverCount} servers`
+    )
   })
   .everySixHours()
