@@ -10,18 +10,21 @@ import Language from '#models/language'
 
 export default class ServersController {
   async index() {
-    const servers = await Server.query()
-      .preload('user')
-      .preload('categories')
-      .preload('growthStat')
-      .preload('languages')
-    const serversWithStats = await Promise.all(
-      servers.map(async (server) => {
-        const stats = await this.getActualStats(server)
-        return { server, stats, categories: server.categories, growthStat: server.growthStat }
-      })
+    // Endpoint léger : pas de préloads (user/categories/growthStat/languages), pas de stats par serveur.
+    // Consommé par le sitemap, le ServerSelect et le compteur "Monitored servers" — tous se contentent du
+    // {id, name, updatedAt} de chaque serveur. Forme `[{ server }]` conservée pour compat frontend.
+    const servers = await Server.query().select(
+      'id',
+      'name',
+      'address',
+      'port',
+      'image_url',
+      'last_player_count',
+      'last_stats_at',
+      'created_at',
+      'updated_at'
     )
-    return serversWithStats
+    return servers.map((server) => ({ server }))
   }
 
   async store({ request, auth, response }: HttpContext) {

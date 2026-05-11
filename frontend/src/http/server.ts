@@ -1,5 +1,7 @@
 import { getBaseUrl } from "@/app/_cheatcode";
 import { Category, Server, ServerStat } from "@/types/server";
+// Note: GET /api/v1/servers is a lightweight endpoint that returns only { server } (no stats/categories).
+// For richer data, use /servers/paginate or /servers/:id.
 import { getErrorMessage } from "./auth";
 
 export const addMinecraftServer = async (
@@ -35,7 +37,7 @@ export const getServers = async () => {
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<{ server: Server; stats: ServerStat[]; categories: Category[] }[]>;
+  return response.json() as Promise<{ server: Server }[]>;
 };
 
 export const getServer = async (serverId: number) => {
