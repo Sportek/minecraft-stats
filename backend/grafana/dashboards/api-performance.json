@@ -326,8 +326,55 @@
     },
     {
       "type": "row",
-      "title": "Scheduler (Loki)",
+      "title": "Pool de connexions DB",
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 },
+      "id": 104,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Pool DB — size / used / pending",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 35 },
+      "id": 25,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "max({__name__=~\"${app}_lucid_pool_size\"}) by (pool)",
+          "legendFormat": "size",
+          "refId": "A"
+        },
+        {
+          "expr": "max({__name__=~\"${app}_lucid_pool_used\"}) by (pool)",
+          "legendFormat": "used",
+          "refId": "B"
+        },
+        {
+          "expr": "max({__name__=~\"${app}_lucid_pool_pending_acquires\"}) by (pool)",
+          "legendFormat": "pending acquires",
+          "refId": "C"
+        },
+        {
+          "expr": "max({__name__=~\"${app}_lucid_pool_pending_creates\"}) by (pool)",
+          "legendFormat": "pending creates",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "drawStyle": "line", "lineInterpolation": "stepAfter", "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean", "max"] }
+      }
+    },
+    {
+      "type": "row",
+      "title": "Scheduler (Loki)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
       "id": 103,
       "collapsed": false,
       "panels": []
@@ -335,7 +382,7 @@
     {
       "type": "timeseries",
       "title": "Durée du job growth_stats (ms)",
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 35 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 45 },
       "id": 30,
       "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
       "targets": [
