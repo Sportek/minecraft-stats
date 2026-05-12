@@ -1,5 +1,3 @@
-import Server from '#models/server'
-import ServerGrowthStat from '#models/server_growth_stat'
 import { Exception } from '@adonisjs/core/exceptions'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
@@ -252,60 +250,75 @@ export default class StatsService {
     return query.orderBy('created_at', 'asc')
   }
 
+  /**
+   * Calcule et stocke les growth stats pour tous les serveurs en une seule requête SQL.
+   * Remplace l'ancien O(3·N) séquentiel par O(1) côté DB + 1 upsert (cf. P.3.2).
+   *
+   * Pré-filtre sur 30 jours pour ne pas scanner toute la table — l'index
+   * (server_id, created_at) le rend efficace.
+   */
   static async calculateAndStoreGrowthStats() {
-    const servers = await Server.query()
+    const aggregateQuery = `
+      SELECT
+        server_id,
+        ROUND(AVG(player_count) FILTER (WHERE created_at > now() - interval '7 days'))::int AS last_week_avg,
+        ROUND(AVG(player_count) FILTER (WHERE created_at BETWEEN now() - interval '14 days' AND now() - interval '7 days'))::int AS prev_week_avg,
+        ROUND(AVG(player_count) FILTER (WHERE created_at > now() - interval '30 days'))::int AS last_month_avg
+      FROM server_stats
+      WHERE created_at > now() - interval '30 days'
+      GROUP BY server_id
+    `
 
-    for (const server of servers) {
-      const lastWeekStats = await this.getStatsWithInterval(
-        server.id,
-        '1 week',
-        DateTime.now().minus({ week: 1 }).toSQL()
-      )
-      const previousWeekStats = await this.getStatsWithInterval(
-        server.id,
-        '1 week',
-        DateTime.now().minus({ week: 2 }).toSQL()
-      )
-      const lastMonthStats = await this.getStatsWithInterval(
-        server.id,
-        '1 month',
-        DateTime.now().minus({ month: 1 }).toSQL()
-      )
+    const rows = (await Database.rawQuery(aggregateQuery)).rows as Array<{
+      server_id: number
+      last_week_avg: number | null
+      prev_week_avg: number | null
+      last_month_avg: number | null
+    }>
 
-      const lastWeekAverage = Math.round(
-        lastWeekStats.reduce((sum: number, stat: any) => sum + stat.player_count, 0) /
-          lastWeekStats.length
-      )
-      const previousWeekAverage = Math.round(
-        previousWeekStats.reduce((sum: number, stat: any) => sum + stat.player_count, 0) /
-          previousWeekStats.length
-      )
-      const lastMonthAverage = Math.round(
-        lastMonthStats.reduce((sum: number, stat: any) => sum + stat.player_count, 0) /
-          lastMonthStats.length
-      )
+    const now = DateTime.now().toSQL()
+    const growthRows = rows.map((row) => {
+      const lastWeek = row.last_week_avg ?? 0
+      const prevWeek = row.prev_week_avg ?? 0
+      const lastMonth = row.last_month_avg ?? 0
 
-      // On calcule le taux de croissance de la semaine dernière par rapport à la semaine d'avant
       const weeklyGrowth =
-        Math.round(((lastWeekAverage - previousWeekAverage) / previousWeekAverage) * 100) / 100
-
-      // On calcule le taux de croissance de la semaine dernière par rapport au mois dernier
+        prevWeek === 0 ? 0 : Math.round(((lastWeek - prevWeek) / prevWeek) * 100) / 100
       const monthlyGrowth =
-        Math.round(((lastWeekAverage - lastMonthAverage) / lastMonthAverage) * 100) / 100
+        lastMonth === 0 ? 0 : Math.round(((lastWeek - lastMonth) / lastMonth) * 100) / 100
 
-      await ServerGrowthStat.updateOrCreate(
-        { serverId: server.id },
-        {
-          serverId: server.id,
-          weeklyGrowth: weeklyGrowth,
-          monthlyGrowth: monthlyGrowth,
-          lastWeekAverage: lastWeekAverage,
-          previousWeekAverage: previousWeekAverage,
-          lastMonthAverage: lastMonthAverage,
-          lastUpdated: DateTime.now(),
-        }
-      )
+      return {
+        server_id: row.server_id,
+        weekly_growth: weeklyGrowth,
+        monthly_growth: monthlyGrowth,
+        last_week_average: lastWeek,
+        previous_week_average: prevWeek,
+        last_month_average: lastMonth,
+        last_updated: now,
+      }
+    })
+
+    if (growthRows.length === 0) {
+      logger.info('SCHEDULER: growth_stats — no servers with stats in the last 30d, skipping upsert')
+      return
     }
+
+    await Database.transaction(async (trx) => {
+      await trx
+        .table('server_growth_stats')
+        .insert(growthRows)
+        .onConflict('server_id')
+        .merge([
+          'weekly_growth',
+          'monthly_growth',
+          'last_week_average',
+          'previous_week_average',
+          'last_month_average',
+          'last_updated',
+        ])
+    })
+
+    logger.info(`SCHEDULER: growth_stats — upserted ${growthRows.length} rows`)
   }
 
   static async getStats(params: {
