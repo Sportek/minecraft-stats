@@ -2,7 +2,10 @@ import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
 import { getDomainConfig } from "@/lib/domain-server";
-export const dynamic = "force-dynamic";
+
+// ISR — la metadata (OG, title, description) est rebuild toutes les 10 minutes
+// au lieu d'être re-fetched à chaque requête (P.4.3 ; remplace force-dynamic).
+export const revalidate = 600;
 
 export const generateMetadata = async (props: {
   params: Promise<{ serverId: string; serverName: string[] }>;
