@@ -326,8 +326,79 @@
     },
     {
       "type": "row",
-      "title": "Pool de connexions DB",
+      "title": "Cache Redis",
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 },
+      "id": 105,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "Cache hit rate (5m)",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 35 },
+      "id": 40,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate({__name__=~\"${app}_cache_hits_total\"}[5m])) / (sum(rate({__name__=~\"${app}_cache_hits_total\"}[5m])) + sum(rate({__name__=~\"${app}_cache_misses_total\"}[5m])))",
+          "legendFormat": "hit rate",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto",
+        "graphMode": "area",
+        "colorMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.5 },
+              { "color": "green", "value": 0.8 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Hits / misses par préfixe (req/s)",
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 35 },
+      "id": 41,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate({__name__=~\"${app}_cache_hits_total\"}[5m])) by (key_prefix)",
+          "legendFormat": "hit · {{key_prefix}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate({__name__=~\"${app}_cache_misses_total\"}[5m])) by (key_prefix)",
+          "legendFormat": "miss · {{key_prefix}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth", "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean", "max"] }
+      }
+    },
+    {
+      "type": "row",
+      "title": "Pool de connexions DB",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 43 },
       "id": 104,
       "collapsed": false,
       "panels": []
@@ -335,7 +406,7 @@
     {
       "type": "timeseries",
       "title": "Pool DB — size / used / pending",
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 35 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 44 },
       "id": 25,
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
@@ -374,7 +445,7 @@
     {
       "type": "row",
       "title": "Scheduler (Loki)",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 53 },
       "id": 103,
       "collapsed": false,
       "panels": []
@@ -382,7 +453,7 @@
     {
       "type": "timeseries",
       "title": "Durée du job growth_stats (ms)",
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 45 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 54 },
       "id": 30,
       "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
       "targets": [

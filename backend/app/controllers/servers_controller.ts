@@ -5,6 +5,7 @@ import { CreateServerValidator, UpdateServerValidator } from '#validators/server
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
+import CacheService from '#services/cache_service'
 import StatsService from '#services/stat_service'
 import Language from '#models/language'
 
@@ -139,12 +140,45 @@ export default class ServersController {
     return response.noContent()
   }
 
-  async paginate({ request }: HttpContext) {
+  async paginate(ctx: HttpContext) {
+    const { request } = ctx
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
     const categoryIds = request.input('categoryIds')
     const languageIds = request.input('languageIds')
     const search = request.input('search', '')
+
+    const cacheKey = CacheService.hashParams('paginate', {
+      page,
+      limit,
+      categoryIds,
+      languageIds,
+      search,
+    })
+
+    const nocache = request.input('nocache') === '1'
+    const bypass =
+      nocache && (process.env.NODE_ENV !== 'production' || ctx.auth?.user?.role === 'admin')
+
+    return CacheService.cacheOrFetch(
+      cacheKey,
+      60,
+      async () => {
+        const result = await this.runPaginateQuery({ page, limit, categoryIds, languageIds, search })
+        return result
+      },
+      { bypass }
+    )
+  }
+
+  private async runPaginateQuery(opts: {
+    page: number
+    limit: number
+    categoryIds?: string
+    languageIds?: string
+    search: string
+  }) {
+    const { page, limit, categoryIds, languageIds, search } = opts
 
     let query = Server.query()
       .preload('user')
