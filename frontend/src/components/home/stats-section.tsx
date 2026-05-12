@@ -24,7 +24,8 @@ const StatsSection = () => {
     `${apiUrl}/servers`,
     fetcher,
     {
-      refreshInterval: 1000 * 60 * 2, // Rafraîchir toutes les 2 minutes
+      // Aligné sur le TTL Redis backend (300s) — cf. P.2.1
+      refreshInterval: 1000 * 60 * 5,
     }
   );
 
@@ -32,7 +33,7 @@ const StatsSection = () => {
     `${apiUrl}/website-stats`,
     fetcher,
     {
-      refreshInterval: 1000 * 60 * 2,
+      refreshInterval: 1000 * 60 * 5,
     }
   );
 

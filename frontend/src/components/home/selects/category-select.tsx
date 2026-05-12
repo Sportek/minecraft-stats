@@ -1,6 +1,6 @@
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import { Category } from "@/types/server";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 
 interface CategorySelectProps {
   value: number | null;
@@ -9,7 +9,7 @@ interface CategorySelectProps {
 }
 
 export const CategorySelect = ({ value, onChange, disabled }: CategorySelectProps) => {
-  const { data: categories } = useSWR<Category[]>(`${getBaseUrl()}/categories`, fetcher);
+  const { data: categories } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
 
   return (
     <select

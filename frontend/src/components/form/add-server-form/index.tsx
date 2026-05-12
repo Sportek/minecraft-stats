@@ -12,14 +12,14 @@ import { Category, Language } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import { z } from "zod";
 
 interface AddServerFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
-  const { data, isLoading, error } = useSWR<Category[]>(`${getBaseUrl()}/categories`, fetcher);
-  const { data: languagesData } = useSWR<Language[]>(`${getBaseUrl()}/languages`, fetcher);
+  const { data, isLoading, error } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
+  const { data: languagesData } = useSWRImmutable<Language[]>(`${getBaseUrl()}/languages`, fetcher);
 
   const categories = data || [];
   const languages = languagesData || [];

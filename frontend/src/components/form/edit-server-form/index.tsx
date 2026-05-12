@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import { z } from "zod";
 
 interface EditServerFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -24,11 +24,11 @@ interface EditServerFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, updateServer, className, ...props }) => {
-  const { data, isLoading } = useSWR<Category[]>(`${getBaseUrl()}/categories`, fetcher);
+  const { data, isLoading } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
 
   const categories = data || [];
 
-  const { data: languagesData } = useSWR<Language[]>(`${getBaseUrl()}/languages`, fetcher);
+  const { data: languagesData } = useSWRImmutable<Language[]>(`${getBaseUrl()}/languages`, fetcher);
 
   const languages = languagesData || [];
 

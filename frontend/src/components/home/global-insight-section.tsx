@@ -37,73 +37,82 @@ const GlobalInsightSection = () => {
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("30 Minutes");
 
-  const fetchStats = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const now = Date.now();
-      const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
-      const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
-      const toDate = now;
+  const fetchStats = useCallback(
+    async (signal: AbortSignal) => {
+      setIsLoading(true);
+      try {
+        const now = Date.now();
+        const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
+        const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
+        const toDate = now;
 
-      // Récupérer les stats globales si aucun serveur n'est sélectionné
-      if (selectedServers.length === 0) {
-        let url = `${apiUrl}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
-        if (selectedCategory) {
-          url += `&categoryId=${selectedCategory}`;
-        }
-        if (selectedLanguage) {
-          url += `&languageId=${selectedLanguage}`;
-        }
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch global stats");
-        }
-
-        const data = await response.json();
-        setGlobalStats(data);
-        setServerStats([]);
-      } else {
-        // Récupérer les stats pour chaque serveur sélectionné
-        const promises = selectedServers.map(async (serverId) => {
-          const response = await fetch(
-            `${apiUrl}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`
-          );
+        // Récupérer les stats globales si aucun serveur n'est sélectionné
+        if (selectedServers.length === 0) {
+          let url = `${apiUrl}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
+          if (selectedCategory) {
+            url += `&categoryId=${selectedCategory}`;
+          }
+          if (selectedLanguage) {
+            url += `&languageId=${selectedLanguage}`;
+          }
+          const response = await fetch(url, { signal });
 
           if (!response.ok) {
-            throw new Error(`Failed to fetch stats for server ${serverId}`);
+            throw new Error("Failed to fetch global stats");
           }
 
-          const stats = await response.json();
+          const data = await response.json();
+          if (signal.aborted) return;
+          setGlobalStats(data);
+          setServerStats([]);
+        } else {
+          // Récupérer les stats pour chaque serveur sélectionné
+          const promises = selectedServers.map(async (serverId) => {
+            const response = await fetch(
+              `${apiUrl}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`,
+              { signal }
+            );
 
-          // Récupérer les informations du serveur
-          const serverResponse = await fetch(`${apiUrl}/servers/${serverId}`);
-          
-          if (!serverResponse.ok) {
-            throw new Error(`Failed to fetch server ${serverId}`);
-          }
-          
-          const serverData = await serverResponse.json();
-          
-          return { 
-            server: serverData.server,
-            stats: stats 
-          };
-        });
+            if (!response.ok) {
+              throw new Error(`Failed to fetch stats for server ${serverId}`);
+            }
 
-        const results = await Promise.all(promises);
-        setGlobalStats([]);
-        setServerStats(results);
+            const stats = await response.json();
+
+            // Récupérer les informations du serveur
+            const serverResponse = await fetch(`${apiUrl}/servers/${serverId}`, { signal });
+
+            if (!serverResponse.ok) {
+              throw new Error(`Failed to fetch server ${serverId}`);
+            }
+
+            const serverData = await serverResponse.json();
+
+            return {
+              server: serverData.server,
+              stats: stats
+            };
+          });
+
+          const results = await Promise.all(promises);
+          if (signal.aborted) return;
+          setGlobalStats([]);
+          setServerStats(results);
+        }
+      } catch (error) {
+        if ((error as Error).name === "AbortError") return;
+        console.error("Error fetching stats:", error);
+      } finally {
+        if (!signal.aborted) setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [apiUrl, dataAggregationInterval, dataRangeInterval, selectedCategory, selectedLanguage, selectedServers]);
+    },
+    [apiUrl, dataAggregationInterval, dataRangeInterval, selectedCategory, selectedLanguage, selectedServers]
+  );
 
   useEffect(() => {
-    fetchStats();
+    const controller = new AbortController();
+    fetchStats(controller.signal);
+    return () => controller.abort();
   }, [fetchStats]);
 
   return (
