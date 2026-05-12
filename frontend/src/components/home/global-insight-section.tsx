@@ -1,3 +1,5 @@
+"use client";
+
 import { ServerStat } from "@/types/server";
 import { useCallback, useEffect, useState } from "react";
 import { TimeRangeSelect, TimeRangeType } from "./selects/time-range-select";

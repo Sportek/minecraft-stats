@@ -59,7 +59,7 @@ const Header = () => {
 
   const displayUserMenu = () => (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger aria-label="User menu">
         <Avatar>
           <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
           <AvatarFallback className="bg-stats-blue-900 text-white">{user?.username?.[0].toUpperCase()}</AvatarFallback>
@@ -107,6 +107,9 @@ const Header = () => {
         </div>
 
         <button
+          type="button"
+          aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isMobileMenuOpen}
           className="md:hidden flex items-center justify-center w-10 h-10 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >

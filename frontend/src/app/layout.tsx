@@ -107,6 +107,9 @@ export default async function RootLayout({
     <html lang={htmlLang} suppressHydrationWarning>
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER} />
       <head>
+        <link rel="preconnect" href="https://www.clarity.ms" crossOrigin="" />
+        <link rel="preconnect" href="https://cloud.umami.is" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://scripts.clarity.ms" />
         <UmamiScript />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/images/minecraft-stats/logo.svg" />

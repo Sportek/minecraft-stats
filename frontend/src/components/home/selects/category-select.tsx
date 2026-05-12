@@ -13,6 +13,7 @@ export const CategorySelect = ({ value, onChange, disabled }: CategorySelectProp
 
   return (
     <select
+      aria-label="Filter by category"
       className="bg-zinc-100 dark:bg-zinc-800 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
