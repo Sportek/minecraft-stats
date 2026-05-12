@@ -219,3 +219,34 @@ scheduler
     )
   })
   .hourly()
+
+// Pré-création de la partition du mois suivant (P.4.2).
+// No-op si `server_stats` n'est pas une table partitionnée — détecté via pg_class.
+scheduler
+  .call(async () => {
+    const isPartitioned = await Database.rawQuery(`
+      SELECT 1 FROM pg_class
+       WHERE relname = 'server_stats' AND relkind = 'p'
+       LIMIT 1
+    `)
+    if (isPartitioned.rows.length === 0) {
+      logger.debug('SCHEDULER: partition_maintenance — server_stats is not partitioned, skipping')
+      return
+    }
+
+    await Database.rawQuery(`
+      DO $$
+      DECLARE
+        next_month date := date_trunc('month', now() + interval '1 month')::date;
+        month_after date := (date_trunc('month', now() + interval '1 month') + interval '1 month')::date;
+        part_name text := format('server_stats_y%sm%s', to_char(next_month, 'YYYY'), to_char(next_month, 'MM'));
+      BEGIN
+        EXECUTE format(
+          'CREATE TABLE IF NOT EXISTS %I PARTITION OF server_stats FOR VALUES FROM (%L) TO (%L)',
+          part_name, next_month, month_after
+        );
+      END $$;
+    `)
+    logger.info('SCHEDULER: partition_maintenance — ensured next month partition exists')
+  })
+  .everySixHours()
