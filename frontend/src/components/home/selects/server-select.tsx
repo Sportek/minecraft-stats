@@ -96,6 +96,7 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-label="Select servers to compare"
           className="w-full justify-between"
           disabled={disabled}
         >

@@ -2,7 +2,6 @@
 
 import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
 import { Icon } from "@iconify/react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import RestrictedWidthLayout from "../restricted-width-layout";
@@ -35,7 +34,7 @@ const Footer = () => {
           </div>
           <div className="flex flex-col gap-4">
             <div className="text-md font-bold">RESSOURCES</div>
-            <div className="flex flex-col gap-2 text-sm *:py-1">
+            <div className="flex flex-col gap-2 text-sm *:py-2">
               <Link
                 href="https://github.com/Sportek/minecraft-stats"
                 className="text-zinc-700 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300"
@@ -58,7 +57,7 @@ const Footer = () => {
           </div>
           <div className="flex flex-col gap-4">
             <div className="text-md font-bold">OTHER</div>
-            <div className="flex flex-col gap-2 text-sm *:py-1">
+            <div className="flex flex-col gap-2 text-sm *:py-2">
               <Link
                 href="https://discord.gg/Ru9fecKwPn"
                 target="_blank"
@@ -104,13 +103,9 @@ const Footer = () => {
               </div>
               <div className="flex flex-row items-center justify-center gap-2">
                 <div>Made with</div>
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-                  className="text-red-500"
-                >
+                <div className="text-red-500 animate-pulse">
                   <Icon icon="ic:round-favorite" className="w-4 h-4" />
-                </motion.div>
+                </div>
                 <div>by</div>
                 <Link
                   href="https://sportek.dev"

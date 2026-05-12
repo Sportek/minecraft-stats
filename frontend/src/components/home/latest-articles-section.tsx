@@ -58,7 +58,7 @@ const LatestArticlesSection = () => {
                 src={post.coverImage || `https://picsum.photos/seed/${post.slug}/800/400`}
                 alt=""
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                unoptimized
+                sizes="80px"
                 fill
               />
             </div>
@@ -67,14 +67,14 @@ const LatestArticlesSection = () => {
                 <span className="text-[10px] font-bold text-stats-blue-600 dark:text-blue-400 uppercase tracking-wide">
                   News
                 </span>
-                <span className="text-[10px] text-gray-500 dark:text-slate-500">
+                <span className="text-[10px] text-gray-600 dark:text-slate-400">
                   • {new Date(post.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              <h4 className="text-sm font-bold text-gray-900 dark:text-white truncate group-hover:text-stats-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate group-hover:text-stats-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
                 {post.title}
-              </h4>
-              <p className="text-xs text-gray-600 dark:text-slate-400 mt-1 line-clamp-1 opacity-80">{post.excerpt}</p>
+              </h3>
+              <p className="text-xs text-gray-700 dark:text-slate-300 mt-1 line-clamp-1">{post.excerpt}</p>
             </div>
           </Link>
         ))}

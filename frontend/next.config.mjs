@@ -17,8 +17,11 @@ const nextConfig = {
       { hostname: "api-staging.minecraft-stats.com" },
       { hostname: "api-prod.minecraft-stats.fr" },
       { hostname: "api-prod.minecraft-stats.com" },
+      { hostname: "upload.wikimedia.org" },
+      { hostname: "i.imgur.com" },
+      { hostname: "picsum.photos" },
     ],
-    formats: ["image/webp"],
+    formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2678400,
     deviceSizes: [48, 96, 128, 256, 384, 512, 640, 750, 828, 1080, 1200],
     imageSizes: [48, 96, 128, 256, 384],
@@ -27,12 +30,28 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  productionBrowserSourceMaps: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ["@iconify/react"],
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+        ],
+      },
+    ];
   },
 };
 

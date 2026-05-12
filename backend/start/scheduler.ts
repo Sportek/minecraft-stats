@@ -2,14 +2,15 @@ import Server from '#models/server'
 import StatsService from '#services/stat_service'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
+import redis from '@adonisjs/redis/services/main'
 import scheduler from 'adonisjs-scheduler/services/main'
+import { DateTime } from 'luxon'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pLimit from 'p-limit'
-import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
 import sharp from 'sharp'
-import { DateTime } from 'luxon'
+import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
 
 type ServerStatRow = {
   server_id: number
@@ -19,109 +20,166 @@ type ServerStatRow = {
 }
 
 /**
+ * Concurrence du pinger (Niveau 1.1 de P.5.1).
+ * 20 = bon compromis : on sature le réseau sortant sans dépasser le pool DB
+ * (les UPDATE individuels de `servers` se font à concurrence du même nombre).
+ */
+const PING_CONCURRENCY = 20
+
+/**
+ * Cadences (Niveau 2.1 — cadence différentielle).
+ */
+const CADENCE = {
+  hot: { minutes: 5 },
+  normal: { minutes: 10 },
+  recentFailure: { minutes: 10 },
+  cold: { minutes: 30 },
+  dead: { hours: 6 },
+}
+const HOT_THRESHOLD_PLAYERS = 100
+
+/**
+ * TTL du lock Redis "ping en cours" (Niveau 2.3).
+ * Garantit qu'un ping abandonné/crashé ne bloque pas le serveur > 60s.
+ */
+const PING_LOCK_TTL_SECONDS = 60
+
+/**
  * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
- * @param base64Image - La chaîne base64 de l'image.
- * @param outputPath - Le chemin de sortie où l'image sera enregistrée.
  */
 function saveBase64Image(base64Image: string, outputPath: string) {
-  // Supprimer le préfixe de la chaîne base64 (par exemple, "data:image/png;base64,")
   const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '')
-
-  // Créer un buffer à partir de la chaîne base64
   const buffer = Buffer.from(base64Data, 'base64')
-
-  // Écrire le buffer dans un fichier avec l'option 'w' pour écraser les fichiers existants
   fs.writeFileSync(outputPath, buffer, { flag: 'w' })
 }
 
 /**
- * Retente une fonction asynchrone plusieurs fois en cas d'échec.
- * @param fn - La fonction asynchrone à exécuter.
- * @param retries - Nombre de tentatives avant d'abandonner.
- * @param delay - Temps d'attente entre chaque tentative (en ms).
- * @returns Le résultat de la fonction si elle réussit.
+ * Calcule quand on va re-pinger un serveur, en fonction du résultat du ping et de
+ * son historique. Voir CADENCE ci-dessus.
  */
-async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      return await fn()
-    } catch (error) {
-      if (attempt === retries) {
-        throw error // Relancer l'erreur après le dernier échec.
-      }
-      await new Promise((resolve) => setTimeout(resolve, delay))
+function computeNextPingAt(server: Server, success: boolean): DateTime {
+  const now = DateTime.now()
+
+  if (success) {
+    if ((server.lastPlayerCount ?? 0) > HOT_THRESHOLD_PLAYERS) {
+      return now.plus(CADENCE.hot)
     }
+    return now.plus(CADENCE.normal)
   }
-  throw new Error('Unreachable code') // Juste pour satisfaire TypeScript.
+
+  // Échec — on grade en fonction de l'ancienneté du dernier succès.
+  const lastSuccess = server.lastStatsAt
+  if (!lastSuccess) {
+    // Jamais pingué avec succès → on le considère "cold" d'emblée (pas d'acharnement).
+    return now.plus(CADENCE.cold)
+  }
+  const hoursSince = now.diff(lastSuccess, 'hours').hours
+  if (hoursSince < 1) return now.plus(CADENCE.recentFailure)
+  if (hoursSince < 6) return now.plus(CADENCE.cold)
+  return now.plus(CADENCE.dead)
+}
+
+/**
+ * Verrou Redis (NX + TTL) pour empêcher qu'un même serveur soit pingué deux fois
+ * simultanément (Niveau 2.3). Si Redis est indisponible, on dégrade gracieusement
+ * (on ping quand même — le lock est un confort, pas une condition de sûreté).
+ */
+async function tryAcquirePingLock(serverId: number): Promise<boolean> {
+  const key = `ping:lock:${serverId}`
+  try {
+    const result = await redis.set(key, '1', 'EX', PING_LOCK_TTL_SECONDS, 'NX')
+    return result === 'OK'
+  } catch (error) {
+    logger.warn(
+      { serverId, err: error.message },
+      'PING_LOCK: redis unavailable, proceeding without lock'
+    )
+    return true
+  }
+}
+
+async function releasePingLock(serverId: number): Promise<void> {
+  const key = `ping:lock:${serverId}`
+  try {
+    await redis.del(key)
+  } catch {
+    // Pas grave — le TTL nettoiera le lock.
+  }
 }
 
 /**
  * Met à jour les informations du serveur et retourne la stat à insérer.
- * L'écriture des UPDATE `servers` reste individuelle, mais l'INSERT `server_stats` est
- * délégué au caller pour permettre un bulk insert en fin de cycle (cf. P.1.4).
- *
- * @param server - Le serveur à mettre à jour.
- * @param overwriteImage - Indique si l'image doit être écrasée.
+ * - 1 seule tentative (Niveau 1.2/1.3 — pas de retry sur les pings périodiques)
+ * - Timeout court (DEFAULT_PING_TIMEOUT côté lib)
+ * - Petit jitter pour étaler les départs concurrents (Niveau 1.4)
+ * - Met à jour `next_ping_at` même en cas d'échec
  */
 async function updateServerInfo(server: Server, overwriteImage = false): Promise<ServerStatRow> {
+  // Petit jitter (0-200ms) pour éviter que tous les pings concurrents partent au
+  // même millième de seconde — étale les pics de bande passante et de DNS lookups.
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 200))
+
   let playerOnline: number | null = null
   let maxPlayer: number | null = null
-  // Capturer l'horodatage au moment du ping (et non en fin de cycle) pour préserver l'exactitude.
+  let success = false
   const createdAt = new Date()
 
   try {
-    // On fait des retry pour éviter les erreurs de connexion
-    const data = await retry(() => pingMinecraftJava(server.address, server.port), 3, 2000)
-    if (!data) {
-      return { server_id: server.id, player_count: null, max_count: null, created_at: createdAt }
+    const data = await pingMinecraftJava(server.address, server.port)
+    if (data) {
+      if (data.favicon && (overwriteImage || !server.imageUrl)) {
+        try {
+          const filename = fileURLToPath(import.meta.url)
+          const pathDirname = dirname(filename)
+
+          const imageBase64 = data.favicon
+          const imagePath = path.join(pathDirname, '../public/images/servers')
+          const imageName = `${server.id}.png`
+          const imageFullPath = path.join(imagePath, imageName)
+          fs.mkdirSync(imagePath, { recursive: true })
+          saveBase64Image(imageBase64, imageFullPath)
+
+          const webpImageName = `${server.id}.webp`
+          const webpImageFullPath = path.join(imagePath, webpImageName)
+          const buffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64')
+          sharp(buffer)
+            .toFormat('webp')
+            .toFile(webpImageFullPath, (err) => {
+              if (err) {
+                logger.error(
+                  `SCHEDULER: Failed to generate webp image for server ${server.name} (${server.address}:${server.port}): ${err.message}`
+                )
+              }
+            })
+
+          server.imageUrl = `/images/servers/${server.id}`
+        } catch (imgErr) {
+          logger.warn(
+            { serverId: server.id, err: (imgErr as Error).message },
+            'SCHEDULER: image processing failed'
+          )
+        }
+      }
+
+      playerOnline = data.players?.online ?? 0
+      maxPlayer = data.players?.max ?? 0
+
+      server.version = data.version.name
+      server.lastPlayerCount = playerOnline
+      server.lastMaxCount = maxPlayer
+      server.lastStatsAt = DateTime.fromJSDate(createdAt)
+      success = true
     }
-
-    if (data.favicon && (overwriteImage || !server.imageUrl)) {
-      const filename = fileURLToPath(import.meta.url)
-      const pathDirname = dirname(filename)
-
-      const imageBase64 = data.favicon
-      const imagePath = path.join(pathDirname, '../public/images/servers')
-      const imageName = `${server.id}.png`
-      const imageFullPath = path.join(imagePath, imageName)
-      fs.mkdirSync(imagePath, { recursive: true })
-      saveBase64Image(imageBase64, imageFullPath)
-
-      // Génération d'une image webp
-      const webpImageName = `${server.id}.webp`
-      const webpImageFullPath = path.join(imagePath, webpImageName)
-      const buffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64')
-      sharp(buffer)
-        .toFormat('webp')
-        .toFile(webpImageFullPath, (err) => {
-          if (err) {
-            logger.error(
-              `SCHEDULER: Failed to generate webp image for server ${server.name} (${server.address}:${server.port}): ${err.message}`
-            )
-          } else {
-            logger.info(
-              `SCHEDULER: Generated webp image for server ${server.name} (${server.address}:${server.port})`
-            )
-          }
-        })
-
-      server.imageUrl = `/images/servers/${server.id}`
-    }
-
-    playerOnline = data.players?.online ?? 0
-    maxPlayer = data.players?.max ?? 0
-
-    server.version = data.version.name
-    server.lastPlayerCount = playerOnline
-    server.lastMaxCount = maxPlayer
-    server.lastStatsAt = DateTime.fromJSDate(createdAt)
-    await server.save()
-    logger.info(`SCHEDULER: Updated server ${server.name} (${server.address}:${server.port})`)
   } catch (error) {
-    logger.error(
-      `SCHEDULER: Failed to update server ${server.name} (${server.address}:${server.port}): ${error.message}`
+    logger.warn(
+      `SCHEDULER: ping failed for ${server.name} (${server.address}:${server.port}): ${error.message}`
     )
   }
+
+  // Mettre à jour `next_ping_at` même en cas d'échec — sinon le serveur resterait
+  // éligible à chaque tick et on le pingerait en boucle.
+  server.nextPingAt = computeNextPingAt(server, success)
+  await server.save()
 
   return {
     server_id: server.id,
@@ -132,8 +190,27 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
 }
 
 /**
+ * Wrapper qui acquiert le lock Redis avant de pinger. Retourne null si un autre
+ * pinger a déjà le lock pour ce serveur.
+ */
+async function pingWithLock(
+  server: Server,
+  overwriteImage: boolean
+): Promise<ServerStatRow | null> {
+  const acquired = await tryAcquirePingLock(server.id)
+  if (!acquired) {
+    logger.info(`SCHEDULER: skip server ${server.id} — ping already in flight`)
+    return null
+  }
+  try {
+    return await updateServerInfo(server, overwriteImage)
+  } finally {
+    await releasePingLock(server.id)
+  }
+}
+
+/**
  * Insère un lot de stats en une seule requête `server_stats`.
- * Aucune action si le batch est vide.
  */
 async function flushStatsBatch(batch: ServerStatRow[]): Promise<void> {
   if (batch.length === 0) return
@@ -142,41 +219,74 @@ async function flushStatsBatch(batch: ServerStatRow[]): Promise<void> {
 }
 
 /**
- * Met à jour les serveurs par lots avec un espacement uniforme des requêtes réseau.
- * L'espacement protège les serveurs Minecraft externes — il est **préservé**, seule
- * l'écriture DB est bulkée à la fin.
+ * Ping tous les serveurs dont `next_ping_at` est passé (ou NULL = jamais pingué).
+ * Parallélisme borné par `PING_CONCURRENCY`. Verrou Redis par serveur (P.5.1 N.2.3).
+ *
+ * @param overwriteImage - Force la régénération de l'image (utilisé par le job 6h)
  */
-async function updateServersWithUniformSpacing(totalTime = 10 * 60 * 1000) {
-  const servers = await Server.all()
-  if (servers.length === 0) return
+async function pingDueServers(overwriteImage = false): Promise<void> {
+  const start = Date.now()
 
-  const delayBetweenRequests = totalTime / servers.length
-  const limit = pLimit(1)
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+  const due = await Server.query()
+    .where((builder) => {
+      builder.whereNull('next_ping_at').orWhere('next_ping_at', '<=', DateTime.now().toSQL())
+    })
+    .orderBy('next_ping_at', 'asc')
 
-  const statsBatch: ServerStatRow[] = []
-  for (const server of servers) {
-    const row = await limit(() => updateServerInfo(server, false))
-    statsBatch.push(row)
-    await delay(delayBetweenRequests)
+  if (due.length === 0) {
+    logger.debug('SCHEDULER: no servers due for ping')
+    return
   }
 
+  const limit = pLimit(PING_CONCURRENCY)
+  const results = await Promise.all(
+    due.map((server) => limit(() => pingWithLock(server, overwriteImage)))
+  )
+
+  const statsBatch = results.filter((row): row is ServerStatRow => row !== null)
   await flushStatsBatch(statsBatch)
+
+  logger.info(
+    `SCHEDULER: pingDueServers done in ${Date.now() - start}ms — ${statsBatch.length}/${due.length} pinged`
+  )
 }
 
-// Planification avec les schedulers
-scheduler
-  .call(async () => {
-    // Espacer les requêtes uniformément sur 10 minutes
-    await updateServersWithUniformSpacing(10 * 60 * 1000)
-  })
-  .everyTenMinutes()
+// ============================================================================
+// Planification
+// ============================================================================
 
+// Ping périodique — tick toutes les 5 min, ne ping que les serveurs dus.
+// Concrètement : Hot servers pingés à chaque tick, Normal toutes les 2 ticks,
+// Cold toutes les 6, Dead toutes les ~72.
 scheduler
   .call(async () => {
+    try {
+      await pingDueServers(false)
+    } catch (error) {
+      logger.error({ err: error.message }, 'SCHEDULER: pingDueServers failed')
+    }
+  })
+  .everyFiveMinutes()
+
+// Force-refresh des favicons toutes les 6h sur TOUS les serveurs (pas seulement dus).
+// Utile pour rafraîchir les images qui auraient changé sans que le ping le détecte.
+scheduler
+  .call(async () => {
+    const start = Date.now()
     const servers = await Server.all()
-    const rows = await Promise.all(servers.map((server) => updateServerInfo(server, true)))
-    await flushStatsBatch(rows)
+    if (servers.length === 0) return
+
+    const limit = pLimit(PING_CONCURRENCY)
+    const results = await Promise.all(
+      servers.map((server) => limit(() => pingWithLock(server, true)))
+    )
+
+    const statsBatch = results.filter((row): row is ServerStatRow => row !== null)
+    await flushStatsBatch(statsBatch)
+
+    logger.info(
+      `SCHEDULER: favicon refresh job done in ${Date.now() - start}ms — ${statsBatch.length}/${servers.length} pinged`
+    )
   })
   .everySixHours()
 

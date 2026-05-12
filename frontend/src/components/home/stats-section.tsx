@@ -1,3 +1,5 @@
+"use client";
+
 import { Icon } from "@iconify/react/dist/iconify.js";
 import StatCard from "../serveur/stat-card";
 import { Server, ServerStat, Category, ServerGrowthStat } from "@/types/server";

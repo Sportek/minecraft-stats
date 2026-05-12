@@ -9,7 +9,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/auth";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ServersProvider } from "@/contexts/servers";
-import { startTransition, useEffect, useState } from "react";
 import { SWRConfig } from "swr";
 import { fetcher } from "@/app/_cheatcode";
 
@@ -18,18 +17,6 @@ export default function ClientLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    startTransition(() => {
-      setMounted(true);
-    });
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <SWRConfig
       value={{

@@ -1,30 +1,10 @@
-"use client";
-
 import HeroSection from "@/components/home/hero-section";
+import GlobalInsightSection from "@/components/home/global-insight-section";
+import LatestArticlesSection from "@/components/home/latest-articles-section";
+import ServerCardsSection from "@/components/home/server-cards-section";
+import StatsSection from "@/components/home/stats-section";
 import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/seo/structured-data";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
-
-const StatsSection = dynamic(() => import("@/components/home/stats-section"), {
-  loading: () => <div className="w-full h-[100px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false,
-});
-
-const GlobalInsightSection = dynamic(() => import("@/components/home/global-insight-section"), {
-  loading: () => <div className="w-full h-[400px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false,
-});
-
-const ServerCardsSection = dynamic(() => import("@/components/home/server-cards-section"), {
-  loading: () => <div className="w-full h-[200px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false,
-});
-
-const LatestArticlesSection = dynamic(() => import("@/components/home/latest-articles-section"), {
-  loading: () => <div className="w-full h-[300px] bg-white dark:bg-zinc-950 rounded-lg animate-pulse" />,
-  ssr: false,
-});
 
 export interface ServerData {
   server: Server;
@@ -44,18 +24,10 @@ const Home = () => {
       <OrganizationStructuredData />
       <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
         <HeroSection />
-        <Suspense>
-          <StatsSection />
-        </Suspense>
-        <Suspense>
-          <LatestArticlesSection />
-        </Suspense>
-        <Suspense>
-          <GlobalInsightSection />
-        </Suspense>
-        <Suspense>
-          <ServerCardsSection />
-        </Suspense>
+        <StatsSection />
+        <LatestArticlesSection />
+        <GlobalInsightSection />
+        <ServerCardsSection />
       </main>
     </>
   );

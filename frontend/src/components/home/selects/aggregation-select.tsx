@@ -9,6 +9,7 @@ interface AggregationSelectProps {
 export const AggregationSelect = ({ value, onChange, disabled }: AggregationSelectProps) => {
   return (
     <select
+      aria-label="Data aggregation interval"
       className="bg-zinc-100 dark:bg-zinc-800 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
       value={value}
       onChange={(e) => onChange(e.target.value as AggregationType)}

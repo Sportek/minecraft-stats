@@ -109,6 +109,7 @@ export const FancyMultiSelect = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
+            aria-label={placeholder}
             className="w-full justify-between"
             disabled={disabled}
           >
