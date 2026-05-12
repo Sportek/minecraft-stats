@@ -183,7 +183,8 @@ scheduler
 scheduler
   .call(async () => {
     const start = Date.now()
-    const serverCount = (await Server.query().count('* as total'))[0].$extras.total
+    const countResult = await Server.query().count('* as total')
+    const serverCount = countResult[0].$extras.total
     await StatsService.calculateAndStoreGrowthStats()
     logger.info(
       `SCHEDULER: growth_stats job completed in ${Date.now() - start}ms for ${serverCount} servers`

@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -11,7 +11,10 @@ import { NextRequest, NextResponse } from "next/server";
  * Body attendu (JSON) :
  *   { path: "/blog" }                  // revalidate un path
  *   { paths: ["/blog", "/"] }          // revalidate plusieurs paths
- *   { tag: "servers" }                 // revalidate par tag (si utilisé)
+ *
+ * Note : revalidation par tag non exposée ici. En Next.js 16, `revalidateTag`
+ * requiert un `CacheLifeConfig` et est restreint aux Server Actions — usage trop
+ * spécifique pour cette route générique. À implémenter séparément si besoin.
  *
  * Exemple côté backend :
  *   fetch("https://frontend/api/revalidate", {
@@ -34,7 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { path?: string; paths?: string[]; tag?: string };
+  let body: { path?: string; paths?: string[] };
   try {
     body = await request.json();
   } catch {
@@ -42,7 +45,6 @@ export async function POST(request: NextRequest) {
   }
 
   const revalidatedPaths: string[] = [];
-  const revalidatedTags: string[] = [];
 
   if (body.path) {
     revalidatePath(body.path);
@@ -54,14 +56,10 @@ export async function POST(request: NextRequest) {
       revalidatedPaths.push(p);
     }
   }
-  if (body.tag) {
-    revalidateTag(body.tag);
-    revalidatedTags.push(body.tag);
-  }
 
-  if (revalidatedPaths.length === 0 && revalidatedTags.length === 0) {
+  if (revalidatedPaths.length === 0) {
     return NextResponse.json(
-      { error: "Provide `path`, `paths`, or `tag` in body" },
+      { error: "Provide `path` or `paths` in body" },
       { status: 400 }
     );
   }
@@ -69,7 +67,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     revalidated: true,
     paths: revalidatedPaths,
-    tags: revalidatedTags,
     now: Date.now(),
   });
 }

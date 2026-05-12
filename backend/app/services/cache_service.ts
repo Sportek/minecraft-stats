@@ -10,7 +10,10 @@ function getOrCreateCounter(name: string, help: string): Counter<string> {
   return new Counter({ name, help, labelNames: ['key_prefix'] })
 }
 
-const cacheHits = getOrCreateCounter(`${metricPrefix}cache_hits_total`, 'Cache hits par préfixe de clé')
+const cacheHits = getOrCreateCounter(
+  `${metricPrefix}cache_hits_total`,
+  'Cache hits par préfixe de clé'
+)
 const cacheMisses = getOrCreateCounter(
   `${metricPrefix}cache_misses_total`,
   'Cache misses par préfixe de clé'

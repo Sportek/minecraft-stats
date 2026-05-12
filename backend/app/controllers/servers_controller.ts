@@ -164,7 +164,13 @@ export default class ServersController {
       cacheKey,
       60,
       async () => {
-        const result = await this.runPaginateQuery({ page, limit, categoryIds, languageIds, search })
+        const result = await this.runPaginateQuery({
+          page,
+          limit,
+          categoryIds,
+          languageIds,
+          search,
+        })
         return result
       },
       { bypass }

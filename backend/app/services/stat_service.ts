@@ -52,25 +52,21 @@ export default class StatsService {
     })
 
     const rows: any[] = result.rows
+    const stripKind = (r: any): any => ({
+      server_id: r.server_id,
+      created_at: r.created_at,
+      player_count: r.player_count,
+    })
 
     const exact = rows.find((r) => r.kind === 'exact')
-    if (exact) {
-      const { kind: _kind, ...row } = exact
-      return row
-    }
+    if (exact) return stripKind(exact)
 
     const before = rows.find((r) => r.kind === 'before')
     const after = rows.find((r) => r.kind === 'after')
 
     if (!before && !after) return null
-    if (before && !after) {
-      const { kind: _kind, ...row } = before
-      return row
-    }
-    if (!before && after) {
-      const { kind: _kind, ...row } = after
-      return row
-    }
+    if (before && !after) return stripKind(before)
+    if (!before && after) return stripKind(after)
 
     // Sinon on fait la moyenne
     const avg = Math.round((Number(before.player_count) + Number(after.player_count)) / 2)
@@ -115,7 +111,8 @@ export default class StatsService {
   ): boolean {
     if (intervalSeconds < 3600) return false
     if (!fromDateSql || !toDateSql) return false
-    const rangeMs = DateTime.fromSQL(toDateSql).toMillis() - DateTime.fromSQL(fromDateSql).toMillis()
+    const rangeMs =
+      DateTime.fromSQL(toDateSql).toMillis() - DateTime.fromSQL(fromDateSql).toMillis()
     return rangeMs > 24 * 60 * 60 * 1000
   }
 
@@ -209,7 +206,9 @@ export default class StatsService {
     fromDate: number
     toDate: number
     interval: string
-  }): Promise<Map<number, Array<{ created_at: DateTime; player_count: number; max_count: number }>>> {
+  }): Promise<
+    Map<number, Array<{ created_at: DateTime; player_count: number; max_count: number }>>
+  > {
     const intervalSeconds = this.intervalToSeconds(params.interval)
     const fromDateSql = DateTime.fromMillis(params.fromDate).toSQL()
     const toDateSql = DateTime.fromMillis(params.toDate).toSQL()
@@ -239,13 +238,12 @@ export default class StatsService {
       ORDER BY server_id, 2
     `
 
-    const rows = (
-      await Database.rawQuery(rawQuery, {
-        serverIds: params.serverIds,
-        fromDate: fromDateSql,
-        toDate: toDateSql,
-      })
-    ).rows as Array<{
+    const batchResult = await Database.rawQuery(rawQuery, {
+      serverIds: params.serverIds,
+      fromDate: fromDateSql,
+      toDate: toDateSql,
+    })
+    const rows = batchResult.rows as Array<{
       server_id: number
       created_at: string | Date
       player_count: number
@@ -313,7 +311,8 @@ export default class StatsService {
       GROUP BY server_id
     `
 
-    const rows = (await Database.rawQuery(aggregateQuery)).rows as Array<{
+    const aggregateResult = await Database.rawQuery(aggregateQuery)
+    const rows = aggregateResult.rows as Array<{
       server_id: number
       last_week_avg: number | null
       prev_week_avg: number | null
@@ -343,7 +342,9 @@ export default class StatsService {
     })
 
     if (growthRows.length === 0) {
-      logger.info('SCHEDULER: growth_stats — no servers with stats in the last 30d, skipping upsert')
+      logger.info(
+        'SCHEDULER: growth_stats — no servers with stats in the last 30d, skipping upsert'
+      )
       return
     }
 
