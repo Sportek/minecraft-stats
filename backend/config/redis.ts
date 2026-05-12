@@ -22,8 +22,15 @@ const redisConfig = defineConfig({
       password: env.get('REDIS_PASSWORD', ''),
       db: 0,
       keyPrefix: '',
+      // Fail-fast quand Redis est down : pas de queue offline, pas de blocage des
+      // commandes le temps de la reconnexion. Le CacheService tombe gracefully
+      // sur le fetcher au lieu d'attendre 5s par requête (P.2.1).
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: 1,
+      connectTimeout: 2000,
       retryStrategy(times) {
-        return times > 10 ? null : times * 50
+        if (times > 10) return null
+        return Math.min(times * 200, 3000)
       },
     },
   },
