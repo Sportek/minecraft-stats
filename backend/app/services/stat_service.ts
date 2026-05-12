@@ -21,67 +21,59 @@ export default class StatsService {
   /**
    * Cherche la donnée exacte, ou fait la moyenne entre la donnée
    * juste avant et juste après si elle n'existe pas.
+   *
+   * Une seule requête UNION ALL pour récupérer exact + before + after (P.3.3).
    */
   static async getExactTimeRow(serverId: number, exactTime: DateTime) {
     const exactTimeSql = exactTime.toSQL()
 
-    // 1) Vérifier si la donnée exacte existe
-    const exactRowQuery = `
-      SELECT 
-        server_id,
-        created_at,
-        player_count
-      FROM server_stats
-      WHERE server_id = ?
-        AND created_at = ?
-      LIMIT 1
+    const combinedQuery = `
+      (SELECT 'exact'::text AS kind, server_id, created_at, player_count
+         FROM server_stats
+        WHERE server_id = :serverId AND created_at = :exactTime
+        LIMIT 1)
+      UNION ALL
+      (SELECT 'before'::text AS kind, server_id, created_at, player_count
+         FROM server_stats
+        WHERE server_id = :serverId AND created_at < :exactTime
+        ORDER BY created_at DESC
+        LIMIT 1)
+      UNION ALL
+      (SELECT 'after'::text AS kind, server_id, created_at, player_count
+         FROM server_stats
+        WHERE server_id = :serverId AND created_at > :exactTime
+        ORDER BY created_at ASC
+        LIMIT 1)
     `
-    const exactRow = await Database.rawQuery(exactRowQuery, [serverId, exactTimeSql])
 
-    if (exactRow.rows.length > 0) {
-      // On a trouvé l'enregistrement exact
-      return exactRow.rows[0]
+    const result = await Database.rawQuery(combinedQuery, {
+      serverId,
+      exactTime: exactTimeSql,
+    })
+
+    const rows: any[] = result.rows
+
+    const exact = rows.find((r) => r.kind === 'exact')
+    if (exact) {
+      const { kind: _kind, ...row } = exact
+      return row
     }
 
-    // 2) Sinon, récupérer l'enregistrement juste avant et juste après
-    const rowBeforeQuery = `
-      SELECT 
-        server_id,
-        created_at,
-        player_count
-      FROM server_stats
-      WHERE server_id = ?
-        AND created_at < ?
-      ORDER BY created_at DESC
-      LIMIT 1
-    `
-    const rowAfterQuery = `
-      SELECT 
-        server_id,
-        created_at,
-        player_count
-      FROM server_stats
-      WHERE server_id = ?
-        AND created_at > ?
-      ORDER BY created_at ASC
-      LIMIT 1
-    `
-    const [beforeRows, afterRows] = await Promise.all([
-      Database.rawQuery(rowBeforeQuery, [serverId, exactTimeSql]),
-      Database.rawQuery(rowAfterQuery, [serverId, exactTimeSql]),
-    ])
-    const rowBefore = beforeRows.rows[0]
-    const rowAfter = afterRows.rows[0]
+    const before = rows.find((r) => r.kind === 'before')
+    const after = rows.find((r) => r.kind === 'after')
 
-    // Aucun avant/après => rien à renvoyer
-    if (!rowBefore && !rowAfter) return null
-    // Seulement avant
-    if (rowBefore && !rowAfter) return rowBefore
-    // Seulement après
-    if (!rowBefore && rowAfter) return rowAfter
+    if (!before && !after) return null
+    if (before && !after) {
+      const { kind: _kind, ...row } = before
+      return row
+    }
+    if (!before && after) {
+      const { kind: _kind, ...row } = after
+      return row
+    }
 
     // Sinon on fait la moyenne
-    const avg = Math.round((Number(rowBefore.player_count) + Number(rowAfter.player_count)) / 2)
+    const avg = Math.round((Number(before.player_count) + Number(after.player_count)) / 2)
     return {
       server_id: serverId,
       created_at: exactTimeSql,
