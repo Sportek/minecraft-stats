@@ -104,7 +104,26 @@ export default class StatsService {
   }
 
   /**
+   * Heuristique de routage (P.4.1) : utilise `server_stats_hourly` pour les requêtes
+   * à interval ≥ 1h sur des plages > 24h. Sinon (intervals fins, fenêtres courtes,
+   * absence de plage), reste sur `server_stats` brute.
+   */
+  private static shouldUseHourlyTable(
+    intervalSeconds: number,
+    fromDateSql?: string,
+    toDateSql?: string
+  ): boolean {
+    if (intervalSeconds < 3600) return false
+    if (!fromDateSql || !toDateSql) return false
+    const rangeMs = DateTime.fromSQL(toDateSql).toMillis() - DateTime.fromSQL(fromDateSql).toMillis()
+    return rangeMs > 24 * 60 * 60 * 1000
+  }
+
+  /**
    * Regroupe les stats en fonction d'un interval (ex: 1 hour, 30 minutes).
+   * Route automatiquement vers la table horaire pré-agrégée si la plage est longue
+   * (P.4.1). La moyenne re-bucketée est **pondérée** par `samples_count` pour
+   * préserver la précision quand des heures ont moins de samples (serveur down).
    */
   static async getStatsWithInterval(
     serverId: number,
@@ -114,8 +133,41 @@ export default class StatsService {
   ) {
     const intervalSeconds = this.intervalToSeconds(interval)
 
-    // Construction de la clause WHERE
-    // On utilise des conditions "dynamiques" sur fromDateSql et toDateSql
+    if (this.shouldUseHourlyTable(intervalSeconds, fromDateSql, toDateSql)) {
+      let whereClauseHourly = `WHERE server_id = :serverId`
+      if (fromDateSql && toDateSql) {
+        whereClauseHourly += ` AND hour BETWEEN :fromDate AND :toDate`
+      } else if (fromDateSql) {
+        whereClauseHourly += ` AND hour >= :fromDate`
+      } else if (toDateSql) {
+        whereClauseHourly += ` AND hour <= :toDate`
+      }
+
+      const hourlyQuery = `
+        SELECT
+          to_timestamp(
+            floor(extract(epoch from hour) / ${intervalSeconds})
+            * ${intervalSeconds}
+          ) AS created_at,
+          ROUND(
+            SUM(avg_player_count::bigint * samples_count)::numeric /
+            NULLIF(SUM(samples_count), 0)
+          )::int AS player_count
+        FROM server_stats_hourly
+        ${whereClauseHourly}
+        GROUP BY 1
+        ORDER BY 1
+      `
+
+      const bindings: any = { serverId }
+      if (fromDateSql) bindings.fromDate = fromDateSql
+      if (toDateSql) bindings.toDate = toDateSql
+
+      const result = await Database.rawQuery(hourlyQuery, bindings)
+      return result.rows
+    }
+
+    // Chemin par défaut : agrégation à la volée sur server_stats brute.
     let whereClause = `WHERE server_id = :serverId`
     if (fromDateSql && toDateSql) {
       whereClause += `
@@ -128,9 +180,9 @@ export default class StatsService {
     }
 
     const rawQuery = `
-      SELECT 
+      SELECT
         to_timestamp(
-          floor(extract(epoch from created_at) / ${intervalSeconds}) 
+          floor(extract(epoch from created_at) / ${intervalSeconds})
           * ${intervalSeconds}
         ) AS created_at,
         round(AVG(player_count))::int AS player_count

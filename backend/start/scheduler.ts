@@ -190,3 +190,32 @@ scheduler
     )
   })
   .everySixHours()
+
+// Agrégation horaire des stats brutes vers server_stats_hourly (P.4.1).
+// Tourne toutes les heures et upsert l'heure qui vient juste de se terminer.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const result = await Database.rawQuery(`
+      INSERT INTO server_stats_hourly (server_id, hour, avg_player_count, max_player_count, samples_count)
+      SELECT
+        server_id,
+        date_trunc('hour', created_at) AS hour,
+        ROUND(AVG(player_count))::int AS avg_player_count,
+        MAX(max_count) AS max_player_count,
+        COUNT(*)::int AS samples_count
+      FROM server_stats
+      WHERE created_at >= date_trunc('hour', now() - interval '1 hour')
+        AND created_at <  date_trunc('hour', now())
+      GROUP BY server_id, hour
+      ON CONFLICT (server_id, hour) DO UPDATE SET
+        avg_player_count = EXCLUDED.avg_player_count,
+        max_player_count = EXCLUDED.max_player_count,
+        samples_count    = EXCLUDED.samples_count
+    `)
+    const rowCount = result.rowCount ?? 0
+    logger.info(
+      `SCHEDULER: hourly_stats aggregation completed in ${Date.now() - start}ms (${rowCount} rows upserted)`
+    )
+  })
+  .hourly()
