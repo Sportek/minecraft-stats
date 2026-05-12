@@ -5,23 +5,27 @@ import { CreateServerValidator, UpdateServerValidator } from '#validators/server
 import type { HttpContext } from '@adonisjs/core/http'
 import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
+import CacheService from '#services/cache_service'
 import StatsService from '#services/stat_service'
 import Language from '#models/language'
 
 export default class ServersController {
   async index() {
-    const servers = await Server.query()
-      .preload('user')
-      .preload('categories')
-      .preload('growthStat')
-      .preload('languages')
-    const serversWithStats = await Promise.all(
-      servers.map(async (server) => {
-        const stats = await this.getActualStats(server)
-        return { server, stats, categories: server.categories, growthStat: server.growthStat }
-      })
+    // Endpoint léger : pas de préloads (user/categories/growthStat/languages), pas de stats par serveur.
+    // Consommé par le sitemap, le ServerSelect et le compteur "Monitored servers" — tous se contentent du
+    // {id, name, updatedAt} de chaque serveur. Forme `[{ server }]` conservée pour compat frontend.
+    const servers = await Server.query().select(
+      'id',
+      'name',
+      'address',
+      'port',
+      'image_url',
+      'last_player_count',
+      'last_stats_at',
+      'created_at',
+      'updated_at'
     )
-    return serversWithStats
+    return servers.map((server) => ({ server }))
   }
 
   async store({ request, auth, response }: HttpContext) {
@@ -136,19 +140,69 @@ export default class ServersController {
     return response.noContent()
   }
 
-  async paginate({ request }: HttpContext) {
+  async paginate(ctx: HttpContext) {
+    const { request } = ctx
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
     const categoryIds = request.input('categoryIds')
     const languageIds = request.input('languageIds')
     const search = request.input('search', '')
 
+    const cacheKey = CacheService.hashParams('paginate', {
+      page,
+      limit,
+      categoryIds,
+      languageIds,
+      search,
+    })
+
+    const nocache = request.input('nocache') === '1'
+    const bypass =
+      nocache && (process.env.NODE_ENV !== 'production' || ctx.auth?.user?.role === 'admin')
+
+    return CacheService.cacheOrFetch(
+      cacheKey,
+      60,
+      async () => {
+        const result = await this.runPaginateQuery({
+          page,
+          limit,
+          categoryIds,
+          languageIds,
+          search,
+        })
+        return result
+      },
+      { bypass }
+    )
+  }
+
+  private async runPaginateQuery(opts: {
+    page: number
+    limit: number
+    categoryIds?: string
+    languageIds?: string
+    search: string
+  }) {
+    const { page, limit, categoryIds, languageIds, search } = opts
+
+    // Ordering : on ne classe par `last_player_count` que si le dernier ping
+    // réussi est récent (< 30 min, soit ~3 cycles de 10 min). Sinon le serveur
+    // est traité comme "stale" et descend en bas, peu importe son ancien count.
+    // Évite qu'un serveur down depuis des jours reste top juste parce qu'il
+    // avait 500 joueurs avant de tomber.
     let query = Server.query()
       .preload('user')
       .preload('categories')
       .preload('growthStat')
       .preload('languages')
-      .orderByRaw('COALESCE(last_player_count, -1) DESC')
+      .orderByRaw(
+        `CASE
+          WHEN last_stats_at > now() - interval '30 minutes'
+            THEN COALESCE(last_player_count, -1)
+          ELSE -1
+         END DESC`
+      )
       .orderBy('last_stats_at', 'desc')
 
     if (search) {
@@ -191,22 +245,49 @@ export default class ServersController {
 
     const servers = await query.paginate(page, limit)
 
-    const serversWithStats = await Promise.all(
-      servers.map(async (server) => {
-        const lastStat = await this.getActualStats(server, 1)
-        const lastDayStats = await StatsService.getStats({
-          server_id: server.id,
-          fromDate: Date.now() - 24 * 60 * 60 * 1000,
-          toDate: Date.now(),
-        })
-        return {
-          server,
-          stats: [...lastStat, ...lastDayStats],
-          categories: server.categories,
-          growthStat: server.growthStat,
-        }
-      })
-    )
+    const now = Date.now()
+    const fromDate = now - 24 * 60 * 60 * 1000
+
+    // Important : Lucid SimplePaginator étend Array, donc `servers.map(...)` retourne
+    // une *nouvelle SimplePaginator* (via Symbol.species), pas un Array standard.
+    // Ce paginator a un `.toJSON()` qui réécrit la réponse en `{meta, data}` →
+    // double nesting côté HTTP. On extrait `servers.all()` (le rows[] réel) avant map.
+    const serverRows = servers.all()
+    const serverIds = serverRows.map((s) => s.id)
+    const statsByServer = await StatsService.getStatsBatch({
+      serverIds,
+      fromDate,
+      toDate: now,
+      interval: '1 hour',
+    })
+
+    const serversWithStats = serverRows.map((server) => {
+      const bucketed = (statsByServer.get(server.id) ?? []).map((row) => ({
+        serverId: server.id,
+        createdAt: row.created_at,
+        playerCount: row.player_count,
+        maxCount: row.max_count,
+      }))
+
+      const lastStat =
+        server.lastStatsAt !== null && server.lastPlayerCount !== null
+          ? [
+              {
+                serverId: server.id,
+                createdAt: server.lastStatsAt,
+                playerCount: server.lastPlayerCount,
+                maxCount: server.lastMaxCount,
+              },
+            ]
+          : []
+
+      return {
+        server,
+        stats: [...lastStat, ...bucketed],
+        categories: server.categories,
+        growthStat: server.growthStat,
+      }
+    })
 
     return {
       data: serversWithStats,

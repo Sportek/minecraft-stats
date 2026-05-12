@@ -100,6 +100,8 @@ services:
     restart: "unless-stopped"
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     networks:
       - sail
     healthcheck:

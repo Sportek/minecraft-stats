@@ -1,11 +1,16 @@
 import Category from '#models/category'
 import CategoryPolicy from '#policies/category_policy'
+import CacheService from '#services/cache_service'
 import { CreateCategoryValidator } from '#validators/category'
 import type { HttpContext } from '@adonisjs/core/http'
 
+const CATEGORIES_CACHE_KEY = 'categories:all'
+
 export default class CategoriesController {
   async index({ response }: HttpContext) {
-    const categories = await Category.all()
+    const categories = await CacheService.cacheOrFetch(CATEGORIES_CACHE_KEY, 3600, () =>
+      Category.all()
+    )
     return response.ok(categories)
   }
 
@@ -15,6 +20,7 @@ export default class CategoriesController {
       return response.forbidden({ message: 'Unauthorized' })
     }
     const category = await Category.create(data)
+    await CacheService.invalidate(CATEGORIES_CACHE_KEY)
     return response.ok(category)
   }
 
@@ -25,6 +31,7 @@ export default class CategoriesController {
       return response.forbidden({ message: 'Unauthorized' })
     }
     await category.delete()
+    await CacheService.invalidate(CATEGORIES_CACHE_KEY)
     return response.ok(category)
   }
 
@@ -36,6 +43,7 @@ export default class CategoriesController {
     }
     const category = await Category.findOrFail(id)
     await category.merge(validatedData).save()
+    await CacheService.invalidate(CATEGORIES_CACHE_KEY)
     return response.ok(category)
   }
 }

@@ -5,6 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
 
+// ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
+export const revalidate = 600;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };

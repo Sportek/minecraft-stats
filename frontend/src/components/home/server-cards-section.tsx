@@ -8,7 +8,7 @@ import { fetcher } from "@/app/_cheatcode";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import { Category, Language } from "@/types/server";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -36,8 +36,8 @@ const ServerCardsSection = () => {
   const debouncedSearch = useDebounce(search, 300);
   const apiUrl = getClientApiUrl();
 
-  const { data: categories } = useSWR<Category[]>(`${apiUrl}/categories`, fetcher);
-  const { data: languages } = useSWR<Language[]>(`${apiUrl}/languages`, fetcher);
+  const { data: categories } = useSWRImmutable<Category[]>(`${apiUrl}/categories`, fetcher);
+  const { data: languages } = useSWRImmutable<Language[]>(`${apiUrl}/languages`, fetcher);
 
   const getKey = (pageIndex: number, previousPageData: PaginatedResponse | null) => {
     if (previousPageData && previousPageData.meta.currentPage >= previousPageData.meta.lastPage) return null;

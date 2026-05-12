@@ -152,7 +152,8 @@ const ServerPage = () => {
     error: serverError,
     isLoading: isServerLoading,
   } = useSWR<ServerData, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {
-    refreshInterval: 1000 * 60 * 2,
+    // Aligné sur le TTL Redis backend (300s) — cf. P.2.1
+    refreshInterval: 1000 * 60 * 5,
   });
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");

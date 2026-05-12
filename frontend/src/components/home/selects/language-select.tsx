@@ -1,6 +1,6 @@
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import { Language } from "@/types/server";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 
 interface LanguageSelectProps {
   value: number | null;
@@ -9,7 +9,7 @@ interface LanguageSelectProps {
 }
 
 export const LanguageSelect = ({ value, onChange, disabled }: LanguageSelectProps) => {
-  const { data: languages } = useSWR<Language[]>(`${getBaseUrl()}/languages`, fetcher);
+  const { data: languages } = useSWRImmutable<Language[]>(`${getBaseUrl()}/languages`, fetcher);
 
   return (
     <select

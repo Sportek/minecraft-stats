@@ -10,6 +10,8 @@ import { AuthProvider } from "@/contexts/auth";
 import { FavoriteProvider } from "@/contexts/favorite";
 import { ServersProvider } from "@/contexts/servers";
 import { startTransition, useEffect, useState } from "react";
+import { SWRConfig } from "swr";
+import { fetcher } from "@/app/_cheatcode";
 
 export default function ClientLayout({
   children,
@@ -29,20 +31,29 @@ export default function ClientLayout({
   }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-      <AuthProvider>
-        <ServersProvider>
-          <FavoriteProvider>
-            <Header />
-            <Toaster />
-            <div className="flex-1 flex flex-col items-center justify-center text-stats-blue-1050 dark:text-stats-blue-50 bg-stats-blue-50 dark:bg-stats-blue-1050">
-              <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
-              <Metrics />
-            </div>
-            <Footer />
-          </FavoriteProvider>
-        </ServersProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <SWRConfig
+      value={{
+        fetcher,
+        revalidateOnFocus: false,
+        dedupingInterval: 60_000,
+        errorRetryCount: 2,
+      }}
+    >
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <AuthProvider>
+          <ServersProvider>
+            <FavoriteProvider>
+              <Header />
+              <Toaster />
+              <div className="flex-1 flex flex-col items-center justify-center text-stats-blue-1050 dark:text-stats-blue-50 bg-stats-blue-50 dark:bg-stats-blue-1050">
+                <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
+                <Metrics />
+              </div>
+              <Footer />
+            </FavoriteProvider>
+          </ServersProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </SWRConfig>
   );
 }

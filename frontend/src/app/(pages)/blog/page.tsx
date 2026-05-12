@@ -4,6 +4,9 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+// ISR — la page est rebuild en arrière-plan toutes les heures (P.4.3)
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Blog - Minecraft Stats",
   description: "Latest news, server spotlights, and development updates.",
