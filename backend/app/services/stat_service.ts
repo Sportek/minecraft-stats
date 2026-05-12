@@ -438,56 +438,41 @@ export default class StatsService {
 
     const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
 
-    // Optimisation : Utilisation d'une seule requête avec des sous-requêtes pour éviter les calculs redondants
+    // Expression "bucket" calculée une seule fois ; partition idem.
+    // En l'absence d'interval, bucket = created_at (chaque ligne est son propre bucket).
+    const intervalSeconds = params.interval ? this.intervalToSeconds(params.interval) : null
+    const bucketExpr = intervalSeconds
+      ? `to_timestamp(floor(extract(epoch from ss.created_at) / ${intervalSeconds}) * ${intervalSeconds})`
+      : 'ss.created_at'
+    const partitionExpr = intervalSeconds
+      ? `floor(extract(epoch from ss.created_at) / ${intervalSeconds})`
+      : 'ss.created_at'
+
+    // Pour chaque (server_id, bucket), on garde la ligne la plus récente, puis
+    // on somme player_count / max_count par bucket et on ordonne.
     const rawQuery = `
-      WITH latest_stats AS (
-        SELECT DISTINCT ON (ss.server_id,
-          ${
-            params.interval
-              ? `
-            to_timestamp(
-              floor(extract(epoch from ss.created_at) / ${this.intervalToSeconds(params.interval)})
-              * ${this.intervalToSeconds(params.interval)}
-            )
-          `
-              : 'ss.created_at'
-          })
+      WITH bucketed AS (
+        SELECT
           ss.server_id,
-          ${
-            params.interval
-              ? `
-            to_timestamp(
-              floor(extract(epoch from ss.created_at) / ${this.intervalToSeconds(params.interval)})
-              * ${this.intervalToSeconds(params.interval)}
-            ) AS created_at,
-          `
-              : 'ss.created_at,'
-          }
           ss.player_count,
-          ss.max_count
+          ss.max_count,
+          ${bucketExpr} AS bucket,
+          ROW_NUMBER() OVER (
+            PARTITION BY ss.server_id, ${partitionExpr}
+            ORDER BY ss.created_at DESC
+          ) AS rn
         FROM server_stats ss
         ${joins}
         ${whereClause}
-        ORDER BY ss.server_id,
-          ${
-            params.interval
-              ? `
-            to_timestamp(
-              floor(extract(epoch from ss.created_at) / ${this.intervalToSeconds(params.interval)})
-              * ${this.intervalToSeconds(params.interval)}
-            )
-          `
-              : 'ss.created_at'
-          },
-          ss.created_at DESC
       )
       SELECT
-        created_at,
+        bucket AS created_at,
         SUM(player_count)::int AS player_count,
         SUM(max_count)::int AS max_count
-      FROM latest_stats
-      GROUP BY created_at
-      ORDER BY created_at
+      FROM bucketed
+      WHERE rn = 1
+      GROUP BY bucket
+      ORDER BY bucket
     `
 
     const bindings: any = {}
