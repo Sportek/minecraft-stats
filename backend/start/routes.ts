@@ -10,8 +10,14 @@
 import swagger from '#config/swagger'
 import router from '@adonisjs/core/services/router'
 import AutoSwagger from 'adonis-autoswagger'
+import { cacheHeaders } from '#middleware/cache_headers_middleware'
 import { middleware } from './kernel.js'
 import { throttleLight } from './limiter.js'
+
+const PUBLIC_STATS = cacheHeaders({ maxAge: 300, sWR: 600 })
+const PUBLIC_PAGINATE = cacheHeaders({ maxAge: 60, sWR: 120 })
+const PUBLIC_LONG = cacheHeaders({ maxAge: 3600 })
+const NO_STORE = cacheHeaders({ noStore: true })
 
 router.get('/swagger', async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger)
@@ -26,38 +32,44 @@ router
     // Gestion des ressources
     router
       .get('servers/paginate', '#controllers/servers_controller.paginate')
-      .use(throttleLight('servers.paginate', 50))
+      .use([throttleLight('servers.paginate', 50), PUBLIC_PAGINATE])
 
     router
       .resource('servers', '#controllers/servers_controller')
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
+      .middleware(['destroy', 'store', 'update'], NO_STORE)
       .use('*', throttleLight('servers', 35))
 
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
       .only(['index', 'store', 'destroy'])
+      .middleware(['store', 'destroy'], NO_STORE)
       .use('*', throttleLight('servers.categories', 8))
 
     router
       .resource('languages', '#controllers/languages_controller')
       .only(['index'])
+      .middleware('index', PUBLIC_LONG)
       .use('*', throttleLight('languages', 8))
 
     router
       .resource('categories', '#controllers/categories_controller')
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
+      .middleware(['destroy', 'store', 'update'], NO_STORE)
+      .middleware('index', PUBLIC_LONG)
       .use('*', throttleLight('categories', 8))
 
     router
       .resource('servers.stats', '#controllers/stats_controller')
       .only(['index'])
+      .middleware('index', PUBLIC_STATS)
       .use('*', throttleLight('servers.stats', 40))
 
     router
       .get('global-stats', '#controllers/stats_controller.globalStats')
-      .use(throttleLight('global-stats', 40))
+      .use([throttleLight('global-stats', 40), PUBLIC_STATS])
 
     router
       .resource('users', '#controllers/users_controller')
@@ -70,31 +82,33 @@ router
       .use(throttleLight('website-stats', 10))
 
     // Authentification et gestion de compte
-    router.post('/login', '#controllers/auth_controller.login').use(throttleLight('login', 5))
+    router
+      .post('/login', '#controllers/auth_controller.login')
+      .use([throttleLight('login', 5), NO_STORE])
     router
       .post('/register', '#controllers/auth_controller.register')
-      .use(throttleLight('register', 5))
+      .use([throttleLight('register', 5), NO_STORE])
     router
       .post('/verify-email', '#controllers/auth_controller.verifyEmail')
-      .use(throttleLight('verify-email', 5))
+      .use([throttleLight('verify-email', 5), NO_STORE])
     router
       .get('/me', '#controllers/auth_controller.retrieveUser')
       .use(middleware.auth())
-      .use(throttleLight('me', 5))
+      .use([throttleLight('me', 5), NO_STORE])
     router
       .post('/change-password', '#controllers/auth_controller.changePassword')
       .use(middleware.auth())
-      .use(throttleLight('change-password', 2))
+      .use([throttleLight('change-password', 2), NO_STORE])
     router
       .get('/login/:provider', '#controllers/auth_controller.providerLogin')
       .where('provider', /google|discord/)
-      .use(throttleLight('provider-login', 5))
+      .use([throttleLight('provider-login', 5), NO_STORE])
     router
       .get('/callback/google', '#controllers/auth_controller.googleCallback')
-      .use(throttleLight('google-callback', 5))
+      .use([throttleLight('google-callback', 5), NO_STORE])
     router
       .get('/callback/discord', '#controllers/auth_controller.discordCallback')
-      .use(throttleLight('discord-callback', 5))
+      .use([throttleLight('discord-callback', 5), NO_STORE])
 
     // Blog - Posts publics
     router.get('posts', '#controllers/posts_controller.index').use(throttleLight('posts.index', 50))
