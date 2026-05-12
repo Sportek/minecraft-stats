@@ -186,12 +186,23 @@ export default class ServersController {
   }) {
     const { page, limit, categoryIds, languageIds, search } = opts
 
+    // Ordering : on ne classe par `last_player_count` que si le dernier ping
+    // réussi est récent (< 30 min, soit ~3 cycles de 10 min). Sinon le serveur
+    // est traité comme "stale" et descend en bas, peu importe son ancien count.
+    // Évite qu'un serveur down depuis des jours reste top juste parce qu'il
+    // avait 500 joueurs avant de tomber.
     let query = Server.query()
       .preload('user')
       .preload('categories')
       .preload('growthStat')
       .preload('languages')
-      .orderByRaw('COALESCE(last_player_count, -1) DESC')
+      .orderByRaw(
+        `CASE
+          WHEN last_stats_at > now() - interval '30 minutes'
+            THEN COALESCE(last_player_count, -1)
+          ELSE -1
+         END DESC`
+      )
       .orderBy('last_stats_at', 'desc')
 
     if (search) {
