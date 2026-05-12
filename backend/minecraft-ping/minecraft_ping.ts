@@ -1,11 +1,12 @@
 import { pingJava } from '@minescope/mineping'
 
 /**
- * Timeout par défaut pour les pings périodiques. Court (3s) car un serveur Minecraft
- * sain répond en quelques centaines de ms. Si ça ne répond pas en 3s, on le marque
- * down et on passe au suivant — le prochain cycle réessaiera (cf. P.5.1 Niveau 1.2).
+ * Timeout par défaut pour les pings périodiques. 5s : laisse une chance aux serveurs
+ * géographiquement lointains (Asie, Amérique du Sud) ou derrière Cloudflare/anti-DDoS.
+ * Si ça ne répond pas en 5s, on le marque down et le prochain cycle réessaiera
+ * (cf. P.5.1 — la cadence différentielle finira par classer les morts en "dead" 6h).
  */
-export const DEFAULT_PING_TIMEOUT = 3000
+export const DEFAULT_PING_TIMEOUT = 5000
 
 /**
  * Timeout plus long pour les pings synchrones initiés par un utilisateur (création de
