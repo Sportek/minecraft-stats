@@ -208,6 +208,7 @@ scheduler
       FROM server_stats
       WHERE created_at >= date_trunc('hour', now() - interval '1 hour')
         AND created_at <  date_trunc('hour', now())
+        AND server_id IS NOT NULL
       GROUP BY server_id, hour
       ON CONFLICT (server_id, hour) DO UPDATE SET
         avg_player_count = EXCLUDED.avg_player_count,
