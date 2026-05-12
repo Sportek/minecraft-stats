@@ -161,7 +161,16 @@ export default class StatsService {
       if (toDateSql) bindings.toDate = toDateSql
 
       const result = await Database.rawQuery(hourlyQuery, bindings)
-      return result.rows
+      // Fallback transparent : si la table horaire n'est pas (encore) backfillée pour
+      // cette range, on retombe sur l'agrégation brute. Évite les réponses vides
+      // tant que `node ace backfill:hourly-stats` n'a pas tourné (P.4.1).
+      if (result.rows.length > 0) {
+        return result.rows
+      }
+      logger.warn(
+        { serverId, fromDateSql, toDateSql, interval },
+        'hourly stats empty for range — falling back to server_stats'
+      )
     }
 
     // Chemin par défaut : agrégation à la volée sur server_stats brute.
