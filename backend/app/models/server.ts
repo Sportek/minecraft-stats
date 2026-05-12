@@ -61,6 +61,11 @@ export default class Server extends BaseModel {
   @column.dateTime({ columnName: 'last_stats_at' })
   declare lastStatsAt: DateTime | null
 
+  // Quand le serveur doit être pingué prochainement (cadence différentielle, P.5.1).
+  // NULL = "ASAP". Mis à jour à chaque ping selon le résultat (Hot / Normal / Cold / Dead).
+  @column.dateTime({ columnName: 'next_ping_at' })
+  declare nextPingAt: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
