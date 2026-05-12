@@ -237,7 +237,12 @@ export default class ServersController {
     const now = Date.now()
     const fromDate = now - 24 * 60 * 60 * 1000
 
-    const serverIds = servers.map((s) => s.id)
+    // Important : Lucid SimplePaginator étend Array, donc `servers.map(...)` retourne
+    // une *nouvelle SimplePaginator* (via Symbol.species), pas un Array standard.
+    // Ce paginator a un `.toJSON()` qui réécrit la réponse en `{meta, data}` →
+    // double nesting côté HTTP. On extrait `servers.all()` (le rows[] réel) avant map.
+    const serverRows = servers.all()
+    const serverIds = serverRows.map((s) => s.id)
     const statsByServer = await StatsService.getStatsBatch({
       serverIds,
       fromDate,
@@ -245,7 +250,7 @@ export default class ServersController {
       interval: '1 hour',
     })
 
-    const serversWithStats = servers.map((server) => {
+    const serversWithStats = serverRows.map((server) => {
       const bucketed = (statsByServer.get(server.id) ?? []).map((row) => ({
         serverId: server.id,
         createdAt: row.created_at,
