@@ -1,13 +1,18 @@
 "use client";
 import { useAuth } from "@/contexts/auth";
 import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
+import { cn } from "@/lib/utils";
+import { getClientBackendUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import RestrictedWidthLayout from "../restricted-width-layout";
+import { ModeToggle } from "../dark-mode/toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,218 +21,369 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { ModeToggle } from "../dark-mode/toggle";
-import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
-import { getClientBackendUrl } from "@/lib/domain";
 
-const NavLink = ({ href, label }: { href: string; label: string }) => (
-  <Link
-    href={href}
-    className="text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
-  >
-    {label}
-  </Link>
+const NAV_LINKS = [
+  { href: "/", label: "Servers", icon: "material-symbols:list", matchPrefixes: ["/servers"] },
+  { href: "/blog", label: "Blog", icon: "material-symbols:article-outline", matchPrefixes: ["/blog"] },
+];
+
+const useIsActive = () => {
+  const pathname = usePathname();
+  return (href: string, matchPrefixes: string[] = []) => {
+    if (pathname === href) return true;
+    if (href === "/" && pathname === "/") return true;
+    return matchPrefixes.some((prefix) => pathname?.startsWith(prefix));
+  };
+};
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <p className="px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{children}</p>
 );
 
-const MobileNavLink = ({
+const MobileMenuLink = ({
   href,
-  label,
-  onClick,
   icon,
+  label,
+  external,
+  active,
+  onClick,
 }: {
   href: string;
+  icon: string;
   label: string;
-  onClick?: () => void;
-  icon?: string;
-}) => (
-  <Link
-    href={href}
-    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors w-full"
-    onClick={onClick}
-  >
-    {icon && <Icon icon={icon} className="w-5 h-5" />}
-    {label}
-  </Link>
-);
+  external?: boolean;
+  active?: boolean;
+  onClick: () => void;
+}) => {
+  const className = cn(
+    "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+    active ? "bg-accent/10 text-accent" : "text-foreground hover:bg-secondary"
+  );
+
+  const content = (
+    <>
+      <Icon icon={icon} className="h-5 w-5 shrink-0" />
+      <span className="flex-1">{label}</span>
+      {external && <Icon icon="material-symbols:open-in-new" className="h-3.5 w-3.5 opacity-60" />}
+    </>
+  );
+
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={className}>
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} onClick={onClick} aria-current={active ? "page" : undefined} className={className}>
+      {content}
+    </Link>
+  );
+};
 
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const isActive = useIsActive();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const backendUrl = getClientBackendUrl();
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Scroll lock du body quand le drawer mobile est ouvert
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (isMobileMenuOpen) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isMobileMenuOpen]);
+
+  // Échappe pour fermer
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMobileMenu();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isMobileMenuOpen]);
 
   const displayUserMenu = () => (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label="User menu">
-        <Avatar>
+      <DropdownMenuTrigger
+        aria-label="User menu"
+        className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        <Avatar className="h-9 w-9">
           <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
-          <AvatarFallback className="bg-stats-blue-700 text-white">{user?.username?.[0].toUpperCase()}</AvatarFallback>
+          <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
+            {user?.username?.[0].toUpperCase()}
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-semibold text-sm">
           <div className="flex items-center gap-2">
-            <Icon icon="material-symbols:person" className="w-5 h-5" />
+            <Icon icon="material-symbols:person" className="w-4 h-4" />
             {user?.username.toUpperCase()}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add Server</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add a server</DropdownMenuItem>
         {(user?.role === "admin" || user?.role === "writer") && (
-          <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage Blog</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage blog</DropdownMenuItem>
         )}
         {user?.role === "admin" && (
-          <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage Users</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage users</DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:text-destructive">
-          Logout
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 
   return (
-    <header className="w-full relative bg-stats-blue-50 dark:bg-stats-blue-1050 border-b border-border/60">
-      <RestrictedWidthLayout className="flex items-center justify-between py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src={MinecraftStatsLogo} alt="Minecraft Stats Logo" width={32} height={32} />
-          <span className="text-lg font-bold text-foreground">Minecraft Stats</span>
-        </Link>
+    <>
+      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-stats-blue-50/85 backdrop-blur-md supports-[backdrop-filter]:bg-stats-blue-50/80 dark:bg-stats-blue-1050/85 dark:supports-[backdrop-filter]:bg-stats-blue-1050/80">
+        <RestrictedWidthLayout className="flex h-16 items-center justify-between gap-4">
+          {/* Left: brand + nav */}
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center gap-2">
+              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
+              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
+            </Link>
+            <nav aria-label="Main" className="hidden md:flex items-center gap-6">
+              {NAV_LINKS.map((link) => {
+                const active = isActive(link.href, link.matchPrefixes);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "text-sm font-medium transition-colors",
+                      active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                    )}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+              <a
+                href={`${backendUrl}/docs`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                API
+                <Icon icon="material-symbols:open-in-new" className="h-3.5 w-3.5 opacity-60" />
+              </a>
+            </nav>
+          </div>
 
-        <div className="hidden md:flex items-center gap-6">
-          <ModeToggle />
-          <NavLink href="/account/add-server" label="Add Your Server" />
-          <NavLink href="/" label="All Servers" />
-          <NavLink href="/blog" label="Blog" />
-          <NavLink href={`${backendUrl}/docs`} label="API" />
-          {user?.username ? displayUserMenu() : <NavLink href="/login" label="Login" />}
-        </div>
-
-        <button
-          type="button"
-          aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={isMobileMenuOpen}
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-md hover:bg-secondary transition-colors"
-          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-        >
-          {isMobileMenuOpen ? (
-            <X className="w-5 h-5 text-foreground" />
-          ) : (
-            <Icon icon="material-symbols:menu" className="w-6 h-6 text-foreground" />
-          )}
-        </button>
-      </RestrictedWidthLayout>
-
-      <div
-        className={cn(
-          "fixed inset-0 z-50 bg-black/30 dark:bg-black/60 backdrop-blur-sm md:hidden transition-opacity duration-200",
-          isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        <div
-          className={cn(
-            "absolute inset-x-0 top-[73px] bg-background border-t border-border shadow-lg transition-all duration-200",
-            isMobileMenuOpen ? "translate-y-0" : "-translate-y-8"
-          )}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {user?.username && (
-            <div className="px-4 py-3 flex items-center gap-3 border-b border-border">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src={user.avatarUrl ?? ""} alt={user.username} />
-                <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
-                  {user.username[0].toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">{user.username}</p>
-                <p className="text-xs text-muted-foreground">Connected</p>
-              </div>
-              <ModeToggle />
-            </div>
-          )}
-
-          {!user?.username && (
-            <div className="px-4 py-3 flex justify-end border-b border-border">
-              <ModeToggle />
-            </div>
-          )}
-
-          <div className="py-2">
-            <MobileNavLink
-              href="/account/add-server"
-              label="Add Your Server"
-              icon="material-symbols:add-circle-outline"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            <MobileNavLink
-              href="/"
-              label="All Servers"
-              icon="material-symbols:list"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            <MobileNavLink
-              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/docs`}
-              label="API"
-              icon="material-symbols:api"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-
+          {/* Right: actions (desktop) */}
+          <div className="hidden md:flex items-center gap-2">
+            <ModeToggle />
+            <div className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
+            <Link href="/account/add-server">
+              <Button variant="accent" size="sm">
+                <Icon icon="material-symbols:add" className="mr-1 h-4 w-4" />
+                Add server
+              </Button>
+            </Link>
             {user?.username ? (
-              <>
-                <div className="h-px bg-border my-2" />
-                <MobileNavLink
-                  href="/account/settings"
-                  label="Profile Settings"
-                  icon="material-symbols:settings-outline"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
-                {(user?.role === "admin" || user?.role === "writer") && (
-                  <MobileNavLink
-                    href="/admin/posts"
-                    label="Manage Blog"
-                    icon="material-symbols:article-outline"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  />
-                )}
-                {user?.role === "admin" && (
-                  <MobileNavLink
-                    href="/admin/users"
-                    label="Manage Users"
-                    icon="material-symbols:group"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  />
-                )}
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-destructive hover:bg-secondary transition-colors w-full"
-                >
-                  <Icon icon="material-symbols:logout" className="w-5 h-5" />
-                  Logout
-                </button>
-              </>
+              displayUserMenu()
             ) : (
-              <>
-                <div className="h-px bg-border my-2" />
-                <MobileNavLink
-                  href="/login"
-                  label="Login"
-                  icon="material-symbols:login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
-              </>
+              <Link href="/login">
+                <Button variant="outline" size="sm">
+                  Sign in
+                </Button>
+              </Link>
             )}
           </div>
-        </div>
+
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-drawer"
+            className="md:hidden flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          >
+            <Icon icon="material-symbols:menu" className="h-6 w-6" />
+          </button>
+        </RestrictedWidthLayout>
+      </header>
+
+      {/* Mobile drawer — slide from right */}
+      <div
+        className={cn(
+          "fixed inset-0 z-[60] md:hidden",
+          isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}
+        aria-hidden={!isMobileMenuOpen}
+      >
+        {/* Backdrop */}
+        <div
+          className={cn(
+            "absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300",
+            isMobileMenuOpen ? "opacity-100" : "opacity-0"
+          )}
+          onClick={closeMobileMenu}
+        />
+
+        {/* Drawer panel */}
+        <aside
+          id="mobile-drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          className={cn(
+            "absolute inset-y-0 right-0 flex w-[85%] max-w-sm flex-col bg-background shadow-2xl transition-transform duration-300 ease-out",
+            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          )}
+        >
+          {/* Drawer header */}
+          <div className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-stats-blue-50/40 px-4 dark:bg-stats-blue-1050/40">
+            <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2">
+              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
+              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
+            </Link>
+            <button
+              type="button"
+              onClick={closeMobileMenu}
+              aria-label="Close navigation menu"
+              className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto px-4 py-5">
+            {/* Primary CTA */}
+            <Link href="/account/add-server" className="block" onClick={closeMobileMenu}>
+              <Button variant="accent" size="lg" className="w-full">
+                <Icon icon="material-symbols:add" className="mr-2 h-5 w-5" />
+                Add your server
+              </Button>
+            </Link>
+
+            {/* Navigation */}
+            <section className="mt-6 space-y-2">
+              <SectionLabel>Navigation</SectionLabel>
+              <div className="space-y-1">
+                {NAV_LINKS.map((link) => (
+                  <MobileMenuLink
+                    key={link.href}
+                    href={link.href}
+                    icon={link.icon}
+                    label={link.label}
+                    active={isActive(link.href, link.matchPrefixes)}
+                    onClick={closeMobileMenu}
+                  />
+                ))}
+                <MobileMenuLink
+                  href={`${backendUrl}/docs`}
+                  icon="material-symbols:api"
+                  label="API documentation"
+                  external
+                  onClick={closeMobileMenu}
+                />
+              </div>
+            </section>
+
+            {/* Account */}
+            <section className="mt-6 space-y-2">
+              <SectionLabel>Account</SectionLabel>
+
+              {user?.username ? (
+                <div className="space-y-1">
+                  {/* User card */}
+                  <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user.avatarUrl ?? ""} alt={user.username} />
+                      <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
+                        {user.username[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-foreground">{user.username}</p>
+                      <p className="truncate text-xs text-muted-foreground">{user.role ?? "Connected"}</p>
+                    </div>
+                  </div>
+
+                  <MobileMenuLink
+                    href="/account/settings"
+                    icon="material-symbols:settings-outline"
+                    label="Profile settings"
+                    active={isActive("/account/settings")}
+                    onClick={closeMobileMenu}
+                  />
+                  {(user?.role === "admin" || user?.role === "writer") && (
+                    <MobileMenuLink
+                      href="/admin/posts"
+                      icon="material-symbols:article-outline"
+                      label="Manage blog"
+                      active={isActive("/admin/posts", ["/admin/posts"])}
+                      onClick={closeMobileMenu}
+                    />
+                  )}
+                  {user?.role === "admin" && (
+                    <MobileMenuLink
+                      href="/admin/users"
+                      icon="material-symbols:group"
+                      label="Manage users"
+                      active={isActive("/admin/users", ["/admin/users"])}
+                      onClick={closeMobileMenu}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      closeMobileMenu();
+                    }}
+                    className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                  >
+                    <Icon icon="material-symbols:logout" className="h-5 w-5" />
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Link href="/login" className="block" onClick={closeMobileMenu}>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Sign in
+                    </Button>
+                  </Link>
+                  <Link href="/sign-up" className="block" onClick={closeMobileMenu}>
+                    <Button variant="ghost" size="sm" className="w-full">
+                      Create an account
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </section>
+          </div>
+
+          {/* Drawer footer — theme toggle */}
+          <div className="flex shrink-0 items-center justify-between border-t border-border px-4 py-3">
+            <span className="text-xs font-medium text-muted-foreground">Theme</span>
+            <ModeToggle />
+          </div>
+        </aside>
       </div>
-    </header>
+    </>
   );
 };
 
