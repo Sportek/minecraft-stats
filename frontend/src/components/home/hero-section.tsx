@@ -26,7 +26,7 @@ const HeroSection = () => {
 
         <h1 className="mt-5 max-w-3xl text-4xl font-extrabold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
           Track Minecraft server popularity{" "}
-          <span className="bg-gradient-to-r from-stats-blue-600 to-stats-blue-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-stats-blue-800 to-stats-blue-600 bg-clip-text text-transparent dark:from-stats-blue-500 dark:to-stats-blue-300">
             in real time.
           </span>
         </h1>

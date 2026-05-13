@@ -5,111 +5,165 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 import RestrictedWidthLayout from "../restricted-width-layout";
-import { Button } from "../ui/button";
 import { getClientBackendUrl } from "@/lib/domain";
 
-const footerLinkClass = "text-muted-foreground hover:text-foreground transition-colors";
+const linkClass = "text-sm text-muted-foreground hover:text-foreground transition-colors";
+const sectionTitleClass = "text-xs font-semibold uppercase tracking-wider text-foreground";
+const socialIconClass =
+  "inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors";
 
 const Footer = () => {
   const isMinecraftStatsDomain =
     typeof window !== "undefined" && window.location.hostname.endsWith("minecraft-stats.com");
   const backendUrl = getClientBackendUrl();
+  const currentYear = new Date().getFullYear();
 
   return (
-    <div className="flex flex-col items-center gap-4 py-4 bg-stats-blue-50 dark:bg-stats-blue-1050 border-t border-border/60">
-      <RestrictedWidthLayout className="gap-4 flex flex-col items-center justify-center">
-        <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-row items-center justify-start w-full gap-2">
-              <Image src={MinecraftStatsLogo} alt="Minecraft Stats Logo" width={32} height={32} />
-              <div className="text-2xl font-bold text-foreground">Minecraft Stats</div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="text-sm text-muted-foreground">
-                Minecraft Stats is a free service that allows you to list the connection statistics of various existing
-                Minecraft servers. You can easily add a Minecraft server and get real-time connection statistics.
-              </div>
-              <Link href="/account/add-server" className="w-full">
-                <Button className="w-full">Add Your Server</Button>
+    <footer className="border-t border-border/60 bg-stats-blue-50 dark:bg-stats-blue-1050">
+      <RestrictedWidthLayout className="py-12">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-12">
+          {/* Brand */}
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2">
+              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
+              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
+            </Link>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              The free, open-source Minecraft server directory with real-time player statistics and historical
+              data.
+            </p>
+            <div className="flex items-center gap-1">
+              <Link
+                href="https://github.com/Sportek/minecraft-stats"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className={socialIconClass}
+              >
+                <Icon icon="mdi:github" className="h-5 w-5" />
               </Link>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="text-md font-bold text-foreground">RESSOURCES</div>
-            <div className="flex flex-col gap-2 text-sm *:py-2">
-              <Link href="https://github.com/Sportek/minecraft-stats" className={footerLinkClass}>
-                GitHub
-              </Link>
-              <Link href={`${backendUrl}/docs`} className={footerLinkClass}>
-                API Documentation
-              </Link>
-              <Link href="/partners" className={footerLinkClass}>
-                Partners
-              </Link>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="text-md font-bold text-foreground">OTHER</div>
-            <div className="flex flex-col gap-2 text-sm *:py-2">
               <Link
                 href="https://discord.gg/Ru9fecKwPn"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={footerLinkClass}
+                aria-label="Discord"
+                className={socialIconClass}
               >
-                Discord Server
-              </Link>
-              <Link href="/about" className={footerLinkClass}>
-                About
-              </Link>
-              <Link href="/cgu" className={footerLinkClass}>
-                Terms of Service
-              </Link>
-              <Link href="/login" className={footerLinkClass}>
-                Login
-              </Link>
-              <Link href="/sign-up" className={footerLinkClass}>
-                Register
+                <Icon icon="mdi:discord" className="h-5 w-5" />
               </Link>
             </div>
           </div>
-        </div>
-        <hr className="w-full h-px bg-border border-0" />
-        <div className="flex flex-row items-center justify-center w-full">
-          <div className="text-xs text-muted-foreground">
-            <div className="flex flex-col items-center justify-center">
-              <div>
-                Copyright © 2024 Minecraft Stats. All Rights Reserved. We aren&apos;t affiliated or officially connected
-                with Mojang.
-              </div>
-              <div className="flex flex-row items-center justify-center gap-2">
-                <div>Made with</div>
-                <div className="text-destructive animate-pulse">
-                  <Icon icon="ic:round-favorite" className="w-4 h-4" />
-                </div>
-                <div>by</div>
-                <Link href="https://sportek.dev" className={footerLinkClass}>
-                  Sportek
+
+          {/* Product */}
+          <nav aria-label="Product" className="space-y-4">
+            <h3 className={sectionTitleClass}>Product</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/" className={linkClass}>
+                  All servers
                 </Link>
-                <div>aka</div>
-                <Link href="https://gabriel-landry.dev" className={footerLinkClass}>
-                  Gabriel Landry
+              </li>
+              <li>
+                <Link href="/account/add-server" className={linkClass}>
+                  Add a server
                 </Link>
-              </div>
-              {isMinecraftStatsDomain && (
-                <div>
-                  Donation of the current domain name by{" "}
-                  <Link href="https://pol.tf" className={footerLinkClass}>
-                    Pol Marnette
-                  </Link>{" "}
-                  who had a similar project.
-                </div>
-              )}
-            </div>
-          </div>
+              </li>
+              <li>
+                <Link href="/blog" className={linkClass}>
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/partners" className={linkClass}>
+                  Partners
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Resources */}
+          <nav aria-label="Resources" className="space-y-4">
+            <h3 className={sectionTitleClass}>Resources</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href={`${backendUrl}/docs`} className={linkClass}>
+                  API documentation
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://github.com/Sportek/minecraft-stats"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClass}
+                >
+                  GitHub
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://discord.gg/Ru9fecKwPn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClass}
+                >
+                  Community
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Company */}
+          <nav aria-label="Company" className="space-y-4">
+            <h3 className={sectionTitleClass}>Company</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/about" className={linkClass}>
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/cgu" className={linkClass}>
+                  Terms of service
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
+
+        {/* Bottom strip */}
+        <div className="mt-12 flex flex-col-reverse items-center gap-4 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+          <p>© {currentYear} Minecraft Stats. Not affiliated with Mojang.</p>
+          <p className="flex items-center gap-1.5">
+            <span>Crafted with</span>
+            <Icon icon="ic:round-favorite" className="h-3.5 w-3.5 text-destructive" />
+            <span>by</span>
+            <Link
+              href="https://sportek.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground hover:text-accent transition-colors"
+            >
+              Sportek
+            </Link>
+          </p>
+        </div>
+
+        {isMinecraftStatsDomain && (
+          <p className="mt-3 text-center text-[11px] text-muted-foreground">
+            Domain name donated by{" "}
+            <Link
+              href="https://pol.tf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors"
+            >
+              Pol Marnette
+            </Link>
+          </p>
+        )}
       </RestrictedWidthLayout>
-    </div>
+    </footer>
   );
 };
 
