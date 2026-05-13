@@ -2,12 +2,11 @@ import { ServerStat } from "@/types/server";
 import { AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
-import dynamic from 'next/dynamic';
-import { generateTooltipHtml } from "./tooltip-chart";
+import dynamic from "next/dynamic";
 
-const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
+const AgCharts = dynamic(() => import("ag-charts-react").then((mod) => mod.AgCharts), {
   ssr: false,
-  loading: () => <div className="h-[40px] w-full bg-zinc-100 dark:bg-zinc-800" />,
+  loading: () => <div className="h-[40px] w-full bg-muted animate-pulse rounded-sm" />,
 });
 
 interface ServerChartProps {
@@ -16,55 +15,31 @@ interface ServerChartProps {
 
 const BASE_AXES: [AgTimeAxisOptions, AgCartesianAxisOptions] = [
   {
-    type: 'time',
-    position: 'bottom',
-    label: {
-      enabled: false,
-      format: '%d/%m %H:%M'
-    },
-    line: {
-      enabled: false,
-    },
-    tick: {
-      enabled: false,
-    },
-    nice: false
+    type: "time",
+    position: "bottom",
+    label: { enabled: false, format: "%d/%m %H:%M" },
+    line: { enabled: false },
+    tick: { enabled: false },
+    nice: false,
   },
   {
-    type: 'number',
-    position: 'left',
-    label: {
-      enabled: false,
-    },
-    line: {
-      enabled: false,
-    },
-    tick: {
-      enabled: false,
-    }
+    type: "number",
+    position: "left",
+    label: { enabled: false },
+    line: { enabled: false },
+    tick: { enabled: false },
   },
 ];
 
+// Note: la sparkline dans une ServerCard est purement décorative.
+// Le tooltip et le hit testing sont désactivés — l'utilisateur clique la carte
+// pour accéder au graphique interactif complet sur la page détail.
 const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
   axes: BASE_AXES,
-  legend: {
-    enabled: false,
-  },
-  background: {
-    fill: 'transparent',
-  },
-  padding: {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  },
-  tooltip: {
-    position: {
-      anchorTo: 'pointer',
-      placement: 'top'
-    }
-  }
+  legend: { enabled: false },
+  background: { fill: "transparent" },
+  padding: { top: 0, right: 0, bottom: 0, left: 0 },
+  tooltip: { enabled: false },
 };
 
 const ServerChart = ({ stats }: ServerChartProps) => {
@@ -80,10 +55,9 @@ const ServerChart = ({ stats }: ServerChartProps) => {
   }, [stats]);
 
   const options = useMemo<AgCartesianChartOptions>(() => {
-    // Calculer les dates min et max
-    const dates = sortedData.map(d => d.time);
-    const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
-    const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+    const dates = sortedData.map((d) => d.time);
+    const minDate = dates.length > 0 ? new Date(Math.min(...dates.map((d) => d.getTime()))) : undefined;
+    const maxDate = dates.length > 0 ? new Date(Math.max(...dates.map((d) => d.getTime()))) : undefined;
 
     const timeAxis: AgTimeAxisOptions = {
       ...BASE_AXES[0],
@@ -103,28 +77,12 @@ const ServerChart = ({ stats }: ServerChartProps) => {
           yName: "Online players",
           stroke: resolvedTheme === "dark" ? "#60A5FA" : "#2563EB",
           strokeWidth: 2,
-          marker: {
-            enabled: false,
-          },
-          tooltip: {
-            enabled: true,
-            position: {
-              anchorTo: "pointer",
-              placement: "top",
-            },
-            renderer: ({ datum }: any) => {
-              return generateTooltipHtml(
-                { time: new Date(datum.time), playerCount: datum.playerCount },
-                { isDarkMode: resolvedTheme === "dark" }
-              );
-            },
-          },
+          marker: { enabled: false },
+          tooltip: { enabled: false },
           fillOpacity: 0.1,
           fill: resolvedTheme === "dark" ? "#60A5FA" : "#2563EB",
           strokeOpacity: 1,
-          interpolation: {
-            type: "smooth",
-          },
+          interpolation: { type: "smooth" },
         },
       ],
       axes: [timeAxis, BASE_AXES[1]],
@@ -133,14 +91,14 @@ const ServerChart = ({ stats }: ServerChartProps) => {
   }, [sortedData, resolvedTheme]);
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="h-[40px] relative">
+    <div className="pointer-events-none flex flex-col gap-2 select-none">
+      <div className="relative h-[40px] overflow-hidden rounded-sm">
         <div className="absolute inset-0">
-          <AgCharts options={options} className="w-full h-full"/>
+          <AgCharts options={options} className="h-full w-full" />
         </div>
       </div>
     </div>
   );
 };
 
-export default ServerChart; 
+export default ServerChart;

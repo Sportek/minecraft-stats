@@ -17,6 +17,7 @@ import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-r
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
 import ServerCard from "@/components/serveur/card";
 import ImprovedCard from "@/components/serveur/improved-card";
+import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -121,19 +122,19 @@ const ServerNotFound = () => {
     <main className="flex-1 space-y-4 py-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-          <div className="bg-white dark:bg-zinc-950 rounded-lg shadow-md p-8 space-y-6 max-w-md w-full">
+          <div className="bg-card text-card-foreground border border-border rounded-lg shadow-sm p-8 space-y-6 max-w-md w-full">
             <div className="space-y-2 text-center">
-              <div className="w-16 h-16 mx-auto bg-stats-blue-600/10 dark:bg-stats-blue-400/10 rounded-full flex items-center justify-center">
-                <Icon icon="mdi:server-off" className="text-stats-blue-600 dark:text-stats-blue-400 w-8 h-8" />
+              <div className="w-16 h-16 mx-auto bg-accent/10 text-accent rounded-full flex items-center justify-center">
+                <Icon icon="mdi:server-off" className="w-8 h-8" />
               </div>
-              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Server Not Found</h2>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              <h2 className="text-xl font-semibold text-foreground">Server Not Found</h2>
+              <p className="text-sm text-muted-foreground">
                 The server you&apos;re looking for doesn&apos;t exist or has been removed.
               </p>
             </div>
             <Link
               href="/"
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-stats-blue-600 hover:bg-stats-blue-700 dark:bg-stats-blue-500 dark:hover:bg-stats-blue-600 rounded-md transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-foreground bg-accent hover:bg-accent/90 rounded-md transition-colors"
             >
               <Icon icon="mdi:home" className="w-4 h-4" />
               Back to Home
@@ -214,9 +215,9 @@ const ServerPage = () => {
   if (isServerLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-zinc-500">Loading server data...</p>
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <Spinner size="md" />
+          <p className="text-sm">Loading server data...</p>
         </div>
       </div>
     );
@@ -228,7 +229,7 @@ const ServerPage = () => {
     }
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-red-500">{serverError.message}</div>
+        <div className="text-destructive">{serverError.message}</div>
       </div>
     );
   }
@@ -238,7 +239,7 @@ const ServerPage = () => {
   }
 
   return (
-    <main className="flex-1 space-y-4 py-4">
+    <main className="flex-1 space-y-6 py-6">
       <ServerStructuredData
         server={serverData.server}
         categories={serverData.categories}
@@ -250,48 +251,53 @@ const ServerPage = () => {
         currentPlayers={serverData.lastPlayerCount ?? 0}
         maxPlayers={serverData.lastMaxCount ?? 0}
       />
-      <div className="flex flex-col gap-4">
-        <ServerCard
-          server={serverData.server}
-          stats={serverData.stats}
-          categories={serverData.categories}
-          growthStat={serverData.growthStat}
-          isFull={true}
-          showChart={false}
-        />
 
-        <div className="bg-white dark:bg-zinc-950 rounded-lg shadow-md p-4 space-y-4">
-          <div className="space-y-4">
-            <div className="flex flex-row justify-between items-center">
-              <h2 className="text-lg font-semibold">Player Count History</h2>
-              <div className="flex flex-row gap-4">
-                <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={isStatsLoading} />
-                <AggregationSelect
-                  value={dataAggregationInterval}
-                  onChange={setDataAggregationInterval}
-                  disabled={isStatsLoading}
-                />
-              </div>
-            </div>
+      <ServerCard
+        server={serverData.server}
+        stats={serverData.stats}
+        categories={serverData.categories}
+        growthStat={serverData.growthStat}
+        isFull={true}
+        showChart={false}
+      />
 
-            <div className="relative">
-              {isStatsLoading && (
-                <div className="absolute inset-0 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm flex items-center justify-center">
-                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                </div>
-              )}
-              <AgCharts options={options} />
+      <section className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+        <div className="flex flex-col gap-2 border-b border-border px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
+              <Icon icon="material-symbols:show-chart" className="h-4 w-4" />
             </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Player Count History</h2>
+              <p className="text-xs text-muted-foreground">Online players over time.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={isStatsLoading} />
+            <AggregationSelect
+              value={dataAggregationInterval}
+              onChange={setDataAggregationInterval}
+              disabled={isStatsLoading}
+            />
           </div>
         </div>
 
-        <ImprovedCard
-          isLoading={isStatsLoading}
-          server={serverData.server}
-          stats={stats}
-          categories={serverData.categories}
-        />
-      </div>
+        <div className="relative p-4">
+          {isStatsLoading && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-b-xl">
+              <Spinner size="md" />
+            </div>
+          )}
+          <AgCharts options={options} />
+        </div>
+      </section>
+
+      <ImprovedCard
+        isLoading={isStatsLoading}
+        server={serverData.server}
+        stats={stats}
+        categories={serverData.categories}
+      />
     </main>
   );
 };

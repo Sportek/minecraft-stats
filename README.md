@@ -1,486 +1,147 @@
-# Minecraft Stats 📊
+# Minecraft Stats
 
 ![Minecraft Stats Banner](./frontend/public/images/minecraft-stats/banner.png)
 
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sportek/minecraft-stats)
-[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/dGEqqPEaXP)
+[![Live](https://img.shields.io/badge/Live-minecraft--stats.com-1F8B4C?style=for-the-badge)](https://minecraft-stats.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Sportek%2Fminecraft--stats-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sportek/minecraft-stats)
+[![Discord](https://img.shields.io/badge/Discord-Communauté-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/dGEqqPEaXP)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=for-the-badge)](LICENSE)
 
-**Minecraft Stats** est une plateforme web complète permettant de suivre et d'analyser les statistiques de joueurs en temps réel pour plus de 70 serveurs Minecraft différents. Si votre serveur n'est pas listé, vous pouvez l'ajouter instantanément et commencer à collecter des données historiques !
+> Plateforme web qui suit en continu le nombre de joueurs sur les serveurs Minecraft référencés, et publie leurs courbes historiques.
 
-🌐 **Site web** : [minecraft-stats.fr](https://minecraft-stats.fr)
-
----
-
-## 🎯 Pourquoi utiliser Minecraft Stats ?
-
-- ✅ **Conservation des données** : Nous sauvegardons toutes les données historiques, sans limitation de temps
-- ⚡ **Ajout instantané** : Ajoutez votre serveur en quelques secondes
-- 📈 **Analyses détaillées** : Visualisez la croissance de votre serveur avec des graphiques interactifs
-- 🔍 **Recherche avancée** : Filtrez par catégories, langues et nom de serveur
-- 🌍 **Multi-langues** : Support des serveurs français, anglais, internationaux et plus
-- 📊 **Statistiques globales** : Consultez les tendances de l'ensemble de la communauté Minecraft
-- 🎨 **Interface moderne** : Design responsive avec mode sombre/clair
-- 🔐 **Authentification sécurisée** : Connexion via email, Google ou Discord
+Accessible sur **[minecraft-stats.fr](https://minecraft-stats.fr)** et **[minecraft-stats.com](https://minecraft-stats.com)** — même application, deux domaines.
 
 ---
 
-## ✨ Fonctionnalités principales
+## Le projet
 
-### 📊 Suivi des statistiques
+Minecraft Stats ping chaque serveur Minecraft référencé toutes les 10 minutes et stocke les mesures. Le résultat : des courbes de joueurs sur plusieurs mois, des classements par activité réelle, des métriques de croissance hebdomadaires et mensuelles — au lieu des classements par votes accumulés des sites concurrents.
 
-- **Collecte automatique** : Ping de tous les serveurs toutes les 10 minutes
-- **Métriques en temps réel** :
-  - Nombre de joueurs connectés
-  - Capacité maximale du serveur
-  - Statut en ligne/hors ligne
-  - Version Minecraft
-  - Favicon du serveur
-- **Historique complet** : Visualisation des données sur différentes périodes (30 min, 1h, 6h, 1 jour, 1 semaine)
-- **Agrégation intelligente** : Les données sont regroupées automatiquement selon l'intervalle de temps sélectionné
-
-### 📈 Analyses et croissance
-
-- **Métriques de croissance** :
-  - Croissance hebdomadaire (comparaison semaine actuelle vs semaine précédente)
-  - Croissance mensuelle (comparaison sur 4 semaines)
-  - Moyennes de joueurs sur différentes périodes
-- **Classement des serveurs** : Tri par nombre de joueurs actifs
-- **Mini-graphiques** : Visualisation rapide des tendances sur 24h dans les cartes de serveur
-- **Graphiques détaillés** : Visualisation complète avec AG Charts sur la page de chaque serveur
-
-### 🏷️ Catégorisation et recherche
-
-- **Catégories de serveurs** :
-  - Survival
-  - Creative
-  - PvP
-  - Roleplay
-  - Moddé
-  - Mini-jeux
-  - Et bien plus...
-- **Filtrage par langue** : FR, EN, ES, DE, etc.
-- **Recherche textuelle** : Recherche par nom ou adresse IP
-- **Filtres multiples** : Combinez catégories, langues et recherche
-
-### 👤 Gestion de compte
-
-- **Authentification multiple** :
-  - Inscription/Connexion par email avec vérification
-  - OAuth Google
-  - OAuth Discord
-- **Gestion des serveurs** :
-  - Ajout de serveurs avec validation en temps réel
-  - Modification des informations du serveur
-  - Suppression de serveurs
-  - Association de catégories et langues
-- **Sécurité** :
-  - Mots de passe hashés avec Argon2
-  - Tokens d'accès sécurisés
-  - Vérification d'email obligatoire
-  - Rate limiting sur toutes les routes
-
-### 🎨 Interface utilisateur
-
-- **Design moderne** :
-  - Interface responsive pour mobile, tablette et desktop
-  - Mode sombre/clair avec transition fluide
-  - Composants UI basés sur Radix UI (shadcn/ui)
-  - Animations avec Framer Motion
-- **Performance optimisée** :
-  - Chargement lazy des composants
-  - Images optimisées (WebP, responsive)
-  - Mise en cache intelligente avec SWR
-  - Préchargement des données critiques
-- **Accessibilité** :
-  - Navigation au clavier
-  - Lecteurs d'écran supportés
-  - Contraste de couleurs optimisé
-
-### 🔗 API publique
-
-API REST complète avec documentation Swagger interactive disponible sur `/docs`.
-
-**Endpoints principaux** :
-
-#### Serveurs
-
-- `GET /api/v1/servers` - Liste tous les serveurs avec leurs stats récentes
-- `GET /api/v1/servers/paginate` - Pagination avec filtres (catégories, langues, recherche)
-- `GET /api/v1/servers/:id` - Détails d'un serveur spécifique
-- `POST /api/v1/servers` - Ajouter un nouveau serveur (authentification requise)
-- `PUT /api/v1/servers/:id` - Modifier un serveur (propriétaire uniquement)
-- `DELETE /api/v1/servers/:id` - Supprimer un serveur (propriétaire uniquement)
-
-#### Statistiques
-
-- `GET /api/v1/servers/:server_id/stats` - Statistiques d'un serveur
-  - Paramètres : `fromDate`, `toDate`, `interval` (30 minutes, 1 hour, 6 hours, 1 day, 1 week)
-- `GET /api/v1/global-stats` - Statistiques globales de tous les serveurs
-  - Agrégation des joueurs sur tous les serveurs
-
-#### Catégories et langues
-
-- `GET /api/v1/categories` - Liste des catégories disponibles
-- `POST /api/v1/categories` - Créer une catégorie (admin)
-- `GET /api/v1/languages` - Liste des langues supportées
-- `GET /api/v1/servers/:server_id/categories` - Catégories d'un serveur
-- `POST /api/v1/servers/:server_id/categories` - Associer des catégories
-
-#### Authentification
-
-- `POST /api/v1/register` - Inscription
-- `POST /api/v1/login` - Connexion
-- `POST /api/v1/verify-email` - Vérification d'email
-- `GET /api/v1/me` - Informations de l'utilisateur connecté
-- `POST /api/v1/change-password` - Changement de mot de passe
-- `GET /api/v1/login/:provider` - OAuth (Google, Discord)
-- `GET /api/v1/callback/:provider` - Callback OAuth
-
-#### Statistiques de la plateforme
-
-- `GET /api/v1/website-stats` - Statistiques globales du site
-- `GET /metrics` - Métriques Prometheus pour monitoring
-
-**Sécurité de l'API** :
-
-- Rate limiting adaptatif sur toutes les routes
-- Authentification par Bearer token
-- Validation des données avec VineJS
-- Protection CORS configurée
-- Headers de sécurité HTTP
+Aujourd'hui : **~520 serveurs référencés**, **~28 000 visiteurs uniques par mois**, hébergé sur un VPS en France.
 
 ---
 
-## 🏗️ Architecture technique
+## Ce que fait le site
 
-### Stack technologique
+**Collecte automatisée**
+Un scheduler ping chaque serveur toutes les 10 minutes via `@minescope/mineping`, espace les requêtes pour ne pas saturer les serveurs cibles, et bulk insert les mesures dans PostgreSQL. Toutes les 6 heures, un second job rafraîchit les favicons (Sharp → WebP) et recalcule les métriques de croissance.
 
-#### Backend
+**Visualisation**
+Page d'accueil avec stats globales (24 h, 7 j, 30 j, 6 mois, 1 an) et intervalles d'agrégation (30 min, 1 h, 6 h, 1 jour, 1 semaine). Chaque page serveur affiche son historique complet via AG Charts, son pic, sa moyenne, sa médiane, sa croissance.
 
-- **Framework** : AdonisJS 6 (TypeScript)
-- **Base de données** : PostgreSQL
-- **ORM** : Lucid
-- **Authentification** : @adonisjs/auth avec tokens d'accès
-- **Validation** : VineJS
-- **Autorisation** : Bouncer (policies)
-- **Emails** : MJML + @adonisjs/mail
-- **Tâches planifiées** : adonisjs-scheduler
-- **Rate limiting** : @adonisjs/limiter avec Redis
-- **Documentation** : Auto-Swagger (Swagger/OpenAPI)
-- **Monitoring** : Prometheus avec @julr/adonisjs-prometheus
-- **Ping Minecraft** : @minescope/mineping
-- **Traitement d'images** : Sharp (conversion WebP)
+**Recherche et filtres**
+Pagination côté serveur, recherche par nom ou IP, filtres multi-sélection par catégorie (Survival, Creative, PvP, Roleplay, Minigames…) et langue (FR, EN, ES, DE, IT, PT, RU…).
 
-#### Frontend
+**Comptes**
+Inscription email avec vérification (MJML + Resend), OAuth Google et Discord (Ally), hash Argon2, rate limiting par route. Un utilisateur connecté peut soumettre un serveur et gérer ceux qu'il a ajoutés. Rôles : `user`, `writer` (blog), `admin`.
 
-- **Framework** : Next.js 15 (App Router)
-- **React** : Version 19
-- **Build** : Turbopack (dev), SWC (production)
-- **Styling** : Tailwind CSS
-- **Composants UI** : Radix UI (shadcn/ui)
-- **Graphiques** : AG Charts Community
-- **Animations** : Framer Motion
-- **Gestion d'état** : React Context + SWR
-- **Formulaires** : React Hook Form + Zod
-- **Thème** : next-themes
-
-### Architecture de la base de données
-
-**Tables principales** :
-
-- `servers` - Informations des serveurs Minecraft
-- `server_stats` - Statistiques collectées toutes les 10 minutes (time-series)
-- `server_growth_stats` - Métriques de croissance calculées
-- `categories` - Catégories de serveurs
-- `server_categories` - Relation many-to-many serveurs ↔ catégories
-- `languages` - Langues supportées
-- `server_languages` - Relation many-to-many serveurs ↔ langues
-- `users` - Comptes utilisateurs
-- `access_tokens` - Tokens de session
-
-### Système de collecte des données
-
-**Scheduler** (tâches automatisées) :
-
-1. **Toutes les 10 minutes** :
-
-   - Ping de tous les serveurs Minecraft
-   - Espacement uniforme des requêtes pour éviter les surcharges
-   - Mise à jour des informations (joueurs, version, MOTD)
-   - Enregistrement des statistiques dans `server_stats`
-   - Limitation à 1 requête simultanée avec délai calculé
-
-2. **Toutes les 6 heures** :
-   - Rafraîchissement des favicons des serveurs
-   - Calcul des métriques de croissance (hebdomadaire/mensuelle)
-   - Conversion des images en format WebP pour optimisation
-
-### Performance et optimisation
-
-- **Requêtes SQL optimisées** : Utilisation de l'agrégation PostgreSQL native
-- **Indexes** : Sur `server_id`, `created_at` pour les requêtes time-series
-- **Caching** :
-  - SWR côté frontend avec revalidation automatique
-  - Redis pour le rate limiting
-- **Images optimisées** :
-  - Conversion automatique en WebP
-  - Tailles responsive (48px à 1200px)
-  - Lazy loading
-  - Cache TTL de 31 jours
-- **Code splitting** : Composants chargés dynamiquement avec Next.js
-- **Suppression des console.log** en production
+**Blog et API publique**
+Blog d'articles avec éditeur Tiptap côté admin. API REST versionnée `/api/v1`, documentée automatiquement via Swagger/Scalar UI sur `/docs`. Cache Redis applicatif + headers `Cache-Control` sur les endpoints publics.
 
 ---
 
-## 🚀 Installation et déploiement
+## Stack
 
-### Prérequis
+| Couche | Techno |
+|---|---|
+| Frontend | Next.js 16 (App Router) + React 19 |
+| Charts | AG Charts Community |
+| Forms | React Hook Form + Zod |
+| Styling | Tailwind CSS + Radix UI (shadcn) |
+| Backend | AdonisJS 6 |
+| ORM | Lucid |
+| Base de données | PostgreSQL |
+| Cache + rate limiting | Redis |
+| Auth OAuth | Ally |
+| Email | Resend + MJML |
+| Images | Sharp (PNG → WebP) |
+| Ping Minecraft | @minescope/mineping |
+| Monitoring | Prometheus + Grafana |
+| Hébergement | VPS Pulseheberg (France) |
 
-- Node.js 20+ et Yarn 1.22+
-- PostgreSQL 14+
-- Redis (pour le rate limiting)
+---
 
-### Installation locale
+## Architecture
 
-#### 1. Cloner le repository
-
-```bash
-git clone https://github.com/Sportek/minecraft-stats.git
-cd minecraft-stats/code
+```
+                        ┌────────────────────┐
+                        │   Cloudflare CDN   │
+                        └──────────┬─────────┘
+                                   │
+              ┌────────────────────┴───────────────────┐
+              │                                        │
+        ┌─────▼──────┐                          ┌──────▼─────┐
+        │  Next.js   │  ── REST /api/v1 ──▶     │ AdonisJS 6 │
+        │  App Router│                          │  (Node 24) │
+        │  ISR + SSR │                          └──────┬─────┘
+        └────────────┘                                 │
+                                  ┌────────────────────┼───────────────────┐
+                                  │                    │                   │
+                            ┌─────▼─────┐       ┌──────▼──────┐     ┌──────▼──────┐
+                            │ PostgreSQL│       │    Redis    │     │  Scheduler  │
+                            │  (Lucid)  │       │ cache + RL  │     │ pings 10min │
+                            └───────────┘       └─────────────┘     │ growth 6h   │
+                                                                    └──────┬──────┘
+                                                                           │
+                                                                    ┌──────▼──────┐
+                                                                    │ Minecraft   │
+                                                                    │ servers (×N)│
+                                                                    └─────────────┘
 ```
 
-#### 2. Backend
+### Schéma de données — l'essentiel
 
-```bash
-cd backend
+- `servers` — un serveur Minecraft référencé
+- `server_stats` — une mesure de ping (one row per serveur per 10 min), table time-series partitionnable mensuellement
+- `server_stats_hourly` — agrégation horaire pré-calculée pour les vues longues plages
+- `server_growth_stats` — métriques de croissance hebdomadaires/mensuelles recalculées par cron
+- `categories`, `languages` + tables pivot — taxonomie many-to-many
+- `users`, `access_tokens`, `posts` — comptes, OAuth, blog
 
-# Installer les dépendances
-yarn install
+---
 
-# Configurer les variables d'environnement
-cp .env.example .env.development
-# Éditer .env.development avec vos configurations
+## API publique
 
-# Démarrer PostgreSQL avec Docker (optionnel)
-docker compose --env-file ./.env.development up -d
+Documentation interactive sur `/docs` (Scalar UI), spec OpenAPI sur `/swagger`.
 
-# Exécuter les migrations
-node ace migration:run
+| Endpoint | Description |
+|---|---|
+| `GET /api/v1/servers` | Liste tous les serveurs avec leurs stats récentes |
+| `GET /api/v1/servers/paginate` | Pagination + filtres (catégories, langues, recherche) |
+| `GET /api/v1/servers/:id` | Détails d'un serveur |
+| `GET /api/v1/servers/:id/stats` | Historique d'un serveur (`fromDate`, `toDate`, `interval`) |
+| `GET /api/v1/global-stats` | Agrégation des joueurs sur tous les serveurs |
+| `GET /api/v1/website-stats` | Statistiques globales de la plateforme |
+| `GET /api/v1/categories`, `/languages` | Taxonomie publique |
+| `POST /api/v1/login`, `/register`, `/verify-email` | Auth email |
+| `GET /api/v1/login/:provider` | OAuth (Google, Discord) |
+| `GET /metrics` | Métriques Prometheus |
 
-# Démarrer le serveur de développement
-yarn dev
+Rate limiting adaptatif par route, validation VineJS, CORS configuré pour les deux domaines.
+
+---
+
+## Structure du repo
+
 ```
-
-Le backend sera accessible sur `http://localhost:9000`.
-
-#### 3. Frontend
-
-```bash
-cd frontend
-
-# Installer les dépendances
-yarn install
-
-# Configurer les variables d'environnement
-cp .env.example .env.local
-# Éditer .env.local avec l'URL de votre backend
-
-# Démarrer le serveur de développement
-yarn dev
-```
-
-Le frontend sera accessible sur `http://localhost:3000`.
-
-### Variables d'environnement
-
-#### Backend (.env.development)
-
-```env
-# Application
-PORT=9000
-HOST=0.0.0.0
-NODE_ENV=development
-APP_KEY=votre_clé_secrète_32_caractères
-
-# Database
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=password
-DB_DATABASE=minecraft_stats
-
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-# Mail (SMTP)
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USERNAME=your_email@example.com
-SMTP_PASSWORD=your_password
-
-# OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-DISCORD_CLIENT_ID=your_discord_client_id
-DISCORD_CLIENT_SECRET=your_discord_client_secret
-```
-
-#### Frontend (.env.local)
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:9000/api/v1
-```
-
-### Déploiement en production
-
-#### Docker (recommandé)
-
-```bash
-# Backend
-cd backend
-yarn build:docker
-yarn start:docker
-
-# Frontend (déployer sur Vercel, Netlify, ou autre)
-cd frontend
-yarn build
-yarn start
-```
-
-#### Manuel
-
-```bash
-# Backend
-cd backend
-yarn build
-yarn start
-
-# Frontend
-cd frontend
-yarn build
-yarn start
+code/
+├── backend/         AdonisJS 6 — API REST + scheduler + ping Minecraft
+├── frontend/        Next.js 16 — App Router + ISR + SSR
+├── docs/            Documentation interne, scripts ops
+├── analytics/       Données SQLite extraites pour analyses ad-hoc
+└── CLAUDE.md        Guide pour le développement assisté par IA
 ```
 
 ---
 
-## 🧪 Tests
+## Licence
 
-### Backend
-
-```bash
-cd backend
-
-# Exécuter tous les tests
-yarn test
-
-# Tests unitaires uniquement
-node ace test --suite=unit
-
-# Tests fonctionnels uniquement
-node ace test --suite=functional
-```
-
-### Linting et formatage
-
-```bash
-# Backend
-cd backend
-yarn lint          # Vérifier le code
-yarn lint:fix      # Corriger automatiquement
-yarn format        # Formatter avec Prettier
-yarn typecheck     # Vérification TypeScript
-
-# Frontend
-cd frontend
-yarn lint
-```
+GPL-3.0 — voir [LICENSE](LICENSE).
 
 ---
 
-## 📖 Documentation
+## Auteur
 
-- **API Documentation** : Disponible sur `/docs` (Swagger UI interactif)
-- **API Spec** : JSON disponible sur `/swagger`
-- **CLAUDE.md** : Guide pour les développeurs et l'IA
+**Gabriel Landry** (Sportek) — [github.com/Sportek](https://github.com/Sportek) — [gabriel-landry.dev](https://gabriel-landry.dev)
 
----
-
-## 🎯 Roadmap et objectifs futurs
-
-- [x] Documentation API améliorée avec Swagger
-- [x] Sécurité API (Rate limiting)
-- [x] Filtrage par langue (FR / EN / INTER / TOUS)
-- [ ] Système de clés API synchronisées aux comptes
-- [ ] Traductions françaises complètes de l'interface
-- [ ] Support des serveurs Bedrock Edition
-- [ ] Notifications Discord/Email pour alertes de serveurs
-- [ ] Comparaison de serveurs côte à côte
-- [ ] Export des données (CSV, JSON)
-
----
-
-## 🤝 Contribution
-
-Les contributions sont les bienvenues ! Voici comment participer :
-
-1. **Fork** le projet
-2. **Créer une branche** pour votre fonctionnalité (`git checkout -b feature/MaSuperFonctionnalite`)
-3. **Commit** vos changements (`git commit -m 'Ajout d\'une super fonctionnalité'`)
-4. **Push** vers la branche (`git push origin feature/MaSuperFonctionnalite`)
-5. **Ouvrir une Pull Request**
-
-### Guidelines
-
-- Suivre les conventions de code (ESLint + Prettier)
-- Ajouter des tests pour les nouvelles fonctionnalités
-- Mettre à jour la documentation si nécessaire
-- Décrire clairement les changements dans la PR
-
----
-
-## 📝 Licence
-
-Ce projet est sous licence **GPL-3.0**. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
----
-
-## 👨‍💻 Auteur
-
-**Sportek** (Gabriel Landry)
-
-- GitHub: [@Sportek](https://github.com/Sportek)
-- Discord: [Rejoindre le serveur](https://discord.gg/dGEqqPEaXP)
-- Site web: [minecraft-stats.fr](https://minecraft-stats.fr)
-
----
-
-## 🙏 Remerciements
-
-- Communauté AdonisJS pour leur framework excellent
-- Vercel/Next.js pour le framework frontend
-- Tous les contributeurs et utilisateurs de la plateforme
-- Les serveurs Minecraft qui font vivre la communauté
-
----
-
-## 📞 Support et contact
-
-- **Issues** : [GitHub Issues](https://github.com/Sportek/minecraft-stats/issues)
-- **Discord** : [Serveur Discord](https://discord.gg/dGEqqPEaXP)
-- **Email** : contact via le site web
-
----
-
-## 🔄 Statut du projet
-
-🟢 **Actif** - Le projet est maintenu activement et de nouvelles fonctionnalités sont régulièrement ajoutées.
-
-**Dernière mise à jour** : Novembre 2024 - Mise à jour vers version 2.0.0 avec nouveau système de ping Minecraft
-
----
-
-<p align="center">
-  Fait avec ❤️ pour la communauté Minecraft
-</p>
+Nom de domaine `minecraft-stats.com` offert par **Pol Marnette** ([pol.tf](https://pol.tf)).

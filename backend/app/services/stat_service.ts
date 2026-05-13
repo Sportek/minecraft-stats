@@ -529,8 +529,8 @@ export default class StatsService {
       )
       SELECT
         bucket AS created_at,
-        SUM(player_count)::int AS player_count,
-        SUM(max_count)::int AS max_count
+        SUM(player_count)::bigint AS player_count,
+        SUM(max_count)::bigint AS max_count
       FROM bucketed
       WHERE rn = 1
       GROUP BY bucket
@@ -544,6 +544,10 @@ export default class StatsService {
     if (params.languageId) bindings.languageId = params.languageId
 
     const result = await Database.rawQuery(rawQuery, bindings)
-    return result.rows.map(this.convertToCamelCase)
+    return result.rows.map((row: any) => ({
+      createdAt: row.created_at,
+      playerCount: Number(row.player_count),
+      maxCount: Number(row.max_count),
+    }))
   }
 }

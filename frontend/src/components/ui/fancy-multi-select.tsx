@@ -2,18 +2,8 @@ import { useState } from "react";
 import { Check, ChevronsUpDown, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
@@ -55,23 +45,23 @@ export const FancyMultiSelect = ({
 
   const handleToggle = (id: number) => {
     const newSelection = selectedIds.includes(id)
-      ? selectedIds.filter(selectedId => selectedId !== id)
+      ? selectedIds.filter((selectedId) => selectedId !== id)
       : [...selectedIds, id];
     onChange(newSelection);
   };
 
   const normalizeString = (str: string) => {
     return str
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
       .toLowerCase();
   };
 
-  const filteredOptions = search.length > 0 
-    ? options.filter(option => normalizeString(option.name).includes(normalizeString(search)))
-    : options;
+  const filteredOptions =
+    search.length > 0
+      ? options.filter((option) => normalizeString(option.name).includes(normalizeString(search)))
+      : options;
 
-  // Trier les options pour afficher d'abord les sélectionnés
   const sortedOptions = [...filteredOptions].sort((a, b) => {
     const aSelected = selectedIds.includes(a.id);
     const bSelected = selectedIds.includes(b.id);
@@ -80,22 +70,20 @@ export const FancyMultiSelect = ({
     return 0;
   });
 
-  // Limiter l'affichage à 10 options maximum seulement si on ne fait pas de recherche
-  const displayedOptions = search.length > 0
-    ? sortedOptions
-    : sortedOptions.filter((option, index) => 
-        selectedIds.includes(option.id) || index < 10
-      );
+  const displayedOptions =
+    search.length > 0
+      ? sortedOptions
+      : sortedOptions.filter((option, index) => selectedIds.includes(option.id) || index < 10);
 
   if (searchOnly) {
     return (
       <div className={cn("relative", className)}>
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder={placeholder}
           value={searchValue}
           onChange={(e) => onSearch?.(e.target.value)}
-          className="pl-9 bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 transition-colors focus:bg-white dark:focus:bg-zinc-950"
+          className="pl-9 bg-muted/40 border-input transition-colors focus:bg-background"
         />
       </div>
     );
@@ -113,19 +101,13 @@ export const FancyMultiSelect = ({
             className="w-full justify-between"
             disabled={disabled}
           >
-            {selectedIds.length === 0
-              ? placeholder
-              : `${selectedIds.length} selected`}
+            {selectedIds.length === 0 ? placeholder : `${selectedIds.length} selected`}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0" align="start">
           <Command>
-            <CommandInput 
-              placeholder={searchPlaceholder} 
-              value={search} 
-              onValueChange={setSearch} 
-            />
+            <CommandInput placeholder={searchPlaceholder} value={search} onValueChange={setSearch} />
             <CommandEmpty>{emptyMessage}</CommandEmpty>
             <CommandGroup>
               <CommandItem
@@ -161,17 +143,16 @@ export const FancyMultiSelect = ({
 
       <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
         {selectedIds.map((id) => {
-          const option = options.find(opt => opt.id === id);
+          const option = options.find((opt) => opt.id === id);
           if (!option) return null;
-          
+
           return (
             <Badge
               key={id}
               variant="outline"
               className={cn(
-                "cursor-pointer transition-all hover:scale-105",
-                "hover:bg-zinc-100 dark:hover:bg-zinc-800",
-                "bg-primary/10 border-primary/50 text-primary"
+                "cursor-pointer transition-all hover:scale-105 hover:bg-secondary",
+                "bg-accent/10 border-accent/50 text-accent"
               )}
               onClick={() => handleToggle(id)}
             >
@@ -186,4 +167,4 @@ export const FancyMultiSelect = ({
       </div>
     </div>
   );
-}; 
+};

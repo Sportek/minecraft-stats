@@ -2,6 +2,7 @@
 
 import { ServerStat } from "@/types/server";
 import { useCallback, useEffect, useState } from "react";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { TimeRangeSelect, TimeRangeType } from "./selects/time-range-select";
 import { AggregationSelect, AggregationType } from "./selects/aggregation-select";
 import { GlobalStatsChart } from "./charts/global-stats-chart";
@@ -48,7 +49,6 @@ const GlobalInsightSection = () => {
         const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
         const toDate = now;
 
-        // Récupérer les stats globales si aucun serveur n'est sélectionné
         if (selectedServers.length === 0) {
           let url = `${apiUrl}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
           if (selectedCategory) {
@@ -68,7 +68,6 @@ const GlobalInsightSection = () => {
           setGlobalStats(data);
           setServerStats([]);
         } else {
-          // Récupérer les stats pour chaque serveur sélectionné
           const promises = selectedServers.map(async (serverId) => {
             const response = await fetch(
               `${apiUrl}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`,
@@ -80,8 +79,6 @@ const GlobalInsightSection = () => {
             }
 
             const stats = await response.json();
-
-            // Récupérer les informations du serveur
             const serverResponse = await fetch(`${apiUrl}/servers/${serverId}`, { signal });
 
             if (!serverResponse.ok) {
@@ -92,7 +89,7 @@ const GlobalInsightSection = () => {
 
             return {
               server: serverData.server,
-              stats: stats
+              stats: stats,
             };
           });
 
@@ -118,47 +115,43 @@ const GlobalInsightSection = () => {
   }, [fetchStats]);
 
   return (
-    <div className="w-full bg-white dark:bg-zinc-950 p-6 rounded-lg shadow-md">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-row justify-between items-center">
-          <h2 className="text-xl font-semibold">Global Insight</h2>
-          <div className="flex flex-row gap-4 flex-wrap">
-            <CategorySelect
-              value={selectedCategory}
-              onChange={setSelectedCategory}
-              disabled={isLoading || selectedServers.length > 0}
-            />
-            <LanguageSelect
-              value={selectedLanguage}
-              onChange={setSelectedLanguage}
-              disabled={isLoading || selectedServers.length > 0}
-            />
-            <TimeRangeSelect
-              value={dataRangeInterval}
-              onChange={setDataRangeInterval}
-              disabled={isLoading}
-            />
-            <AggregationSelect
-              value={dataAggregationInterval}
-              onChange={setDataAggregationInterval}
-              disabled={isLoading}
-            />
+    <section className="w-full rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+      <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
+            <Icon icon="material-symbols:analytics-outline" className="h-4 w-4" />
           </div>
+          <h2 className="text-lg font-semibold text-foreground">Global Insight</h2>
         </div>
-        <ServerSelect
-          selectedServers={selectedServers}
-          onChange={setSelectedServers}
-          disabled={isLoading}
-        />
-        <GlobalStatsChart
-          globalStats={globalStats}
-          serverStats={serverStats}
-          isLoading={isLoading}
-        />
+        <p className="text-sm text-muted-foreground">
+          Compare aggregated player counts across servers, categories, and languages.
+        </p>
       </div>
-    </div>
+
+      <div className="flex flex-col gap-4 p-6">
+        <div className="flex flex-row flex-wrap gap-2">
+          <CategorySelect
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            disabled={isLoading || selectedServers.length > 0}
+          />
+          <LanguageSelect
+            value={selectedLanguage}
+            onChange={setSelectedLanguage}
+            disabled={isLoading || selectedServers.length > 0}
+          />
+          <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={isLoading} />
+          <AggregationSelect
+            value={dataAggregationInterval}
+            onChange={setDataAggregationInterval}
+            disabled={isLoading}
+          />
+        </div>
+        <ServerSelect selectedServers={selectedServers} onChange={setSelectedServers} disabled={isLoading} />
+        <GlobalStatsChart globalStats={globalStats} serverStats={serverStats} isLoading={isLoading} />
+      </div>
+    </section>
   );
 };
 
 export default GlobalInsightSection;
-

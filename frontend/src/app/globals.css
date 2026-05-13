@@ -1,4 +1,118 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-  
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Surfaces */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    /* Action neutre (boutons par défaut, texte titre) */
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Surfaces secondaires (badges, chips, hover faibles) */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    /* Texte muet, surfaces désactivées */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    /* Accent de marque — stats-blue-600 (#0099ff) */
+    --accent: 204 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Erreur */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Succès */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Bordures & inputs */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+
+    /* Focus ring — couleur de marque */
+    --ring: 204 100% 50%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 204 100% 55%;
+    --accent-foreground: 240 10% 3.9%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 60% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+
+    --ring: 204 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Hiérarchie typographique de base — peut être surchargée par classe */
+  h1 {
+    @apply scroll-m-20 text-3xl font-bold tracking-tight md:text-4xl;
+  }
+  h2 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+  h4 {
+    @apply scroll-m-20 text-lg font-semibold tracking-tight;
+  }
+
+  /* Focus visible cohérent partout : pas d'outline natif, ring de marque */
+  :focus-visible {
+    @apply outline-none;
+  }
+
+  /* Sélection de texte sur fond accent */
+  ::selection {
+    @apply bg-accent/30 text-foreground;
+  }
+}

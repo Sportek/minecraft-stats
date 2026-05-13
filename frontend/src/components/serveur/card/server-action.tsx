@@ -36,10 +36,10 @@ const ServerActions = ({ server }: ServerActionsProps) => {
     <>
       {canEdit() ? (
         <button
-          className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center hover:bg-zinc-400 dark:hover:bg-zinc-600 hover:cursor-pointer"
+          className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-secondary text-secondary-foreground items-center justify-center hover:bg-accent hover:text-accent-foreground hover:cursor-pointer transition-colors"
           onClick={handleEdit}
         >
-          <Icon icon="material-symbols:edit-outline" className="text-zinc-700 dark:text-zinc-300" />
+          <Icon icon="material-symbols:edit-outline" className="w-4 h-4" />
         </button>
       ) : null}
       {/* <button

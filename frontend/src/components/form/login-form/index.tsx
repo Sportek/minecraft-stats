@@ -1,7 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+type LoginFormProps = React.HTMLAttributes<HTMLFormElement>;
 
 const formSchema = z.object({
   email: z.string().email().trim(),
@@ -27,8 +28,10 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
     },
   });
 
-  const { login } = useAuth();
+  const { login, loginWithDiscord, loginWithGoogle } = useAuth();
   const { toast } = useToast();
+
+  const isSubmitting = form.formState.isSubmitting;
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     const response = await login(credentials.email, credentials.password);
@@ -47,21 +50,36 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
     }
   };
 
-  const { loginWithDiscord, loginWithGoogle } = useAuth();
-
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn("space-y-4", className)}>
+      {/* OAuth d'abord (pattern moderne) */}
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <Button type="button" variant="outline" className="w-full" onClick={loginWithDiscord}>
+          <Icon icon="logos:discord-icon" className="mr-2 h-4 w-4" />
+          Discord
+        </Button>
+        <Button type="button" variant="outline" className="w-full" onClick={loginWithGoogle}>
+          <Icon icon="logos:google-icon" className="mr-2 h-4 w-4" />
+          Google
+        </Button>
+      </div>
+
+      <div className="relative flex items-center">
+        <div className="h-px flex-1 bg-border" />
+        <span className="px-3 text-xs uppercase tracking-wider text-muted-foreground">or with email</span>
+        <div className="h-px flex-1 bg-border" />
+      </div>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" {...props} method="POST">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
-                <FormDescription>Your email address</FormDescription>
                 <FormControl>
-                  <Input placeholder="" {...field} />
+                  <Input type="email" autoComplete="email" placeholder="you@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -73,33 +91,23 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormDescription>Your password</FormDescription>
                 <FormControl>
-                  <Input type="password" placeholder="" {...field} />
+                  <Input type="password" autoComplete="current-password" placeholder="••••••••" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit">
-            Submit
-          </Button>
-          <div className="flex items-center justify-center space-x-2">
-            <div className="h-px bg-gray-300 w-full" />
-            <div className="text-gray-500 text-xs">Or</div>
-            <div className="h-px bg-gray-300 w-full" />
-          </div>
-          <Button variant={"outline"} className="w-full" type="button" onClick={loginWithDiscord}>
-            <div className="flex items-center space-x-2 text-center">
-              <Icon icon="logos:discord-icon" className="w-5 h-5" />
-              <div>Continue with Discord</div>
-            </div>
-          </Button>
-          <Button variant={"outline"} className="w-full" type="button" onClick={loginWithGoogle}>
-            <div className="flex items-center space-x-2 text-center">
-              <Icon icon="logos:google-icon" className="w-5 h-5" />
-              <div>Continue with Google</div>
-            </div>
+
+          <Button variant="accent" className="w-full" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Spinner size="xs" tone="current" className="mr-2" />
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
       </Form>
