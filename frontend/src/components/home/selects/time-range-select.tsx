@@ -1,3 +1,5 @@
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 export type TimeRangeType = "1 Day" | "1 Week" | "1 Month" | "6 Months" | "1 Year";
 
 interface TimeRangeSelectProps {
@@ -6,20 +8,27 @@ interface TimeRangeSelectProps {
   disabled: boolean;
 }
 
+const options: { value: TimeRangeType; label: string }[] = [
+  { value: "1 Day", label: "24h" },
+  { value: "1 Week", label: "7 days" },
+  { value: "1 Month", label: "30 days" },
+  { value: "6 Months", label: "6 months" },
+  { value: "1 Year", label: "1 year" },
+];
+
 export const TimeRangeSelect = ({ value, onChange, disabled }: TimeRangeSelectProps) => {
   return (
-    <select
-      aria-label="Time range"
-      className="bg-zinc-100 dark:bg-zinc-800 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      value={value}
-      onChange={(e) => onChange(e.target.value as TimeRangeType)}
-      disabled={disabled}
-    >
-      <option value="1 Day">24h</option>
-      <option value="1 Week">7 days</option>
-      <option value="1 Month">30 days</option>
-      <option value="6 Months">6 months</option>
-      <option value="1 Year">1 year</option>
-    </select>
+    <Select value={value} onValueChange={(v) => onChange(v as TimeRangeType)} disabled={disabled}>
+      <SelectTrigger aria-label="Time range" className="h-9 w-auto min-w-[7rem] bg-secondary text-sm">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
-}; 
+};

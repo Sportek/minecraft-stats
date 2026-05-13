@@ -5,10 +5,11 @@ import { useMemo } from "react";
 import { Server } from "../selects/server-select";
 import dynamic from 'next/dynamic';
 import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
+import { Spinner } from "@/components/ui/spinner";
 
 const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
   ssr: false,
-  loading: () => <div className="h-72 w-full bg-zinc-100 dark:bg-zinc-800" />,
+  loading: () => <div className="h-72 w-full bg-muted animate-pulse rounded-md" />,
 });
 
 interface ChartDatum {
@@ -222,8 +223,8 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
     <div className="flex flex-col gap-2">
       <div className="h-72 relative">
         {isLoading && (
-          <div className="absolute inset-0 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center">
+            <Spinner size="md" />
           </div>
         )}
         <AgCharts options={options} />

@@ -2,6 +2,7 @@
 
 import { getPosts } from "@/http/post";
 import { Post } from "@/types/post";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -27,16 +28,13 @@ const LatestArticlesSection = () => {
 
   if (loading) {
     return (
-      <div className="space-y-4 pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <section className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-24 bg-gray-100 dark:bg-stats-blue-1000 border border-gray-200 dark:border-slate-800 rounded-xl animate-pulse"
-            ></div>
+            <div key={i} className="h-28 animate-pulse rounded-xl border border-border bg-muted" />
           ))}
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -45,41 +43,53 @@ const LatestArticlesSection = () => {
   }
 
   return (
-    <div className="space-y-4 pt-2">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <section className="space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
+            <Icon icon="material-symbols:article-outline" className="h-4 w-4" />
+          </div>
+          <h2 className="text-lg font-semibold text-foreground">From the blog</h2>
+        </div>
+        <Link
+          href="/blog"
+          className="text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
+        >
+          See all →
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {posts.map((post) => (
           <Link
             key={post.id}
             href={`/blog/${post.slug}`}
-            className="group relative bg-white dark:bg-zinc-950 rounded-md p-3 cursor-pointer transition-all flex items-center gap-4 overflow-hidden shadow-md"
+            className="group flex items-center gap-4 overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground shadow-sm transition-all hover:border-accent/50 hover:shadow-md"
           >
-            <div className="w-20 h-16 rounded-lg bg-gray-100 dark:bg-slate-800 overflow-hidden shrink-0 relative border border-gray-200 dark:border-slate-700/50">
+            <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
               <Image
                 src={post.coverImage || `https://picsum.photos/seed/${post.slug}/800/400`}
                 alt=""
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 sizes="80px"
                 fill
               />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold text-stats-blue-600 dark:text-blue-400 uppercase tracking-wide">
-                  News
-                </span>
-                <span className="text-[10px] text-gray-600 dark:text-slate-400">
-                  • {new Date(post.createdAt).toLocaleDateString()}
-                </span>
+              <div className="mb-1 flex items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                <span className="text-accent">News</span>
+                <span>·</span>
+                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
               </div>
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate group-hover:text-stats-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+              <h3 className="truncate text-sm font-bold leading-tight text-foreground transition-colors group-hover:text-accent">
                 {post.title}
               </h3>
-              <p className="text-xs text-gray-700 dark:text-slate-300 mt-1 line-clamp-1">{post.excerpt}</p>
+              <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{post.excerpt}</p>
             </div>
           </Link>
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 

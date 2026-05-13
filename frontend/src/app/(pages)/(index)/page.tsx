@@ -22,11 +22,11 @@ const Home = () => {
     <>
       <WebsiteStructuredData />
       <OrganizationStructuredData />
-      <main className="w-full h-full flex flex-col flex-1 py-4 gap-4">
+      <main className="flex w-full flex-1 flex-col gap-10 pb-12">
         <HeroSection />
         <StatsSection />
-        <LatestArticlesSection />
         <GlobalInsightSection />
+        <LatestArticlesSection />
         <ServerCardsSection />
       </main>
     </>

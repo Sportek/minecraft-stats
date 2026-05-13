@@ -21,7 +21,7 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="relative flex flex-col shadow-md bg-white dark:bg-zinc-950 p-4 w-full rounded-md h-full justify-between transition-all duration-50 ease-in-out group hover:bg-zinc-50 dark:hover:bg-zinc-900"
+      className="relative flex flex-col shadow-sm border border-border bg-card text-card-foreground p-4 w-full rounded-md h-full justify-between transition-all duration-150 ease-in-out group hover:border-accent/50 hover:shadow-md"
     >
       <ServerActions server={server} />
       <div className="flex flex-col gap-4 w-full h-full min-w-0">

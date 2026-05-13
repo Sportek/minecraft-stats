@@ -26,43 +26,35 @@ const StatsSection = () => {
     `${apiUrl}/servers`,
     fetcher,
     {
-      // Aligné sur le TTL Redis backend (300s) — cf. P.2.1
       refreshInterval: 1000 * 60 * 5,
     }
   );
 
-  const { data: websiteStats, error: websiteStatsError, isLoading: isWebsiteStatsLoading } = useSWR<{ totalRecords: number }>(
-    `${apiUrl}/website-stats`,
-    fetcher,
-    {
-      refreshInterval: 1000 * 60 * 5,
-    }
-  );
+  const { data: websiteStats, error: websiteStatsError, isLoading: isWebsiteStatsLoading } = useSWR<{
+    totalRecords: number;
+  }>(`${apiUrl}/website-stats`, fetcher, {
+    refreshInterval: 1000 * 60 * 5,
+  });
 
   if (isServersLoading || isWebsiteStatsLoading) {
     return (
-      <div className="w-full flex flex-col sm:flex-row gap-4 justify-around">
-        <div className="bg-white dark:bg-zinc-950 p-4 rounded-md shadow-md w-full flex flex-col gap-2">
-          <div className="flex flex-row gap-2 items-center">
-            <Skeleton className="w-6 h-6 rounded-full" />
-            <Skeleton className="h-4 w-24" />
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-10 w-10 rounded-md" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+            <Skeleton className="mt-3 h-8 w-24" />
           </div>
-          <Skeleton className="h-7 w-20" />
-        </div>
-        <div className="bg-white dark:bg-zinc-950 p-4 rounded-md shadow-md w-full flex flex-col gap-2">
-          <div className="flex flex-row gap-2 items-center">
-            <Skeleton className="w-6 h-6 rounded-full" />
-            <Skeleton className="h-4 w-24" />
-          </div>
-          <Skeleton className="h-7 w-20" />
-        </div>
+        ))}
       </div>
     );
   }
 
   if (serversError || websiteStatsError) {
     return (
-      <div className="w-full text-center text-red-500">
+      <div className="w-full text-center text-sm text-destructive">
         {serversError?.message ?? websiteStatsError?.message ?? "Error loading stats"}
       </div>
     );
@@ -73,24 +65,19 @@ const StatsSection = () => {
   }
 
   return (
-    <div className="w-full flex flex-col sm:flex-row gap-4 justify-around">
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
       <StatCard
         title="Total Data Rows"
         value={new Intl.NumberFormat("en-US").format(websiteStats.totalRecords)}
-        icon={
-          <Icon
-            icon="material-symbols:database-sharp"
-            className="w-6 h-6 text-stats-blue-600 dark:text-stats-blue-400"
-          />
-        }
+        icon={<Icon icon="material-symbols:database-sharp" className="h-5 w-5" />}
       />
       <StatCard
         title="Monitored Servers"
         value={new Intl.NumberFormat("en-US").format(servers.length)}
-        icon={<Icon icon="mynaui:servers-solid" className="w-6 h-6 text-stats-blue-600 dark:text-stats-blue-400" />}
+        icon={<Icon icon="mynaui:servers-solid" className="h-5 w-5" />}
       />
     </div>
   );
 };
 
-export default StatsSection; 
+export default StatsSection;

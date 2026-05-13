@@ -93,7 +93,7 @@ const ServerStatus = ({ stats, growthStat, lastOnlineAt }: ServerStatusProps) =>
                 <span>
                   <Icon
                     icon="material-symbols:info-outline"
-                    className="text-zinc-700 dark:text-zinc-300 w-3 h-3"
+                    className="text-muted-foreground w-3 h-3"
                   />
                 </span>
               </TooltipTrigger>
@@ -108,8 +108,8 @@ const ServerStatus = ({ stats, growthStat, lastOnlineAt }: ServerStatusProps) =>
           <div
             className={cn(
               growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0
-                ? "text-green-500"
-                : "text-red-500",
+                ? "text-success"
+                : "text-destructive",
               "text-xs"
             )}
           >

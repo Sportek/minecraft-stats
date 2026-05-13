@@ -1,28 +1,33 @@
 "use client";
 import SignUpForm from "@/components/form/sign-up-form";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import { FC } from "react";
 
-interface SignUpPageProps {}
-
-const SignUpPage: FC<SignUpPageProps> = () => {
+const SignUpPage: FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-full flex-1 py-8">
-      <div className="shadow-md rounded-md p-4 w-full sm:w-fit gap-4 flex flex-col bg-white dark:bg-zinc-800">
-        <h1 className="text-2xl font-bold">Sign Up</h1>
-        <div className="text-sm flex flex-row items-center gap-1">
-          <div className="text-zinc-500 dark:text-zinc-400">Already have an account?</div>
-          <Link href="/login" className="text-stats-blue-900 dark:text-stats-blue-50 underline font-semibold">
-            Login
-          </Link>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row gap-4">
-            <div className="w-screen max-w-2xl">
-              <SignUpForm />
-            </div>
+    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+      <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
+            <Icon icon="material-symbols:person-add-outline" className="h-4 w-4" />
           </div>
+          <h1 className="text-lg font-semibold text-foreground">Create your account</h1>
         </div>
+        <p className="text-sm text-muted-foreground">
+          Get a free account to add and manage your Minecraft servers.
+        </p>
+      </div>
+
+      <div className="space-y-5 p-6">
+        <SignUpForm />
+
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-accent hover:underline">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );
