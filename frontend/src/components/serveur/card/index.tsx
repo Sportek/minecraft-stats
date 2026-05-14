@@ -7,6 +7,7 @@ import ServerCategories from "./server-category";
 import ServerActions from "./server-action";
 import ServerChart from "./server-chart";
 import ServerLanguages from "./server-languages";
+import FavoriteButton from "./favorite-button";
 
 interface ServerCardProps {
   server: Server;
@@ -48,8 +49,9 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
             )}
           </div>
         </div>
-        <div className="flex flex-row justify-between w-full">
+        <div className="flex flex-row items-center justify-between gap-2 w-full">
           <ServerCategories categories={categories} version={server.version ?? undefined} isFull={isFull} />
+          <FavoriteButton serverId={server.id} serverName={server.name} />
         </div>
       </div>
     </Link>

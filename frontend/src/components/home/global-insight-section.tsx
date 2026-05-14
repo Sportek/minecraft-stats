@@ -1,7 +1,7 @@
 "use client";
 
 import { ServerStat } from "@/types/server";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { TimeRangeSelect, TimeRangeType } from "./selects/time-range-select";
 import { AggregationSelect, AggregationType } from "./selects/aggregation-select";
@@ -10,6 +10,9 @@ import { Server, ServerSelect } from "./selects/server-select";
 import { CategorySelect } from "./selects/category-select";
 import { LanguageSelect } from "./selects/language-select";
 import { getClientApiUrl } from "@/lib/domain";
+import { useFavorite } from "@/contexts/favorite";
+import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 
 const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
   "1 Day": 1000 * 60 * 60 * 24,
@@ -29,9 +32,11 @@ const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
 };
 
 const GlobalInsightSection = () => {
+  const { favorites } = useFavorite();
   const [globalStats, setGlobalStats] = useState<ServerStat[]>([]);
   const [serverStats, setServerStats] = useState<{ server: Server; stats: ServerStat[] }[]>([]);
-  const [selectedServers, setSelectedServers] = useState<number[]>([]);
+  const [selectedServers, setSelectedServers] = useState<number[]>(() => favorites);
+  const [manualOverride, setManualOverride] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +44,37 @@ const GlobalInsightSection = () => {
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("30 Minutes");
+
+  // Tant que l'utilisateur n'a pas pris la main sur la sélection, on suit les favoris.
+  useEffect(() => {
+    if (manualOverride) return;
+    setSelectedServers(favorites);
+  }, [favorites, manualOverride]);
+
+  // Évite de marquer un override quand le changement de sélection vient de nous (sync favoris).
+  const lastSyncedFavoritesRef = useRef<string>(JSON.stringify(favorites));
+  const handleSelectionChange = useCallback(
+    (next: number[]) => {
+      setSelectedServers(next);
+      const fingerprint = JSON.stringify([...next].sort());
+      const favFingerprint = JSON.stringify([...favorites].sort());
+      if (fingerprint !== favFingerprint) {
+        setManualOverride(true);
+      }
+      lastSyncedFavoritesRef.current = JSON.stringify(favorites);
+    },
+    [favorites]
+  );
+
+  const resetToFavorites = useCallback(() => {
+    setManualOverride(false);
+    setSelectedServers(favorites);
+  }, [favorites]);
+
+  const showAggregated = useCallback(() => {
+    setManualOverride(true);
+    setSelectedServers([]);
+  }, []);
 
   const fetchStats = useCallback(
     async (signal: AbortSignal) => {
@@ -114,6 +150,9 @@ const GlobalInsightSection = () => {
     return () => controller.abort();
   }, [fetchStats]);
 
+  const hasFavorites = favorites.length > 0;
+  const followingFavorites = hasFavorites && !manualOverride;
+
   return (
     <section className="w-full rounded-xl border border-border bg-card text-card-foreground shadow-sm">
       <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
@@ -147,7 +186,43 @@ const GlobalInsightSection = () => {
             disabled={isLoading}
           />
         </div>
-        <ServerSelect selectedServers={selectedServers} onChange={setSelectedServers} disabled={isLoading} />
+        <ServerSelect selectedServers={selectedServers} onChange={handleSelectionChange} disabled={isLoading} />
+        {hasFavorites && (
+          <div className="flex flex-row flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            {followingFavorites ? (
+              <>
+                <Star className="h-3.5 w-3.5 fill-current text-accent" />
+                <span>
+                  Following your <span className="font-medium text-foreground">{favorites.length}</span> favorite
+                  {favorites.length > 1 ? "s" : ""}.
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={showAggregated}
+                  disabled={isLoading}
+                >
+                  Show all servers
+                </Button>
+              </>
+            ) : (
+              <>
+                <span>Custom selection.</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={resetToFavorites}
+                  disabled={isLoading}
+                >
+                  <Star className="mr-1 h-3.5 w-3.5 fill-current" />
+                  Reset to favorites
+                </Button>
+              </>
+            )}
+          </div>
+        )}
         <GlobalStatsChart globalStats={globalStats} serverStats={serverStats} isLoading={isLoading} />
       </div>
     </section>
