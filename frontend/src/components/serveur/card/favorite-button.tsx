@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
-import { useFavorite } from "@/contexts/favorite";
+import { MAX_FAVORITES, useFavorite } from "@/contexts/favorite";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
 interface FavoriteButtonProps {
@@ -9,12 +10,20 @@ interface FavoriteButtonProps {
 
 const FavoriteButton = ({ serverId, serverName }: FavoriteButtonProps) => {
   const { isFavorite, toggleFavorite } = useFavorite();
+  const { toast } = useToast();
   const active = isFavorite(serverId);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    toggleFavorite(serverId);
+    const applied = toggleFavorite(serverId);
+    if (!applied) {
+      toast({
+        title: "Favorite limit reached",
+        description: `You can pin up to ${MAX_FAVORITES} servers. Remove one before adding another.`,
+        variant: "error",
+      });
+    }
   };
 
   return (
