@@ -230,10 +230,7 @@ export default class ServersController {
     // donc safe même si les IDs venaient d'une source moins fiable.
     if (pinnedIds.length > 0) {
       const placeholders = pinnedIds.map(() => '?').join(',')
-      query = query.orderByRaw(
-        `CASE WHEN id IN (${placeholders}) THEN 0 ELSE 1 END`,
-        pinnedIds
-      )
+      query = query.orderByRaw(`CASE WHEN id IN (${placeholders}) THEN 0 ELSE 1 END`, pinnedIds)
     }
 
     query = query
