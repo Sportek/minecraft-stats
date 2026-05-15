@@ -147,6 +147,12 @@ export default class ServersController {
     const categoryIds = request.input('categoryIds')
     const languageIds = request.input('languageIds')
     const search = request.input('search', '')
+    const pinnedIdsParam = request.input('pinnedIds')
+
+    // Pinned IDs appliqués sur toutes les pages pour que le débordement (>= limit)
+    // continue d'apparaître en haut des pages suivantes. La CASE WHEN reste un
+    // no-op pour les rows non pinned, donc pas de coût significatif.
+    const pinnedIds = this.parsePinnedIds(pinnedIdsParam)
 
     const cacheKey = CacheService.hashParams('paginate', {
       page,
@@ -154,15 +160,20 @@ export default class ServersController {
       categoryIds,
       languageIds,
       search,
+      pinnedIds: pinnedIds.join(','),
     })
 
     const nocache = request.input('nocache') === '1'
     const bypass =
       nocache && (process.env.NODE_ENV !== 'production' || ctx.auth?.user?.role === 'admin')
 
+    // TTL réduit quand la requête est personnalisée — la fragmentation cache
+    // coûte moins en stockage, et les stats changent toutes les 10 min de toute façon.
+    const ttl = pinnedIds.length > 0 ? 30 : 60
+
     return CacheService.cacheOrFetch(
       cacheKey,
-      60,
+      ttl,
       async () => {
         const result = await this.runPaginateQuery({
           page,
@@ -170,11 +181,28 @@ export default class ServersController {
           categoryIds,
           languageIds,
           search,
+          pinnedIds,
         })
         return result
       },
       { bypass }
     )
+  }
+
+  private static readonly MAX_PINNED_IDS = 20
+
+  private parsePinnedIds(raw: unknown): number[] {
+    if (typeof raw !== 'string' || raw.length === 0) return []
+    const ids: number[] = []
+    const seen = new Set<number>()
+    for (const part of raw.split(',')) {
+      const n = Number.parseInt(part.trim(), 10)
+      if (!Number.isInteger(n) || n <= 0 || seen.has(n)) continue
+      seen.add(n)
+      ids.push(n)
+      if (ids.length >= ServersController.MAX_PINNED_IDS) break
+    }
+    return ids
   }
 
   private async runPaginateQuery(opts: {
@@ -183,8 +211,9 @@ export default class ServersController {
     categoryIds?: string
     languageIds?: string
     search: string
+    pinnedIds: number[]
   }) {
-    const { page, limit, categoryIds, languageIds, search } = opts
+    const { page, limit, categoryIds, languageIds, search, pinnedIds } = opts
 
     // Ordering : on ne classe par `last_player_count` que si le dernier ping
     // réussi est récent (< 30 min, soit ~3 cycles de 10 min). Sinon le serveur
@@ -196,6 +225,15 @@ export default class ServersController {
       .preload('categories')
       .preload('growthStat')
       .preload('languages')
+
+    // Priorité aux favoris en page 1 : `IN (?,?,...)` avec bindings explicites,
+    // donc safe même si les IDs venaient d'une source moins fiable.
+    if (pinnedIds.length > 0) {
+      const placeholders = pinnedIds.map(() => '?').join(',')
+      query = query.orderByRaw(`CASE WHEN id IN (${placeholders}) THEN 0 ELSE 1 END`, pinnedIds)
+    }
+
+    query = query
       .orderByRaw(
         `CASE
           WHEN last_stats_at > now() - interval '30 minutes'
