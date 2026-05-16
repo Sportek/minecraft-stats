@@ -4,6 +4,7 @@
  */
 
 export const controllers = {
+  Advertisements: () => import('#controllers/advertisements_controller'),
   Auth: () => import('#controllers/auth_controller'),
   Categories: () => import('#controllers/categories_controller'),
   Languages: () => import('#controllers/languages_controller'),

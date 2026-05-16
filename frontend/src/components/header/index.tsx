@@ -142,6 +142,11 @@ const Header = () => {
         {user?.role === "admin" && (
           <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage users</DropdownMenuItem>
         )}
+        {user?.role === "admin" && (
+          <DropdownMenuItem onClick={() => router.push("/admin/advertisements")}>
+            Manage advertisements
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:text-destructive">
           Sign out
@@ -344,6 +349,15 @@ const Header = () => {
                       icon="material-symbols:group"
                       label="Manage users"
                       active={isActive("/admin/users", ["/admin/users"])}
+                      onClick={closeMobileMenu}
+                    />
+                  )}
+                  {user?.role === "admin" && (
+                    <MobileMenuLink
+                      href="/admin/advertisements"
+                      icon="material-symbols:ad-group-outline"
+                      label="Manage advertisements"
+                      active={isActive("/admin/advertisements", ["/admin/advertisements"])}
                       onClick={closeMobileMenu}
                     />
                   )}

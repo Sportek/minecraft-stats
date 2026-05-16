@@ -122,6 +122,20 @@ router
       .get('posts/placeholders/list', '#controllers/posts_controller.getPlaceholders')
       .use(throttleLight('posts.placeholders.list', 20))
 
+    // Publicités - Diffusion publique
+    router
+      .get('advertisements', '#controllers/advertisements_controller.index')
+      .use([throttleLight('advertisements.index', 60), PUBLIC_PAGINATE])
+    router
+      .post(
+        'advertisements/:id/impression',
+        '#controllers/advertisements_controller.recordImpression'
+      )
+      .use([throttleLight('advertisements.impression', 120), NO_STORE])
+    router
+      .get('advertisements/:id/click', '#controllers/advertisements_controller.click')
+      .use([throttleLight('advertisements.click', 120), NO_STORE])
+
     // Blog - Posts management (writers and admins via policy)
     router
       .group(() => {
@@ -156,6 +170,26 @@ router
         router
           .patch('users/:id/role', '#controllers/users_controller.updateRole')
           .use(throttleLight('admin.users.updateRole', 10))
+
+        // Advertisements management (admin only via policy)
+        router
+          .get('advertisements', '#controllers/advertisements_controller.adminIndex')
+          .use([throttleLight('admin.advertisements.index', 30), NO_STORE])
+        router
+          .get('advertisements/:id/stats', '#controllers/advertisements_controller.stats')
+          .use([throttleLight('admin.advertisements.stats', 30), NO_STORE])
+        router
+          .get('advertisements/:id', '#controllers/advertisements_controller.show')
+          .use([throttleLight('admin.advertisements.show', 30), NO_STORE])
+        router
+          .post('advertisements', '#controllers/advertisements_controller.store')
+          .use([throttleLight('admin.advertisements.store', 20), NO_STORE])
+        router
+          .put('advertisements/:id', '#controllers/advertisements_controller.update')
+          .use([throttleLight('admin.advertisements.update', 20), NO_STORE])
+        router
+          .delete('advertisements/:id', '#controllers/advertisements_controller.destroy')
+          .use([throttleLight('admin.advertisements.destroy', 20), NO_STORE])
       })
       .prefix('admin')
       .use(middleware.auth())
