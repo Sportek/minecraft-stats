@@ -1,6 +1,7 @@
 import HeroSection from "@/components/home/hero-section";
 import GlobalInsightSection from "@/components/home/global-insight-section";
 import LatestArticlesSection from "@/components/home/latest-articles-section";
+import FavoritesSection from "@/components/home/favorites-section";
 import ServerCardsSection from "@/components/home/server-cards-section";
 import StatsSection from "@/components/home/stats-section";
 import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/seo/structured-data";
@@ -27,6 +28,7 @@ const Home = () => {
         <StatsSection />
         <GlobalInsightSection />
         <LatestArticlesSection />
+        <FavoritesSection />
         <ServerCardsSection />
       </main>
     </>
