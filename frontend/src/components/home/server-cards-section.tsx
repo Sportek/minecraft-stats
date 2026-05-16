@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import ServerCard from "@/components/serveur/card";
 import { ServerData } from "@/app/(pages)/(index)/page";
@@ -17,7 +17,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClientApiUrl } from "@/lib/domain";
-import { useFavorite } from "@/contexts/favorite";
 
 const PAGE_SIZE_OPTIONS = [12, 24, 36, 48] as const;
 const DEFAULT_PAGE_SIZE = 24;
@@ -40,21 +39,6 @@ const ServerCardsSection = () => {
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const debouncedSearch = useDebounce(search, 300);
   const apiUrl = getClientApiUrl();
-  const { favorites, hydrated: favoritesHydrated } = useFavorite();
-
-  // Snapshot des pinned IDs envoyés au backend. Ne suit pas `favorites` en temps réel —
-  // sinon un simple toggle changerait la clé SWR et déclencherait un full refetch.
-  // Le snapshot ne se rafraîchit que sur:
-  //   1) hydratation initiale des favoris depuis le localStorage
-  //   2) changement de page/pageSize/filtre (= nouvelle requête de toute façon)
-  // Le réordonnancement visuel des favoris se fait côté client via `orderedServers`.
-  const [pinnedSnapshot, setPinnedSnapshot] = useState<number[]>([]);
-
-  useEffect(() => {
-    if (!favoritesHydrated) return;
-    setPinnedSnapshot([...favorites].sort((a, b) => a - b));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [favoritesHydrated, currentPage, pageSize, debouncedSearch, selectedCategories, selectedLanguages]);
 
   const { data: categories } = useSWRImmutable<Category[]>(`${apiUrl}/categories`, fetcher);
   const { data: languages } = useSWRImmutable<Language[]>(`${apiUrl}/languages`, fetcher);
@@ -62,10 +46,9 @@ const ServerCardsSection = () => {
   const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : "";
   const categoriesParam = selectedCategories.length > 0 ? `&categoryIds=${selectedCategories.join(",")}` : "";
   const languagesParam = selectedLanguages.length > 0 ? `&languageIds=${selectedLanguages.join(",")}` : "";
-  const pinnedParam = pinnedSnapshot.length > 0 ? `&pinnedIds=${pinnedSnapshot.join(",")}` : "";
 
   const { data, isValidating, isLoading } = useSWR<PaginatedResponse>(
-    `${apiUrl}/servers/paginate?page=${currentPage}&limit=${pageSize}${searchParam}${categoriesParam}${languagesParam}${pinnedParam}`,
+    `${apiUrl}/servers/paginate?page=${currentPage}&limit=${pageSize}${searchParam}${categoriesParam}${languagesParam}`,
     fetcher,
     { keepPreviousData: true }
   );
@@ -73,22 +56,6 @@ const ServerCardsSection = () => {
   const servers = useMemo(() => data?.data ?? [], [data?.data]);
   const totalServers = data?.meta?.total ?? 0;
   const totalPages = data?.meta?.lastPage ?? 1;
-
-  // Reorder live: favoris en premier dans la page courante. Préserve l'ordre
-  // relatif renvoyé par le backend dans chaque groupe. Le `[overflow-anchor:none]`
-  // sur le grid empêche le navigateur d'ajuster scrollY pour suivre la carte
-  // déplacée (sinon la page paraît scroller vers le haut au toggle).
-  const orderedServers = useMemo(() => {
-    if (favorites.length === 0 || servers.length === 0) return servers;
-    const favSet = new Set(favorites);
-    const pinned: typeof servers = [];
-    const rest: typeof servers = [];
-    for (const item of servers) {
-      if (item?.server && favSet.has(item.server.id)) pinned.push(item);
-      else rest.push(item);
-    }
-    return [...pinned, ...rest];
-  }, [servers, favorites]);
 
   // Chaque changement de filtre remet la pagination à 1.
   const updateSearch = (value: string) => {
@@ -249,11 +216,10 @@ const ServerCardsSection = () => {
         <div
           className={cn(
             "grid grid-cols-1 gap-4 transition-opacity duration-200 sm:grid-cols-2 lg:grid-cols-3",
-            "[overflow-anchor:none] [&>*]:[overflow-anchor:none]",
             isFetching && "opacity-60"
           )}
         >
-          {orderedServers
+          {servers
             .filter((item) => item?.server)
             .map((item) => (
               <ServerCard
