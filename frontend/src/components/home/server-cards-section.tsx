@@ -97,66 +97,65 @@ const ServerCardsSection = () => {
 
   return (
     <section id="server-cards-section" className="w-full scroll-mt-8 space-y-6">
-      <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
-        <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-                <Icon icon="material-symbols:search" className="h-4 w-4" />
-              </div>
-              <h2 className="text-lg font-semibold text-foreground">Browse Servers</h2>
+      <div className="space-y-3">
+        {/* En-tête slim : titre + compteur sur une seule ligne, sans description. */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
+              <Icon icon="material-symbols:search" className="h-4 w-4" />
             </div>
-            {totalServers > 0 && (
-              <span className="text-xs font-medium text-muted-foreground">
-                {new Intl.NumberFormat("en-US").format(totalServers)} tracked
-              </span>
-            )}
+            <h2 className="text-lg font-semibold text-foreground">Browse Servers</h2>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Find a server by name, IP, category or language.
-          </p>
+          {totalServers > 0 && (
+            <span className="text-xs font-medium text-muted-foreground">
+              {new Intl.NumberFormat("en-US").format(totalServers)} tracked
+            </span>
+          )}
         </div>
 
-        <div className="space-y-4 p-6">
+        {/* Barre d'outils compacte : recherche + filtres + clear sur une ligne. */}
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-2 sm:flex-row sm:items-center">
           <FancyMultiSelect
             searchOnly
             placeholder="Search by name or IP..."
             onSearch={updateSearch}
             searchValue={search}
-            className="w-full"
+            className="sm:flex-1"
           />
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="flex items-center gap-2">
             <FancyMultiSelect
+              compact
               options={categories?.map((cat) => ({ id: cat.id, name: cat.name })) ?? []}
               selectedIds={selectedCategories}
               onChange={updateCategories}
-              placeholder="All categories"
+              placeholder="Categories"
               searchPlaceholder="Search categories..."
               emptyMessage="No categories found."
+              className="flex-1 sm:flex-none"
             />
             <FancyMultiSelect
+              compact
               options={languages?.map((lang) => ({ id: lang.id, name: lang.name, flag: lang.flag })) ?? []}
               selectedIds={selectedLanguages}
               onChange={updateLanguages}
-              placeholder="All languages"
+              placeholder="Languages"
               searchPlaceholder="Search languages..."
               emptyMessage="No languages found."
+              className="flex-1 sm:flex-none"
             />
-          </div>
-
-          <div className="flex justify-end">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={clearFilters}
+              aria-label="Clear filters"
+              title="Clear filters"
               className={cn(
-                "text-muted-foreground hover:text-foreground transition-opacity",
+                "shrink-0 text-muted-foreground hover:text-foreground transition-opacity",
                 hasActiveFilters ? "opacity-100" : "opacity-0 pointer-events-none"
               )}
             >
-              <X className="h-3.5 w-3.5 mr-1.5" />
-              Clear filters
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>

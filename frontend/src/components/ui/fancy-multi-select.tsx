@@ -25,6 +25,7 @@ interface FancyMultiSelectProps {
   searchOnly?: boolean;
   onSearch?: (value: string) => void;
   searchValue?: string;
+  compact?: boolean;
 }
 
 export const FancyMultiSelect = ({
@@ -39,6 +40,7 @@ export const FancyMultiSelect = ({
   searchOnly = false,
   onSearch,
   searchValue,
+  compact = false,
 }: FancyMultiSelectProps) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -89,6 +91,68 @@ export const FancyMultiSelect = ({
     );
   }
 
+  const popoverContent = (
+    <PopoverContent className="w-full p-0" align="start">
+      <Command>
+        <CommandInput placeholder={searchPlaceholder} value={search} onValueChange={setSearch} />
+        <CommandEmpty>{emptyMessage}</CommandEmpty>
+        <CommandGroup>
+          <CommandItem
+            onSelect={() => {
+              onChange([]);
+              setOpen(false);
+            }}
+            className="cursor-pointer"
+          >
+            <Check className={cn("mr-2 h-4 w-4", selectedIds.length === 0 ? "opacity-100" : "opacity-0")} />
+            {placeholder}
+          </CommandItem>
+          {displayedOptions.map((option) => (
+            <CommandItem
+              key={option.id}
+              onSelect={() => {
+                handleToggle(option.id);
+                setOpen(false);
+              }}
+              className="cursor-pointer"
+            >
+              <Check
+                className={cn("mr-2 h-4 w-4", selectedIds.includes(option.id) ? "opacity-100" : "opacity-0")}
+              />
+              {option.flag && <span className="mr-1">{option.flag}</span>}
+              {option.name}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </Command>
+    </PopoverContent>
+  );
+
+  // Variante compacte : bouton dimensionné au contenu, sans la zone de badges
+  // en dessous. Le nombre de filtres actifs s'affiche dans le bouton lui-même.
+  if (compact) {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            aria-label={placeholder}
+            className={cn("justify-between gap-2", className)}
+            disabled={disabled}
+          >
+            <span className="truncate">
+              {selectedIds.length === 0 ? placeholder : `${placeholder} (${selectedIds.length})`}
+            </span>
+            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        {popoverContent}
+      </Popover>
+    );
+  }
+
   return (
     <div className={cn("space-y-2", className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -105,40 +169,7 @@ export const FancyMultiSelect = ({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
-          <Command>
-            <CommandInput placeholder={searchPlaceholder} value={search} onValueChange={setSearch} />
-            <CommandEmpty>{emptyMessage}</CommandEmpty>
-            <CommandGroup>
-              <CommandItem
-                onSelect={() => {
-                  onChange([]);
-                  setOpen(false);
-                }}
-                className="cursor-pointer"
-              >
-                <Check className={cn("mr-2 h-4 w-4", selectedIds.length === 0 ? "opacity-100" : "opacity-0")} />
-                {placeholder}
-              </CommandItem>
-              {displayedOptions.map((option) => (
-                <CommandItem
-                  key={option.id}
-                  onSelect={() => {
-                    handleToggle(option.id);
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Check
-                    className={cn("mr-2 h-4 w-4", selectedIds.includes(option.id) ? "opacity-100" : "opacity-0")}
-                  />
-                  {option.flag && <span className="mr-1">{option.flag}</span>}
-                  {option.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
+        {popoverContent}
       </Popover>
 
       <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
