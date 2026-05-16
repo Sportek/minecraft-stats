@@ -250,13 +250,13 @@ export default class ServersController {
 
     if (categoryIds) {
       try {
-        const ids = categoryIds
+        const categoryIdList = categoryIds
           .split(',')
           .map((id: string) => Number.parseInt(id.trim(), 10))
           .filter((id: number) => !Number.isNaN(id))
-        if (ids.length > 0) {
+        if (categoryIdList.length > 0) {
           query = query.whereHas('categories', (builder) => {
-            builder.whereIn('categories.id', ids)
+            builder.whereIn('categories.id', categoryIdList)
           })
         }
       } catch (error) {
@@ -266,13 +266,13 @@ export default class ServersController {
 
     if (languageIds) {
       try {
-        const ids = languageIds
+        const languageIdList = languageIds
           .split(',')
           .map((id: string) => Number.parseInt(id.trim(), 10))
           .filter((id: number) => !Number.isNaN(id))
-        if (ids.length > 0) {
+        if (languageIdList.length > 0) {
           query = query.whereHas('languages', (builder) => {
-            builder.whereIn('languages.id', ids)
+            builder.whereIn('languages.id', languageIdList)
           })
         }
       } catch (error) {
