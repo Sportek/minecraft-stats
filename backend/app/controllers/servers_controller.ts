@@ -154,6 +154,17 @@ export default class ServersController {
     // propre bloc, indépendamment de la pagination classique du classement.
     const ids = this.parseIdList(idsParam)
 
+    // Garde-fou : `ids` fourni mais rien d'exploitable après parsing → set vide.
+    // Sans ça, runPaginateQuery sauterait le `whereIn` et renverrait le
+    // classement global, que le client prendrait à tort pour des favoris.
+    const hasIdsParam = idsParam !== undefined && idsParam !== null && idsParam !== ''
+    if (hasIdsParam && ids.length === 0) {
+      return {
+        data: [],
+        meta: { total: 0, perPage: Number(limit), currentPage: 1, lastPage: 1, firstPage: 1 },
+      }
+    }
+
     const cacheKey = CacheService.hashParams('paginate', {
       page,
       limit,
@@ -191,11 +202,23 @@ export default class ServersController {
 
   private static readonly MAX_IDS = 20
 
+  /**
+   * Normalise le paramètre `ids` en liste d'entiers positifs, dédupliquée et
+   * plafonnée à MAX_IDS. AdonisJS (qs) parse `?ids=1` en STRING "1" mais
+   * `?ids=1,2` (virgule) ET `?ids=1&ids=2` en ARRAY. On accepte donc string ET
+   * array — sinon la requête favoris dégénère en classement global dès qu'il y
+   * a 2+ IDs (cf. FavoritesSection côté frontend).
+   */
   private parseIdList(raw: unknown): number[] {
-    if (typeof raw !== 'string' || raw.length === 0) return []
+    const tokens: string[] = Array.isArray(raw)
+      ? raw.flatMap((v) => String(v).split(','))
+      : typeof raw === 'string'
+        ? raw.split(',')
+        : []
+
     const ids: number[] = []
     const seen = new Set<number>()
-    for (const part of raw.split(',')) {
+    for (const part of tokens) {
       const n = Number.parseInt(part.trim(), 10)
       if (!Number.isInteger(n) || n <= 0 || seen.has(n)) continue
       seen.add(n)
