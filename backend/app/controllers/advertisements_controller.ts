@@ -64,6 +64,15 @@ function normalizePlacement(value: unknown): Placement | null {
   return value === 'home' || value === 'server' ? value : null
 }
 
+/**
+ * Recherche une publicité à partir d'un id de route potentiellement non numérique
+ * (évite une erreur SQL si l'id est invalide).
+ */
+function findAdById(id: string): Promise<Advertisement | null> {
+  const numericId = Number.parseInt(id, 10)
+  return Number.isFinite(numericId) ? Advertisement.find(numericId) : Promise.resolve(null)
+}
+
 export default class AdvertisementsController {
   /**
    * Liste publique des publicités diffusables pour un emplacement donné.
@@ -115,16 +124,21 @@ export default class AdvertisementsController {
    * Enregistre une impression (la pub a été affichée). Public, idempotence gérée côté client.
    */
   async recordImpression({ params, request, response }: HttpContext) {
-    const ad = await Advertisement.find(params.id)
+    const ad = await findAdById(params.id)
     // On ne révèle pas l'existence de la pub : réponse identique dans tous les cas.
     if (ad) {
       const serverId = Number.parseInt(request.input('serverId'), 10)
-      await AdvertisementEvent.create({
-        advertisementId: ad.id,
-        type: 'impression',
-        placement: normalizePlacement(request.input('placement')),
-        serverId: Number.isFinite(serverId) ? serverId : null,
-      })
+      try {
+        await AdvertisementEvent.create({
+          advertisementId: ad.id,
+          type: 'impression',
+          placement: normalizePlacement(request.input('placement')),
+          serverId: Number.isFinite(serverId) ? serverId : null,
+        })
+      } catch (error) {
+        // Le tracking est best-effort : un échec ne doit pas faire échouer la requête.
+        console.error('Failed to record ad impression event', error)
+      }
     }
     return response.noContent()
   }
@@ -135,7 +149,7 @@ export default class AdvertisementsController {
    * la pub (anti open-redirect, et protection contre l'injection d'en-tête).
    */
   async click({ params, request, response }: HttpContext) {
-    const ad = await Advertisement.find(params.id)
+    const ad = await findAdById(params.id)
     if (!ad) {
       return response.redirect('/')
     }
@@ -160,13 +174,18 @@ export default class AdvertisementsController {
     }
 
     const serverId = Number.parseInt(request.input('serverId'), 10)
-    await AdvertisementEvent.create({
-      advertisementId: ad.id,
-      type: 'click',
-      placement: normalizePlacement(request.input('placement')),
-      serverId: Number.isFinite(serverId) ? serverId : null,
-      targetUrl: target.slice(0, 2048),
-    })
+    try {
+      await AdvertisementEvent.create({
+        advertisementId: ad.id,
+        type: 'click',
+        placement: normalizePlacement(request.input('placement')),
+        serverId: Number.isFinite(serverId) ? serverId : null,
+        targetUrl: target.slice(0, 2048),
+      })
+    } catch (error) {
+      // Le tracking est best-effort : un échec ne doit jamais empêcher la redirection.
+      console.error('Failed to record ad click event', error)
+    }
 
     response.header('Location', target)
     return response.status(302).send('')
