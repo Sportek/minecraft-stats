@@ -4,6 +4,7 @@ import LatestArticlesSection from "@/components/home/latest-articles-section";
 import FavoritesSection from "@/components/home/favorites-section";
 import ServerCardsSection from "@/components/home/server-cards-section";
 import StatsSection from "@/components/home/stats-section";
+import AdSlot from "@/components/ads/ad-slot";
 import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/seo/structured-data";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 
@@ -27,6 +28,7 @@ const Home = () => {
         <HeroSection />
         <StatsSection />
         <GlobalInsightSection />
+        <AdSlot placement="home" />
         <LatestArticlesSection />
         <FavoritesSection />
         <ServerCardsSection />

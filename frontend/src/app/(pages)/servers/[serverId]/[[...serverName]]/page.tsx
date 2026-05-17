@@ -17,6 +17,7 @@ import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-r
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
 import ServerCard from "@/components/serveur/card";
 import ImprovedCard from "@/components/serveur/improved-card";
+import AdSlot from "@/components/ads/ad-slot";
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTheme } from "next-themes";
@@ -259,6 +260,12 @@ const ServerPage = () => {
         growthStat={serverData.growthStat}
         isFull={true}
         showChart={false}
+      />
+
+      <AdSlot
+        placement="server"
+        serverId={Number(serverId)}
+        serverCategoryIds={serverData.categories.map((category) => category.id)}
       />
 
       <section className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">

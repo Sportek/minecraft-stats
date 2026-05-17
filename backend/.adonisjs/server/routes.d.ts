@@ -39,6 +39,9 @@ export type ScannedRoutes = {
     'posts.index': { paramsTuple?: []; params?: {} }
     'posts.show': { paramsTuple: [ParamValue]; params: {'slug': ParamValue} }
     'posts.get_placeholders': { paramsTuple?: []; params?: {} }
+    'advertisements.index': { paramsTuple?: []; params?: {} }
+    'advertisements.record_impression': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.click': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.admin_index': { paramsTuple?: []; params?: {} }
     'posts.store': { paramsTuple?: []; params?: {} }
     'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -48,6 +51,12 @@ export type ScannedRoutes = {
     'posts.preview_placeholder': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.update_role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.admin_index': { paramsTuple?: []; params?: {} }
+    'advertisements.stats': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.store': { paramsTuple?: []; params?: {} }
+    'advertisements.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'uploads.upload_image': { paramsTuple?: []; params?: {} }
   }
   GET: {
@@ -71,8 +80,13 @@ export type ScannedRoutes = {
     'posts.index': { paramsTuple?: []; params?: {} }
     'posts.show': { paramsTuple: [ParamValue]; params: {'slug': ParamValue} }
     'posts.get_placeholders': { paramsTuple?: []; params?: {} }
+    'advertisements.index': { paramsTuple?: []; params?: {} }
+    'advertisements.click': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
+    'advertisements.admin_index': { paramsTuple?: []; params?: {} }
+    'advertisements.stats': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   HEAD: {
     'prometheus.metrics': { paramsTuple?: []; params?: {} }
@@ -95,8 +109,13 @@ export type ScannedRoutes = {
     'posts.index': { paramsTuple?: []; params?: {} }
     'posts.show': { paramsTuple: [ParamValue]; params: {'slug': ParamValue} }
     'posts.get_placeholders': { paramsTuple?: []; params?: {} }
+    'advertisements.index': { paramsTuple?: []; params?: {} }
+    'advertisements.click': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
+    'advertisements.admin_index': { paramsTuple?: []; params?: {} }
+    'advertisements.stats': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   POST: {
     'servers.store': { paramsTuple?: []; params?: {} }
@@ -107,10 +126,12 @@ export type ScannedRoutes = {
     'auth.register': { paramsTuple?: []; params?: {} }
     'auth.verify_email': { paramsTuple?: []; params?: {} }
     'auth.change_password': { paramsTuple?: []; params?: {} }
+    'advertisements.record_impression': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.store': { paramsTuple?: []; params?: {} }
     'posts.publish': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.unpublish': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.preview_placeholder': { paramsTuple?: []; params?: {} }
+    'advertisements.store': { paramsTuple?: []; params?: {} }
     'uploads.upload_image': { paramsTuple?: []; params?: {} }
   }
   PUT: {
@@ -118,6 +139,7 @@ export type ScannedRoutes = {
     'categories.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PATCH: {
     'servers.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -131,6 +153,7 @@ export type ScannedRoutes = {
     'categories.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'advertisements.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {
