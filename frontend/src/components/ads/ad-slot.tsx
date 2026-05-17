@@ -70,11 +70,8 @@ function buildSrcDoc(
     anchor.setAttribute("rel", "noopener noreferrer nofollow sponsored");
   });
 
-  const reset =
-    "*{box-sizing:border-box}html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}";
-
-  return `<!DOCTYPE html><html><head><meta charset="utf-8">
-<style>${reset}</style>${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
+  // Aucun CSS injecté : la publicité contrôle entièrement son propre rendu.
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
 }
 
 /**
@@ -127,7 +124,7 @@ const AdSlot = ({ placement, serverId, serverCategoryIds, className }: AdSlotPro
         srcDoc={srcDoc}
         sandbox="allow-popups allow-popups-to-escape-sandbox"
         loading="lazy"
-        className="block h-[110px] w-full rounded-lg border border-border bg-card sm:h-[130px]"
+        className="block h-[110px] w-full sm:h-[130px]"
       />
     </div>
   );
