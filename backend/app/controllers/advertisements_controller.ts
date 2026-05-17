@@ -25,10 +25,9 @@ function parseDate(value: string | null | undefined): DateTime | null {
  * il faut donc comparer sur la même base).
  */
 function decodeHtmlEntities(value: string): string {
-  return value
-    .replace(/&amp;/gi, '&')
-    .replace(/&#38;/g, '&')
-    .replace(/&#x26;/gi, '&')
+  // Décodage en une seule passe : la sortie n'est jamais re-traitée, donc
+  // aucun risque de double-décodage (ex. "&amp;#38;" reste "&#38;").
+  return value.replace(/&(?:amp|#38|#x26);/gi, '&')
 }
 
 /**
