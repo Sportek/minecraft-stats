@@ -85,6 +85,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       });
     } catch (error: any) {
       if (error instanceof DuplicateServerError) {
+        const safeServerId = encodeURIComponent(String(error.existingServer.id));
         toast({
           title: "Server already listed",
           description: (
@@ -92,7 +93,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               This server is already on Minecraft Stats as{" "}
               <a
                 className="font-semibold underline"
-                href={`/servers/${error.existingServer.id}`}
+                href={`/servers/${safeServerId}`}
               >
                 {error.existingServer.name}
               </a>
