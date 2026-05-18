@@ -74,7 +74,7 @@ export default class DuplicateDetectionService {
 
   /** Aplatit un MOTD (string ou composant Chat imbriqué) en texte brut. */
   private static flattenMotd(node: unknown): string {
-    if (node == null) return ''
+    if (node === null || node === undefined) return ''
     if (typeof node === 'string') return node
     if (Array.isArray(node)) return node.map((n) => this.flattenMotd(n)).join('')
     if (typeof node === 'object') {
