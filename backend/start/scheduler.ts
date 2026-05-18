@@ -1,4 +1,5 @@
 import Server from '#models/server'
+import DuplicateDetectionService from '#services/duplicate_detection_service'
 import StatsService from '#services/stat_service'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
@@ -168,6 +169,21 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
       server.lastPlayerCount = playerOnline
       server.lastMaxCount = maxPlayer
       server.lastStatsAt = DateTime.fromJSDate(createdAt)
+
+      // Rafraîchit les empreintes de détection de doublon. favicon + MOTD sont
+      // recalculés à chaque ping (le MOTD bouge souvent) ; l'endpoint DNS, qui
+      // ne change quasi jamais, n'est re-résolu que lors du job 6h (overwriteImage).
+      if (data.favicon) {
+        server.faviconHash = DuplicateDetectionService.hashFavicon(data.favicon)
+      }
+      server.motdHash = DuplicateDetectionService.hashMotd(data.description)
+      if (overwriteImage) {
+        server.resolvedEndpoint = await DuplicateDetectionService.resolveEndpoint(
+          server.address,
+          server.port
+        )
+      }
+
       success = true
     }
   } catch (error) {
@@ -288,7 +304,7 @@ scheduler
       `SCHEDULER: favicon refresh job done in ${Date.now() - start}ms — ${statsBatch.length}/${servers.length} pinged`
     )
   })
-  .everySixHours()
+  .everyTenMinutes()
 
 scheduler
   .call(async () => {

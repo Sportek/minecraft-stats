@@ -4,6 +4,26 @@ import { Category, Server, ServerStat } from "@/types/server";
 // For richer data, use /servers/paginate or /servers/:id.
 import { getErrorMessage } from "./auth";
 
+export interface DuplicateServerInfo {
+  id: number;
+  name: string;
+}
+
+/**
+ * Levée quand le backend répond 409 lors de la création : le serveur est
+ * détecté comme déjà référencé (cf. DuplicateDetectionService côté backend).
+ * Porte le serveur existant pour permettre à l'UI d'y renvoyer l'utilisateur.
+ */
+export class DuplicateServerError extends Error {
+  readonly existingServer: DuplicateServerInfo;
+
+  constructor(message: string, existingServer: DuplicateServerInfo) {
+    super(message);
+    this.name = "DuplicateServerError";
+    this.existingServer = existingServer;
+  }
+}
+
 export const addMinecraftServer = async (
   data: { name: string; address: string; port: number; categories: string[] },
   token: string
@@ -18,6 +38,13 @@ export const addMinecraftServer = async (
   });
 
   if (!response.ok) {
+    if (response.status === 409) {
+      const body = await response.json().catch(() => null);
+      throw new DuplicateServerError(
+        body?.message ?? "This server is already listed.",
+        body?.existingServer ?? { id: 0, name: "" }
+      );
+    }
     const errorMessage = await getErrorMessage(response);
     throw new Error(errorMessage);
   }

@@ -305,6 +305,7 @@ export class ServerSchema extends BaseModel {
     'address',
     'categoryId',
     'createdAt',
+    'faviconHash',
     'id',
     'imageUrl',
     'lastMaxCount',
@@ -312,9 +313,11 @@ export class ServerSchema extends BaseModel {
     'lastPlayerCount',
     'lastStatsAt',
     'motd',
+    'motdHash',
     'name',
     'nextPingAt',
     'port',
+    'resolvedEndpoint',
     'updatedAt',
     'userId',
     'version',
@@ -326,6 +329,8 @@ export class ServerSchema extends BaseModel {
   declare categoryId: number | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
+  @column()
+  declare faviconHash: string | null
   @column({ isPrimary: true })
   declare id: number
   @column()
@@ -341,11 +346,15 @@ export class ServerSchema extends BaseModel {
   @column()
   declare motd: string | null
   @column()
+  declare motdHash: string | null
+  @column()
   declare name: string
   @column.dateTime()
   declare nextPingAt: DateTime | null
   @column()
   declare port: number
+  @column()
+  declare resolvedEndpoint: string | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()
