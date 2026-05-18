@@ -7,7 +7,7 @@ export const CreateAdvertisementValidator = vine.compile(
   vine.object({
     name: vine.string().trim().minLength(2).maxLength(255),
     type: vine.enum(['custom', 'network']).optional(),
-    htmlContent: vine.string().minLength(1).maxLength(50000),
+    htmlContent: vine.string().minLength(1).maxLength(200000),
     enabled: vine.boolean().optional(),
     weight: vine.number().min(1).max(1000).optional(),
     showOnHome: vine.boolean().optional(),
@@ -25,7 +25,7 @@ export const UpdateAdvertisementValidator = vine.compile(
   vine.object({
     name: vine.string().trim().minLength(2).maxLength(255).optional(),
     type: vine.enum(['custom', 'network']).optional(),
-    htmlContent: vine.string().minLength(1).maxLength(50000).optional(),
+    htmlContent: vine.string().minLength(1).maxLength(200000).optional(),
     enabled: vine.boolean().optional(),
     weight: vine.number().min(1).max(1000).optional(),
     showOnHome: vine.boolean().optional(),

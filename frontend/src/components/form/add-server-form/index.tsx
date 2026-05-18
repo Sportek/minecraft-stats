@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { useToast } from "@/components/ui/use-toast";
 import { useServers } from "@/contexts/servers";
+import { DuplicateServerError } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { Category, Language } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,9 +84,28 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
         variant: "success",
       });
     } catch (error: any) {
+      if (error instanceof DuplicateServerError) {
+        toast({
+          title: "Server already listed",
+          description: (
+            <span>
+              This server is already on Minecraft Stats as{" "}
+              <a
+                className="font-semibold underline"
+                href={`/servers/${error.existingServer.id}`}
+              >
+                {error.existingServer.name}
+              </a>
+              .
+            </span>
+          ),
+          variant: "error",
+        });
+        return;
+      }
       toast({
         title: "Error while adding server",
-        description: "The server is already registered",
+        description: error?.message || "An error occurred while adding the server.",
         variant: "error",
       });
     }

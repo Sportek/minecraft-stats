@@ -30,6 +30,17 @@ export default class Server extends BaseModel {
   @column()
   declare imageUrl: string | null
 
+  // Empreintes de détection de doublon (cf. DuplicateDetectionService).
+  // Toutes indexées : la recherche de doublon se fait par égalité de hash.
+  @column({ columnName: 'favicon_hash' })
+  declare faviconHash: string | null
+
+  @column({ columnName: 'resolved_endpoint' })
+  declare resolvedEndpoint: string | null
+
+  @column({ columnName: 'motd_hash' })
+  declare motdHash: string | null
+
   @column({ columnName: 'user_id' })
   declare userId: number
 

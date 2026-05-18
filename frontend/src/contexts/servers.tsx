@@ -23,11 +23,9 @@ export const ServersProvider = ({ children }: { children: React.ReactNode }) => 
 
   const addServer = useCallback(
     async (data: { name: string; address: string; port: number; categories: string[] }) => {
-      try {
-        await addMinecraftServer(data, getToken() ?? "");
-      } catch (error: any) {
-        throw new Error(error.message);
-      }
+      // Pas de wrapping de l'erreur : on laisse remonter l'instance d'origine
+      // (notamment DuplicateServerError) pour que le formulaire puisse la typer.
+      await addMinecraftServer(data, getToken() ?? "");
     },
     [getToken]
   );

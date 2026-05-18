@@ -3,10 +3,15 @@ import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
 import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
 import type { HttpContext } from '@adonisjs/core/http'
-import { isPingPossible } from '../../minecraft-ping/minecraft_ping.js'
+import {
+  INTERACTIVE_PING_TIMEOUT,
+  isPingPossible,
+  pingMinecraftJava,
+} from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
 import CacheService from '#services/cache_service'
 import StatsService from '#services/stat_service'
+import DuplicateDetectionService from '#services/duplicate_detection_service'
 import Language from '#models/language'
 
 export default class ServersController {
@@ -37,14 +42,48 @@ export default class ServersController {
 
     const validatedData = await CreateServerValidator.validate(data)
 
-    const successPing = await isPingPossible(validatedData.address, validatedData.port)
-    if (!successPing) {
+    // Ping interactif : sert à la fois de test de joignabilité ET de source
+    // pour les empreintes de détection de doublon (favicon, MOTD, version).
+    let pingData: Awaited<ReturnType<typeof pingMinecraftJava>> | null = null
+    try {
+      pingData = await pingMinecraftJava(
+        validatedData.address,
+        validatedData.port,
+        INTERACTIVE_PING_TIMEOUT
+      )
+    } catch {
+      pingData = null
+    }
+    if (!pingData) {
       return response.badRequest({ message: 'Server is not reachable' })
+    }
+
+    // Détection de doublon : un même serveur listé sous plusieurs adresses
+    // (play./mc./IP brute). Lookups indexés — cf. DuplicateDetectionService.
+    const fingerprint = await DuplicateDetectionService.fingerprint(
+      validatedData.address,
+      validatedData.port,
+      pingData
+    )
+    const duplicate = await DuplicateDetectionService.findDuplicate(fingerprint)
+    if (duplicate) {
+      return response.conflict({
+        message: 'This server appears to already be listed on Minecraft Stats.',
+        existingServer: { id: duplicate.server.id, name: duplicate.server.name },
+        score: duplicate.score,
+        matchedSignals: duplicate.signals,
+      })
     }
 
     const { categories, languages, ...dataToCreate } = validatedData
 
-    const server = await Server.create(dataToCreate)
+    const server = await Server.create({
+      ...dataToCreate,
+      version: fingerprint.version,
+      faviconHash: fingerprint.faviconHash,
+      resolvedEndpoint: fingerprint.resolvedEndpoint,
+      motdHash: fingerprint.motdHash,
+    })
 
     const categoriesToAttach = await Promise.all(
       categories.map((name) => Category.findBy('name', name))
