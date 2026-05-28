@@ -7,8 +7,14 @@ import { DateTime } from 'luxon'
 
 export default class PostsController {
   /**
-   * List all published posts (public)
-   * Returns posts ordered by published_at desc
+   * @listPosts
+   * @operationId listPosts
+   * @tag POSTS
+   * @summary List published posts
+   * @description Returns a paginated list of published posts ordered by `published_at` descending. Each post includes its author (id, username, avatarUrl). Publicly accessible.
+   * @paramQuery page - Page number (default 1) - @type(number) @example(1)
+   * @paramQuery limit - Number of items per page (default 10) - @type(number) @example(10)
+   * @responseBody 200 - {"meta": {"total": 42, "perPage": 10, "currentPage": 1, "lastPage": 5}, "data": [{"id": 1, "title": "Welcome", "slug": "welcome", "content": "<p>Hello</p>", "excerpt": "Hello", "coverImage": "/images/blog/cover.webp", "published": true, "publishedAt": "2026-05-28T12:00:00.000Z", "userId": 1, "createdAt": "2026-05-20T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z", "author": {"id": 1, "username": "admin", "avatarUrl": ""}}]}
    */
   async index({ request, response }: HttpContext) {
     const page = request.input('page', 1)
@@ -27,7 +33,14 @@ export default class PostsController {
   }
 
   /**
-   * Get a single post by slug (public)
+   * @showPost
+   * @operationId showPost
+   * @tag POSTS
+   * @summary Get a published post by slug
+   * @description Returns a single published post identified by its slug. Placeholders in the content (e.g. `%PLAYER_COUNT_REALTIME_125%`) are resolved server-side before the response is sent. Returns 404 if no published post matches the slug. Publicly accessible.
+   * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
+   * @responseBody 200 - <Post>
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
   async show({ params, response }: HttpContext) {
     const post = await Post.query()
@@ -45,7 +58,17 @@ export default class PostsController {
   }
 
   /**
-   * List all posts for writers/admins (includes drafts)
+   * @adminListPosts
+   * @operationId adminListPosts
+   * @tag POSTS_ADMIN
+   * @summary List all posts (admin/writer)
+   * @description Returns a paginated list of posts including drafts. Writers only see their own posts, admins see every post. Each post includes its author (id, username, avatarUrl). Requires authentication and `manage` ability on the Post policy.
+   * @paramQuery page - Page number (default 1) - @type(number) @example(1)
+   * @paramQuery limit - Number of items per page (default 20) - @type(number) @example(20)
+   * @paramQuery status - Filter by status: `all`, `published`, or `draft` (default `all`) - @type(string) @example(all)
+   * @responseBody 200 - {"meta": {"total": 42, "perPage": 20, "currentPage": 1, "lastPage": 3}, "data": [{"id": 1, "title": "Draft", "slug": "draft", "content": "<p>WIP</p>", "excerpt": "", "coverImage": "", "published": false, "publishedAt": "", "userId": 1, "createdAt": "2026-05-20T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z", "author": {"id": 1, "username": "writer", "avatarUrl": ""}}]}
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    */
   async adminIndex({ request, response, auth, bouncer }: HttpContext) {
     const user = auth.user
@@ -82,7 +105,16 @@ export default class PostsController {
   }
 
   /**
-   * Create a new post (writers and admins)
+   * @createPost
+   * @operationId createPost
+   * @tag POSTS_ADMIN
+   * @summary Create a new post
+   * @description Creates a new post owned by the authenticated user. The post is always created as an unpublished draft (`published: false`); use the publish endpoint to make it public. Requires authentication and `manage` ability on the Post policy.
+   * @requestBody <CreatePostValidator>
+   * @responseBody 201 - <Post>
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
+   * @responseBody 422 - {"errors": [{"message": "The title field must be defined", "field": "title", "rule": "required"}]}
    */
   async store({ request, auth, response, bouncer }: HttpContext) {
     const user = auth.user
@@ -108,7 +140,18 @@ export default class PostsController {
   }
 
   /**
-   * Update a post (writers can update their own, admins can update any)
+   * @updatePost
+   * @operationId updatePost
+   * @tag POSTS_ADMIN
+   * @summary Update an existing post
+   * @description Updates fields of an existing post. Writers may only update their own posts, admins may update any. Requires authentication and `update` ability on the Post policy. Returns 404 if the post does not exist.
+   * @paramPath id - Post id - @type(number) @example(7) @required
+   * @requestBody <UpdatePostValidator>
+   * @responseBody 200 - <Post>
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. You can only update your own posts."}
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
+   * @responseBody 422 - {"errors": [{"message": "The title field must have at least 3 characters", "field": "title", "rule": "minLength"}]}
    */
   async update({ params, request, response, auth, bouncer }: HttpContext) {
     const user = auth.user
@@ -133,7 +176,16 @@ export default class PostsController {
   }
 
   /**
-   * Delete a post (writers can delete their own, admins can delete any)
+   * @deletePost
+   * @operationId deletePost
+   * @tag POSTS_ADMIN
+   * @summary Delete a post
+   * @description Permanently deletes a post. Writers may only delete their own posts, admins may delete any. Requires authentication and `destroy` ability on the Post policy. Returns 404 if the post does not exist.
+   * @paramPath id - Post id - @type(number) @example(7) @required
+   * @responseBody 204 - {}
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. You can only delete your own posts."}
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
   async destroy({ params, response, auth, bouncer }: HttpContext) {
     const user = auth.user
@@ -153,7 +205,16 @@ export default class PostsController {
   }
 
   /**
-   * Publish a post (writers can publish their own, admins can publish any)
+   * @publishPost
+   * @operationId publishPost
+   * @tag POSTS_ADMIN
+   * @summary Publish a post
+   * @description Marks a post as published and sets `publishedAt` to the current timestamp. Writers may only publish their own posts, admins may publish any. Requires authentication and `publish` ability on the Post policy. Returns 404 if the post does not exist.
+   * @paramPath id - Post id - @type(number) @example(7) @required
+   * @responseBody 200 - <Post>
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. You can only publish your own posts."}
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
   async publish({ params, response, auth, bouncer }: HttpContext) {
     const user = auth.user
@@ -177,7 +238,16 @@ export default class PostsController {
   }
 
   /**
-   * Unpublish a post (writers can unpublish their own, admins can unpublish any)
+   * @unpublishPost
+   * @operationId unpublishPost
+   * @tag POSTS_ADMIN
+   * @summary Unpublish a post
+   * @description Marks a post as unpublished and clears its `publishedAt` timestamp. Writers may only unpublish their own posts, admins may unpublish any. Requires authentication and `publish` ability on the Post policy. Returns 404 if the post does not exist.
+   * @paramPath id - Post id - @type(number) @example(7) @required
+   * @responseBody 200 - <Post>
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. You can only unpublish your own posts."}
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
   async unpublish({ params, response, auth, bouncer }: HttpContext) {
     const user = auth.user
@@ -201,7 +271,12 @@ export default class PostsController {
   }
 
   /**
-   * Get available placeholders (public)
+   * @listPlaceholders
+   * @operationId listPlaceholders
+   * @tag POSTS
+   * @summary List available content placeholders
+   * @description Returns the catalog of placeholder tokens that can be embedded in post content (e.g. `%PLAYER_COUNT_REALTIME_125%`). Each entry includes the placeholder name, a human-readable description, and an example string. Publicly accessible.
+   * @responseBody 200 - [{"name": "PLAYER_COUNT_REALTIME", "description": "Current number of online players", "example": "%PLAYER_COUNT_REALTIME_125%"}, {"name": "PLAYER_COUNT_PEAK_HIGH", "description": "Highest number of players ever recorded", "example": "%PLAYER_COUNT_PEAK_HIGH_125%"}]
    */
   async getPlaceholders({ response }: HttpContext) {
     const placeholders = PlaceholderService.getAvailablePlaceholders()
@@ -209,7 +284,16 @@ export default class PostsController {
   }
 
   /**
-   * Preview placeholder value for a specific server (writers and admins)
+   * @previewPlaceholder
+   * @operationId previewPlaceholder
+   * @tag POSTS_ADMIN
+   * @summary Preview a placeholder substitution
+   * @description Resolves a single placeholder for a given server and returns both the raw placeholder string and the computed value, so the editor UI can show writers what the token will render to. Requires authentication and `manage` ability on the Post policy.
+   * @requestBody {"placeholderName": "PLAYER_COUNT_REALTIME", "serverId": "125"}
+   * @responseBody 200 - {"placeholder": "%PLAYER_COUNT_REALTIME_125%", "value": "42", "serverId": 125, "placeholderName": "PLAYER_COUNT_REALTIME"}
+   * @responseBody 400 - {"error": "placeholderName and serverId are required"}
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    */
   async previewPlaceholder({ request, response, auth, bouncer }: HttpContext) {
     const user = auth.user
