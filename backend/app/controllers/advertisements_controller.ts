@@ -5,6 +5,7 @@ import {
   CreateAdvertisementValidator,
   UpdateAdvertisementValidator,
 } from '#validators/advertisement'
+import { parseEpochMs } from '#validators/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
@@ -74,8 +75,15 @@ function findAdById(id: string): Promise<Advertisement | null> {
 
 export default class AdvertisementsController {
   /**
-   * Liste publique des publicités diffusables pour un emplacement donné.
-   * Le frontend effectue la rotation pondérée parmi le résultat.
+   * @listAdvertisements
+   * @operationId listAdvertisements
+   * @tag ADVERTISEMENTS
+   * @summary List advertisements eligible for a given placement
+   * @description Returns the lightweight list of advertisements currently eligible for the requested placement (`home` or `server`). Only enabled ads inside their scheduling window are returned. For the `server` placement the result is additionally filtered by the supplied `categoryIds` (an ad without any category targets every category). The frontend handles the weighted rotation among the returned items. Publicly accessible.
+   * @paramQuery placement - Placement target. Either `home` or `server`. - @type(string) @example(home) @required
+   * @paramQuery categoryIds - Comma-separated list of category ids used to filter ads when `placement=server` (ignored otherwise). - @type(string) @example(1,3,5)
+   * @responseBody 200 - [{"id": 1, "name": "Summer promo", "type": "custom", "htmlContent": "<a href=\"https://example.com\">Click</a>", "weight": 10}]
+   * @responseBody 400 - {"error": "Invalid or missing placement"}
    */
   async index({ request, response }: HttpContext) {
     const placement = normalizePlacement(request.input('placement'))
@@ -120,7 +128,14 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Enregistre une impression (la pub a été affichée). Public, idempotence gérée côté client.
+   * @recordAdImpression
+   * @operationId recordAdImpression
+   * @tag ADVERTISEMENTS
+   * @summary Record an advertisement impression
+   * @description Records an `impression` event for the advertisement identified by `:id`. The endpoint is intentionally best-effort: it always responds with 204 No Content, even when the advertisement does not exist or the underlying insert fails (the existence of the ad is never revealed). The optional `placement` and `serverId` fields are persisted on the event for analytics. Publicly accessible.
+   * @paramPath id - Identifier of the advertisement. - @type(number) @example(42) @required
+   * @requestBody {"placement": "home", "serverId": 42}
+   * @responseBody 204 - No content
    */
   async recordImpression({ params, request, response }: HttpContext) {
     const ad = await findAdById(params.id)
@@ -143,9 +158,16 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Enregistre un clic puis redirige vers l'URL cible.
-   * L'URL doit être un lien http(s) valide ET faire partie des liens du HTML de
-   * la pub (anti open-redirect, et protection contre l'injection d'en-tête).
+   * @adClickRedirect
+   * @operationId adClickRedirect
+   * @tag ADVERTISEMENTS
+   * @summary Record an ad click and redirect to its target URL
+   * @description Records a `click` event for the advertisement identified by `:id` and then issues an HTTP 302 redirect to the requested `to` URL. To prevent open-redirect and header-injection attacks, the target URL must (a) be a valid `http(s)` URL and (b) appear as an `href` inside the ad's stored HTML content. When the advertisement does not exist, or when the supplied target URL is missing/invalid/not allow-listed, the user is silently redirected to `/`. The optional `placement` and `serverId` query parameters are persisted on the click event for analytics. Publicly accessible.
+   * @paramPath id - Identifier of the advertisement. - @type(number) @example(42) @required
+   * @paramQuery to - Target URL to redirect to. Must be an `http(s)` link present in the ad's HTML `href` attributes. - @type(string) @example(https://example.com) @required
+   * @paramQuery placement - Placement where the click originated (`home` or `server`). - @type(string) @example(home)
+   * @paramQuery serverId - Identifier of the server the ad was displayed next to, when applicable. - @type(number) @example(134)
+   * @responseBody 302 - HTML 302 redirect to the advertisement target URL (or to `/` when the ad or target is invalid). The destination is provided in the `Location` response header.
    */
   async click({ params, request, response }: HttpContext) {
     const ad = await findAdById(params.id)
@@ -191,7 +213,14 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Liste complète des publicités avec compteurs d'impressions/clics (admin).
+   * @adminListAdvertisements
+   * @operationId adminListAdvertisements
+   * @tag ADVERTISEMENTS_ADMIN
+   * @summary List every advertisement with impression and click counters (admin)
+   * @description Returns the complete list of advertisements (ordered by `created_at` desc) together with their preloaded categories and aggregated `impressionsCount` / `clicksCount`. Requires authentication and the administrator policy.
+   * @responseBody 200 - [{"id": 1, "name": "Summer promo", "type": "custom", "htmlContent": "<a href=\"https://example.com\">Click</a>", "enabled": true, "weight": 10, "showOnHome": true, "showOnServer": false, "startsAt": "", "endsAt": "", "createdAt": "2026-05-01T00:00:00.000Z", "updatedAt": "2026-05-01T00:00:00.000Z", "categories": [], "impressionsCount": 1234, "clicksCount": 56}]
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
    */
   async adminIndex({ response, auth, bouncer }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
@@ -214,7 +243,16 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Détail d'une publicité (admin).
+   * @getAdvertisement
+   * @operationId getAdvertisement
+   * @tag ADVERTISEMENTS_ADMIN
+   * @summary Get a single advertisement (admin)
+   * @description Returns the advertisement identified by `:id` with its preloaded categories. Requires authentication and the administrator policy.
+   * @paramPath id - Identifier of the advertisement. - @type(number) @example(42) @required
+   * @responseBody 200 - <Advertisement>
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
+   * @responseBody 404 - {"message": "Row not found"}
    */
   async show({ params, response, auth, bouncer }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
@@ -230,7 +268,16 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Crée une publicité (admin).
+   * @createAdvertisement
+   * @operationId createAdvertisement
+   * @tag ADVERTISEMENTS_ADMIN
+   * @summary Create an advertisement (admin)
+   * @description Creates a new advertisement. `startsAt` and `endsAt` accept ISO date strings (or `null`). When `categoryIds` is provided the targeted categories are synchronized on the new advertisement. Requires authentication and the administrator policy.
+   * @requestBody <CreateAdvertisementValidator>
+   * @responseBody 201 - <Advertisement>
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
+   * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
   async store({ request, response, auth, bouncer }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
@@ -256,7 +303,18 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Met à jour une publicité (admin).
+   * @updateAdvertisement
+   * @operationId updateAdvertisement
+   * @tag ADVERTISEMENTS_ADMIN
+   * @summary Update an advertisement (admin)
+   * @description Updates an existing advertisement. All fields are optional; `startsAt` and `endsAt` are only modified when explicitly provided in the body and accept ISO date strings or `null`. When `categoryIds` is provided the associated categories are fully synchronized. Requires authentication and the administrator policy.
+   * @paramPath id - Identifier of the advertisement. - @type(number) @example(42) @required
+   * @requestBody <UpdateAdvertisementValidator>
+   * @responseBody 200 - <Advertisement>
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
+   * @responseBody 404 - {"message": "Row not found"}
+   * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
   async update({ params, request, response, auth, bouncer }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
@@ -282,7 +340,16 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Supprime une publicité et ses évènements associés (admin).
+   * @deleteAdvertisement
+   * @operationId deleteAdvertisement
+   * @tag ADVERTISEMENTS_ADMIN
+   * @summary Delete an advertisement (admin)
+   * @description Permanently deletes the advertisement identified by `:id` together with its associated events. Requires authentication and the administrator policy.
+   * @paramPath id - Identifier of the advertisement. - @type(number) @example(42) @required
+   * @responseBody 204 - No content
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
+   * @responseBody 404 - {"message": "Row not found"}
    */
   async destroy({ params, response, auth, bouncer }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
@@ -296,8 +363,19 @@ export default class AdvertisementsController {
   }
 
   /**
-   * Statistiques temporelles d'impressions et de clics pour une publicité (admin).
-   * Paramètres : interval ('hour' | 'day'), fromDate et toDate (epoch ms).
+   * @getAdStats
+   * @operationId getAdStats
+   * @tag ADVERTISEMENTS_ADMIN
+   * @summary Time-series impression and click statistics for an ad (admin)
+   * @description Returns aggregated impression and click counts grouped into buckets of `hour` or `day` (default: `day`) for the advertisement identified by `:id`. The window can be narrowed with the optional `fromDate` and `toDate` query parameters (epoch milliseconds). The response provides both the per-bucket `series` and the cumulative `totals` over the requested window. Requires authentication and the administrator policy.
+   * @paramPath id - Identifier of the advertisement. - @type(number) @example(42) @required
+   * @paramQuery interval - Bucket size for the series. `hour` or `day` (defaults to `day`). - @type(string) @example(day)
+   * @paramQuery fromDate - Lower bound of the window, in epoch milliseconds (or the literal string `now`). - @type(number) @example(1716854400000)
+   * @paramQuery toDate - Upper bound of the window, in epoch milliseconds (or the literal string `now`). - @type(number) @example(1717459200000)
+   * @responseBody 200 - {"totals": {"impressions": 1234, "clicks": 56}, "series": [{"time": "2026-05-01T00:00:00.000Z", "impressions": 100, "clicks": 5}], "interval": "day"}
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
+   * @responseBody 404 - {"message": "Row not found"}
    */
   async stats({ params, request, response, auth, bouncer }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
@@ -306,12 +384,12 @@ export default class AdvertisementsController {
 
     const ad = await Advertisement.findOrFail(params.id)
     const interval = request.input('interval') === 'hour' ? 'hour' : 'day'
-    const fromDate = Number.parseInt(request.input('fromDate'), 10)
-    const toDate = Number.parseInt(request.input('toDate'), 10)
+    const fromDate = parseEpochMs(request.input('fromDate'))
+    const toDate = parseEpochMs(request.input('toDate'))
 
     let query = db.from('advertisement_events').where('advertisement_id', ad.id)
-    if (Number.isFinite(fromDate)) query = query.where('created_at', '>=', new Date(fromDate))
-    if (Number.isFinite(toDate)) query = query.where('created_at', '<=', new Date(toDate))
+    if (fromDate !== null) query = query.where('created_at', '>=', new Date(fromDate))
+    if (toDate !== null) query = query.where('created_at', '<=', new Date(toDate))
 
     const rows = await query
       .select(db.raw('date_trunc(?, created_at) as bucket', [interval]))

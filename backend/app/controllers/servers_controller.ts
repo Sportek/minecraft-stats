@@ -15,6 +15,14 @@ import DuplicateDetectionService from '#services/duplicate_detection_service'
 import Language from '#models/language'
 
 export default class ServersController {
+  /**
+   * @listServers
+   * @operationId listServers
+   * @tag SERVERS
+   * @summary List all servers (lightweight)
+   * @description Returns a lightweight list of every server, without preloads or stats. Used by the sitemap, ServerSelect dropdown, and the "Monitored servers" counter. Each item contains only the minimal server fields. Publicly accessible.
+   * @responseBody 200 - [{"server": {"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "image_url": "/images/servers/1.webp", "last_player_count": 42000, "last_stats_at": "2026-05-28T12:00:00.000Z", "created_at": "2025-01-01T00:00:00.000Z", "updated_at": "2026-05-28T12:00:00.000Z"}}]
+   */
   async index() {
     // Endpoint léger : pas de préloads (user/categories/growthStat/languages), pas de stats par serveur.
     // Consommé par le sitemap, le ServerSelect et le compteur "Monitored servers" — tous se contentent du
@@ -33,6 +41,19 @@ export default class ServersController {
     return servers.map((server) => ({ server }))
   }
 
+  /**
+   * @createServer
+   * @operationId createServer
+   * @tag SERVERS
+   * @summary Create a new server
+   * @description Creates a new Minecraft server entry owned by the authenticated user. The controller first performs an interactive ping that doubles as a reachability check and as the source for duplicate-detection fingerprints (favicon, MOTD, version). If the server cannot be reached the request is rejected with 400. If the fingerprint matches an existing server the request is rejected with 409 and includes the duplicate metadata. Requires authentication.
+   * @requestBody <CreateServerValidator>
+   * @responseBody 200 - <Server>
+   * @responseBody 400 - {"message": "Server is not reachable"}
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 409 - {"message": "This server appears to already be listed on Minecraft Stats.", "existingServer": {"id": 1, "name": "Hypixel"}, "score": 95, "matchedSignals": ["faviconHash", "motdHash"]}
+   * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "address"}]}
+   */
   async store({ request, auth, response }: HttpContext) {
     const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories', 'languages'])
     const user = auth.user
@@ -113,6 +134,16 @@ export default class ServersController {
     return stats
   }
 
+  /**
+   * @showServer
+   * @operationId showServer
+   * @tag SERVERS
+   * @summary Get a single server by id
+   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. Publicly accessible.
+   * @paramPath id - The server id - @type(number) @example(134) @required
+   * @responseBody 200 - {"server": "<Server>", "stats": ["<ServerStat>"], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}
+   * @responseBody 404 - {"message": "Server not found"}
+   */
   async show({ params, response }: HttpContext) {
     let server = await Server.query()
       .where('id', params.id)
@@ -126,6 +157,20 @@ export default class ServersController {
     return { server, stats, categories: server.categories, growthStat: server.growthStat }
   }
 
+  /**
+   * @updateServer
+   * @operationId updateServer
+   * @tag SERVERS
+   * @summary Update an existing server
+   * @description Updates a server owned by the authenticated user. Re-pings the server with the new (or current) address/port to confirm reachability before persisting changes. Categories and languages, when provided, are synced (replace semantics). Requires authentication and ownership.
+   * @paramPath id - The server id - @type(number) @example(134) @required
+   * @requestBody <UpdateServerValidator>
+   * @responseBody 200 - <Server>
+   * @responseBody 400 - {"message": "Server is not reachable"}
+   * @responseBody 403 - {"message": "Unauthorized"}
+   * @responseBody 404 - {"message": "Row not found"}
+   * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "port"}]}
+   */
   async update({ params, request, response, bouncer }: HttpContext) {
     const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories', 'languages'])
     const validatedData = await UpdateServerValidator.validate(data)
@@ -167,6 +212,17 @@ export default class ServersController {
     return server.merge(dataToUpdate).save()
   }
 
+  /**
+   * @deleteServer
+   * @operationId deleteServer
+   * @tag SERVERS
+   * @summary Delete a server
+   * @description Permanently deletes a server owned by the authenticated user. Requires authentication and ownership.
+   * @paramPath id - The server id - @type(number) @example(134) @required
+   * @responseBody 204 - No content
+   * @responseBody 403 - {"message": "Unauthorized"}
+   * @responseBody 404 - {"message": "Server not found"}
+   */
   async destroy({ params, response, bouncer }: HttpContext) {
     const server = await Server.find(params.id)
     if (!server) {
@@ -179,6 +235,21 @@ export default class ServersController {
     return response.noContent()
   }
 
+  /**
+   * @paginateServers
+   * @operationId paginateServers
+   * @tag SERVERS
+   * @summary Paginated list of servers with 24h stats
+   * @description Returns a paginated list of servers with their preloaded categories, languages, growthStat, and a stats array containing hourly buckets over the last 24 hours plus the latest live snapshot prepended. Servers whose last ping is older than 30 minutes are demoted in the ordering (treated as stale) regardless of their last player count. Responses are cached (60s by default, 30s when the `ids` filter is used); pass `nocache=1` to bypass the cache (effective in non-production environments or for admin users). The `ids` query parameter restricts results to a specific set of server ids (used by the favorites section). It accepts either a CSV string (`?ids=1,2,3`) or a repeated query param (`?ids=1&ids=2&ids=3`); values are parsed as positive integers, deduplicated, and capped at MAX_IDS=20 (additional ids are silently dropped). When `ids` is provided but yields zero valid ids after parsing, an empty page is returned instead of falling back to the global ranking. Publicly accessible.
+   * @paramQuery page - Page number (1-indexed) - @type(number) @example(1)
+   * @paramQuery limit - Items per page - @type(number) @example(10)
+   * @paramQuery categoryIds - CSV of category ids to filter on (e.g. "1,2,3") - @type(string) @example(1,3,5)
+   * @paramQuery languageIds - CSV of language ids to filter on (e.g. "1,2,3") - @type(string) @example(1,2)
+   * @paramQuery search - Case-insensitive substring matched against name and address - @type(string) @example(hypixel)
+   * @paramQuery ids - Restrict to specific server ids. Accepts CSV ("1,2,3") OR repeated param ("ids=1&ids=2"). Positive integers only, deduplicated, max 20 ids (extras dropped). Used for the favorites section. - @type(string) @example(12,34,56)
+   * @paramQuery nocache - Set to "1" to bypass the response cache. Only honored in non-production environments or for admin users. - @type(string) @enum(1)
+   * @responseBody 200 - {"data": [{"server": "<Server>", "stats": [{"serverId": 1, "createdAt": "2026-05-28T12:00:00.000Z", "playerCount": 1200, "maxCount": 5000}], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}], "meta": {"total": 100, "perPage": 10, "currentPage": 1, "lastPage": 10, "firstPage": 1}}
+   */
   async paginate(ctx: HttpContext) {
     const { request } = ctx
     const page = request.input('page', 1)
