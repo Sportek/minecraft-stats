@@ -9,6 +9,9 @@ on:
       - 'mcp/**'
       - '.github/workflows/deploy-mcp.yml'
 
+permissions:
+  contents: read
+
 env:
   IMAGE_NAME: sportek/minecraft-stats-mcp
 
