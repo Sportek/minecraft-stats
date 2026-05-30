@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
+import { renderMarkdown } from "@/lib/markdown";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
 export const revalidate = 600;
@@ -154,9 +155,10 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
                 prose-ol:list-decimal prose-ol:pl-6
                 prose-li:mb-2
                 prose-code:bg-gray-100 dark:prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-                prose-pre:bg-gray-100 dark:prose-pre:bg-slate-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-slate-700 prose-pre:rounded-lg
+                prose-pre:bg-gray-100 dark:prose-pre:bg-slate-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-slate-700 prose-pre:rounded-lg prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-slate-800 dark:prose-pre:text-slate-100
+                [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm
               "
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
               />
 
               {/* Footer Divider */}
