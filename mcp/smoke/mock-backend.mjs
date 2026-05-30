@@ -1,12 +1,16 @@
 import http from 'node:http'
 import { readFileSync } from 'node:fs'
 
-const swagger = readFileSync(new URL('../../backend/swagger.json', import.meta.url))
+// On sert le spec en YAML, exactement comme l'endpoint /swagger d'AutoSwagger.
+const swaggerYaml = readFileSync(new URL('../../backend/swagger.yml', import.meta.url))
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x')
   res.setHeader('content-type', 'application/json')
-  if (url.pathname === '/swagger') return res.end(swagger)
+  if (url.pathname === '/swagger') {
+    res.setHeader('content-type', 'application/yaml')
+    return res.end(swaggerYaml)
+  }
   if (url.pathname === '/api/v1/website-stats')
     return res.end(JSON.stringify({ servers: 42, players: 12345, mock: true }))
   if (url.pathname.startsWith('/api/v1/servers/') && url.pathname.endsWith('/stats'))

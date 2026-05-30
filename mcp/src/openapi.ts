@@ -10,6 +10,7 @@
 */
 
 import { z, type ZodTypeAny } from 'zod'
+import { parse as parseYaml } from 'yaml'
 import { API_BASE_URL, OPENAPI_URL, PROXY_TIMEOUT_MS, PUBLIC_ENDPOINTS } from './config.js'
 
 /** Paramètre OpenAPI (sous-ensemble utilisé). */
@@ -51,10 +52,15 @@ export async function fetchSpec(retries = 10, delayMs = 3000): Promise<OpenApiSp
   let lastError: unknown
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const res = await fetch(OPENAPI_URL, { headers: { accept: 'application/json' } })
+      const res = await fetch(OPENAPI_URL, {
+        headers: { accept: 'application/yaml, application/json, text/yaml' },
+      })
       if (!res.ok) throw new Error(`HTTP ${res.status} en récupérant ${OPENAPI_URL}`)
-      const spec = (await res.json()) as OpenApiSpec
-      if (!spec.paths) throw new Error('Spec OpenAPI invalide : "paths" manquant')
+      // AutoSwagger sert le spec en YAML ; YAML étant un sur-ensemble de JSON,
+      // parseYaml gère les deux formats indifféremment.
+      const text = await res.text()
+      const spec = parseYaml(text) as OpenApiSpec
+      if (!spec || !spec.paths) throw new Error('Spec OpenAPI invalide : "paths" manquant')
       return spec
     } catch (error) {
       lastError = error
