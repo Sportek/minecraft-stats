@@ -1,0 +1,30 @@
+{
+  "name": "minecraft-stats-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "author": "Sportek aka Gabriel Landry",
+  "description": "Serveur MCP (Model Context Protocol) pour Minecraft Stats — expose les endpoints publics en lecture seule aux agents IA, généré automatiquement depuis le spec OpenAPI du backend.",
+  "main": "build/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node build/server.js",
+    "typecheck": "tsc --noEmit",
+    "inspect": "npx @modelcontextprotocol/inspector",
+    "build:docker": "docker build -t sportek/minecraft-stats-mcp:latest .",
+    "push:docker": "docker push sportek/minecraft-stats-mcp:latest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "express": "^5.1.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.3"
+  }
+}

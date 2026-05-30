@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Minecraft Stats is a full-stack web application that tracks player count statistics for Minecraft servers. It consists of:
 - **Backend**: AdonisJS 6 API (TypeScript) with PostgreSQL database
 - **Frontend**: Next.js 15 (React 19) with TypeScript, using Turbopack
+- **MCP server** (`mcp/`): Standalone Node/TypeScript service exposing the public read-only API to AI agents via the Model Context Protocol (Streamable HTTP). Tools are auto-generated at startup from the backend's live OpenAPI spec (`/swagger`), filtered by an explicit public allowlist. See `mcp/README.md`.
 
 The application pings Minecraft servers every 10 minutes to collect player statistics, stores historical data, and provides a public API and web interface to visualize server growth and trends.
 
