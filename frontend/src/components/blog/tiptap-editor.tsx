@@ -31,7 +31,7 @@ import { PlaceholderPicker } from "./placeholder-picker";
 
 interface TiptapEditorProps {
   content: string;
-  onChange: (html: string) => void;
+  onChange: (markdown: string) => void;
   placeholder?: string;
 }
 
@@ -68,10 +68,9 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
     ],
     content,
     onUpdate: ({ editor }) => {
-      // Note : Tu peux choisir de récupérer du HTML ou du Markdown ici.
-      // Pour l'instant, on garde HTML pour ton backend actuel.
-      onChange(editor.getHTML());
-      // Si un jour tu veux sauvegarder en Markdown en BDD : onChange(editor.storage.markdown.getMarkdown())
+      // On sauvegarde le contenu en Markdown. Le rendu public le reconvertit en
+      // HTML via markdown-it (voir src/lib/markdown.ts).
+      onChange(editor.storage.markdown.getMarkdown());
     },
     editorProps: {
       attributes: {
@@ -90,7 +89,8 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           "prose-ol:list-decimal prose-ol:pl-6",
           "prose-li:mb-2",
           "prose-code:bg-gray-100 dark:prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none",
-          "prose-pre:bg-gray-100 dark:prose-pre:bg-slate-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-slate-700 prose-pre:rounded-lg",
+          "prose-pre:bg-gray-100 dark:prose-pre:bg-slate-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-slate-700 prose-pre:rounded-lg prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-slate-800 dark:prose-pre:text-slate-100",
+          "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm",
         ].join(" "),
       },
     },
@@ -100,8 +100,9 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
     if (!editor) return;
 
     // On ne met à jour le contenu que si l'éditeur n'a pas le focus
-    // OU si le contenu est vide (initialisation)
-    if (!editor.isFocused && content !== editor.getHTML()) {
+    // OU si le contenu est vide (initialisation). On compare en Markdown car
+    // c'est désormais le format échangé via la prop `content`.
+    if (!editor.isFocused && content !== editor.storage.markdown.getMarkdown()) {
       editor.commands.setContent(content);
     }
   }, [content, editor]);

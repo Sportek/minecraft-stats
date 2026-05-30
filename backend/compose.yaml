@@ -92,6 +92,42 @@ services:
       start_period: 10s
 
   ##########################################################################
+  # Serveur MCP (Model Context Protocol) — expose les stats publiques aux IA
+  ##########################################################################
+  mcp:
+    container_name: "stats-mcp-${APP_NAME}"
+    image: "sportek/minecraft-stats-mcp:${IMAGE_TAG:-latest}"
+    pull_policy: always
+    restart: "unless-stopped"
+    depends_on:
+      - adonis_app
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=3334
+      - HOST=0.0.0.0
+      # Le MCP récupère le spec OpenAPI et relaie les requêtes vers le backend
+      # via le réseau interne, en utilisant le port d'écoute du backend (${PORT}).
+      - API_BASE_URL=http://adonis_app:${PORT}
+      - MCP_PATH=/mcp
+      - ALLOWED_HOSTS=${MCP_ALLOWED_HOSTS:-}
+      - ALLOWED_ORIGINS=${MCP_ALLOWED_ORIGINS:-}
+    networks:
+      - sail
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      # 127.0.0.1 (et non localhost) : le serveur écoute en IPv4 (0.0.0.0), alors
+      # que localhost résout en IPv6 (::1) dans l'image Alpine -> connexion refusée.
+      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:3334/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  ##########################################################################
   # Grafana
   ##########################################################################
   grafana:
