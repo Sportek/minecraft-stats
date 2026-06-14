@@ -74,7 +74,8 @@ router
     router
       .resource('users', '#controllers/users_controller')
       .except(['create', 'edit'])
-      .middleware(['destroy', 'store', 'update'], middleware.auth())
+      .middleware(['index', 'show', 'destroy', 'store', 'update'], middleware.auth())
+      .middleware(['index', 'show'], NO_STORE)
       .use('*', throttleLight('users', 8))
 
     router

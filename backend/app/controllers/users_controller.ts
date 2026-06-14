@@ -8,11 +8,16 @@ export default class UsersController {
    * @listUsers
    * @operationId listUsers
    * @tag USERS
-   * @summary List all users
-   * @description Returns the full collection of users registered on the platform. Publicly accessible.
+   * @summary List all users (admin only)
+   * @description Returns the full collection of users registered on the platform. Requires an authenticated admin (gated by `UserPolicy.manage`).
    * @responseBody 200 - <User[]>
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"message": "Unauthorized"}
    */
-  async index({ response }: HttpContext) {
+  async index({ response, bouncer }: HttpContext) {
+    if (await bouncer.with(UserPolicy).denies('manage')) {
+      return response.forbidden({ message: 'Unauthorized' })
+    }
     const users = await User.all()
     return response.ok(users)
   }
@@ -42,12 +47,17 @@ export default class UsersController {
    * @showUser
    * @operationId showUser
    * @tag USERS
-   * @summary Get a single user
-   * @description Returns the user identified by `id`. Responds with `null` (HTTP 200) when no user matches the id, since the controller uses `User.find` rather than `findOrFail`.
+   * @summary Get a single user (admin only)
+   * @description Returns the user identified by `id`. Requires an authenticated admin (gated by `UserPolicy.manage`). Responds with `null` (HTTP 200) when no user matches the id, since the controller uses `User.find` rather than `findOrFail`.
    * @paramPath id - User ID - @type(number) @example(7) @required
    * @responseBody 200 - <User>
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"message": "Unauthorized"}
    */
-  async show({ params, response }: HttpContext) {
+  async show({ params, response, bouncer }: HttpContext) {
+    if (await bouncer.with(UserPolicy).denies('manage')) {
+      return response.forbidden({ message: 'Unauthorized' })
+    }
     const user = await User.find(params.id)
     return response.ok(user)
   }
