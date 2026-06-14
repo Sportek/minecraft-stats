@@ -46,12 +46,25 @@ const HOT_THRESHOLD_PLAYERS = 100
 const PING_LOCK_TTL_SECONDS = 60
 
 /**
- * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
+ * Taille max d'un favicon accepté. Un favicon Minecraft légitime est un PNG
+ * 64x64 de quelques Ko ; les octets proviennent d'un serveur distant
+ * (attaquant-contrôlé), donc on borne pour éviter l'écriture disque / le décodage
+ * d'un blob géant (DoS), d'autant qu'il y a jusqu'à PING_CONCURRENCY pings en vol.
  */
-function saveBase64Image(base64Image: string, outputPath: string) {
+const MAX_FAVICON_BYTES = 128 * 1024
+
+/**
+ * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
+ * Lève si le contenu décodé dépasse MAX_FAVICON_BYTES (capturé par l'appelant).
+ */
+function saveBase64Image(base64Image: string, outputPath: string): Buffer {
   const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '')
   const buffer = Buffer.from(base64Data, 'base64')
+  if (buffer.byteLength > MAX_FAVICON_BYTES) {
+    throw new Error(`favicon too large: ${buffer.byteLength} bytes (max ${MAX_FAVICON_BYTES})`)
+  }
   fs.writeFileSync(outputPath, buffer, { flag: 'w' })
+  return buffer
 }
 
 /**
@@ -138,12 +151,12 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
           const imageName = `${server.id}.png`
           const imageFullPath = path.join(imagePath, imageName)
           fs.mkdirSync(imagePath, { recursive: true })
-          saveBase64Image(imageBase64, imageFullPath)
+          const buffer = saveBase64Image(imageBase64, imageFullPath)
 
           const webpImageName = `${server.id}.webp`
           const webpImageFullPath = path.join(imagePath, webpImageName)
-          const buffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64')
-          sharp(buffer)
+          sharp(buffer, { limitInputPixels: 16_384 * 16_384, failOn: 'error' })
+            .resize(64, 64, { fit: 'inside', withoutEnlargement: true })
             .toFormat('webp')
             .toFile(webpImageFullPath, (err) => {
               if (err) {

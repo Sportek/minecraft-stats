@@ -147,7 +147,7 @@ export default class ServersController {
   async show({ params, response }: HttpContext) {
     let server = await Server.query()
       .where('id', params.id)
-      .preload('user')
+      .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
       .preload('growthStat')
       .preload('categories')
       .preload('languages')
@@ -252,8 +252,8 @@ export default class ServersController {
    */
   async paginate(ctx: HttpContext) {
     const { request } = ctx
-    const page = request.input('page', 1)
-    const limit = request.input('limit', 10)
+    const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
+    const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 10), 10) || 10))
     const categoryIds = request.input('categoryIds')
     const languageIds = request.input('languageIds')
     const search = request.input('search', '')
@@ -354,7 +354,7 @@ export default class ServersController {
     // Évite qu'un serveur down depuis des jours reste top juste parce qu'il
     // avait 500 joueurs avant de tomber.
     let query = Server.query()
-      .preload('user')
+      .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
       .preload('categories')
       .preload('growthStat')
       .preload('languages')

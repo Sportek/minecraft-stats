@@ -17,8 +17,8 @@ export default class PostsController {
    * @responseBody 200 - {"meta": {"total": 42, "perPage": 10, "currentPage": 1, "lastPage": 5}, "data": [{"id": 1, "title": "Welcome", "slug": "welcome", "content": "<p>Hello</p>", "excerpt": "Hello", "coverImage": "/images/blog/cover.webp", "published": true, "publishedAt": "2026-05-28T12:00:00.000Z", "userId": 1, "createdAt": "2026-05-20T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z", "author": {"id": 1, "username": "admin", "avatarUrl": ""}}]}
    */
   async index({ request, response }: HttpContext) {
-    const page = request.input('page', 1)
-    const limit = request.input('limit', 10)
+    const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
+    const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 10), 10) || 10))
 
     const posts = await Post.query()
       .where('published', true)
@@ -80,8 +80,8 @@ export default class PostsController {
       return response.forbidden({ error: 'Access denied. Writer privileges required.' })
     }
 
-    const page = request.input('page', 1)
-    const limit = request.input('limit', 20)
+    const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
+    const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20))
     const status = request.input('status', 'all') // all, published, draft
 
     const query = Post.query().preload('author', (authorQuery) => {

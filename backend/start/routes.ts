@@ -8,9 +8,9 @@
 */
 
 import swagger from '#config/swagger'
+import { cacheHeaders } from '#middleware/cache_headers_middleware'
 import router from '@adonisjs/core/services/router'
 import AutoSwagger from 'adonis-autoswagger'
-import { cacheHeaders } from '#middleware/cache_headers_middleware'
 import { middleware } from './kernel.js'
 import { throttleLight } from './limiter.js'
 
@@ -100,6 +100,14 @@ router
       .post('/change-password', '#controllers/auth_controller.changePassword')
       .use(middleware.auth())
       .use([throttleLight('change-password', 2), NO_STORE])
+    router
+      .post('/logout', '#controllers/auth_controller.logout')
+      .use(middleware.auth())
+      .use([throttleLight('logout', 10), NO_STORE])
+    router
+      .post('/logout-all', '#controllers/auth_controller.logoutAll')
+      .use(middleware.auth())
+      .use([throttleLight('logout-all', 5), NO_STORE])
     router
       .get('/login/:provider', '#controllers/auth_controller.providerLogin')
       .where('provider', /google|discord/)

@@ -92,6 +92,40 @@ export const changeUserPassword = async (credentials: { oldPassword: string; new
   return response.json() as Promise<User>;
 };
 
+export const logoutUser = async (token: string) => {
+  const response = await fetch(`${getBaseUrl()}/logout`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+};
+
+export const logoutAllUser = async (token: string) => {
+  const response = await fetch(`${getBaseUrl()}/logout-all`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+};
+
 export const getErrorMessage = async (response: Response) => {
   const error = await response.json();
   const errorMessage = error?.error?.message || error?.errors?.[0]?.message || error?.message;

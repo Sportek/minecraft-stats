@@ -135,7 +135,47 @@ export default class AuthController {
       return response.badRequest({ message: 'Invalid old password' })
     user.password = validatedUserData.newPassword
     await user.save()
+
+    const currentTokenId = user.currentAccessToken?.identifier
+    const tokens = await User.accessTokens.all(user)
+    await Promise.all(
+      tokens
+        .filter((token) => token.identifier !== currentTokenId)
+        .map((token) => User.accessTokens.delete(user, token.identifier))
+    )
+
     return response.ok(user)
+  }
+
+  /**
+   * @logout
+   * @operationId logout
+   * @tag AUTH
+   * @summary Log out of the current session
+   * @description Revokes the access token presented on this request, invalidating only the current session server-side. Requires authentication.
+   * @responseBody 200 - {"message": "Logged out"}
+   * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
+   */
+  async logout({ auth, response }: HttpContext) {
+    const user = auth.getUserOrFail()
+    await User.accessTokens.delete(user, user.currentAccessToken.identifier)
+    return response.ok({ message: 'Logged out' })
+  }
+
+  /**
+   * @logoutAll
+   * @operationId logoutAll
+   * @tag AUTH
+   * @summary Revoke all sessions (log out of every device)
+   * @description Revokes every access token of the authenticated user, including the current one, signing them out on all devices. Useful after a suspected compromise. Requires authentication.
+   * @responseBody 200 - {"message": "All sessions revoked", "revoked": 3}
+   * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
+   */
+  async logoutAll({ auth, response }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const tokens = await User.accessTokens.all(user)
+    await Promise.all(tokens.map((token) => User.accessTokens.delete(user, token.identifier)))
+    return response.ok({ message: 'All sessions revoked', revoked: tokens.length })
   }
 
   /**
@@ -193,7 +233,7 @@ export default class AuthController {
       }
     )
 
-    if (!user.provider && user.provider !== 'discord')
+    if (user.provider !== 'discord')
       return response.badRequest({ message: 'Cannot login with this third-party provider' })
 
     return {
@@ -242,7 +282,7 @@ export default class AuthController {
       }
     )
 
-    if (!user.provider && user.provider !== 'google')
+    if (user.provider !== 'google')
       return response.badRequest({ message: 'Cannot login with this third-party provider' })
 
     return {
