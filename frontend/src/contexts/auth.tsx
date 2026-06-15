@@ -1,6 +1,6 @@
 "use client";
 import { getBaseUrl } from "@/app/_cheatcode";
-import { changeUserPassword, getUser, loginUser, registerUser } from "@/http/auth";
+import { changeUserPassword, getUser, loginUser, logoutAllUser, logoutUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useState } from "react";
@@ -10,7 +10,8 @@ interface AuthContextProps {
   setUser: (user: User | null) => void;
   login: (email: string, password: string) => Promise<{ message: string } | undefined>;
   register: (username: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  logoutAll: () => Promise<void>;
   loginWithDiscord: () => void;
   loginWithGoogle: () => void;
   getToken: () => string | null;
@@ -95,12 +96,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [router]
   );
 
-  const logout = useCallback(() => {
-    setUser(null);
-    setIsLoggedIn(false);
-    removeToken();
-    router.push("/");
-  }, [router, setUser, setIsLoggedIn, removeToken]);
+  const logout = useCallback(async () => {
+    try {
+      const token = getToken();
+      // Révoque le token côté serveur (sinon il reste valide 30 jours).
+      if (token) await logoutUser(token);
+    } catch {
+      // Même si la révocation serveur échoue (token déjà expiré, réseau HS),
+      // on nettoie la session côté client.
+    } finally {
+      setUser(null);
+      setIsLoggedIn(false);
+      removeToken();
+      router.push("/");
+    }
+  }, [router, getToken, setUser, setIsLoggedIn, removeToken]);
+
+  const logoutAll = useCallback(async () => {
+    try {
+      const token = getToken();
+      // Révoque TOUS les tokens (tous les appareils), y compris celui-ci.
+      if (token) await logoutAllUser(token);
+    } catch {
+      // Idem : on nettoie la session locale quoi qu'il arrive.
+    } finally {
+      setUser(null);
+      setIsLoggedIn(false);
+      removeToken();
+      router.push("/");
+    }
+  }, [router, getToken, setUser, setIsLoggedIn, removeToken]);
 
   const changePassword = useCallback(
     async (oldPassword: string, newPassword: string) => {
@@ -135,6 +160,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       login,
       register,
       logout,
+      logoutAll,
       loginWithDiscord,
       loginWithGoogle,
       getToken,
@@ -149,6 +175,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     login,
     register,
     logout,
+    logoutAll,
     loginWithDiscord,
     loginWithGoogle,
     getToken,

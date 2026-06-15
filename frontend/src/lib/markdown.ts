@@ -1,3 +1,4 @@
+import DOMPurify from "isomorphic-dompurify";
 import MarkdownIt from "markdown-it";
 
 /**
@@ -8,8 +9,13 @@ import MarkdownIt from "markdown-it";
  * tandis que les nouveaux articles écrits en Markdown sont convertis. Aucune
  * migration n'est nécessaire.
  *
- * Le contenu est rédigé par des auteurs/admins authentifiés (route protégée par
- * policy), au même niveau de confiance que le rendu HTML précédent.
+ * Comme `html: true` autorise du HTML arbitraire, et que le contenu peut inclure
+ * des données non fiables (placeholders %SERVER_VERSION%/%ADDRESS% alimentés par
+ * le ping d'un serveur distant, ou un compte `writer` compromis), on passe
+ * systématiquement le HTML rendu par DOMPurify avant injection via
+ * `dangerouslySetInnerHTML`. Les balises de mise en forme restent autorisées ;
+ * `<script>`, les attributs gestionnaires d'événements et les URLs
+ * `javascript:`/`data:` dangereuses sont supprimés.
  */
 const md = new MarkdownIt({
   html: true,
@@ -19,5 +25,7 @@ const md = new MarkdownIt({
 
 export function renderMarkdown(content: string | null | undefined): string {
   if (!content) return "";
-  return md.render(content);
+  return DOMPurify.sanitize(md.render(content), {
+    USE_PROFILES: { html: true },
+  });
 }

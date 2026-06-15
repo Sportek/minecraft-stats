@@ -24,6 +24,22 @@ export default class PlaceholderService {
   private static readonly PLACEHOLDER_REGEX = /%([A-Z_]+)_(\d+)%/g
 
   /**
+   * Échappe les caractères HTML sensibles. Les valeurs SERVER_VERSION / ADDRESS
+   * proviennent de sources non fiables (réponse de ping du serveur distant,
+   * saisie du propriétaire) et sont substituées dans le contenu d'un article qui
+   * est ensuite rendu en HTML brut côté frontend (markdown-it `html: true`).
+   * Sans échappement, une version/adresse malveillante = XSS stocké.
+   */
+  private static escapeHtml(value: string): string {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;')
+  }
+
+  /**
    * Replace all placeholders in content with actual values
    */
   static async replacePlaceholders(content: string): Promise<string> {
@@ -157,7 +173,7 @@ export default class PlaceholderService {
         return String(data.median)
 
       case 'SERVER_VERSION':
-        return data.server?.version || 'Unknown'
+        return this.escapeHtml(data.server?.version || 'Unknown')
 
       case 'DATA_SINCE_DATE':
         if (data.firstStat) {
@@ -169,7 +185,7 @@ export default class PlaceholderService {
         if (!data.server?.address) {
           return 'N/A'
         }
-        return data.server.address
+        return this.escapeHtml(data.server.address)
 
       default:
         return `[Unknown placeholder: ${placeholderName}]`

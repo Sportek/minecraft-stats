@@ -1,5 +1,6 @@
 import vine from '@vinejs/vine'
 import { LanguageCode } from '../constants/languages.js'
+import { publicHostField } from './helpers.js'
 
 export enum ServerCategory {
   SURVIVAL = 'survival',
@@ -18,7 +19,7 @@ export enum ServerCategory {
 export const CreateServerValidator = vine.compile(
   vine.object({
     name: vine.string(),
-    address: vine.string(),
+    address: publicHostField(),
     port: vine.number().max(65535).min(1),
     imageUrl: vine.string().optional(),
     categories: vine.array(vine.string()),
@@ -31,7 +32,7 @@ export const CreateServerValidator = vine.compile(
 export const UpdateServerValidator = vine.compile(
   vine.object({
     name: vine.string().optional(),
-    address: vine.string().optional(),
+    address: publicHostField().optional(),
     port: vine.number().max(65535).min(1).optional(),
     imageUrl: vine.string().optional(),
     categories: vine.array(vine.string()).optional(),

@@ -1,10 +1,35 @@
 "use client";
 
 import ChangePasswordForm from "@/components/form/change-password-form";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 
 const SettingsPage = () => {
-  const { user } = useAuth();
+  const { user, logoutAll } = useAuth();
+  const { toast } = useToast();
+
+  const handleLogoutAll = async () => {
+    const confirmed = window.confirm(
+      "Log out of all devices? This revokes every active session, including this one."
+    );
+    if (!confirmed) return;
+    try {
+      await logoutAll();
+      toast({
+        title: "All sessions revoked",
+        description: "You have been logged out of every device.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "error",
+      });
+    }
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -39,6 +64,15 @@ const SettingsPage = () => {
               <ChangePasswordForm />
             </div>
           </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="text-xl font-semibold">Security</div>
+          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+            Sign out of every device. Use this if you suspect your account has been compromised.
+          </div>
+          <Button variant="destructive" className="w-fit" onClick={handleLogoutAll}>
+            Log out of all devices
+          </Button>
         </div>
       </div>
     </div>

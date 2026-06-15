@@ -133,8 +133,8 @@ export default class UsersController {
       return response.forbidden({ error: 'Access denied. Admin privileges required.' })
     }
 
-    const page = request.input('page', 1)
-    const limit = request.input('limit', 20)
+    const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
+    const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20))
     const search = request.input('search', '')
     const role = request.input('role', 'all')
 

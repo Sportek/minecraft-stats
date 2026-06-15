@@ -2,6 +2,19 @@ import { getClientDomainConfig } from "@/lib/domain";
 import { Category, Server } from "@/types/server";
 import Script from "next/script";
 
+/**
+ * Sérialise un objet JSON-LD pour une insertion sûre dans un <script>.
+ * `JSON.stringify` n'échappe ni `<` ni `>` ni `/`, donc une valeur contenant
+ * `</script>` (ex. un nom de serveur attaquant-contrôlé) pourrait fermer la
+ * balise et injecter du HTML/JS. On neutralise `<`, `>` et `&`.
+ */
+function toJsonLd(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+}
+
 interface ServerStructuredDataProps {
   server: Server;
   categories: Category[];
@@ -76,7 +89,7 @@ export function ServerStructuredData({
     <Script
       id={`structured-data-${server.id}`}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
     />
   );
 }
@@ -132,7 +145,7 @@ export function WebsiteStructuredData({ totalServers, totalPlayers }: WebsiteStr
     <Script
       id="website-structured-data"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
     />
   );
 }
@@ -166,7 +179,7 @@ export function OrganizationStructuredData({ name = "Minecraft Stats" }: Organiz
     <Script
       id="organization-structured-data"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
     />
   );
 }
@@ -230,7 +243,7 @@ export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredData
     <Script
       id={`blog-post-structured-data-${post.id}`}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
     />
   );
 }
@@ -294,7 +307,7 @@ export function ServerFAQStructuredData({
     <Script
       id={`faq-structured-data-${server.id}`}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
     />
   );
 }
