@@ -11,7 +11,7 @@ import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pLimit from 'p-limit'
 import sharp from 'sharp'
-import { pingMinecraftJava } from '../minecraft-ping/minecraft_ping.js'
+import { pingMinecraftServer } from '../minecraft-ping/minecraft_ping.js'
 
 type ServerStatRow = {
   server_id: number
@@ -139,7 +139,7 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
   const createdAt = new Date()
 
   try {
-    const data = await pingMinecraftJava(server.address, server.port)
+    const data = await pingMinecraftServer(server.type, server.address, server.port)
     if (data) {
       if (data.favicon && (overwriteImage || !server.imageUrl)) {
         try {

@@ -9,11 +9,14 @@ export interface Language {
   updatedAt: Date;
 }
 
+export type ServerType = "java" | "bedrock";
+
 export interface Server {
   id: number;
   name: string;
   address: string;
   port: number;
+  type: ServerType;
   version: string | null;
   imageUrl: string;
   user: User;

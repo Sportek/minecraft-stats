@@ -35,6 +35,7 @@ const ServerCardsSection = () => {
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<number[]>([]);
+  const [selectedType, setSelectedType] = useState<"all" | "java" | "bedrock">("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const debouncedSearch = useDebounce(search, 300);
@@ -46,9 +47,10 @@ const ServerCardsSection = () => {
   const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : "";
   const categoriesParam = selectedCategories.length > 0 ? `&categoryIds=${selectedCategories.join(",")}` : "";
   const languagesParam = selectedLanguages.length > 0 ? `&languageIds=${selectedLanguages.join(",")}` : "";
+  const typeParam = selectedType !== "all" ? `&type=${selectedType}` : "";
 
   const { data, isValidating, isLoading } = useSWR<PaginatedResponse>(
-    `${apiUrl}/servers/paginate?page=${currentPage}&limit=${pageSize}${searchParam}${categoriesParam}${languagesParam}`,
+    `${apiUrl}/servers/paginate?page=${currentPage}&limit=${pageSize}${searchParam}${categoriesParam}${languagesParam}${typeParam}`,
     fetcher,
     { keepPreviousData: true }
   );
@@ -73,6 +75,11 @@ const ServerCardsSection = () => {
     setCurrentPage(1);
   };
 
+  const updateType = (type: "all" | "java" | "bedrock") => {
+    setSelectedType(type);
+    setCurrentPage(1);
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -86,10 +93,12 @@ const ServerCardsSection = () => {
     setSearch("");
     setSelectedCategories([]);
     setSelectedLanguages([]);
+    setSelectedType("all");
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = search || selectedCategories.length > 0 || selectedLanguages.length > 0;
+  const hasActiveFilters =
+    search || selectedCategories.length > 0 || selectedLanguages.length > 0 || selectedType !== "all";
   const isFetching = isLoading || isValidating;
 
   const rangeStart = totalServers === 0 ? 0 : (currentPage - 1) * pageSize + 1;
@@ -144,6 +153,16 @@ const ServerCardsSection = () => {
               emptyMessage="No languages found."
               className="flex-1 sm:flex-none"
             />
+            <Select value={selectedType} onValueChange={(v) => updateType(v as "all" | "java" | "bedrock")}>
+              <SelectTrigger aria-label="Edition" className="h-9 flex-1 sm:w-auto sm:flex-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All editions</SelectItem>
+                <SelectItem value="java">Java</SelectItem>
+                <SelectItem value="bedrock">Bedrock</SelectItem>
+              </SelectContent>
+            </Select>
             <Button
               variant="ghost"
               size="icon"

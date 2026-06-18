@@ -1,11 +1,11 @@
 "use client";
 
-import { addMinecraftServer } from "@/http/server";
+import { addMinecraftServer, ServerPayload } from "@/http/server";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { useAuth } from "./auth";
 
 interface ServersContextProps {
-  addServer: (data: { name: string; address: string; port: number; categories: string[] }) => Promise<void>;
+  addServer: (data: ServerPayload) => Promise<void>;
 }
 
 export const ServersContext = createContext<ServersContextProps | null>(null);
@@ -22,7 +22,7 @@ export const ServersProvider = ({ children }: { children: React.ReactNode }) => 
   const { getToken } = useAuth();
 
   const addServer = useCallback(
-    async (data: { name: string; address: string; port: number; categories: string[] }) => {
+    async (data: ServerPayload) => {
       // Pas de wrapping de l'erreur : on laisse remonter l'instance d'origine
       // (notamment DuplicateServerError) pour que le formulaire puisse la typer.
       await addMinecraftServer(data, getToken() ?? "");

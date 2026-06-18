@@ -1,5 +1,13 @@
 import { getBaseUrl } from "@/app/_cheatcode";
-import { Category, Server, ServerStat } from "@/types/server";
+import { Category, Server, ServerStat, ServerType } from "@/types/server";
+
+export interface ServerPayload {
+  name: string;
+  address: string;
+  port: number;
+  type: ServerType;
+  categories: string[];
+}
 // Note: GET /api/v1/servers is a lightweight endpoint that returns only { server } (no stats/categories).
 // For richer data, use /servers/paginate or /servers/:id.
 import { getErrorMessage } from "./auth";
@@ -25,7 +33,7 @@ export class DuplicateServerError extends Error {
 }
 
 export const addMinecraftServer = async (
-  data: { name: string; address: string; port: number; categories: string[] },
+  data: ServerPayload,
   token: string
 ) => {
   const response = await fetch(`${getBaseUrl()}/servers`, {
@@ -119,7 +127,7 @@ export const deleteServer = async (serverId: number, token: string) => {
 
 export const editServer = async (
   serverId: number,
-  data: { name: string; address: string; port: number; categories: string[] },
+  data: ServerPayload,
   token: string
 ) => {
   const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {

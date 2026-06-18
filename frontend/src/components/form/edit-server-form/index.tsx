@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { deleteServer, editServer } from "@/http/server";
@@ -41,6 +42,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
    .object({
      name: z.string().min(1).trim(),
      address: z.string().min(1).trim(),
+     type: z.enum(["java", "bedrock"]),
      port: z.string().min(1).max(5),
      categories: z.array(z.string()),
      languages: z.array(z.string()),
@@ -70,6 +72,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
     defaultValues: {
       name: server.name,
       address: server.address,
+      type: server.type,
       port: server.port.toString(),
       categories: serverCategories.map((category) => category.name),
       languages: server.languages.map((language) => language.code),
@@ -161,6 +164,28 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                   <FormDescription>The address of the server</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Edition</FormLabel>
+                  <FormDescription>Java or Bedrock edition</FormDescription>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="java">Java</SelectItem>
+                        <SelectItem value="bedrock">Bedrock</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

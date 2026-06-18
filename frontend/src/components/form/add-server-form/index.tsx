@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { useServers } from "@/contexts/servers";
 import { DuplicateServerError } from "@/http/server";
@@ -18,6 +19,12 @@ import { z } from "zod";
 
 interface AddServerFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
+/** Port d'écoute par défaut selon l'édition (Java TCP 25565, Bedrock UDP 19132). */
+const DEFAULT_PORT: Record<"java" | "bedrock", string> = {
+  java: "25565",
+  bedrock: "19132",
+};
+
 const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
   const { data, isLoading, error } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
   const { data: languagesData } = useSWRImmutable<Language[]>(`${getBaseUrl()}/languages`, fetcher);
@@ -29,6 +36,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     .object({
       name: z.string().min(1).trim(),
       address: z.string().min(1).trim(),
+      type: z.enum(["java", "bedrock"]),
       port: z.string().min(1).max(5),
       categories: z.array(z.string()),
       languages: z.array(z.string()),
@@ -57,7 +65,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     defaultValues: {
       name: "",
       address: "",
-      port: "25565",
+      type: "java",
+      port: DEFAULT_PORT.java,
       categories: [],
       languages: [],
     },
@@ -142,6 +151,35 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                   <FormDescription>The address of the server</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Edition</FormLabel>
+                  <FormDescription>Java or Bedrock edition</FormDescription>
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value: "java" | "bedrock") => {
+                        field.onChange(value);
+                        // Bascule le port sur la valeur par défaut de l'édition choisie.
+                        form.setValue("port", DEFAULT_PORT[value]);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="java">Java</SelectItem>
+                        <SelectItem value="bedrock">Bedrock</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -50,7 +50,7 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
           </div>
         </div>
         <div className="flex flex-row items-center justify-between gap-2 w-full">
-          <ServerCategories categories={categories} version={server.version ?? undefined} isFull={isFull} />
+          <ServerCategories categories={categories} version={server.version ?? undefined} type={server.type} isFull={isFull} />
           <FavoriteButton serverId={server.id} serverName={server.name} />
         </div>
       </div>
