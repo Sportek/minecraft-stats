@@ -1,16 +1,29 @@
 import { Badge } from "@/components/ui/badge";
-import { Category } from "@/types/server";
+import { Category, ServerType } from "@/types/server";
+import { cn } from "@/lib/utils";
 import { extractVersions, formatVersion } from "@/utils/server-version";
 
 interface ServerCategoriesProps {
   categories: Category[];
   version?: string;
+  type?: ServerType;
   isFull?: boolean;
 }
 
-const ServerCategories = ({ categories, version, isFull }: ServerCategoriesProps) => {
+const ServerCategories = ({ categories, version, type, isFull }: ServerCategoriesProps) => {
   return (
     <div className="flex flex-row items-center gap-1 truncate">
+      <Badge
+        variant="outline"
+        className={cn(
+          "text-xs",
+          type === "bedrock"
+            ? "border-emerald-500/60 text-emerald-600 dark:text-emerald-400"
+            : "border-sky-500/60 text-sky-600 dark:text-sky-400"
+        )}
+      >
+        {type === "bedrock" ? "Bedrock" : "Java"}
+      </Badge>
       <Badge
         variant="secondary"
         className="bg-stats-blue-900 dark:bg-stats-blue-950 text-white hover:bg-stats-blue-800 dark:hover:bg-stats-blue-800/80"

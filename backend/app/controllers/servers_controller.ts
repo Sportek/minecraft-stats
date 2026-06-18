@@ -6,8 +6,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 import {
   INTERACTIVE_PING_TIMEOUT,
   isPingPossible,
-  pingMinecraftJava,
+  pingMinecraftServer,
 } from '../../minecraft-ping/minecraft_ping.js'
+import type { NormalizedPing } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
 import CacheService from '#services/cache_service'
 import StatsService from '#services/stat_service'
@@ -32,6 +33,7 @@ export default class ServersController {
       'name',
       'address',
       'port',
+      'type',
       'image_url',
       'last_player_count',
       'last_stats_at',
@@ -55,19 +57,29 @@ export default class ServersController {
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "address"}]}
    */
   async store({ request, auth, response }: HttpContext) {
-    const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories', 'languages'])
+    const data = request.only([
+      'name',
+      'address',
+      'port',
+      'type',
+      'imageUrl',
+      'categories',
+      'languages',
+    ])
     const user = auth.user
     if (!user) {
       return response.unauthorized({ message: 'Unauthorized' })
     }
 
     const validatedData = await CreateServerValidator.validate(data)
+    const type = validatedData.type ?? 'java'
 
     // Ping interactif : sert à la fois de test de joignabilité ET de source
     // pour les empreintes de détection de doublon (favicon, MOTD, version).
-    let pingData: Awaited<ReturnType<typeof pingMinecraftJava>> | null = null
+    let pingData: NormalizedPing | null = null
     try {
-      pingData = await pingMinecraftJava(
+      pingData = await pingMinecraftServer(
+        type,
         validatedData.address,
         validatedData.port,
         INTERACTIVE_PING_TIMEOUT
@@ -100,6 +112,7 @@ export default class ServersController {
 
     const server = await Server.create({
       ...dataToCreate,
+      type,
       version: fingerprint.version,
       faviconHash: fingerprint.faviconHash,
       resolvedEndpoint: fingerprint.resolvedEndpoint,
@@ -172,7 +185,15 @@ export default class ServersController {
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "port"}]}
    */
   async update({ params, request, response, bouncer }: HttpContext) {
-    const data = request.only(['name', 'address', 'port', 'imageUrl', 'categories', 'languages'])
+    const data = request.only([
+      'name',
+      'address',
+      'port',
+      'type',
+      'imageUrl',
+      'categories',
+      'languages',
+    ])
     const validatedData = await UpdateServerValidator.validate(data)
     const server = await Server.findByOrFail('id', params.id)
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
@@ -182,6 +203,7 @@ export default class ServersController {
     const { categories, languages, ...dataToUpdate } = validatedData
 
     const successPing = await isPingPossible(
+      validatedData.type ?? server.type,
       validatedData.address ?? server.address,
       validatedData.port ?? server.port
     )
@@ -246,6 +268,7 @@ export default class ServersController {
    * @paramQuery categoryIds - CSV of category ids to filter on (e.g. "1,2,3") - @type(string) @example(1,3,5)
    * @paramQuery languageIds - CSV of language ids to filter on (e.g. "1,2,3") - @type(string) @example(1,2)
    * @paramQuery search - Case-insensitive substring matched against name and address - @type(string) @example(hypixel)
+   * @paramQuery type - Filter by server edition. Any other value is ignored. - @type(string) @enum(java, bedrock)
    * @paramQuery ids - Restrict to specific server ids. Accepts CSV ("1,2,3") OR repeated param ("ids=1&ids=2"). Positive integers only, deduplicated, max 20 ids (extras dropped). Used for the favorites section. - @type(string) @example(12,34,56)
    * @paramQuery nocache - Set to "1" to bypass the response cache. Only honored in non-production environments or for admin users. - @type(string) @enum(1)
    * @responseBody 200 - {"data": [{"server": "<Server>", "stats": [{"serverId": 1, "createdAt": "2026-05-28T12:00:00.000Z", "playerCount": 1200, "maxCount": 5000}], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}], "meta": {"total": 100, "perPage": 10, "currentPage": 1, "lastPage": 10, "firstPage": 1}}
@@ -258,6 +281,9 @@ export default class ServersController {
     const languageIds = request.input('languageIds')
     const search = request.input('search', '')
     const idsParam = request.input('ids')
+    // Édition (java/bedrock). Toute autre valeur est ignorée (pas de filtre).
+    const typeParam = request.input('type')
+    const type = typeParam === 'java' || typeParam === 'bedrock' ? typeParam : undefined
 
     // `ids` restreint la requête à une liste explicite de serveurs — utilisé par
     // la section "favoris", qui affiche les favoris de l'utilisateur dans leur
@@ -281,6 +307,7 @@ export default class ServersController {
       categoryIds,
       languageIds,
       search,
+      type,
       ids: ids.join(','),
     })
 
@@ -302,6 +329,7 @@ export default class ServersController {
           categoryIds,
           languageIds,
           search,
+          type,
           ids,
         })
         return result
@@ -344,9 +372,10 @@ export default class ServersController {
     categoryIds?: string
     languageIds?: string
     search: string
+    type?: 'java' | 'bedrock'
     ids: number[]
   }) {
-    const { page, limit, categoryIds, languageIds, search, ids } = opts
+    const { page, limit, categoryIds, languageIds, search, type, ids } = opts
 
     // Ordering : on ne classe par `last_player_count` que si le dernier ping
     // réussi est récent (< 30 min, soit ~3 cycles de 10 min). Sinon le serveur
@@ -379,6 +408,10 @@ export default class ServersController {
       query = query.where((builder) => {
         builder.whereILike('name', `%${search}%`).orWhereILike('address', `%${search}%`)
       })
+    }
+
+    if (type) {
+      query = query.where('type', type)
     }
 
     if (categoryIds) {

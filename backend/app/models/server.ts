@@ -6,6 +6,7 @@ import Language from './language.js'
 import ServerGrowthStat from './server_growth_stat.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
+import type { ServerType } from '../constants/server_type.js'
 import db from '@adonisjs/lucid/services/db'
 
 export default class Server extends BaseModel {
@@ -20,6 +21,10 @@ export default class Server extends BaseModel {
 
   @column()
   declare port: number
+
+  // Édition du serveur — détermine le protocole de ping (cf. minecraft_ping.ts).
+  @column()
+  declare type: ServerType
 
   @column()
   declare version: string | null
