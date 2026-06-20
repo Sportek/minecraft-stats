@@ -1,5 +1,6 @@
 import Server from '#models/server'
 import ServerCategoryPolicy from '#policies/server_category_policy'
+import { attachServerCategoryValidator } from '#validators/server_category'
 import { type HttpContext } from '@adonisjs/core/http'
 
 export default class ServerCategoriesController {
@@ -33,7 +34,7 @@ export default class ServerCategoriesController {
    * @responseBody 404 - {"message": "Row not found"}
    */
   async store({ request, response, bouncer }: HttpContext) {
-    const { serverId, categoryId } = request.body()
+    const { serverId, categoryId } = await request.validateUsing(attachServerCategoryValidator)
     const server = await Server.findOrFail(serverId)
     if (await bouncer.with(ServerCategoryPolicy).denies('update', server)) {
       return response.forbidden({ message: 'Unauthorized' })
@@ -56,7 +57,7 @@ export default class ServerCategoriesController {
    * @responseBody 404 - {"message": "Row not found"}
    */
   async destroy({ request, response, bouncer }: HttpContext) {
-    const { serverId, categoryId } = request.body()
+    const { serverId, categoryId } = await request.validateUsing(attachServerCategoryValidator)
     const server = await Server.findOrFail(serverId)
     if (await bouncer.with(ServerCategoryPolicy).denies('destroy', server)) {
       return response.forbidden({ message: 'Unauthorized' })

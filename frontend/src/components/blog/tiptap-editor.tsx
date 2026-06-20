@@ -121,7 +121,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
           editor.chain().focus().setImage({ src: fullUrl }).run();
         } catch (error) {
-          console.error("Failed to upload image:", error);
+          console.error("Failed to upload image:", error instanceof Error ? error.message : error);
           alert("Failed to upload image");
         }
       }

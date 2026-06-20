@@ -1,34 +1,18 @@
 "use client";
+import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import EditServerForm from "@/components/form/edit-server-form";
 import Loader from "@/components/loader";
-import { getServer } from "@/http/server";
 import { Category, Server, ServerStat } from "@/types/server";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
 
 const ServerEditPage = () => {
   const { serverId } = useParams();
 
-  const [server, setServer] = useState<{ server: Server; stats: ServerStat[]; categories: Category[] }>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-
-  const updateServer = useCallback(async () => {
-    try {
-      const server = await getServer(Number(serverId));
-      setServer(server);
-    } catch (error) {
-      setError(error as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [serverId]);
-
-  useEffect(() => {
-    updateServer();
-  }, [updateServer]);
-
+  const { data: server, isLoading, mutate } = useSWR<{ server: Server; stats: ServerStat[]; categories: Category[] }>(
+    `${getBaseUrl()}/servers/${serverId}`,
+    fetcher
+  );
 
   return isLoading ? (
     <div className="flex flex-col items-center justify-center h-full flex-1 py-8">
@@ -42,7 +26,7 @@ const ServerEditPage = () => {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-4">
               <div className="w-screen max-w-2xl">
-                <EditServerForm server={server.server} serverCategories={server.categories} updateServer={updateServer} />
+                <EditServerForm server={server.server} serverCategories={server.categories} updateServer={mutate} />
               </div>
             </div>
           </div>

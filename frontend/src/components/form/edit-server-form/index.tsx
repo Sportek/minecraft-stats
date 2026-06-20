@@ -105,10 +105,10 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       });
       router.replace("/");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error while editing server",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Error while editing server",
         variant: "error",
       });
     }
@@ -125,10 +125,10 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       });
       router.replace("/");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error while deleting server",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Error while deleting server",
         variant: "error",
       });
     }

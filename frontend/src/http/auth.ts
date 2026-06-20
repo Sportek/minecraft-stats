@@ -70,8 +70,8 @@ export const getUser = async (token: string) => {
     throw new Error(errorMessage);
   }
 
-  const user = await response.json();
-  return user.user as User | undefined;
+  const body = (await response.json()) as { user?: User };
+  return body.user;
 };
 
 export const changeUserPassword = async (credentials: { oldPassword: string; newPassword: string }, token: string) => {
@@ -126,8 +126,8 @@ export const logoutAllUser = async (token: string) => {
   return response.json();
 };
 
-export const getErrorMessage = async (response: Response) => {
-  const error = await response.json();
+export const getErrorMessage = async (response: Response): Promise<string | undefined> => {
+  const error = (await response.json()) as { error?: { message?: string }; errors?: { message?: string }[]; message?: string };
   const errorMessage = error?.error?.message || error?.errors?.[0]?.message || error?.message;
   return errorMessage;
 };

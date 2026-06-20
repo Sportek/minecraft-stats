@@ -74,69 +74,97 @@ export default class PlaceholderService {
   }
 
   /**
-   * Preload server data for multiple servers at once
+   * Preload server data for multiple servers at once.
+   *
+   * Toutes les données sont récupérées avec des requêtes ensemblistes
+   * (`whereIn` / `GROUP BY server_id`) pour éviter le N+1 : un serveur absent du
+   * résultat `whereIn` est traité comme introuvable (`exists: false`), et les
+   * erreurs DB ne sont plus avalées — elles remontent.
    */
   private static async preloadServerData(serverIds: number[]): Promise<Map<number, ServerData>> {
     const serversData = new Map<number, ServerData>()
 
+    if (serverIds.length === 0) {
+      return serversData
+    }
+
+    const servers = await Server.query().whereIn('id', serverIds)
+
+    // Latest stat per server (highest createdAt) — équivalent à orderBy createdAt desc + first
+    const latestStats = await ServerStat.query()
+      .whereIn('serverId', serverIds)
+      .select('*')
+      .distinctOn('serverId')
+      .orderBy('serverId', 'asc')
+      .orderBy('createdAt', 'desc')
+
+    // First stat per server (lowest createdAt) — équivalent à orderBy createdAt asc + first
+    const firstStats = await ServerStat.query()
+      .whereIn('serverId', serverIds)
+      .select('*')
+      .distinctOn('serverId')
+      .orderBy('serverId', 'asc')
+      .orderBy('createdAt', 'asc')
+
+    // Peak high per server (highest playerCount) — équivalent à orderBy playerCount desc + first
+    const peakHighStats = await ServerStat.query()
+      .whereIn('serverId', serverIds)
+      .select('*')
+      .distinctOn('serverId')
+      .orderBy('serverId', 'asc')
+      .orderBy('playerCount', 'desc')
+
+    // Peak low per server (lowest playerCount > 0) — équivalent à where > 0 + orderBy playerCount asc + first
+    const peakLowStats = await ServerStat.query()
+      .whereIn('serverId', serverIds)
+      .where('playerCount', '>', 0)
+      .select('*')
+      .distinctOn('serverId')
+      .orderBy('serverId', 'asc')
+      .orderBy('playerCount', 'asc')
+
+    // Average and median per server, en une seule requête groupée
+    const aggregatesQuery = await Database.rawQuery(
+      `
+      SELECT
+        server_id,
+        AVG(player_count)::int as avg_players,
+        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY player_count)::int as median_players
+      FROM server_stats
+      WHERE server_id IN (${serverIds.map(() => '?').join(', ')})
+      GROUP BY server_id
+    `,
+      serverIds
+    )
+
+    const byServerId = <T extends { serverId: number }>(rows: T[]): Map<number, T> =>
+      new Map(rows.map((row) => [row.serverId, row]))
+
+    const latestByServer = byServerId(latestStats)
+    const firstByServer = byServerId(firstStats)
+    const peakHighByServer = byServerId(peakHighStats)
+    const peakLowByServer = byServerId(peakLowStats)
+    const aggregatesByServer = new Map<number, { avg_players: number; median_players: number }>(
+      aggregatesQuery.rows.map((row: any) => [Number(row.server_id), row])
+    )
+
+    for (const server of servers) {
+      const aggregates = aggregatesByServer.get(server.id)
+
+      serversData.set(server.id, {
+        exists: true,
+        server,
+        latestStat: latestByServer.get(server.id),
+        firstStat: firstByServer.get(server.id),
+        peakHigh: peakHighByServer.get(server.id),
+        peakLow: peakLowByServer.get(server.id),
+        average: aggregates?.avg_players || 0,
+        median: aggregates?.median_players || 0,
+      })
+    }
+
     for (const serverId of serverIds) {
-      try {
-        const server = await Server.find(serverId)
-        if (!server) {
-          serversData.set(serverId, { exists: false })
-          continue
-        }
-
-        // Get latest stat
-        const latestStat = await ServerStat.query()
-          .where('serverId', serverId)
-          .orderBy('createdAt', 'desc')
-          .first()
-
-        // Get first stat (for data since date)
-        const firstStat = await ServerStat.query()
-          .where('serverId', serverId)
-          .orderBy('createdAt', 'asc')
-          .first()
-
-        // Get peak high
-        const peakHigh = await ServerStat.query()
-          .where('serverId', serverId)
-          .orderBy('playerCount', 'desc')
-          .first()
-
-        // Get peak low (excluding 0 values)
-        const peakLow = await ServerStat.query()
-          .where('serverId', serverId)
-          .where('playerCount', '>', 0)
-          .orderBy('playerCount', 'asc')
-          .first()
-
-        // Get average and median
-        const statsQuery = await Database.rawQuery(
-          `
-          SELECT
-            AVG(player_count)::int as avg_players,
-            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY player_count)::int as median_players
-          FROM server_stats
-          WHERE server_id = ?
-        `,
-          [serverId]
-        )
-
-        const stats = statsQuery.rows[0]
-
-        serversData.set(serverId, {
-          exists: true,
-          server,
-          latestStat: latestStat ?? undefined,
-          firstStat: firstStat ?? undefined,
-          peakHigh: peakHigh ?? undefined,
-          peakLow: peakLow ?? undefined,
-          average: stats?.avg_players || 0,
-          median: stats?.median_players || 0,
-        })
-      } catch {
+      if (!serversData.has(serverId)) {
         serversData.set(serverId, { exists: false })
       }
     }

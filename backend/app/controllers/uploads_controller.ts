@@ -42,6 +42,10 @@ export default class UploadsController {
       return response.badRequest({ error: image.errors })
     }
 
+    if (!image.tmpPath) {
+      return response.badRequest({ error: 'Invalid upload' })
+    }
+
     // Generate unique filename
     const fileName = `${randomUUID()}.webp`
     const uploadsPath = app.makePath('public/images/blog')
@@ -52,7 +56,7 @@ export default class UploadsController {
 
     try {
       // Read the uploaded file
-      const imageBuffer = await fs.readFile(image.tmpPath!)
+      const imageBuffer = await fs.readFile(image.tmpPath)
 
       // Convert to WebP and optimize
       await sharp(imageBuffer)

@@ -19,8 +19,13 @@ export default class LoggerMiddleware {
     } catch (error) {
       const duration = Math.round(performance.now() - startTime)
       const realIp = ctx.request.header('CF-Connecting-IP') || ctx.request.ip()
+      const err = error instanceof Error ? error : new Error(String(error))
+      const status =
+        error && typeof error === 'object' && 'status' in error
+          ? (error as { status?: number }).status
+          : undefined
       ctx.logger.error(
-        `[${realIp}] ${ctx.request.method()} ${ctx.request.url()} ${error.status || 500} ${duration}ms ${error.name} ${error.message}`
+        `[${realIp}] ${ctx.request.method()} ${ctx.request.url()} ${status || 500} ${duration}ms ${err.name} ${err.message}`
       )
 
       throw error

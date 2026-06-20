@@ -19,3 +19,10 @@ export const UpdatePostValidator = vine.compile(
     coverImage: vine.string().maxLength(500).optional(),
   })
 )
+
+export const PreviewPlaceholderValidator = vine.compile(
+  vine.object({
+    placeholderName: vine.string(),
+    serverId: vine.number().positive(),
+  })
+)

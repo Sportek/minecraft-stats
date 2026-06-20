@@ -1,7 +1,11 @@
 import Post from '#models/post'
 import PostPolicy from '#policies/post_policy'
 import PlaceholderService from '#services/placeholder_service'
-import { CreatePostValidator, UpdatePostValidator } from '#validators/post'
+import {
+  CreatePostValidator,
+  PreviewPlaceholderValidator,
+  UpdatePostValidator,
+} from '#validators/post'
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 
@@ -291,9 +295,9 @@ export default class PostsController {
    * @description Resolves a single placeholder for a given server and returns both the raw placeholder string and the computed value, so the editor UI can show writers what the token will render to. Requires authentication and `manage` ability on the Post policy.
    * @requestBody {"placeholderName": "PLAYER_COUNT_REALTIME", "serverId": "125"}
    * @responseBody 200 - {"placeholder": "%PLAYER_COUNT_REALTIME_125%", "value": "42", "serverId": 125, "placeholderName": "PLAYER_COUNT_REALTIME"}
-   * @responseBody 400 - {"error": "placeholderName and serverId are required"}
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
+   * @responseBody 422 - {"errors": [{"message": "The serverId field must be defined", "field": "serverId", "rule": "required"}]}
    */
   async previewPlaceholder({ request, response, auth, bouncer }: HttpContext) {
     const user = auth.user
@@ -305,11 +309,7 @@ export default class PostsController {
       return response.forbidden({ error: 'Access denied. Writer privileges required.' })
     }
 
-    const { placeholderName, serverId } = request.only(['placeholderName', 'serverId'])
-
-    if (!placeholderName || !serverId) {
-      return response.badRequest({ error: 'placeholderName and serverId are required' })
-    }
+    const { placeholderName, serverId } = await request.validateUsing(PreviewPlaceholderValidator)
 
     const placeholder = `%${placeholderName}_${serverId}%`
     const result = await PlaceholderService.replacePlaceholders(placeholder)
@@ -317,7 +317,7 @@ export default class PostsController {
     return response.ok({
       placeholder,
       value: result,
-      serverId: Number.parseInt(serverId),
+      serverId,
       placeholderName,
     })
   }

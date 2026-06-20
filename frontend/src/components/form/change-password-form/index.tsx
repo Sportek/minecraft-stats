@@ -49,10 +49,10 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
         description: "Your password has been changed successfully",
         variant: "success",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error while changing password",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Error while changing password",
         variant: "error",
       });
     }
