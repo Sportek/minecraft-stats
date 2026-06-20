@@ -20,7 +20,7 @@ export const LanguageSelect = ({ value, onChange, disabled }: LanguageSelectProp
       onValueChange={(v) => onChange(v === ALL_VALUE ? null : Number(v))}
       disabled={disabled}
     >
-      <SelectTrigger aria-label="Filter by language" className="h-9 w-auto min-w-[10rem] bg-secondary text-sm">
+      <SelectTrigger aria-label="Filter by language" className="h-9 w-auto min-w-40 bg-secondary text-sm">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

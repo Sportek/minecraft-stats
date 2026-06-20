@@ -129,7 +129,7 @@ const AdminUsersPage = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by username or email..."
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stats-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -178,7 +178,7 @@ const AdminUsersPage = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white dark:bg-stats-blue-1000 border border-gray-300 dark:border-stats-blue-800 rounded-lg overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-stats-blue-1000 border border-gray-300 dark:border-stats-blue-800 rounded-lg overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -249,7 +249,7 @@ const AdminUsersPage = () => {
                               value={u.role}
                               onChange={(e) => handleRoleChange(u.id, e.target.value as "admin" | "writer" | "user")}
                               disabled={updatingUserId === u.id}
-                              className="px-3 py-1.5 bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-stats-blue-500 disabled:opacity-50"
+                              className="px-3 py-1.5 bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md text-sm text-gray-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500 disabled:opacity-50"
                             >
                               <option value="user">User</option>
                               <option value="writer">Writer</option>

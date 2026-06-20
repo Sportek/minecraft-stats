@@ -148,7 +148,7 @@ const EditPostPage = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Server Update v2.0"
-              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stats-blue-500 focus:border-transparent transition-all"
+              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500 focus:border-transparent transition-all"
               required
             />
           </div>
@@ -160,7 +160,7 @@ const EditPostPage = () => {
               type="text"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-700 dark:text-slate-300 font-mono text-sm placeholder-gray-500 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent"
+              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-700 dark:text-slate-300 font-mono text-sm placeholder-gray-500 dark:placeholder-slate-600 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent"
             />
           </div>
 
@@ -171,7 +171,7 @@ const EditPostPage = () => {
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               rows={2}
-              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent resize-none"
+              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent resize-none"
               placeholder="A short description for the article card..."
             />
           </div>
@@ -186,7 +186,7 @@ const EditPostPage = () => {
               value={coverImage}
               onChange={(e) => setCoverImage(e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent"
+              className="w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent"
             />
           </div>
 

@@ -12,7 +12,7 @@ const ResearchInput = React.forwardRef<HTMLInputElement, InputProps>(({ classNam
       <input
         type={type}
         className={cn(
-          "flex h-full w-full focus-visible:outline-none text-zinc-900 dark:text-zinc-50 dark:bg-zinc-900",
+          "flex h-full w-full focus-visible:outline-hidden text-zinc-900 dark:text-zinc-50 dark:bg-zinc-900",
           className,
         )}
         ref={ref}

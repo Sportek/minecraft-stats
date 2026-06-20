@@ -124,7 +124,7 @@ const ServerNotFound = () => {
     <main className="flex-1 space-y-4 py-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-          <div className="bg-card text-card-foreground border border-border rounded-lg shadow-sm p-8 space-y-6 max-w-md w-full">
+          <div className="bg-card text-card-foreground border border-border rounded-lg shadow-xs p-8 space-y-6 max-w-md w-full">
             <div className="space-y-2 text-center">
               <div className="w-16 h-16 mx-auto bg-accent/10 text-accent rounded-full flex items-center justify-center">
                 <Icon icon="mdi:server-off" className="w-8 h-8" />
@@ -265,7 +265,7 @@ const ServerPage = () => {
         serverCategoryIds={serverData.categories.map((category) => category.id)}
       />
 
-      <section className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+      <section className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         <div className="flex flex-col gap-2 border-b border-border px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
@@ -288,7 +288,7 @@ const ServerPage = () => {
 
         <div className="relative p-4">
           {isStatsLoading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-b-xl">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-xs rounded-b-xl">
               <Spinner size="md" />
             </div>
           )}

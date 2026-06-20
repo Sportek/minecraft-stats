@@ -177,7 +177,7 @@ const AdvertisementStatsPage = () => {
           ].map((card) => (
             <div
               key={card.label}
-              className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-stats-blue-800 dark:bg-stats-blue-1000"
+              className="rounded-lg border border-gray-300 bg-white p-5 shadow-xs dark:border-stats-blue-800 dark:bg-stats-blue-1000"
             >
               <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-slate-500">
                 {card.label}
@@ -188,7 +188,7 @@ const AdvertisementStatsPage = () => {
         </div>
 
         {/* Graphique */}
-        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-stats-blue-800 dark:bg-stats-blue-1000">
+        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-xs dark:border-stats-blue-800 dark:bg-stats-blue-1000">
           {loading ? (
             <div className="flex h-[320px] items-center justify-center text-gray-500 dark:text-slate-500">
               Chargement des statistiques...

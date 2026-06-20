@@ -19,7 +19,7 @@ function toLocalInput(iso: string | null | undefined): string {
 }
 
 const inputClass =
-  "w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent transition-all";
+  "w-full bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500/50 focus:border-transparent transition-all";
 const labelClass = "block text-sm font-medium text-gray-700 dark:text-slate-300";
 
 interface AdFormProps {

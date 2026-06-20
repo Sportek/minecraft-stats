@@ -40,7 +40,7 @@ const StatsSection = () => {
     return (
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
         {[0, 1].map((i) => (
-          <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+          <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-xs">
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-md" />
               <Skeleton className="h-4 w-32" />

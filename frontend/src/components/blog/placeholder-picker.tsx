@@ -91,10 +91,10 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
                 value={serverId}
                 onChange={(e) => setServerId(e.target.value)}
                 placeholder="Enter server ID (e.g., 125)"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-stats-blue-700 rounded-lg bg-white dark:bg-stats-blue-950 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stats-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-stats-blue-700 rounded-lg bg-white dark:bg-stats-blue-950 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500"
               />
               <p className="mt-2 text-xs text-gray-600 dark:text-slate-400 flex items-start gap-1">
-                <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                <Info className="w-3 h-3 mt-0.5 shrink-0" />
                 <span>
                   Enter the ID of the server you want to reference. You can find server IDs in the URL when
                   viewing a server page (e.g., /server/125).

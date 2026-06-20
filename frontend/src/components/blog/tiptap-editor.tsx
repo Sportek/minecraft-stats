@@ -75,7 +75,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
     editorProps: {
       attributes: {
         class: [
-          "prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[500px] p-6",
+          "prose prose-lg dark:prose-invert max-w-none focus:outline-hidden min-h-[500px] p-6",
           "prose-headings:font-bold prose-headings:tracking-tight",
           "prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4",
           "prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-slate-700 prose-h2:pb-2",

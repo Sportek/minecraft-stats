@@ -16,7 +16,7 @@ const HeroSection = () => {
 
       <div className="flex flex-col items-center md:items-start text-center md:text-left">
         {/* Eyebrow live indicator */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
@@ -26,7 +26,7 @@ const HeroSection = () => {
 
         <h1 className="mt-5 max-w-3xl text-4xl font-extrabold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
           Track Minecraft server popularity{" "}
-          <span className="bg-gradient-to-r from-stats-blue-800 to-stats-blue-600 bg-clip-text text-transparent dark:from-stats-blue-500 dark:to-stats-blue-300">
+          <span className="bg-linear-to-r from-stats-blue-800 to-stats-blue-600 bg-clip-text text-transparent dark:from-stats-blue-500 dark:to-stats-blue-300">
             in real time.
           </span>
         </h1>
@@ -39,7 +39,7 @@ const HeroSection = () => {
         <div className="mt-7 flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-3">
           <Link
             href="/account/add-server"
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-all hover:bg-accent/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-xs transition-all hover:bg-accent/90 hover:shadow-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <Icon icon="material-symbols:rocket-launch" className="h-4 w-4" />
             Add Your Server
