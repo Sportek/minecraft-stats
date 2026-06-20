@@ -19,7 +19,7 @@ const ServerEditPage = () => {
       const server = await getServer(Number(serverId));
       setServer(server);
     } catch (error) {
-      setError(error as Error);
+      setError(error instanceof Error ? error : new Error(String(error)));
     } finally {
       setIsLoading(false);
     }

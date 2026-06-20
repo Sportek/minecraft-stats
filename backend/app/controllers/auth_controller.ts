@@ -188,8 +188,12 @@ export default class AuthController {
    * @responseBody 302 - Redirect to the provider's authorization URL
    * @responseBody 400 - {"errors": [{"message": "Unknown OAuth provider"}]}
    */
-  async providerLogin({ ally, request }: HttpContext) {
-    const driverInstance = ally.use(request.param('provider') as 'discord' | 'google')
+  async providerLogin({ ally, request, response }: HttpContext) {
+    const provider = request.param('provider')
+    if (provider !== 'discord' && provider !== 'google') {
+      return response.badRequest({ error: 'Unsupported provider' })
+    }
+    const driverInstance = ally.use(provider)
     return await driverInstance.redirect()
   }
 

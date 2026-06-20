@@ -109,9 +109,9 @@ const createAreaSeries = (
       anchorTo: 'pointer',
       placement: 'top',
     },
-    renderer: ({ datum }: any) => {
+    renderer: ({ datum }: { datum: Record<string, number | Date> }) => {
       return generateTooltipHtml(
-        { time: new Date(datum.time), playerCount: datum[yKey] ?? 0 },
+        { time: new Date(datum.time), playerCount: Number(datum[yKey] ?? 0) },
         { isDarkMode: theme === 'dark' }
       );
     },

@@ -21,10 +21,10 @@ const SettingsPage = () => {
         description: "You have been logged out of every device.",
         variant: "success",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Something went wrong",
         variant: "error",
       });
     }

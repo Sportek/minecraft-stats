@@ -93,7 +93,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
         description: "Your server has been added successfully, it will be available in a few minutes",
         variant: "success",
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof DuplicateServerError) {
         const safeServerId = encodeURIComponent(String(error.existingServer.id));
         toast({
@@ -116,7 +116,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       }
       toast({
         title: "Error while adding server",
-        description: error?.message || "An error occurred while adding the server.",
+        description: error instanceof Error ? error.message : "An error occurred while adding the server.",
         variant: "error",
       });
     }

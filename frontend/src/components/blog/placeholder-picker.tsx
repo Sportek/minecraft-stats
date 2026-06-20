@@ -12,7 +12,6 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [placeholders, setPlaceholders] = useState<PlaceholderInfo[]>([]);
   const [serverId, setServerId] = useState("");
-  const [selectedPlaceholder, setSelectedPlaceholder] = useState<string | null>(null);
   const [copiedPlaceholder, setCopiedPlaceholder] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,7 +39,6 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
     onInsert(placeholder);
     setIsOpen(false);
     setServerId("");
-    setSelectedPlaceholder(null);
   };
 
   const handleCopy = (placeholderName: string) => {
@@ -106,17 +104,12 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-3">
                 {placeholders.map((placeholder) => {
-                  const isSelected = selectedPlaceholder === placeholder.name;
                   const isCopied = copiedPlaceholder === placeholder.name;
 
                   return (
                     <div
                       key={placeholder.name}
-                      className={`p-4 rounded-lg border transition-all ${
-                        isSelected
-                          ? "border-stats-blue-500 bg-stats-blue-50 dark:bg-stats-blue-900/30"
-                          : "border-gray-200 dark:border-stats-blue-800 bg-gray-50 dark:bg-stats-blue-900/20"
-                      }`}
+                      className="p-4 rounded-lg border transition-all border-gray-200 dark:border-stats-blue-800 bg-gray-50 dark:bg-stats-blue-900/20"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">

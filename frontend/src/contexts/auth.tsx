@@ -74,11 +74,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         saveToken(response.accessToken.token);
         setIsLoggedIn(true);
         router.push("/");
-      } catch (error: any) {
+      } catch (error) {
         setUser(null);
         setIsLoggedIn(false);
         removeToken();
-        return { message: error.message };
+        return { message: error instanceof Error ? error.message : String(error) };
       }
     },
     [router, setUser, saveToken, setIsLoggedIn, removeToken]
@@ -89,8 +89,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         await registerUser({ username, email, password });
         router.push("/");
-      } catch (error: any) {
-        throw new Error(error.message);
+      } catch (error) {
+        throw new Error(error instanceof Error ? error.message : String(error));
       }
     },
     [router]
@@ -131,9 +131,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     async (oldPassword: string, newPassword: string) => {
       try {
         await changeUserPassword({ oldPassword, newPassword }, getToken() ?? "");
-      } catch (error: any) {
-        console.log("AuthError", error.message);
-        throw new Error(error.message);
+      } catch (error) {
+        console.log("AuthError", error instanceof Error ? error.message : String(error));
+        throw new Error(error instanceof Error ? error.message : String(error));
       }
     },
     [getToken]

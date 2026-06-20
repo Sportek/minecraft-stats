@@ -50,8 +50,12 @@ export default class StatsController {
       return response.status(200).json(results)
     } catch (error) {
       console.error(error)
-      return response.status(error.status ?? 500).json({
-        error: error.message ?? 'Internal server error',
+      const status =
+        error && typeof error === 'object' && 'status' in error
+          ? ((error as { status?: number }).status ?? 500)
+          : 500
+      return response.status(status).json({
+        error: error instanceof Error ? error.message : 'Internal server error',
       })
     }
   }
@@ -85,8 +89,12 @@ export default class StatsController {
       return response.status(200).json(results)
     } catch (error) {
       console.error(error)
-      return response.status(error.status ?? 500).json({
-        error: error.message ?? 'Internal server error',
+      const status =
+        error && typeof error === 'object' && 'status' in error
+          ? ((error as { status?: number }).status ?? 500)
+          : 500
+      return response.status(status).json({
+        error: error instanceof Error ? error.message : 'Internal server error',
       })
     }
   }

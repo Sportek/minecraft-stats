@@ -14,7 +14,8 @@ const EditPostPage = () => {
   const token = getToken();
   const router = useRouter();
   const params = useParams();
-  const postId = Number.parseInt(params.id as string);
+  const idParam = Array.isArray(params.id) ? params.id[0] : params.id;
+  const postId = Number.parseInt(idParam ?? "");
 
   const [post, setPost] = useState<Post | null>(null);
   const [title, setTitle] = useState("");

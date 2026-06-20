@@ -110,7 +110,7 @@ const createAreaSeries = (
       anchorTo: "pointer",
       placement: "top",
     },
-    renderer: ({ datum }: any) => {
+    renderer: ({ datum }: { datum: { time: string | number | Date; playerCount: number } }) => {
       return generateTooltipHtml(
         { time: new Date(datum.time), playerCount: datum.playerCount },
         { isDarkMode: theme === "dark" }
