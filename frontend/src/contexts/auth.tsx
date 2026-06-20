@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await getUser(token);
       setUser(response || null);
       setIsLoggedIn(true);
-    } catch (error: any) {
+    } catch {
       setUser(null);
       setIsLoggedIn(false);
       removeToken();
