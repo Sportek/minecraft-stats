@@ -1,3 +1,4 @@
+import "@/lib/ag-charts";
 import { ServerStat } from "@/types/server";
 import { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
 import { useTheme } from "next-themes";
@@ -32,8 +33,8 @@ const COLORS = [
   { light: '#EA580C', dark: '#FB923C' }, // Orange
 ];
 
-const BASE_AXES: AgCartesianAxisOptions[] = [
-  {
+const BASE_AXES: { x: AgTimeAxisOptions; y: AgCartesianAxisOptions } = {
+  x: {
     type: 'time',
     position: 'bottom',
     label: {
@@ -42,16 +43,16 @@ const BASE_AXES: AgCartesianAxisOptions[] = [
     nice: false,
     min: undefined,
     max: undefined
-  } as AgTimeAxisOptions,
-  {
+  },
+  y: {
     type: 'number',
     position: 'left',
   },
-];
+};
 
 const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
   container: undefined,
-  axes: BASE_AXES,
+  axes: { x: BASE_AXES.x, y: BASE_AXES.y },
   legend: {
     enabled: true,
     position: 'bottom',
@@ -145,14 +146,10 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
         data,
         series: [createAreaSeries('time', 'playerCount', 'All monitored servers', COLORS[0], resolvedTheme)],
         theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        axes: [
-          {
-            ...BASE_AXES[0],
-            min: minDate,
-            max: maxDate,
-          },
-          BASE_AXES[1]
-        ]
+        axes: {
+          x: { ...BASE_AXES.x, min: minDate, max: maxDate },
+          y: BASE_AXES.y,
+        }
       } as AgCartesianChartOptions;
     }
 
@@ -204,14 +201,10 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
         data: allData,
         series,
         theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
-        axes: [
-          {
-            ...BASE_AXES[0],
-            min: minDate,
-            max: maxDate,
-          },
-          BASE_AXES[1]
-        ]
+        axes: {
+          x: { ...BASE_AXES.x, min: minDate, max: maxDate },
+          y: BASE_AXES.y,
+        }
       } as AgCartesianChartOptions;
     } catch (error) {
       console.error('Error processing server stats:', error);

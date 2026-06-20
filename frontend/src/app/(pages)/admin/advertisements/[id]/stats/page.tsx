@@ -2,8 +2,9 @@
 
 import { useAuth } from "@/contexts/auth";
 import { getAdminAdvertisement, getAdvertisementStats } from "@/http/advertisement";
+import "@/lib/ag-charts";
 import { AdStatsResponse, Advertisement } from "@/types/advertisement";
-import { AgChartOptions } from "ag-charts-community";
+import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
@@ -73,7 +74,7 @@ const AdvertisementStatsPage = () => {
     [stats]
   );
 
-  const chartOptions = useMemo<AgChartOptions>(() => {
+  const chartOptions = useMemo<AgCartesianChartOptions>(() => {
     const isDark = resolvedTheme === "dark";
     return {
       data: chartData,
@@ -98,10 +99,10 @@ const AdvertisementStatsPage = () => {
           marker: { enabled: false },
         },
       ],
-      axes: [
-        { type: "time" as const, position: "bottom" as const },
-        { type: "number" as const, position: "left" as const },
-      ],
+      axes: {
+        x: { type: "time" as const, position: "bottom" as const },
+        y: { type: "number" as const, position: "left" as const },
+      },
     };
   }, [chartData, resolvedTheme]);
 
