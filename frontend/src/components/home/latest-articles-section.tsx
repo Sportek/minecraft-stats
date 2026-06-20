@@ -1,32 +1,16 @@
 "use client";
 
 import { getPosts } from "@/http/post";
-import { Post } from "@/types/post";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 const LatestArticlesSection = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useSWR(["posts", 1, 3], () => getPosts(1, 3));
+  const posts = data?.data ?? [];
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await getPosts(1, 3);
-        setPosts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

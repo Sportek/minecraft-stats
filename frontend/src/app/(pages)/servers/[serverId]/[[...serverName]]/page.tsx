@@ -24,7 +24,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { startTransition, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 
 const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
@@ -161,32 +161,20 @@ const ServerPage = () => {
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("1 Hour");
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
-  const [stats, setStats] = useState<ServerStat[]>([]);
   const { resolvedTheme } = useTheme();
 
-  useEffect(() => {
-    async function fetchServerStats() {
+  const { data: statsData, isLoading: isStatsLoading } = useSWR<ServerStat[], Error>(
+    ["server-stats", serverId, dataRangeInterval, dataAggregationInterval],
+    () => {
       const now = Date.now();
       const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
       const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
-      const newStats = await getServerStats(
-        Number(serverId),
-        fromDate,
-        now,
-        interval
-      );
-      setStats(newStats);
-    }
+      return getServerStats(Number(serverId), fromDate, now, interval);
+    },
+    { refreshInterval: 1000 * 60 * 2 }
+  );
 
-    startTransition(() => {
-      setIsStatsLoading(true);
-    });
-    fetchServerStats().finally(() => setIsStatsLoading(false));
-
-    const intervalId = setInterval(fetchServerStats, 1000 * 60 * 2);
-    return () => clearInterval(intervalId);
-  }, [serverId, dataRangeInterval, dataAggregationInterval]);
+  const stats = useMemo(() => statsData ?? [], [statsData]);
 
   const options = useMemo((): AgCartesianChartOptions => {
     const data = stats.map((stat) => ({

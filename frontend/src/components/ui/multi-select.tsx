@@ -28,34 +28,27 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
   const [selected, setSelected] = React.useState<readonly { value: string; label: string }[]>(defaultSelected || []);
   const [inputValue, setInputValue] = React.useState("");
 
-  React.useEffect(() => {
-    onSelectionChange?.(selected.map((s) => s.value));
-  }, [selected, onSelectionChange]);
+  const handleUnselect = (element: { value: string; label: string }) => {
+    const next = selected.filter((s) => s.value !== element.value);
+    setSelected(next);
+    onSelectionChange?.(next.map((s) => s.value));
+  };
 
-  const handleUnselect = React.useCallback((element: { value: string; label: string }) => {
-    setSelected((prev) => prev.filter((s) => s.value !== element.value));
-  }, []);
-
-  const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const input = inputRef.current;
-      if (input) {
-        if (e.key === "Delete" || e.key === "Backspace") {
-          if (input.value === "") {
-            setSelected((prev) => {
-              const newSelected = [...prev];
-              newSelected.pop();
-              return newSelected;
-            });
-          }
-        }
-        if (e.key === "Escape") {
-          input.blur();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const input = inputRef.current;
+    if (input) {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (input.value === "") {
+          const next = selected.slice(0, -1);
+          setSelected(next);
+          onSelectionChange?.(next.map((s) => s.value));
         }
       }
-    },
-    []
-  );
+      if (e.key === "Escape") {
+        input.blur();
+      }
+    }
+  };
 
   if (elements.length === 0) {
     return null;
@@ -116,7 +109,9 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
                       onSelect={() => {
                         if (!selected.some((s) => s.value === element.value)) {
                           setInputValue("");
-                          setSelected((prev) => [...prev, element]);
+                          const next = [...selected, element];
+                          setSelected(next);
+                          onSelectionChange?.(next.map((s) => s.value));
                         }
                       }}
                       className={"cursor-pointer"}

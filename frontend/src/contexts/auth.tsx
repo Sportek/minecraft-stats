@@ -3,7 +3,8 @@ import { getBaseUrl } from "@/app/_cheatcode";
 import { changeUserPassword, getUser, loginUser, logoutAllUser, logoutUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
 import { useRouter } from "next/navigation";
-import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 
 interface AuthContextProps {
   user: User | null;
@@ -33,38 +34,70 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // `token` is kept in React state (not just localStorage) so it can drive the
+  // SWR key reactively: writing a token re-fetches /me, removing it disables the read.
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("accessToken");
+  });
   const router = useRouter();
+
+  const {
+    data: meUser,
+    error: meError,
+    mutate: mutateMe,
+  } = useSWR(token ? (["me", token] as const) : null, ([, t]) => getUser(t));
 
   const getToken = useCallback(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("accessToken");
   }, []);
 
-  const saveToken = useCallback((token: string) => {
+  const saveToken = useCallback((newToken: string) => {
     if (typeof window === "undefined") return;
-    localStorage.setItem("accessToken", token);
+    localStorage.setItem("accessToken", newToken);
+    setToken(newToken);
   }, []);
 
   const removeToken = useCallback(() => {
     if (typeof window === "undefined") return;
     localStorage.removeItem("accessToken");
+    setToken(null);
+  }, []);
+
+  // A bad/expired token makes /me throw; clear the session like the old fetchUser did.
+  // Also drop any synchronous override so isLoggedIn falls back to the (now logged-out)
+  // derived value instead of staying stale-true after the token is cleared.
+  useEffect(() => {
+    if (meError) {
+      removeToken();
+      setLoggedInOverride(null);
+    }
+  }, [meError, removeToken]);
+
+  // `isLoggedIn` is derived from the /me read, but consumers (login/logout/OAuth
+  // callback) flip it synchronously via setIsLoggedIn. The override lets those
+  // synchronous updates win until the next /me read settles. null = use derived.
+  const [loggedInOverride, setLoggedInOverride] = useState<boolean | null>(null);
+
+  const user = meError ? null : meUser ?? null;
+  const isLoggedIn = loggedInOverride ?? (!meError && Boolean(token) && Boolean(meUser));
+
+  // Compat shims for the previous useState setters exposed in the public API.
+  const setUser = useCallback(
+    (next: User | null) => {
+      mutateMe(next ?? undefined, { revalidate: false });
+    },
+    [mutateMe]
+  );
+
+  const setIsLoggedIn = useCallback((next: boolean) => {
+    setLoggedInOverride(next);
   }, []);
 
   const fetchUser = useCallback(async () => {
-    try {
-      const token = getToken();
-      if (!token) return;
-      const response = await getUser(token);
-      setUser(response || null);
-      setIsLoggedIn(true);
-    } catch {
-      setUser(null);
-      setIsLoggedIn(false);
-      removeToken();
-    }
-  }, [getToken, setUser, setIsLoggedIn, removeToken]);
+    await mutateMe();
+  }, [mutateMe]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -147,12 +180,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push(`${getBaseUrl()}/login/google`);
   }, [router]);
 
-  useEffect(() => {
-    startTransition(() => {
-      fetchUser();
-    });
-  }, [fetchUser]);
-
   const contextValue = useMemo(() => {
     return {
       user,
@@ -172,6 +199,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [
     user,
+    setUser,
     login,
     register,
     logout,
