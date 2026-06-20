@@ -51,7 +51,7 @@ export default async function BlogPage() {
                       fill
                     />
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-stats-blue-1050 via-stats-blue-1050/60 to-transparent dark:from-[#0B1221] dark:via-[#0B1221]/60" />
+                    <div className="absolute inset-0 bg-linear-to-t from-stats-blue-1050 via-stats-blue-1050/60 to-transparent dark:from-[#0B1221] dark:via-[#0B1221]/60" />
                   </div>
 
                   {/* Content Overlay */}

@@ -19,7 +19,7 @@ const options: { value: TimeRangeType; label: string }[] = [
 export const TimeRangeSelect = ({ value, onChange, disabled }: TimeRangeSelectProps) => {
   return (
     <Select value={value} onValueChange={(v) => onChange(v as TimeRangeType)} disabled={disabled}>
-      <SelectTrigger aria-label="Time range" className="h-9 w-auto min-w-[7rem] bg-secondary text-sm">
+      <SelectTrigger aria-label="Time range" className="h-9 w-auto min-w-28 bg-secondary text-sm">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

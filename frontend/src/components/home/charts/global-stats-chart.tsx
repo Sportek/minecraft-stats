@@ -216,7 +216,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
     <div className="flex flex-col gap-2">
       <div className="h-72 relative">
         {isLoading && (
-          <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center">
+          <div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center">
             <Spinner size="md" />
           </div>
         )}

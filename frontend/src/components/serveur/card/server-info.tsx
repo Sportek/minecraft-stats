@@ -25,7 +25,7 @@ const ServerInfo = ({ name, address }: ServerInfoProps) => {
   };
 
   return (
-    <div className="min-w-0 flex-shrink flex flex-col gap-0.5">
+    <div className="min-w-0 shrink flex flex-col gap-0.5">
       <div className="text-xl font-semibold truncate text-foreground">{name}</div>
       {address ? (
         <button

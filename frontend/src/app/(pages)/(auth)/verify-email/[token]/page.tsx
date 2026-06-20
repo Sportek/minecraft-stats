@@ -30,7 +30,7 @@ const VerifyEmail = () => {
   }, [decodedToken]);
 
   return (
-    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
       <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
@@ -62,7 +62,7 @@ const VerifyEmail = () => {
             </div>
             <Link
               href="/login"
-              className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-colors hover:bg-accent/90"
+              className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-xs transition-colors hover:bg-accent/90"
             >
               Continue to sign in
             </Link>
@@ -83,7 +83,7 @@ const VerifyEmail = () => {
             <div className="flex flex-col gap-2">
               <Link
                 href="/sign-up"
-                className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-colors hover:bg-accent/90"
+                className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-xs transition-colors hover:bg-accent/90"
               >
                 Create a new account
               </Link>

@@ -193,7 +193,7 @@ const ServerCardsSection = () => {
           <div className="flex items-center gap-2">
             <span>Per page</span>
             <Select value={String(pageSize)} onValueChange={(v) => updatePageSize(Number(v))}>
-              <SelectTrigger aria-label="Servers per page" className="h-8 w-auto min-w-[4.5rem] bg-secondary text-xs">
+              <SelectTrigger aria-label="Servers per page" className="h-8 w-auto min-w-18 bg-secondary text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

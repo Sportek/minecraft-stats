@@ -22,21 +22,21 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="relative flex flex-col shadow-sm border border-border bg-card text-card-foreground p-4 w-full rounded-md h-full justify-between transition-all duration-150 ease-in-out group hover:border-accent/50 hover:shadow-md"
+      className="relative flex flex-col shadow-xs border border-border bg-card text-card-foreground p-4 w-full rounded-md h-full justify-between transition-all duration-150 ease-in-out group hover:border-accent/50 hover:shadow-md"
     >
       <ServerActions server={server} />
       <div className="flex flex-col gap-4 w-full h-full min-w-0">
         <div className="flex flex-row gap-4 w-full">
-          <div className="flex-shrink-0 flex flex-col gap-2 items-center justify-center">
+          <div className="shrink-0 flex flex-col gap-2 items-center justify-center">
             <ServerImage imageUrl={server.imageUrl} name={server.name} />
             <ServerLanguages languages={server.languages} className="flex flex-row gap-2 items-center justify-center" />
           </div>
-          <div className="flex flex-col flex-grow gap-2 min-w-0">
+          <div className="flex flex-col grow gap-2 min-w-0">
             <div className="flex flex-row items-center w-full min-w-0">
-              <div className="flex-grow min-w-0">
+              <div className="grow min-w-0">
                 <ServerInfo name={server.name} address={server.address} />
               </div>
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <ServerStatus 
                   stats={stats} 
                   growthStat={growthStat} 

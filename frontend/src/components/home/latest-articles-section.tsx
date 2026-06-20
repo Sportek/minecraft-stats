@@ -64,7 +64,7 @@ const LatestArticlesSection = () => {
           <Link
             key={post.id}
             href={`/blog/${post.slug}`}
-            className="group flex items-center gap-4 overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground shadow-sm transition-all hover:border-accent/50 hover:shadow-md"
+            className="group flex items-center gap-4 overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground shadow-xs transition-all hover:border-accent/50 hover:shadow-md"
           >
             <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
               <Image

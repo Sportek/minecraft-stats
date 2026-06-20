@@ -36,7 +36,7 @@ const FavoriteButton = ({ serverId, serverName }: FavoriteButtonProps) => {
       id={`favorite-button-${serverName}-${serverId}`}
       className={cn(
         "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors",
-        "hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "hover:bg-secondary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
         active ? "text-accent" : "text-muted-foreground hover:text-foreground"
       )}
     >

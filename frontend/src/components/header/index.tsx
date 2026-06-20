@@ -117,7 +117,7 @@ const Header = () => {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label="User menu"
-        className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="rounded-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <Avatar className="h-9 w-9">
           <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
@@ -157,7 +157,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-stats-blue-50/85 backdrop-blur-md supports-[backdrop-filter]:bg-stats-blue-50/80 dark:bg-stats-blue-1050/85 dark:supports-[backdrop-filter]:bg-stats-blue-1050/80">
+      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-stats-blue-50/85 backdrop-blur-md supports-backdrop-filter:bg-stats-blue-50/80 dark:bg-stats-blue-1050/85 dark:supports-backdrop-filter:bg-stats-blue-1050/80">
         <RestrictedWidthLayout className="flex h-16 items-center justify-between gap-4">
           {/* Left: brand + nav */}
           <div className="flex items-center gap-8">
@@ -221,7 +221,7 @@ const Header = () => {
             aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-drawer"
-            className="md:hidden flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="md:hidden flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-secondary transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
           >
             <Icon icon="material-symbols:menu" className="h-6 w-6" />
@@ -232,7 +232,7 @@ const Header = () => {
       {/* Mobile drawer — slide from right */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] md:hidden",
+          "fixed inset-0 z-60 md:hidden",
           isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}
         aria-hidden={!isMobileMenuOpen}
@@ -240,7 +240,7 @@ const Header = () => {
         {/* Backdrop */}
         <div
           className={cn(
-            "absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300",
+            "absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300",
             isMobileMenuOpen ? "opacity-100" : "opacity-0"
           )}
           onClick={closeMobileMenu}
@@ -267,7 +267,7 @@ const Header = () => {
               type="button"
               onClick={closeMobileMenu}
               aria-label="Close navigation menu"
-              className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <X className="h-5 w-5" />
             </button>

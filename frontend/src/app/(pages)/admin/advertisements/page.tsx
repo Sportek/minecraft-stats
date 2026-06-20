@@ -109,7 +109,7 @@ const AdminAdvertisementsPage = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm dark:border-stats-blue-800 dark:bg-stats-blue-1000">
+        <div className="overflow-hidden rounded-lg border border-gray-300 bg-white shadow-xs dark:border-stats-blue-800 dark:bg-stats-blue-1000">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
               <thead>
