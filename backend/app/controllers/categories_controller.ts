@@ -1,7 +1,11 @@
 import Category from '#models/category'
 import CategoryPolicy from '#policies/category_policy'
 import CacheService from '#services/cache_service'
-import { CreateCategoryValidator } from '#validators/category'
+import {
+  CategoryIdValidator,
+  CreateCategoryValidator,
+  UpdateCategoryValidator,
+} from '#validators/category'
 import type { HttpContext } from '@adonisjs/core/http'
 
 const CATEGORIES_CACHE_KEY = 'categories:all'
@@ -48,15 +52,16 @@ export default class CategoriesController {
    * @operationId destroyCategory
    * @tag CATEGORIES
    * @summary Delete a category
-   * @description Deletes a category. The target id is read from the request body (rather than the URL). Authorization is enforced by `CategoryPolicy.destroy`. The categories cache is invalidated on success.
+   * @description Deletes a category. The target id is read from the request body (rather than the URL) and validated against `CategoryIdValidator` (required positive integer). Authorization is enforced by `CategoryPolicy.destroy`. The categories cache is invalidated on success.
    * @paramPath id - Category ID (ignored — id is read from the body) - @type(number) @example(3)
    * @requestBody {"id": 1}
    * @responseBody 200 - <Category>
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 404 - {"message": "Row not found"}
+   * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "id"}]}
    */
   async destroy({ request, response, bouncer }: HttpContext) {
-    const { id } = request.body()
+    const { id } = await CategoryIdValidator.validate(request.body())
     const category = await Category.findOrFail(id)
     if (await bouncer.with(CategoryPolicy).denies('destroy')) {
       return response.forbidden({ message: 'Unauthorized' })
@@ -71,7 +76,7 @@ export default class CategoriesController {
    * @operationId updateCategory
    * @tag CATEGORIES
    * @summary Update a category
-   * @description Updates a category. The target id and the updated fields are both read from the request body. The body (minus `id`) is validated against `CreateCategoryValidator`. Authorization is enforced by `CategoryPolicy.update`. The categories cache is invalidated on success.
+   * @description Updates a category. The target id and the updated fields are both read from the request body and validated against `UpdateCategoryValidator` (required positive integer `id` + `name` string). Authorization is enforced by `CategoryPolicy.update`. The categories cache is invalidated on success.
    * @paramPath id - Category ID (ignored — id is read from the body) - @type(number) @example(3)
    * @requestBody {"id": 1, "name": "Survival"}
    * @responseBody 200 - <Category>
@@ -80,8 +85,7 @@ export default class CategoriesController {
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
   async update({ request, response, bouncer }: HttpContext) {
-    const { id, ...data } = request.body()
-    const validatedData = await CreateCategoryValidator.validate(data)
+    const { id, ...validatedData } = await UpdateCategoryValidator.validate(request.body())
     if (await bouncer.with(CategoryPolicy).denies('update')) {
       return response.forbidden({ message: 'Unauthorized' })
     }

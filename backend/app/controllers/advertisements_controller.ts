@@ -1,13 +1,13 @@
 import Advertisement from '#models/advertisement'
 import AdvertisementEvent from '#models/advertisement_event'
 import AdvertisementPolicy from '#policies/advertisement_policy'
+import AdvertisementStatsService from '#services/advertisement_stats_service'
 import {
   CreateAdvertisementValidator,
   UpdateAdvertisementValidator,
 } from '#validators/advertisement'
 import { parseEpochMs } from '#validators/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
-import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
 type Placement = 'home' | 'server'
@@ -387,30 +387,12 @@ export default class AdvertisementsController {
     const fromDate = parseEpochMs(request.input('fromDate'))
     const toDate = parseEpochMs(request.input('toDate'))
 
-    let query = db.from('advertisement_events').where('advertisement_id', ad.id)
-    if (fromDate !== null) query = query.where('created_at', '>=', new Date(fromDate))
-    if (toDate !== null) query = query.where('created_at', '<=', new Date(toDate))
-
-    const rows = await query
-      .select(db.raw('date_trunc(?, created_at) as bucket', [interval]))
-      .select(db.raw(`count(*) filter (where type = 'impression') as impressions`))
-      .select(db.raw(`count(*) filter (where type = 'click') as clicks`))
-      .groupByRaw('bucket')
-      .orderByRaw('bucket asc')
-
-    const series = rows.map((row) => ({
-      time: row.bucket,
-      impressions: Number(row.impressions),
-      clicks: Number(row.clicks),
-    }))
-
-    const totals = series.reduce(
-      (acc, row) => ({
-        impressions: acc.impressions + row.impressions,
-        clicks: acc.clicks + row.clicks,
-      }),
-      { impressions: 0, clicks: 0 }
-    )
+    const { totals, series } = await AdvertisementStatsService.getStats({
+      advertisementId: ad.id,
+      interval,
+      fromDate,
+      toDate,
+    })
 
     return response.ok({ totals, series, interval })
   }

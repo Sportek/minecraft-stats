@@ -28,36 +28,25 @@ export default class StatsController {
    */
   async index(ctx: HttpContext) {
     const { request, response } = ctx
-    try {
-      const validatedData = await StatValidator.validate({
-        ...request.params(),
-        ...request.qs(),
-      })
+    const validatedData = await StatValidator.validate({
+      ...request.params(),
+      ...request.qs(),
+    })
 
-      // Cas exactTime non cacheable (point-in-time, rarement réutilisé).
-      if (validatedData.exactTime) {
-        const results = await StatsService.getStats(validatedData)
-        return response.status(200).json(results)
-      }
-
-      const key = `stats:${validatedData.server_id}:${validatedData.fromDate ?? 0}:${validatedData.toDate ?? 0}:${validatedData.interval ?? 'raw'}`
-      const results = await CacheService.cacheOrFetch(
-        key,
-        300,
-        () => StatsService.getStats(validatedData),
-        { bypass: bypassFlag(ctx) }
-      )
+    // Cas exactTime non cacheable (point-in-time, rarement réutilisé).
+    if (validatedData.exactTime) {
+      const results = await StatsService.getStats(validatedData)
       return response.status(200).json(results)
-    } catch (error) {
-      console.error(error)
-      const status =
-        error && typeof error === 'object' && 'status' in error
-          ? ((error as { status?: number }).status ?? 500)
-          : 500
-      return response.status(status).json({
-        error: error instanceof Error ? error.message : 'Internal server error',
-      })
     }
+
+    const key = `stats:${validatedData.server_id}:${validatedData.fromDate ?? 0}:${validatedData.toDate ?? 0}:${validatedData.interval ?? 'raw'}`
+    const results = await CacheService.cacheOrFetch(
+      key,
+      300,
+      () => StatsService.getStats(validatedData),
+      { bypass: bypassFlag(ctx) }
+    )
+    return response.status(200).json(results)
   }
 
   /**
@@ -77,25 +66,14 @@ export default class StatsController {
    */
   async globalStats(ctx: HttpContext) {
     const { request, response } = ctx
-    try {
-      const validatedData = await GlobalStatValidator.validate(request.qs())
-      const key = CacheService.hashParams('global-stats', validatedData)
-      const results = await CacheService.cacheOrFetch(
-        key,
-        300,
-        () => StatsService.getGlobalStats(validatedData),
-        { bypass: bypassFlag(ctx) }
-      )
-      return response.status(200).json(results)
-    } catch (error) {
-      console.error(error)
-      const status =
-        error && typeof error === 'object' && 'status' in error
-          ? ((error as { status?: number }).status ?? 500)
-          : 500
-      return response.status(status).json({
-        error: error instanceof Error ? error.message : 'Internal server error',
-      })
-    }
+    const validatedData = await GlobalStatValidator.validate(request.qs())
+    const key = CacheService.hashParams('global-stats', validatedData)
+    const results = await CacheService.cacheOrFetch(
+      key,
+      300,
+      () => StatsService.getGlobalStats(validatedData),
+      { bypass: bypassFlag(ctx) }
+    )
+    return response.status(200).json(results)
   }
 }
