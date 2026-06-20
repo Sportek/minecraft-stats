@@ -73,7 +73,7 @@ export default class UploadsController {
     } catch (error) {
       return response.internalServerError({
         error: 'Failed to process image',
-        details: error.message,
+        details: error instanceof Error ? error.message : 'Unknown error',
       })
     }
   }

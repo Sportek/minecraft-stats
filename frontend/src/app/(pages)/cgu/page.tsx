@@ -89,9 +89,9 @@ const CGU = () => {
         <p>
           Nous utilisons le local storage pour gérer l&apos;authentification. Pour plus d&apos;informations, veuillez
           consulter notre politique de confidentialité{" "}
-          <a href="/cgu" className="text-blue-500">
+          <Link href="/cgu" className="text-blue-500">
             ici
-          </a>
+          </Link>
           .
         </p>
         <h3 className="text-lg font-medium mb-1">Stockage et Sécurité des Données</h3>

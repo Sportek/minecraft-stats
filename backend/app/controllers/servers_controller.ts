@@ -123,17 +123,13 @@ export default class ServersController {
       categories.map((name) => Category.findBy('name', name))
     )
 
-    await server
-      .related('categories')
-      .attach(categoriesToAttach.filter((c) => c !== null).map((c) => c!.id))
+    await server.related('categories').attach(categoriesToAttach.flatMap((c) => (c ? [c.id] : [])))
 
     const languagesToAttach = await Promise.all(
       languages.map((code) => Language.findBy('code', code))
     )
 
-    await server
-      .related('languages')
-      .attach(languagesToAttach.filter((l) => l !== null).map((l) => l!.id))
+    await server.related('languages').attach(languagesToAttach.flatMap((l) => (l ? [l.id] : [])))
 
     await server.related('user').associate(user)
     return server
@@ -216,9 +212,7 @@ export default class ServersController {
         categories.map((name) => Category.findBy('name', name))
       )
 
-      await server
-        .related('categories')
-        .sync(categoriesToAttach.filter((c) => c !== null).map((c) => c!.id))
+      await server.related('categories').sync(categoriesToAttach.flatMap((c) => (c ? [c.id] : [])))
     }
 
     if (languages) {
@@ -226,9 +220,7 @@ export default class ServersController {
         languages.map((code) => Language.findBy('code', code))
       )
 
-      await server
-        .related('languages')
-        .sync(languagesToAttach.filter((l) => l !== null).map((l) => l!.id))
+      await server.related('languages').sync(languagesToAttach.flatMap((l) => (l ? [l.id] : [])))
     }
 
     return server.merge(dataToUpdate).save()

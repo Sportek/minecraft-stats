@@ -105,7 +105,7 @@ async function tryAcquirePingLock(serverId: number): Promise<boolean> {
     return result === 'OK'
   } catch (error) {
     logger.warn(
-      { serverId, err: error.message },
+      { serverId, err: error instanceof Error ? error.message : String(error) },
       'PING_LOCK: redis unavailable, proceeding without lock'
     )
     return true
@@ -201,7 +201,7 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
     }
   } catch (error) {
     logger.warn(
-      `SCHEDULER: ping failed for ${server.name} (${server.address}:${server.port}): ${error.message}`
+      `SCHEDULER: ping failed for ${server.name} (${server.address}:${server.port}): ${error instanceof Error ? error.message : String(error)}`
     )
   }
 
@@ -292,7 +292,10 @@ scheduler
     try {
       await pingDueServers(false)
     } catch (error) {
-      logger.error({ err: error.message }, 'SCHEDULER: pingDueServers failed')
+      logger.error(
+        { err: error instanceof Error ? error.message : String(error) },
+        'SCHEDULER: pingDueServers failed'
+      )
     }
   })
   .everyFiveMinutes()

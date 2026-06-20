@@ -7,6 +7,10 @@ interface Server {
   updatedAt: string;
 }
 
+interface ServerListItem {
+  server: Server;
+}
+
 async function getAllServers(apiUrl: string): Promise<Server[]> {
   try {
     const response = await fetch(`${apiUrl}/servers`, {
@@ -18,8 +22,8 @@ async function getAllServers(apiUrl: string): Promise<Server[]> {
       return [];
     }
 
-    const data = await response.json();
-    return data.map((item: any) => ({
+    const data: ServerListItem[] = await response.json();
+    return data.map((item) => ({
       id: item.server.id,
       name: item.server.name,
       updatedAt: item.server.updatedAt,

@@ -12,6 +12,7 @@ import { DuplicateServerError } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { Category, Language } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import useSWRImmutable from "swr/immutable";
@@ -100,12 +101,12 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
           description: (
             <span>
               This server is already on Minecraft Stats as{" "}
-              <a
+              <Link
                 className="font-semibold underline"
                 href={`/servers/${safeServerId}`}
               >
                 {error.existingServer.name}
-              </a>
+              </Link>
               .
             </span>
           ),
