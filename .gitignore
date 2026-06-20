@@ -6,3 +6,11 @@ analytics/data
 .claude/
 _bmad/
 _bmad-output/
+
+# design-sync (claude.ai/design)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+frontend/ds-tailwind.css
