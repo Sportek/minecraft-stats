@@ -2,6 +2,10 @@
   "extends": "@adonisjs/tsconfig/tsconfig.app.json",
   "compilerOptions": {
     "rootDir": "./",
-    "outDir": "./build"
+    "outDir": "./build",
+    // TS6 turns `strict` on by default; keep catch variables typed as `any`
+    // (the @adonisjs/tsconfig base did not set this) to preserve existing
+    // `catch (error) { error.message }` usage without a behavior refactor.
+    "useUnknownInCatchVariables": false
   }
 }
