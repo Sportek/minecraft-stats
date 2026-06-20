@@ -1587,38 +1587,33 @@ acorn@^8.15.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.17.0.tgz#1785adb84faf8d8add10369b93826fc2bd08f1fe"
   integrity sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==
 
-ag-charts-community@11.3.2, ag-charts-community@^11.2.4:
-  version "11.3.2"
-  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-11.3.2.tgz#7ab5b2f18aca465956e946225b62ecb3448a23d9"
-  integrity sha512-4ZshRqfeCoQKgJ8WNxLfgkKtLszIxEF9WWOSuT2Uvyyy3x0rUUPQbl98+kVh+sRyGGQ6Qj8uoStqHAhwPwgTOQ==
+ag-charts-community@13.3.1, ag-charts-community@^13.3.1:
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-13.3.1.tgz#3631c5727e9f410331bb9e1f49e5b75b0a53c23f"
+  integrity sha512-xRwyuP4xcMoyzaa27fccUhKqGyiWp/0h6vq0ZBuAtj2k0OC5UbV6IQUW6/0AgmLIQ4/K9QlRWFOe3sL/x5MHow==
   dependencies:
-    ag-charts-core "11.3.2"
-    ag-charts-locale "11.3.2"
-    ag-charts-types "11.3.2"
+    ag-charts-core "13.3.1"
+    ag-charts-locale "13.3.1"
+    ag-charts-types "13.3.1"
 
-ag-charts-core@11.3.2:
-  version "11.3.2"
-  resolved "https://registry.yarnpkg.com/ag-charts-core/-/ag-charts-core-11.3.2.tgz#6af442c4839f36256d16253c9eabaa663e0b6cd6"
-  integrity sha512-D66lTBVXRDI6vFTcmL91KeBghOx63MmWrgDSJEEhsrK1ioWeYnFcRXStX0msx60D12i+Ba+uhM9xrxgRmqzM5w==
+ag-charts-core@13.3.1:
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-core/-/ag-charts-core-13.3.1.tgz#cc98767e1c34111fe1e8534e236c2436927544e5"
+  integrity sha512-oDnK07/S6Z10EwIBxhC4tMDwdf2ck5MMcuSB/h+0/Q2XcL2l3S4jmlq3iKI7Kp9sh0H5JYDDc2sAdkUN87W8RA==
   dependencies:
-    ag-charts-types "11.3.2"
+    ag-charts-types "13.3.1"
 
-ag-charts-locale@11.3.2:
-  version "11.3.2"
-  resolved "https://registry.yarnpkg.com/ag-charts-locale/-/ag-charts-locale-11.3.2.tgz#583b7f62d36a99a1aede8186033f1b1371dafb63"
-  integrity sha512-6DrHD53PfdVNqFAlmNkHTnlQ9QY9EzME0vvaiotUpO8boKflGivgqmfx/uNTp6AsvOrsnRBBZW4b4XSg0LKG2w==
+ag-charts-locale@13.3.1:
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-locale/-/ag-charts-locale-13.3.1.tgz#8185e7132a5194cba6058073b32804de4cdaeda7"
+  integrity sha512-jF7iXI3PBFq/LFgBKwt72CykDBWcl3HYgP7B/hSJGsFdK+yuUTPrP67dA/wghgC6sg+Qw2U2GeykhZkG0yH8ww==
 
-ag-charts-react@^11.2.4:
-  version "11.3.2"
-  resolved "https://registry.yarnpkg.com/ag-charts-react/-/ag-charts-react-11.3.2.tgz#a3383e98cb823ed8c385e68bc155bc52bd1ef5e8"
-  integrity sha512-AcDvXTe6cdxF3B9scQA5ftN6h0ApIohr74XjndOF7Ka4yRzMDF1X/cFP1IIwiwj/AR3gJTmx1B7L00yv/tVQCw==
+ag-charts-react@^13.3.1:
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-react/-/ag-charts-react-13.3.1.tgz#e9b60d867ef3f1dfc6c18930811db1df19f21713"
+  integrity sha512-m1Wqv8HydZ0aQw+k8oV4ind+We1REdb7v0MKcGRbiWt+vX+1J8kWb1Yu61zZPSkT8yX/ZZuLto+yEcTY1n3iPQ==
   dependencies:
-    ag-charts-community "11.3.2"
-
-ag-charts-types@11.3.2:
-  version "11.3.2"
-  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-11.3.2.tgz#b1b4e2d273911cdd6d78ce7b4a6c561fa22796bf"
-  integrity sha512-trPGqgGYiTeLgtf9nLuztDYOPOFOLbqHn1g2D99phf7QowcwdX0TPx0wfWG8Hm90LjB8IH+G2s3AZe2vrdAtMQ==
+    ag-charts-community "13.3.1"
 
 ag-charts-types@13.3.1:
   version "13.3.1"

@@ -1,3 +1,4 @@
+import "@/lib/ag-charts";
 import { ServerStat } from "@/types/server";
 import { AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
 import { useTheme } from "next-themes";
@@ -13,8 +14,8 @@ interface ServerChartProps {
   stats: ServerStat[];
 }
 
-const BASE_AXES: [AgTimeAxisOptions, AgCartesianAxisOptions] = [
-  {
+const BASE_AXES: { x: AgTimeAxisOptions; y: AgCartesianAxisOptions } = {
+  x: {
     type: "time",
     position: "bottom",
     label: { enabled: false, format: "%d/%m %H:%M" },
@@ -22,20 +23,20 @@ const BASE_AXES: [AgTimeAxisOptions, AgCartesianAxisOptions] = [
     tick: { enabled: false },
     nice: false,
   },
-  {
+  y: {
     type: "number",
     position: "left",
     label: { enabled: false },
     line: { enabled: false },
     tick: { enabled: false },
   },
-];
+};
 
 // Note: la sparkline dans une ServerCard est purement décorative.
 // Le tooltip et le hit testing sont désactivés — l'utilisateur clique la carte
 // pour accéder au graphique interactif complet sur la page détail.
 const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
-  axes: BASE_AXES,
+  axes: { x: BASE_AXES.x, y: BASE_AXES.y },
   legend: { enabled: false },
   background: { fill: "transparent" },
   padding: { top: 0, right: 0, bottom: 0, left: 0 },
@@ -60,7 +61,7 @@ const ServerChart = ({ stats }: ServerChartProps) => {
     const maxDate = dates.length > 0 ? new Date(Math.max(...dates.map((d) => d.getTime()))) : undefined;
 
     const timeAxis: AgTimeAxisOptions = {
-      ...BASE_AXES[0],
+      ...BASE_AXES.x,
       min: minDate,
       max: maxDate,
     };
@@ -85,7 +86,7 @@ const ServerChart = ({ stats }: ServerChartProps) => {
           interpolation: { type: "smooth" },
         },
       ],
-      axes: [timeAxis, BASE_AXES[1]],
+      axes: { x: timeAxis, y: BASE_AXES.y },
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
     };
   }, [sortedData, resolvedTheme]);

@@ -3,6 +3,7 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 import { getServerStats } from "@/http/server";
 import { ServerStat } from "@/types/server";
+import "@/lib/ag-charts";
 import {
   AgAreaSeriesOptions,
   AgCartesianAxisOptions,
@@ -43,8 +44,8 @@ const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
   "1 Week": "1 week",
 };
 
-const BASE_AXES: AgCartesianAxisOptions[] = [
-  {
+const BASE_AXES: { x: AgTimeAxisOptions; y: AgCartesianAxisOptions } = {
+  x: {
     type: "time",
     position: "bottom",
     label: {
@@ -53,16 +54,16 @@ const BASE_AXES: AgCartesianAxisOptions[] = [
     nice: false,
     min: undefined,
     max: undefined,
-  } as AgTimeAxisOptions,
-  {
+  },
+  y: {
     type: "number",
     position: "left",
   },
-];
+};
 
 const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
   container: undefined,
-  axes: BASE_AXES,
+  axes: { x: BASE_AXES.x, y: BASE_AXES.y },
   legend: {
     enabled: false,
   },
@@ -202,14 +203,10 @@ const ServerPage = () => {
       data,
       series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme)],
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
-      axes: [
-        {
-          ...BASE_AXES[0],
-          min: minDate,
-          max: maxDate,
-        } as AgTimeAxisOptions,
-        BASE_AXES[1],
-      ],
+      axes: {
+        x: { ...BASE_AXES.x, min: minDate, max: maxDate },
+        y: BASE_AXES.y,
+      },
     };
   }, [stats, resolvedTheme]);
 
