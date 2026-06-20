@@ -18,7 +18,7 @@ const options: { value: AggregationType; label: string }[] = [
 export const AggregationSelect = ({ value, onChange, disabled }: AggregationSelectProps) => {
   return (
     <Select value={value} onValueChange={(v) => onChange(v as AggregationType)} disabled={disabled}>
-      <SelectTrigger aria-label="Data aggregation interval" className="h-9 w-auto min-w-[7rem] bg-secondary text-sm">
+      <SelectTrigger aria-label="Data aggregation interval" className="h-9 w-auto min-w-28 bg-secondary text-sm">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

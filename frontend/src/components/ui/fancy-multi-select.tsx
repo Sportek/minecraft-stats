@@ -172,7 +172,7 @@ export const FancyMultiSelect = ({
         {popoverContent}
       </Popover>
 
-      <div className="flex flex-wrap gap-2 min-h-[1.75rem]">
+      <div className="flex flex-wrap gap-2 min-h-7">
         {selectedIds.map((id) => {
           const option = options.find((opt) => opt.id === id);
           if (!option) return null;

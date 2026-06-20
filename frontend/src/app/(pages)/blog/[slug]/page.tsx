@@ -92,7 +92,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
             {/* Metadata Line: Author - Date - Category */}
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 dark:text-slate-400">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-stats-blue-600 to-indigo-500 flex items-center justify-center text-[10px] font-bold text-white border border-white/10">
+                <div className="w-6 h-6 rounded-full bg-linear-to-tr from-stats-blue-600 to-indigo-500 flex items-center justify-center text-[10px] font-bold text-white border border-white/10">
                   {post.author.username.charAt(0)}
                 </div>
                 <span className="font-medium text-gray-800 dark:text-slate-200">{post.author.username}</span>
@@ -123,7 +123,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
           {post.coverImage && (
             <div className="mb-12 relative px-4 md:px-0">
               <div className="w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative group bg-gray-100 dark:bg-slate-900">
-                <div className="absolute inset-0 bg-gradient-to-t from-stats-blue-1050 via-transparent to-transparent opacity-10 pointer-events-none z-10 dark:from-[#0B1221]" />
+                <div className="absolute inset-0 bg-linear-to-t from-stats-blue-1050 via-transparent to-transparent opacity-10 pointer-events-none z-10 dark:from-[#0B1221]" />
                 <Image src={post.coverImage} alt={post.title} className="w-full h-full object-cover" unoptimized fill />
               </div>
             </div>

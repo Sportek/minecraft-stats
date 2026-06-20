@@ -19,7 +19,7 @@ const ServerLanguages = ({ languages, className }: ServerLanguagesProps) => {
             {displayedFlags.map((language, index) => (
               <span 
                 key={language.id} 
-                className="text-lg relative hover:z-20 hover:-translate-y-0.5 hover:drop-shadow-sm transition-all duration-200 ease-in-out"
+                className="text-lg relative hover:z-20 hover:-translate-y-0.5 hover:drop-shadow-xs transition-all duration-200 ease-in-out"
                 style={{ zIndex: 10 - index }}
                 title={language.name}
               >

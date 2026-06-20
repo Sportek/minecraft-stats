@@ -72,7 +72,7 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
               <Badge key={element.value} variant="secondary">
                 {element.label}
                 <button
-                  className="rounded-full outline-none"
+                  className="rounded-full outline-hidden"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleUnselect(element);
@@ -96,14 +96,14 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
             placeholder={selected.length === 0 ? title : ""}
-            className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+            className="ml-2 flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground"
           />
         </div>
       </div>
       <div className="relative">
         <CommandList>
           {open && selectables.length > 0 ? (
-            <div className="absolute top-0 z-20 w-full rounded-md border border-border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+            <div className="absolute top-0 z-20 w-full rounded-md border border-border bg-popover text-popover-foreground shadow-md outline-hidden animate-in">
               <CommandGroup className="h-full overflow-auto">
                 {selectables.map((element) => {
                   return (
