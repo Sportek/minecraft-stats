@@ -4,6 +4,7 @@ import ChangePasswordForm from "@/components/form/change-password-form";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
 import DangerZoneCard from "@/components/account/danger-zone-card";
+import AvatarUpload from "@/components/account/avatar-upload";
 import InfoField from "@/components/account/info-field";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -84,6 +85,9 @@ const SettingsPage = () => {
           />
         </div>
       </section>
+
+      {/* Profile picture */}
+      <AvatarUpload />
 
       {/* Manage password */}
       <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">

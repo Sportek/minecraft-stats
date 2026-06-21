@@ -166,6 +166,28 @@ export function getClientBackendUrl(): string {
   return getClientDomainConfig().backendUrl;
 }
 
+/**
+ * Base URL for static assets (images). Points to the S3/CDN in production
+ * (NEXT_PUBLIC_ASSETS_URL); falls back to the backend, which serves images
+ * locally in development.
+ */
+export function getClientAssetsUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_ASSETS_URL;
+  return fromEnv && fromEnv.length > 0 ? fromEnv : getClientBackendUrl();
+}
+
+/**
+ * Resolves a stored image reference to an absolute URL. Absolute URLs (OAuth
+ * avatars, externally-hosted covers) are returned untouched; relative paths
+ * (`/images/...`) are prefixed with the assets base URL.
+ */
+export function resolveAssetUrl(path?: string | null): string {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = getClientAssetsUrl();
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
 // Re-export domain config for use in other modules
 export { DEFAULT_DOMAIN, DOMAIN_CONFIG, extractDomainKey, getLocalhostConfig, isLocalhost };
 export type { DomainConfig, DomainKey };

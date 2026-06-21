@@ -1,4 +1,5 @@
 import { PostAuthor, PostEyebrow } from "@/components/blog/post-meta";
+import { resolveAssetUrl } from "@/lib/domain";
 import { Post } from "@/types/post";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,7 +21,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
         <div className="relative aspect-video w-full overflow-hidden bg-secondary md:aspect-auto md:h-full md:min-h-[18rem]">
           {post.coverImage ? (
             <Image
-              src={post.coverImage}
+              src={resolveAssetUrl(post.coverImage)}
               alt={post.title}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               unoptimized
@@ -60,7 +61,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
       <div className="relative aspect-video w-full overflow-hidden bg-secondary">
         {post.coverImage ? (
           <Image
-            src={post.coverImage}
+            src={resolveAssetUrl(post.coverImage)}
             alt={post.title}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             unoptimized

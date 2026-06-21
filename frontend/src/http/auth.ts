@@ -92,6 +92,27 @@ export const changeUserPassword = async (credentials: { oldPassword: string; new
   return response.json() as Promise<User>;
 };
 
+export const uploadUserAvatar = async (file: File, token: string) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const response = await fetch(`${getBaseUrl()}/account/avatar`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  const body = (await response.json()) as { user: User };
+  return body.user;
+};
+
 export const logoutUser = async (token: string) => {
   const response = await fetch(`${getBaseUrl()}/logout`, {
     method: "POST",

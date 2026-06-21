@@ -1,4 +1,4 @@
-import { getClientDomainConfig } from "@/lib/domain";
+import { getClientDomainConfig, resolveAssetUrl } from "@/lib/domain";
 import { Category, Server } from "@/types/server";
 import Script from "next/script";
 
@@ -30,7 +30,8 @@ export function ServerStructuredData({
   maxPlayers = 0,
   lastStatsAt,
 }: Readonly<ServerStructuredDataProps>) {
-  const { baseUrl, backendUrl } = getClientDomainConfig();
+  const { baseUrl } = getClientDomainConfig();
+  const imageUrl = resolveAssetUrl(`${server.imageUrl}.webp`);
 
   const slug = server.name
     .toLowerCase()
@@ -43,7 +44,7 @@ export function ServerStructuredData({
     name: `${server.name} - Minecraft Server Stats`,
     description: `Statistics and analytics for ${server.name} Minecraft server. Currently ${playerCount} players online.`,
     url: `${baseUrl}/servers/${server.id}/${slug}`,
-    image: `${backendUrl}${server.imageUrl}.webp`,
+    image: imageUrl,
     datePublished: server.createdAt,
     dateModified: lastStatsAt ?? server.createdAt,
     mainEntity: {
@@ -58,7 +59,7 @@ export function ServerStructuredData({
         maxValue: maxPlayers || undefined,
       },
       url: `${baseUrl}/servers/${server.id}/${slug}`,
-      image: `${backendUrl}${server.imageUrl}.webp`,
+      image: imageUrl,
     },
     breadcrumb: {
       "@type": "BreadcrumbList",
@@ -211,7 +212,9 @@ export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredData
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt || post.content.substring(0, 160),
-    image: post.coverImage ? `${baseUrl}${post.coverImage}` : `${baseUrl}/images/minecraft-stats/og-image.webp`,
+    image: post.coverImage
+      ? resolveAssetUrl(post.coverImage)
+      : `${baseUrl}/images/minecraft-stats/og-image.webp`,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt || post.publishedAt,
     author: {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { getClientBackendUrl } from "@/lib/domain";
+import { resolveAssetUrl } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 import { LetterTile } from "@/components/ui/letter-tile";
 
@@ -13,8 +13,7 @@ interface ServerImageProps {
 }
 
 const ServerImage = ({ imageUrl, name, className }: ServerImageProps) => {
-  const backendUrl = getClientBackendUrl();
-  const [src, setSrc] = useState(imageUrl ? `${backendUrl}${imageUrl}.webp` : "");
+  const [src, setSrc] = useState(imageUrl ? resolveAssetUrl(`${imageUrl}.webp`) : "");
 
   if (!src) {
     return <LetterTile name={name} className={cn("h-12 w-12 rounded-md text-lg", className)} />;
@@ -30,7 +29,7 @@ const ServerImage = ({ imageUrl, name, className }: ServerImageProps) => {
       priority
       className={cn("h-12 w-12 rounded-md object-cover", className)}
       onError={() => {
-        const png = `${backendUrl}${imageUrl}.png`;
+        const png = resolveAssetUrl(`${imageUrl}.png`);
         // First failure: try the PNG; second failure: fall back to the letter tile.
         setSrc((current) => (current !== png ? png : ""));
       }}
