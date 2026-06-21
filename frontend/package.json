@@ -39,7 +39,7 @@
     "cmdk": "^1.1.1",
     "isomorphic-dompurify": "^3.17.0",
     "lucide-react": "^1.21.0",
-    "markdown-it": "13.0.2",
+    "markdown-it": "14.2.0",
     "next": "^16.2.6",
     "next-themes": "^0.4.6",
     "react": "19.2.3",
@@ -69,10 +69,10 @@
   "overrides": {
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
-    "markdown-it": "13.0.2"
+    "markdown-it": "14.2.0"
   },
   "resolutions": {
-    "markdown-it": "13.0.2",
+    "markdown-it": "14.2.0",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "eslint-plugin-react-hooks": "7.0.1"
