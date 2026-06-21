@@ -1,0 +1,41 @@
+{
+  "projectId": "596d1fc7-67f9-4049-a9f6-bbf7c1f7fedf",
+  "shape": "package",
+  "pkg": "frontend",
+  "globalName": "MinecraftStatsUI",
+  "entry": "./frontend/.ds-entry.mjs",
+  "srcDir": "src/components/ui",
+  "tsconfig": "tsconfig.json",
+  "cssEntry": "ds-tailwind.css",
+  "buildCmd": "npx tailwindcss -i src/app/globals.css -o ds-tailwind.css --minify",
+  "readmeHeader": ".design-sync/conventions.md",
+  "componentSrcMap": {
+    "Avatar": "src/components/ui/avatar.tsx",
+    "Badge": "src/components/ui/badge.tsx",
+    "Button": "src/components/ui/button.tsx",
+    "Card": "src/components/ui/card.tsx",
+    "Checkbox": "src/components/ui/checkbox.tsx",
+    "Command": "src/components/ui/command.tsx",
+    "Dialog": "src/components/ui/dialog.tsx",
+    "DropdownMenu": "src/components/ui/dropdown-menu.tsx",
+    "FancyMultiSelect": "src/components/ui/fancy-multi-select.tsx",
+    "Form": "src/components/ui/form.tsx",
+    "Input": "src/components/ui/input.tsx",
+    "Label": "src/components/ui/label.tsx",
+    "Pagination": "src/components/ui/pagination.tsx",
+    "Popover": "src/components/ui/popover.tsx",
+    "Select": "src/components/ui/select.tsx",
+    "Skeleton": "src/components/ui/skeleton.tsx",
+    "Spinner": "src/components/ui/spinner.tsx",
+    "Toast": "src/components/ui/toast.tsx",
+    "Toaster": "src/components/ui/toaster.tsx",
+    "Tooltip": "src/components/ui/tooltip.tsx"
+  },
+  "overrides": {
+    "Dialog": { "cardMode": "single", "viewport": "680x460", "primaryStory": "AddServer" },
+    "Popover": { "cardMode": "single", "viewport": "440x340", "primaryStory": "Filters" },
+    "Tooltip": { "cardMode": "single", "viewport": "420x240", "primaryStory": "PlayerCount" },
+    "DropdownMenu": { "cardMode": "single", "viewport": "420x420", "primaryStory": "ServerActions" },
+    "Toast": { "cardMode": "single", "viewport": "480x360", "primaryStory": "Notifications" }
+  }
+}
