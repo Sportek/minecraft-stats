@@ -188,6 +188,21 @@ export function resolveAssetUrl(path?: string | null): string {
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+/**
+ * Resolves an avatar URL with a cache-busting `?v=` param so a freshly uploaded
+ * avatar (which reuses the same key) shows immediately instead of the cached
+ * one. External provider URLs change on their own, so they are left untouched.
+ */
+export function resolveAvatarUrl(
+  avatarUrl?: string | null,
+  version?: string | number | Date | null
+): string {
+  const resolved = resolveAssetUrl(avatarUrl);
+  if (!resolved || !version || /^https?:\/\//i.test(avatarUrl ?? "")) return resolved;
+  const stamp = version instanceof Date ? version.getTime() : version;
+  return `${resolved}${resolved.includes("?") ? "&" : "?"}v=${encodeURIComponent(String(stamp))}`;
+}
+
 // Re-export domain config for use in other modules
 export { DEFAULT_DOMAIN, DOMAIN_CONFIG, extractDomainKey, getLocalhostConfig, isLocalhost };
 export type { DomainConfig, DomainKey };
