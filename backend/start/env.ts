@@ -48,6 +48,14 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Cloudflare Turnstile (captcha on email/password auth)
+  |----------------------------------------------------------
+  | Optional: when unset, captcha verification is skipped (dev/tests).
+  */
+  TURNSTILE_SECRET_KEY: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
   | Variables for configuring the limiter package
   |----------------------------------------------------------
   */

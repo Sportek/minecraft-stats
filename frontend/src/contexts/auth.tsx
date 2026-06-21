@@ -9,8 +9,17 @@ import useSWR from "swr";
 interface AuthContextProps {
   user: User | null;
   setUser: (user: User | null) => void;
-  login: (email: string, password: string) => Promise<{ message: string } | undefined>;
-  register: (username: string, email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    turnstileToken?: string | null
+  ) => Promise<{ message: string } | undefined>;
+  register: (
+    username: string,
+    email: string,
+    password: string,
+    turnstileToken?: string | null
+  ) => Promise<void>;
   logout: () => Promise<void>;
   logoutAll: () => Promise<void>;
   loginWithDiscord: () => void;
@@ -100,9 +109,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [mutateMe]);
 
   const login = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, turnstileToken?: string | null) => {
       try {
-        const response = await loginUser({ email, password });
+        const response = await loginUser({ email, password, turnstileToken });
         setUser(response.user);
         saveToken(response.accessToken.token);
         setIsLoggedIn(true);
@@ -118,9 +127,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const register = useCallback(
-    async (username: string, email: string, password: string) => {
+    async (username: string, email: string, password: string, turnstileToken?: string | null) => {
       try {
-        await registerUser({ username, email, password });
+        await registerUser({ username, email, password, turnstileToken });
         router.push("/");
       } catch (error) {
         throw new Error(error instanceof Error ? error.message : String(error));

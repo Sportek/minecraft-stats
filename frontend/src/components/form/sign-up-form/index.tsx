@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { Turnstile, isTurnstileEnabled } from "@/components/form/turnstile";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,11 +35,15 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
   const { register, loginWithDiscord, loginWithGoogle } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Bumping this key remounts the widget for a fresh token after a failure.
+  const [captchaKey, setCaptchaKey] = useState(0);
+  const captchaMissing = isTurnstileEnabled && !captchaToken;
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
-      await register(credentials.username, credentials.email, credentials.password);
+      await register(credentials.username, credentials.email, credentials.password, captchaToken);
       toast({
         title: "Registration successful",
         description:
@@ -53,6 +58,8 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
           variant: "error",
         });
         form.reset();
+        setCaptchaToken(null);
+        setCaptchaKey((key) => key + 1);
       }
     } finally {
       setLoading(false);
@@ -112,7 +119,14 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             )}
           />
 
-          <Button variant="accent" className="h-11 w-full text-[15px]" type="submit" disabled={loading}>
+          <Turnstile key={captchaKey} onToken={setCaptchaToken} className="flex justify-center" />
+
+          <Button
+            variant="accent"
+            className="h-11 w-full text-[15px]"
+            type="submit"
+            disabled={loading || captchaMissing}
+          >
             {loading ? (
               <>
                 <Spinner size="xs" tone="current" className="mr-2" />

@@ -3,7 +3,12 @@
 import { getBaseUrl } from "@/app/_cheatcode";
 import { AccessToken, User } from "@/types/auth";
 
-export const registerUser = async (credentials: { username: string; email: string; password: string }) => {
+export const registerUser = async (credentials: {
+  username: string;
+  email: string;
+  password: string;
+  turnstileToken?: string | null;
+}) => {
   const response = await fetch(`${getBaseUrl()}/register`, {
     method: "POST",
     body: JSON.stringify(credentials),
@@ -36,7 +41,11 @@ export const verifyEmail = async (credentials: { token: string }) => {
   return response.json() as Promise<User>;
 };
 
-export const loginUser = async (credentials: { email: string; password: string }) => {
+export const loginUser = async (credentials: {
+  email: string;
+  password: string;
+  turnstileToken?: string | null;
+}) => {
   const response = await fetch(`${getBaseUrl()}/login`, {
     method: "POST",
     headers: {
