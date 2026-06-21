@@ -16,6 +16,7 @@ const BASE_ITEMS: NavItem[] = [
   { href: "/account/settings", label: "Profile", icon: "material-symbols:person-outline" },
   { href: "/account/my-servers", label: "My Servers", icon: "mynaui:servers" },
   { href: "/account/add-server", label: "Add Server", icon: "material-symbols:add-rounded" },
+  { href: "/account/api-tokens", label: "API Tokens", icon: "material-symbols:key-outline" },
 ];
 
 const WRITER_ITEMS: NavItem[] = [
