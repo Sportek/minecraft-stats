@@ -8,6 +8,7 @@ import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-s
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AvatarTile } from "@/components/ui/avatar-tile";
 import { useAuth } from "@/contexts/auth";
 import { deletePost, getAdminPosts, publishPost, unpublishPost } from "@/http/post";
 import { Post } from "@/types/post";
@@ -20,14 +21,6 @@ const estimateReadTime = (content: string) => {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
   return `${Math.max(1, Math.round(words / 200))} min read`;
 };
-
-/** Deterministic gradient cover for the row thumbnail, keyed on the post id. */
-const COVER_GRADIENTS = [
-  "linear-gradient(135deg,hsl(210_60%_35%),hsl(224_60%_18%))",
-  "linear-gradient(135deg,hsl(160_55%_32%),hsl(190_60%_20%))",
-  "linear-gradient(135deg,hsl(280_50%_38%),hsl(260_55%_22%))",
-  "linear-gradient(135deg,hsl(20_70%_40%),hsl(0_55%_24%))",
-];
 
 const AdminPostsPage = () => {
   const { user, getToken } = useAuth();
@@ -206,12 +199,11 @@ const AdminPostsPage = () => {
                 className="flex flex-col gap-3 p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <div
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white"
-                    style={{ backgroundImage: COVER_GRADIENTS[post.id % COVER_GRADIENTS.length] }}
-                  >
-                    {post.title.charAt(0).toUpperCase()}
-                  </div>
+                  <AvatarTile
+                    name={post.title}
+                    src={post.coverImage}
+                    className="h-12 w-12 shrink-0 rounded-lg text-lg"
+                  />
                   <div className="min-w-0">
                     <p className="truncate font-medium text-foreground">{post.title}</p>
                     <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
