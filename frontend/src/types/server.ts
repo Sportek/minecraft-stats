@@ -18,10 +18,15 @@ export interface Server {
   port: number;
   type: ServerType;
   version: string | null;
+  website: string | null;
   imageUrl: string;
   user: User;
   createdAt: Date;
   lastOnlineAt: Date | null;
+  lastPlayerCount: number | null;
+  lastMaxCount: number | null;
+  peakPlayerCount: number | null;
+  peakPlayerAt: Date | null;
   languages: Language[];
 }
 

@@ -35,6 +35,10 @@ router
       .use([throttleLight('servers.paginate', 50), PUBLIC_PAGINATE])
 
     router
+      .get('servers/mine', '#controllers/servers_controller.mine')
+      .use([middleware.auth(), throttleLight('servers.mine', 30), NO_STORE])
+
+    router
       .resource('servers', '#controllers/servers_controller')
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, ChevronsUpDown, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -92,38 +92,40 @@ export const FancyMultiSelect = ({
   }
 
   const popoverContent = (
-    <PopoverContent className="w-full p-0" align="start">
+    <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[12rem] p-0" align="start">
       <Command>
         <CommandInput placeholder={searchPlaceholder} value={search} onValueChange={setSearch} />
-        <CommandEmpty>{emptyMessage}</CommandEmpty>
-        <CommandGroup>
-          <CommandItem
-            onSelect={() => {
-              onChange([]);
-              setOpen(false);
-            }}
-            className="cursor-pointer"
-          >
-            <Check className={cn("mr-2 h-4 w-4", selectedIds.length === 0 ? "opacity-100" : "opacity-0")} />
-            {placeholder}
-          </CommandItem>
-          {displayedOptions.map((option) => (
+        <CommandList>
+          <CommandEmpty>{emptyMessage}</CommandEmpty>
+          <CommandGroup>
             <CommandItem
-              key={option.id}
               onSelect={() => {
-                handleToggle(option.id);
+                onChange([]);
                 setOpen(false);
               }}
               className="cursor-pointer"
             >
-              <Check
-                className={cn("mr-2 h-4 w-4", selectedIds.includes(option.id) ? "opacity-100" : "opacity-0")}
-              />
-              {option.flag && <span className="mr-1">{option.flag}</span>}
-              {option.name}
+              <Check className={cn("mr-2 h-4 w-4", selectedIds.length === 0 ? "opacity-100" : "opacity-0")} />
+              {placeholder}
             </CommandItem>
-          ))}
-        </CommandGroup>
+            {displayedOptions.map((option) => (
+              <CommandItem
+                key={option.id}
+                onSelect={() => {
+                  handleToggle(option.id);
+                  setOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                <Check
+                  className={cn("mr-2 h-4 w-4", selectedIds.includes(option.id) ? "opacity-100" : "opacity-0")}
+                />
+                {option.flag && <span className="mr-1">{option.flag}</span>}
+                {option.name}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
       </Command>
     </PopoverContent>
   );

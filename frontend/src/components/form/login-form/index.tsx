@@ -1,4 +1,6 @@
 "use client";
+import EmailDivider from "@/components/form/auth-card/email-divider";
+import OAuthButtons from "@/components/form/auth-card/oauth-buttons";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,7 +9,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Icon } from "@iconify/react/dist/iconify.js";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -51,24 +52,11 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
-      {/* OAuth d'abord (pattern moderne) */}
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <Button type="button" variant="outline" className="w-full" onClick={loginWithDiscord}>
-          <Icon icon="logos:discord-icon" className="mr-2 h-4 w-4" />
-          Discord
-        </Button>
-        <Button type="button" variant="outline" className="w-full" onClick={loginWithGoogle}>
-          <Icon icon="logos:google-icon" className="mr-2 h-4 w-4" />
-          Google
-        </Button>
-      </div>
+    <div className={cn("space-y-5", className)}>
+      {/* OAuth first (modern pattern). */}
+      <OAuthButtons onDiscord={loginWithDiscord} onGoogle={loginWithGoogle} />
 
-      <div className="relative flex items-center">
-        <div className="h-px flex-1 bg-border" />
-        <span className="px-3 text-xs uppercase tracking-wider text-muted-foreground">or with email</span>
-        <div className="h-px flex-1 bg-border" />
-      </div>
+      <EmailDivider />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" {...props} method="POST">
@@ -99,7 +87,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
             )}
           />
 
-          <Button variant="accent" className="w-full" type="submit" disabled={isSubmitting}>
+          <Button variant="accent" className="h-11 w-full text-[15px]" type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Spinner size="xs" tone="current" className="mr-2" />

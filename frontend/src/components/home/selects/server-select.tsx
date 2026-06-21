@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fetcher } from "@/app/_cheatcode";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -21,6 +23,13 @@ export interface Server {
   name: string;
 }
 
+interface ServerListEntry {
+  server?: {
+    id?: number;
+    name?: string;
+  };
+}
+
 interface ServerSelectProps {
   selectedServers: number[];
   onChange: (servers: number[]) => void;
@@ -29,31 +38,20 @@ interface ServerSelectProps {
 
 export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSelectProps) => {
   const [open, setOpen] = useState(false);
-  const [servers, setServers] = useState<Server[]>([]);
   const [search, setSearch] = useState("");
   const apiUrl = getClientApiUrl();
 
-  useEffect(() => {
-    const fetchServers = async () => {
-      try {
-        const response = await fetch(apiUrl + "/servers");
-        if (!response.ok) throw new Error('Failed to fetch servers');
-        const data = await response.json();
-        
-        // Vérifier et formater les données du serveur
-        const formattedServers = Array.isArray(data) ? data.map(obtainData => ({
+  const { data } = useSWR<ServerListEntry[]>(`${apiUrl}/servers`, fetcher);
+
+  // Vérifier et formater les données du serveur
+  const servers: Server[] = Array.isArray(data)
+    ? data
+        .map((obtainData) => ({
           id: obtainData.server?.id,
-          name: obtainData.server?.name ?? `Serveur ${obtainData.server?.id ?? 'Inconnu'}`
-        })).filter(server => server.id != null) : [];
-        
-        setServers(formattedServers);
-      } catch (error) {
-        console.error('Error fetching servers:', error);
-        setServers([]);
-      }
-    };
-    fetchServers();
-  }, [apiUrl]);
+          name: obtainData.server?.name ?? `Serveur ${obtainData.server?.id ?? "Inconnu"}`,
+        }))
+        .filter((server): server is Server => server.id != null)
+    : [];
 
   const handleServerToggle = (serverId: number) => {
     const newSelection = selectedServers.includes(serverId)

@@ -70,8 +70,13 @@ function buildSrcDoc(
     anchor.setAttribute("rel", "noopener noreferrer nofollow sponsored");
   });
 
-  // Aucun CSS injecté : la publicité contrôle entièrement son propre rendu.
-  return `<!DOCTYPE html><html><head><meta charset="utf-8">${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
+  // Minimal reset: drop the default body margin/white background, and give
+  // html/body full height so ads built with `height:100%` actually fill the
+  // iframe (otherwise they collapse to their content height and leave an empty
+  // band). The ad still controls its own visual — its own background wins.
+  const reset =
+    "<style>html,body{margin:0;padding:0;height:100%;background:transparent}</style>";
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">${reset}${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
 }
 
 /**
@@ -124,7 +129,7 @@ const AdSlot = ({ placement, serverId, serverCategoryIds, className }: AdSlotPro
         srcDoc={srcDoc}
         sandbox="allow-popups allow-popups-to-escape-sandbox"
         loading="lazy"
-        className="block h-[110px] w-full sm:h-[130px]"
+        className="block h-[110px] w-full bg-transparent sm:h-[130px]"
       />
     </div>
   );

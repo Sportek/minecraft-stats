@@ -10,7 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
   ssr: false,
-  loading: () => <div className="h-72 w-full bg-muted animate-pulse rounded-md" />,
+  loading: () => <div className="h-72 w-full bg-foreground/10 animate-pulse rounded-md" />,
 });
 
 interface ChartDatum {
@@ -109,9 +109,9 @@ const createAreaSeries = (
       anchorTo: 'pointer',
       placement: 'top',
     },
-    renderer: ({ datum }: any) => {
+    renderer: ({ datum }: { datum: Record<string, number | Date> }) => {
       return generateTooltipHtml(
-        { time: new Date(datum.time), playerCount: datum[yKey] ?? 0 },
+        { time: new Date(datum.time), playerCount: Number(datum[yKey] ?? 0) },
         { isDarkMode: theme === 'dark' }
       );
     },

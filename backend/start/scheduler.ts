@@ -105,7 +105,7 @@ async function tryAcquirePingLock(serverId: number): Promise<boolean> {
     return result === 'OK'
   } catch (error) {
     logger.warn(
-      { serverId, err: error.message },
+      { serverId, err: error instanceof Error ? error.message : String(error) },
       'PING_LOCK: redis unavailable, proceeding without lock'
     )
     return true
@@ -183,6 +183,12 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
       server.lastMaxCount = maxPlayer
       server.lastStatsAt = DateTime.fromJSDate(createdAt)
 
+      // Pic all-time : on ne le déplace que vers le haut.
+      if (playerOnline > (server.peakPlayerCount ?? 0)) {
+        server.peakPlayerCount = playerOnline
+        server.peakPlayerAt = DateTime.fromJSDate(createdAt)
+      }
+
       // Rafraîchit les empreintes de détection de doublon. favicon + MOTD sont
       // recalculés à chaque ping (le MOTD bouge souvent) ; l'endpoint DNS, qui
       // ne change quasi jamais, n'est re-résolu que lors du job 6h (overwriteImage).
@@ -201,7 +207,7 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
     }
   } catch (error) {
     logger.warn(
-      `SCHEDULER: ping failed for ${server.name} (${server.address}:${server.port}): ${error.message}`
+      `SCHEDULER: ping failed for ${server.name} (${server.address}:${server.port}): ${error instanceof Error ? error.message : String(error)}`
     )
   }
 
@@ -292,7 +298,10 @@ scheduler
     try {
       await pingDueServers(false)
     } catch (error) {
-      logger.error({ err: error.message }, 'SCHEDULER: pingDueServers failed')
+      logger.error(
+        { err: error instanceof Error ? error.message : String(error) },
+        'SCHEDULER: pingDueServers failed'
+      )
     }
   })
   .everyFiveMinutes()

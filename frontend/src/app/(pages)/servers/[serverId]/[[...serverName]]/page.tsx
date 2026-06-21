@@ -16,7 +16,8 @@ import { ServerData } from "@/app/(pages)/(index)/page";
 import { AggregationSelect, AggregationType } from "@/components/home/selects/aggregation-select";
 import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
-import ServerCard from "@/components/serveur/card";
+import ServerDetailHeader from "@/components/serveur/server-detail-header";
+import ServerFAQ from "@/components/serveur/server-faq";
 import ImprovedCard from "@/components/serveur/improved-card";
 import AdSlot from "@/components/ads/ad-slot";
 import { Spinner } from "@/components/ui/spinner";
@@ -24,7 +25,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { startTransition, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 
 const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
@@ -110,7 +111,7 @@ const createAreaSeries = (
       anchorTo: "pointer",
       placement: "top",
     },
-    renderer: ({ datum }: any) => {
+    renderer: ({ datum }: { datum: { time: string | number | Date; playerCount: number } }) => {
       return generateTooltipHtml(
         { time: new Date(datum.time), playerCount: datum.playerCount },
         { isDarkMode: theme === "dark" }
@@ -126,7 +127,7 @@ const ServerNotFound = () => {
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="bg-card text-card-foreground border border-border rounded-lg shadow-xs p-8 space-y-6 max-w-md w-full">
             <div className="space-y-2 text-center">
-              <div className="w-16 h-16 mx-auto bg-accent/10 text-accent rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto bg-secondary text-muted-foreground rounded-full flex items-center justify-center">
                 <Icon icon="mdi:server-off" className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-semibold text-foreground">Server Not Found</h2>
@@ -161,32 +162,20 @@ const ServerPage = () => {
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("1 Hour");
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
-  const [stats, setStats] = useState<ServerStat[]>([]);
   const { resolvedTheme } = useTheme();
 
-  useEffect(() => {
-    async function fetchServerStats() {
+  const { data: statsData, isLoading: isStatsLoading } = useSWR<ServerStat[], Error>(
+    ["server-stats", serverId, dataRangeInterval, dataAggregationInterval],
+    () => {
       const now = Date.now();
       const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
       const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
-      const newStats = await getServerStats(
-        Number(serverId),
-        fromDate,
-        now,
-        interval
-      );
-      setStats(newStats);
-    }
+      return getServerStats(Number(serverId), fromDate, now, interval);
+    },
+    { refreshInterval: 1000 * 60 * 2 }
+  );
 
-    startTransition(() => {
-      setIsStatsLoading(true);
-    });
-    fetchServerStats().finally(() => setIsStatsLoading(false));
-
-    const intervalId = setInterval(fetchServerStats, 1000 * 60 * 2);
-    return () => clearInterval(intervalId);
-  }, [serverId, dataRangeInterval, dataAggregationInterval]);
+  const stats = useMemo(() => statsData ?? [], [statsData]);
 
   const options = useMemo((): AgCartesianChartOptions => {
     const data = stats.map((stat) => ({
@@ -238,6 +227,14 @@ const ServerPage = () => {
 
   return (
     <main className="flex-1 space-y-6 py-6">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link href="/" className="text-accent transition-colors hover:underline">
+          Servers
+        </Link>
+        <span aria-hidden="true">/</span>
+        <span className="truncate font-medium text-foreground">{serverData.server.name}</span>
+      </nav>
+
       <ServerStructuredData
         server={serverData.server}
         categories={serverData.categories}
@@ -250,13 +247,11 @@ const ServerPage = () => {
         maxPlayers={serverData.lastMaxCount ?? 0}
       />
 
-      <ServerCard
+      <ServerDetailHeader
         server={serverData.server}
         stats={serverData.stats}
         categories={serverData.categories}
         growthStat={serverData.growthStat}
-        isFull={true}
-        showChart={false}
       />
 
       <AdSlot
@@ -268,9 +263,7 @@ const ServerPage = () => {
       <section className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         <div className="flex flex-col gap-2 border-b border-border px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-              <Icon icon="material-symbols:show-chart" className="h-4 w-4" />
-            </div>
+            <Icon icon="material-symbols:show-chart" className="h-5 w-5 shrink-0 text-muted-foreground" />
             <div>
               <h2 className="text-lg font-semibold text-foreground">Player Count History</h2>
               <p className="text-xs text-muted-foreground">Online players over time.</p>
@@ -292,7 +285,10 @@ const ServerPage = () => {
               <Spinner size="md" />
             </div>
           )}
-          <AgCharts options={options} />
+          {/* Smaller chart height on mobile, taller on larger screens */}
+          <div className="h-[280px] sm:h-[360px]">
+            <AgCharts options={options} className="h-full w-full" />
+          </div>
         </div>
       </section>
 
@@ -301,6 +297,12 @@ const ServerPage = () => {
         server={serverData.server}
         stats={stats}
         categories={serverData.categories}
+      />
+
+      <ServerFAQ
+        server={serverData.server}
+        currentPlayers={serverData.lastPlayerCount ?? 0}
+        maxPlayers={serverData.lastMaxCount ?? 0}
       />
     </main>
   );

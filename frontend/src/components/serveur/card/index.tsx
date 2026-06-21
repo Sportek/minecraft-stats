@@ -6,7 +6,6 @@ import ServerStatus from "./server-status";
 import ServerCategories from "./server-category";
 import ServerActions from "./server-action";
 import ServerChart from "./server-chart";
-import ServerLanguages from "./server-languages";
 import FavoriteButton from "./favorite-button";
 
 interface ServerCardProps {
@@ -22,37 +21,37 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
   return (
     <Link
       href={`/servers/${server.id}/${server.name}`}
-      className="relative flex flex-col shadow-xs border border-border bg-card text-card-foreground p-4 w-full rounded-md h-full justify-between transition-all duration-150 ease-in-out group hover:border-accent/50 hover:shadow-md"
+      className="group relative flex h-full w-full flex-col gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs transition-all duration-150 ease-in-out hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md"
     >
       <ServerActions server={server} />
-      <div className="flex flex-col gap-4 w-full h-full min-w-0">
-        <div className="flex flex-row gap-4 w-full">
-          <div className="shrink-0 flex flex-col gap-2 items-center justify-center">
-            <ServerImage imageUrl={server.imageUrl} name={server.name} />
-            <ServerLanguages languages={server.languages} className="flex flex-row gap-2 items-center justify-center" />
-          </div>
-          <div className="flex flex-col grow gap-2 min-w-0">
-            <div className="flex flex-row items-center w-full min-w-0">
-              <div className="grow min-w-0">
-                <ServerInfo name={server.name} address={server.address} />
-              </div>
-              <div className="shrink-0">
-                <ServerStatus 
-                  stats={stats} 
-                  growthStat={growthStat} 
-                  lastOnlineAt={server.lastOnlineAt ? new Date(server.lastOnlineAt).toISOString() : null} 
-                />
-              </div>
-            </div>
-            {showChart && (
-                <ServerChart stats={stats} />
-            )}
-          </div>
+
+      {/* Row 1: avatar · identity (name, flags, address, website) · metrics */}
+      <div className="flex w-full items-start gap-3">
+        <ServerImage imageUrl={server.imageUrl} name={server.name} />
+        <div className="min-w-0 flex-1">
+          <ServerInfo
+            name={server.name}
+            address={server.address}
+            website={server.website}
+            languages={server.languages}
+          />
         </div>
-        <div className="flex flex-row items-center justify-between gap-2 w-full">
-          <ServerCategories categories={categories} version={server.version ?? undefined} type={server.type} isFull={isFull} />
-          <FavoriteButton serverId={server.id} serverName={server.name} />
+        <div className="shrink-0">
+          <ServerStatus
+            stats={stats}
+            growthStat={growthStat}
+            lastOnlineAt={server.lastOnlineAt ? new Date(server.lastOnlineAt).toISOString() : null}
+          />
         </div>
+      </div>
+
+      {/* Row 2: full-width sparkline */}
+      {showChart && <ServerChart stats={stats} />}
+
+      {/* Row 3: badges (edition, version, categories) · favorite */}
+      <div className="mt-auto flex w-full items-center justify-between gap-2">
+        <ServerCategories categories={categories} version={server.version ?? undefined} type={server.type} isFull={isFull} />
+        <FavoriteButton serverId={server.id} serverName={server.name} />
       </div>
     </Link>
   );

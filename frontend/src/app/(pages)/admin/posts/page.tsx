@@ -1,18 +1,45 @@
 "use client";
 
+import DashboardHero from "@/components/account/dashboard-hero";
+import DashboardLayout from "@/components/account/dashboard-layout";
+import DashboardStatTile from "@/components/account/dashboard-stat-tile";
+import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
+import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { AvatarTile } from "@/components/ui/avatar-tile";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/auth";
 import { deletePost, getAdminPosts, publishPost, unpublishPost } from "@/http/post";
 import { Post } from "@/types/post";
-import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+/** Rough read-time estimate (~200 words / minute) from raw markdown content. */
+const estimateReadTime = (content: string) => {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.round(words / 200))} min read`;
+};
 
 const AdminPostsPage = () => {
   const { user, getToken } = useAuth();
   const token = getToken();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
+  const [query, setQuery] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<Post | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -32,35 +59,62 @@ const AdminPostsPage = () => {
     fetchPosts();
   }, [token, filter]);
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-900 dark:text-white">Loading...</div>
-      </div>
+  // Separate unfiltered fetch so the stat tiles and tab counts always reflect
+  // the full set of posts, independent of the active filter tab.
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchAllPosts = async () => {
+      try {
+        const response = await getAdminPosts(token, 1, 50, "all");
+        setAllPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+
+    fetchAllPosts();
+  }, [token]);
+
+  const publishedCount = useMemo(() => allPosts.filter((p) => p.published).length, [allPosts]);
+  const draftCount = allPosts.length - publishedCount;
+
+  const visiblePosts = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    if (!term) return posts;
+    return posts.filter(
+      (p) => p.title.toLowerCase().includes(term) || p.slug.toLowerCase().includes(term)
     );
+  }, [posts, query]);
+
+  if (!user) {
+    return <AdminLoadingState label="Loading..." />;
   }
 
   if (user.role !== "admin" && user.role !== "writer") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-slate-400">You must be a writer or administrator to access this page.</p>
-        </div>
-      </div>
+      <AdminMessageState
+        tone="destructive"
+        title="Access Denied"
+        description="You must be a writer or administrator to access this page."
+      />
     );
   }
 
-  const handleDelete = async (postId: number) => {
-    if (!token) return;
-    if (!confirm("Are you sure you want to delete this article?")) return;
-
+  const confirmDelete = async () => {
+    if (!token || !pendingDelete) return;
+    const postId = pendingDelete.id;
+    setIsDeleting(true);
     try {
       await deletePost(postId, token);
-      setPosts(posts.filter((p) => p.id !== postId));
+      setPosts((current) => current.filter((p) => p.id !== postId));
+      setAllPosts((current) => current.filter((p) => p.id !== postId));
+      setPendingDelete(null);
     } catch (error) {
       console.error("Failed to delete post:", error);
       alert("Failed to delete article");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -70,6 +124,7 @@ const AdminPostsPage = () => {
     try {
       const updatedPost = await publishPost(postId, token);
       setPosts(posts.map((p) => (p.id === postId ? updatedPost : p)));
+      setAllPosts(allPosts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to publish post:", error);
       alert("Failed to publish article");
@@ -82,154 +137,167 @@ const AdminPostsPage = () => {
     try {
       const updatedPost = await unpublishPost(postId, token);
       setPosts(posts.map((p) => (p.id === postId ? updatedPost : p)));
+      setAllPosts(allPosts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to unpublish post:", error);
       alert("Failed to unpublish article");
     }
   };
 
-  const publishedCount = posts.filter((p) => p.published).length;
-  const draftCount = posts.filter((p) => !p.published).length;
-
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8 animate-in fade-in duration-300">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Manage Articles</h1>
-            <p className="text-gray-600 dark:text-slate-400">Create, edit and manage your blog posts.</p>
-          </div>
+    <DashboardLayout>
+      <DashboardHero
+        title="Articles"
+        subtitle="Create, edit and manage your blog posts."
+        action={
+          <Button asChild variant="accent">
+            <Link href="/admin/posts/new">
+              <Plus className="h-5 w-5" />
+              <span>New Article</span>
+            </Link>
+          </Button>
+        }
+      />
 
-          <Link
-            href="/admin/posts/new"
-            className="flex items-center gap-2 bg-stats-blue-600 hover:bg-stats-blue-500 text-white px-4 py-2 rounded-md font-medium transition-all shadow-lg shadow-stats-blue-900/20"
-          >
-            <Plus className="w-5 h-5" />
-            <span>New Article</span>
-          </Link>
-        </div>
-
-        {/* Tabs / Filters */}
-        <div className="flex items-center gap-2 mb-6">
-          <button
-            onClick={() => setFilter("all")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === "all"
-                ? "bg-stats-blue-600 text-white"
-                : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-            }`}
-          >
-            All ({posts.length})
-          </button>
-          <button
-            onClick={() => setFilter("published")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === "published"
-                ? "bg-stats-blue-600 text-white"
-                : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-            }`}
-          >
-            Published
-          </button>
-          <button
-            onClick={() => setFilter("draft")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === "draft"
-                ? "bg-stats-blue-600 text-white"
-                : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-            }`}
-          >
-            Drafts
-          </button>
-        </div>
-
-        {/* Table */}
-        <div className="bg-white dark:bg-stats-blue-1000 border border-gray-300 dark:border-stats-blue-800 rounded-lg overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-100 dark:bg-stats-blue-950 border-b border-gray-300 dark:border-stats-blue-800 text-xs uppercase tracking-wider text-gray-600 dark:text-slate-400 font-semibold">
-                  <th className="px-6 py-4">Title</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Created Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-stats-blue-800">
-                {loading ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-slate-500">
-                      Loading articles...
-                    </td>
-                  </tr>
-                ) : posts.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-slate-500">
-                      No articles found. Click &quot;New Article&quot; to create one.
-                    </td>
-                  </tr>
-                ) : (
-                  posts.map((post) => (
-                    <tr key={post.id} className="hover:bg-gray-50 dark:hover:bg-stats-blue-900 transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="text-gray-900 dark:text-white font-medium group-hover:text-stats-blue-600 dark:group-hover:text-stats-blue-400 transition-colors">
-                            {post.title}
-                          </span>
-                          <span className="text-gray-500 dark:text-slate-500 text-xs font-mono mt-0.5">
-                            {post.slug}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                            post.published
-                              ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
-                              : "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
-                          }`}
-                        >
-                          {post.published ? "Published" : "Draft"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600 dark:text-slate-400 text-sm">
-                        {new Date(post.createdAt).toISOString().split("T")[0]}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => (post.published ? handleUnpublish(post.id) : handlePublish(post.id))}
-                            className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-stats-blue-600 dark:hover:text-stats-blue-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-stats-blue-500/10"
-                            title="View"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <Link
-                            href={`/admin/posts/${post.id}/edit`}
-                            className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-green-500/10"
-                            title="Edit"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(post.id)}
-                            className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-red-500/10"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {/* Stat tiles */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <DashboardStatTile label="Total Articles" value={String(allPosts.length)} />
+        <DashboardStatTile label="Published" value={String(publishedCount)} dot="success" />
+        <DashboardStatTile label="Drafts" value={String(draftCount)} dot="muted" />
       </div>
-    </div>
+
+      {/* Articles card */}
+      <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+        {/* Toolbar */}
+        <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <AdminFilterTabs
+            value={filter}
+            onChange={setFilter}
+            tabs={[
+              { value: "all", label: `All (${allPosts.length})` },
+              { value: "published", label: `Published (${publishedCount})` },
+              { value: "draft", label: `Drafts (${draftCount})` },
+            ]}
+          />
+          <div className="relative sm:w-64">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search articles..."
+              className="pl-9"
+            />
+          </div>
+        </div>
+
+        {/* Rows */}
+        {loading ? (
+          <div className="px-6 py-12 text-center text-muted-foreground">Loading articles...</div>
+        ) : visiblePosts.length === 0 ? (
+          <div className="px-6 py-14 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
+              <Search className="h-5 w-5" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">No articles found</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Nothing matches this filter or search. Try another tab.
+            </p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {visiblePosts.map((post) => (
+              <li
+                key={post.id}
+                className="flex flex-col gap-3 p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center"
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <AvatarTile
+                    name={post.title}
+                    src={post.coverImage}
+                    className="h-12 w-12 shrink-0 rounded-lg text-lg"
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-foreground">{post.title}</p>
+                    <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="truncate">{post.author.username}</span>
+                      <span aria-hidden className="opacity-50">
+                        ·
+                      </span>
+                      <span className="shrink-0">{estimateReadTime(post.content)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 sm:justify-end">
+                  <Badge variant={post.published ? "success" : "secondary"}>
+                    {post.published ? "Published" : "Draft"}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date(post.createdAt).toISOString().split("T")[0]}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-accent"
+                      onClick={() => (post.published ? handleUnpublish(post.id) : handlePublish(post.id))}
+                      title="View"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-accent"
+                      title="Edit"
+                    >
+                      <Link href={`/admin/posts/${post.id}/edit`}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => setPendingDelete(post)}
+                      title="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <Dialog open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this article?</DialogTitle>
+            <DialogDescription>
+              {pendingDelete ? (
+                <>
+                  <span className="font-medium text-foreground">{pendingDelete.title}</span> will be
+                  permanently deleted. This action cannot be undone.
+                </>
+              ) : null}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingDelete(null)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={isDeleting}>
+              {isDeleting ? "Deleting…" : "Delete article"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </DashboardLayout>
   );
 };
 

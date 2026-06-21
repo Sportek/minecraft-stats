@@ -1,17 +1,17 @@
 "use client";
 import { useAuth } from "@/contexts/auth";
-import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
 import { cn } from "@/lib/utils";
 import { getClientBackendUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react";
 import { X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import BrandLogo from "../brand-logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import RestrictedWidthLayout from "../restricted-width-layout";
 import { ModeToggle } from "../dark-mode/toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { letterTileGradient } from "../ui/letter-tile";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -121,7 +121,10 @@ const Header = () => {
       >
         <Avatar className="h-9 w-9">
           <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
-          <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
+          <AvatarFallback
+            className="text-white text-sm"
+            style={{ background: letterTileGradient(user?.username ?? "") }}
+          >
             {user?.username?.[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
@@ -134,21 +137,13 @@ const Header = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add a server</DropdownMenuItem>
-        {(user?.role === "admin" || user?.role === "writer") && (
-          <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage blog</DropdownMenuItem>
-        )}
-        {user?.role === "admin" && (
-          <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage users</DropdownMenuItem>
-        )}
-        {user?.role === "admin" && (
-          <DropdownMenuItem onClick={() => router.push("/admin/advertisements")}>
-            Manage advertisements
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem onClick={() => router.push("/account/my-servers")}>
+          <Icon icon="material-symbols:dashboard-outline" className="mr-2 h-4 w-4" />
+          Dashboard
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:text-destructive">
+          <Icon icon="material-symbols:logout" className="mr-2 h-4 w-4" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -157,14 +152,11 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-stats-blue-50/85 backdrop-blur-md supports-backdrop-filter:bg-stats-blue-50/80 dark:bg-stats-blue-1050/85 dark:supports-backdrop-filter:bg-stats-blue-1050/80">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/75">
         <RestrictedWidthLayout className="flex h-16 items-center justify-between gap-4">
           {/* Left: brand + nav */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
-              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
-            </Link>
+            <BrandLogo />
             <nav aria-label="Main" className="hidden md:flex items-center gap-6">
               {NAV_LINKS.map((link) => {
                 const active = isActive(link.href, link.matchPrefixes);
@@ -258,11 +250,8 @@ const Header = () => {
           )}
         >
           {/* Drawer header */}
-          <div className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-stats-blue-50/40 px-4 dark:bg-stats-blue-1050/40">
-            <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2">
-              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
-              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
-            </Link>
+          <div className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-secondary/40 px-4">
+            <BrandLogo onClick={closeMobileMenu} />
             <button
               type="button"
               onClick={closeMobileMenu}
@@ -317,7 +306,10 @@ const Header = () => {
                   <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={user.avatarUrl ?? ""} alt={user.username} />
-                      <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
+                      <AvatarFallback
+                        className="text-white text-sm"
+                        style={{ background: letterTileGradient(user.username) }}
+                      >
                         {user.username[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -327,40 +319,16 @@ const Header = () => {
                     </div>
                   </div>
 
+                  {/* Un seul point d'entrée : le dashboard fournit sa propre nav
+                      (Profile, My Servers, Add Server, Articles, Users, Ads) via
+                      la barre d'onglets responsive de DashboardSidebar. */}
                   <MobileMenuLink
-                    href="/account/settings"
-                    icon="material-symbols:settings-outline"
-                    label="Profile settings"
-                    active={isActive("/account/settings")}
+                    href="/account/my-servers"
+                    icon="material-symbols:dashboard-outline"
+                    label="Dashboard"
+                    active={isActive("/account", ["/account", "/admin"])}
                     onClick={closeMobileMenu}
                   />
-                  {(user?.role === "admin" || user?.role === "writer") && (
-                    <MobileMenuLink
-                      href="/admin/posts"
-                      icon="material-symbols:article-outline"
-                      label="Manage blog"
-                      active={isActive("/admin/posts", ["/admin/posts"])}
-                      onClick={closeMobileMenu}
-                    />
-                  )}
-                  {user?.role === "admin" && (
-                    <MobileMenuLink
-                      href="/admin/users"
-                      icon="material-symbols:group"
-                      label="Manage users"
-                      active={isActive("/admin/users", ["/admin/users"])}
-                      onClick={closeMobileMenu}
-                    />
-                  )}
-                  {user?.role === "admin" && (
-                    <MobileMenuLink
-                      href="/admin/advertisements"
-                      icon="material-symbols:ad-group-outline"
-                      label="Manage advertisements"
-                      active={isActive("/admin/advertisements", ["/admin/advertisements"])}
-                      onClick={closeMobileMenu}
-                    />
-                  )}
                   <button
                     type="button"
                     onClick={() => {

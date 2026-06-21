@@ -37,7 +37,8 @@
     "#tests/*": "./tests/*.js",
     "#config/*": "./config/*.js",
     "#generated/*": "./.adonisjs/server/*.js",
-    "#transformers/*": "./app/transformers/*.js"
+    "#transformers/*": "./app/transformers/*.js",
+    "#utils/*": "./app/utils/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.4.0",

@@ -1,13 +1,14 @@
 "use client";
 
+import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
+import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import { useAuth } from "@/contexts/auth";
 import { getAdminAdvertisement, getAdvertisementStats } from "@/http/advertisement";
 import "@/lib/ag-charts";
 import { AdStatsResponse, Advertisement } from "@/types/advertisement";
 import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
@@ -107,23 +108,16 @@ const AdvertisementStatsPage = () => {
   }, [chartData, resolvedTheme]);
 
   if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg text-gray-900 dark:text-white">Chargement...</div>
-      </div>
-    );
+    return <AdminLoadingState label="Chargement..." />;
   }
 
   if (user.role !== "admin") {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="mb-2 text-2xl font-bold text-red-500">Accès refusé</h1>
-          <p className="text-gray-600 dark:text-slate-400">
-            Vous devez être administrateur pour accéder à cette page.
-          </p>
-        </div>
-      </div>
+      <AdminMessageState
+        tone="destructive"
+        title="Accès refusé"
+        description="Vous devez être administrateur pour accéder à cette page."
+      />
     );
   }
 
@@ -134,39 +128,27 @@ const AdvertisementStatsPage = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-5xl animate-in fade-in px-4 py-8 duration-300">
-        <Link
-          href="/admin/advertisements"
-          className="mb-6 flex items-center gap-2 font-medium text-stats-blue-600 transition-colors hover:text-stats-blue-500 dark:text-stats-blue-400 dark:hover:text-stats-blue-300"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Retour à la liste
-        </Link>
+        <AdminBackLink href="/admin/advertisements" label="Retour à la liste" />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Statistiques{ad ? ` — ${ad.name}` : ""}
           </h1>
-          <p className="text-gray-600 dark:text-slate-400">
+          <p className="text-muted-foreground">
             Évolution des impressions et des clics dans le temps.
           </p>
         </div>
 
         {/* Sélecteur de période */}
-        <div className="mb-6 flex items-center gap-2">
-          {(Object.keys(RANGES) as RangeKey[]).map((key) => (
-            <button
-              key={key}
-              onClick={() => setRange(key)}
-              className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
-                range === key
-                  ? "bg-stats-blue-600 text-white"
-                  : "border border-gray-300 bg-gray-200 text-gray-700 hover:text-gray-900 dark:border-stats-blue-700/50 dark:bg-stats-blue-900 dark:text-slate-400 dark:hover:text-white"
-              }`}
-            >
-              {RANGES[key].label}
-            </button>
-          ))}
-        </div>
+        <AdminFilterTabs
+          className="mb-6"
+          value={range}
+          onChange={setRange}
+          tabs={(Object.keys(RANGES) as RangeKey[]).map((key) => ({
+            value: key,
+            label: RANGES[key].label,
+          }))}
+        />
 
         {/* Cartes de totaux */}
         <div className="mb-6 grid gap-4 sm:grid-cols-3">
@@ -177,24 +159,24 @@ const AdvertisementStatsPage = () => {
           ].map((card) => (
             <div
               key={card.label}
-              className="rounded-lg border border-gray-300 bg-white p-5 shadow-xs dark:border-stats-blue-800 dark:bg-stats-blue-1000"
+              className="rounded-lg border border-border bg-card p-5 text-card-foreground shadow-xs"
             >
-              <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-slate-500">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 {card.label}
               </p>
-              <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{card.value}</p>
+              <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">{card.value}</p>
             </div>
           ))}
         </div>
 
         {/* Graphique */}
-        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-xs dark:border-stats-blue-800 dark:bg-stats-blue-1000">
+        <div className="rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs">
           {loading ? (
-            <div className="flex h-[320px] items-center justify-center text-gray-500 dark:text-slate-500">
+            <div className="flex h-[320px] items-center justify-center text-muted-foreground">
               Chargement des statistiques...
             </div>
           ) : chartData.length === 0 ? (
-            <div className="flex h-[320px] items-center justify-center text-gray-500 dark:text-slate-500">
+            <div className="flex h-[320px] items-center justify-center text-muted-foreground">
               Aucune donnée sur cette période.
             </div>
           ) : (

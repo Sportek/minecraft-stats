@@ -44,6 +44,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
      address: z.string().min(1).trim(),
      type: z.enum(["java", "bedrock"]),
      port: z.string().min(1).max(5),
+     website: z.string().trim().optional(),
      categories: z.array(z.string()),
      languages: z.array(z.string()),
    })
@@ -74,6 +75,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       address: server.address,
       type: server.type,
       port: server.port.toString(),
+      website: server.website ?? "",
       categories: serverCategories.map((category) => category.name),
       languages: server.languages.map((language) => language.code),
     },
@@ -96,7 +98,11 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await editServer(server.id, { ...credentials, port: parseInt(credentials.port) }, getToken() ?? "");
+      await editServer(
+        server.id,
+        { ...credentials, port: parseInt(credentials.port), website: credentials.website?.trim() || undefined },
+        getToken() ?? ""
+      );
       form.reset();
       toast({
         title: "Server edited",
@@ -105,10 +111,10 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       });
       router.replace("/");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error while editing server",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Error while editing server",
         variant: "error",
       });
     }
@@ -125,10 +131,10 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       });
       router.replace("/");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error while deleting server",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Error while deleting server",
         variant: "error",
       });
     }
@@ -171,6 +177,20 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
             />
             <FormField
               control={form.control}
+              name="website"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Website (optional)</FormLabel>
+                  <FormDescription>Left empty, we infer it from the address</FormDescription>
+                  <FormControl>
+                    <Input type="text" placeholder="example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="type"
               render={({ field }) => (
                 <FormItem>
@@ -204,7 +224,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
                       defaultSelected={field.value.map((category) => ({ value: category, label: category }))}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -233,7 +253,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                           label: language ? `${language.flag} ${language.name}` : code
                         };
                       })}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -254,7 +274,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button variant="accent" className="w-full" type="submit">
               Save
             </Button>
             {user.role === "admin" && (

@@ -10,115 +10,59 @@ interface ServerStatusProps {
   lastOnlineAt?: string | null;
 }
 
-const ServerStatus = ({ stats, growthStat, lastOnlineAt }: ServerStatusProps) => {
-  const getFormattedTimeSinceLastOnline = () => {
-    if (lastOnlineAt) {
-      const millisecondsInADay = 1000 * 60 * 60 * 24;
-      const millisecondsInAWeek = millisecondsInADay * 7;
-      const millisecondsInAMonth = millisecondsInADay * 30;
+const formatGrowth = (growth: number) => `${growth >= 0 ? "+" : ""}${Math.round(growth * 100)}%`;
 
-      const elapsedTime = Date.now() - new Date(lastOnlineAt).getTime();
+const StatusReading = ({ online, label }: { online: boolean; label: string }) => (
+  <div className="flex flex-row items-center gap-2">
+    <span
+      className={cn(
+        "h-2.5 w-2.5 rounded-full ring-2",
+        online ? "bg-success ring-success/20" : "bg-muted-foreground/50 ring-muted-foreground/10"
+      )}
+    />
+    <span className="font-semibold tabular-nums">{label}</span>
+  </div>
+);
 
-      if (elapsedTime >= millisecondsInAMonth) {
-        const months = Math.floor(elapsedTime / millisecondsInAMonth);
-        return `${months} months`;
-      } else if (elapsedTime >= millisecondsInAWeek) {
-        const weeks = Math.floor(elapsedTime / millisecondsInAWeek);
-        return `${weeks} weeks`;
-      } else {
-        const days = Math.floor(elapsedTime / millisecondsInADay);
-        return `${days} days`;
-      }
-    }
-    return "never";
-  };
+const ServerStatus = ({ stats, growthStat }: ServerStatusProps) => {
+  const lastStat = stats.length > 0 ? getLastStat(stats) : null;
+  const playerCount = lastStat?.playerCount;
 
-  const getFormattedGrowth = (growth: number | null) => {
-    if (growth == null) {
-      return null;
-    }
-    if (growth >= 0) {
-      return `+${Math.round(growth * 100)}%`;
-    }
-    return `${Math.round((growth * 100))}%`;
-  };
-
-  if (!stats || stats.length === 0) {
+  if (playerCount == null) {
     return (
       <div className="flex flex-col items-end">
-        <div className="flex flex-row items-center gap-2">
-          <div className="w-3 h-3 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center">
-            <div className="w-2 h-2 bg-gray-500 dark:bg-gray-500 rounded-full" />
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <div>N/A</div>
-          </div>
-        </div>
+        <StatusReading online={false} label="N/A" />
       </div>
     );
   }
 
-  const lastStat = getLastStat(stats);
-
-  if (!lastStat || lastStat.playerCount == null) {
-    return (
-      <div className="flex flex-col items-end">
-        <div className="flex flex-row items-center gap-2">
-          <div className="w-3 h-3 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center">
-            <div className="w-2 h-2 bg-gray-500 dark:bg-gray-500 rounded-full" />
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <div>N/A</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const monthlyGrowth = growthStat?.monthlyGrowth;
 
   return (
-    <div className="flex flex-col items-end">
-      <div className="flex flex-row items-center gap-2">
-        <div className="w-3 h-3 bg-green-300 dark:bg-green-700 rounded-full flex items-center justify-center">
-          <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full" />
-        </div>
-        <div className="flex flex-col justify-center items-center">
-          <div>{new Intl.NumberFormat("en-US").format(lastStat.playerCount)}</div>
-        </div>
-      </div>
-      {growthStat?.monthlyGrowth != null && (
+    <div className="flex flex-col items-end gap-0.5">
+      <StatusReading online label={new Intl.NumberFormat("en-US").format(playerCount)} />
+      {monthlyGrowth != null && (
         <div className="flex flex-row items-center gap-1">
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span>
-                  <Icon
-                    icon="material-symbols:info-outline"
-                    className="text-muted-foreground w-3 h-3"
-                  />
+                  <Icon icon="material-symbols:info-outline" className="text-muted-foreground w-3 h-3" />
                 </span>
               </TooltipTrigger>
               <TooltipContent className="max-w-60">
-                <div>
-                  This shows how the average player count this week compares to the average for the past 30
-                  days. Positive values indicate growth.
-                </div>
+                This shows how the average player count this week compares to the average for the past 30 days.
+                Positive values indicate growth.
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <div
-            className={cn(
-              growthStat.monthlyGrowth != null && growthStat.monthlyGrowth >= 0
-                ? "text-success"
-                : "text-destructive",
-              "text-xs"
-            )}
-          >
-            {getFormattedGrowth(growthStat.monthlyGrowth)}
-          </div>
+          <span className={cn("text-xs font-medium", monthlyGrowth >= 0 ? "text-success" : "text-destructive")}>
+            {formatGrowth(monthlyGrowth)}
+          </span>
         </div>
       )}
     </div>
   );
 };
 
-export default ServerStatus; 
+export default ServerStatus;

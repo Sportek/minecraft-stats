@@ -110,10 +110,8 @@ const ServerCardsSection = () => {
         {/* En-tête slim : titre + compteur sur une seule ligne, sans description. */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-              <Icon icon="material-symbols:search" className="h-4 w-4" />
-            </div>
-            <h2 className="text-lg font-semibold text-foreground">Browse Servers</h2>
+            <Icon icon="material-symbols:search" className="h-5 w-5 shrink-0 text-muted-foreground" />
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">Browse Servers</h2>
           </div>
           {totalServers > 0 && (
             <span className="text-xs font-medium text-muted-foreground">
@@ -132,7 +130,7 @@ const ServerCardsSection = () => {
             className="sm:flex-1"
           />
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <FancyMultiSelect
               compact
               options={categories?.map((cat) => ({ id: cat.id, name: cat.name })) ?? []}
@@ -212,7 +210,7 @@ const ServerCardsSection = () => {
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: pageSize }).map((_, i) => (
-            <Skeleton key={i} className="h-44 w-full rounded-md" />
+            <Skeleton key={i} className="h-44 w-full rounded-lg" />
           ))}
         </div>
       ) : servers.length === 0 ? (

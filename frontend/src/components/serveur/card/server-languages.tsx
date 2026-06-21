@@ -28,22 +28,22 @@ const ServerLanguages = ({ languages, className }: ServerLanguagesProps) => {
             ))}
           </div>
           {remainingCount > 0 && (
-            <span className="text-sm text-gray-500 ml-1.5 font-medium">
+            <span className="text-sm text-muted-foreground ml-1.5 font-medium">
               +{remainingCount}
             </span>
           )}
         </div>
 
         <div className="absolute left-0 bottom-full mb-2 opacity-0 invisible group-hover/languages:opacity-100 group-hover/languages:visible transition-all duration-200 ease-in-out z-30">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 border border-gray-200 dark:border-gray-700">
+          <div className="bg-popover text-popover-foreground rounded-lg shadow-lg p-2 border border-border">
             <div className="flex flex-col gap-2">
               {languages.map((language) => (
                 <div
                   key={language.id}
-                  className="flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-1.5 rounded transition-colors"
+                  className="flex items-center gap-3 hover:bg-secondary px-3 py-1.5 rounded transition-colors"
                 >
                   <span className="text-lg">{language.flag}</span>
-                  <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <span className="text-sm whitespace-nowrap">
                     {language.name}
                   </span>
                 </div>

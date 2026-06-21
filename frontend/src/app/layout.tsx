@@ -114,7 +114,7 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/images/minecraft-stats/logo.svg" />
       </head>
-      <body className={cn(inter.className, "h-full min-h-screen w-screen flex flex-col")}>
+      <body className={cn(inter.className, "h-full min-h-screen w-full flex flex-col")}>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

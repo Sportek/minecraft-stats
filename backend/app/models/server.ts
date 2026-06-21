@@ -29,6 +29,11 @@ export default class Server extends BaseModel {
   @column()
   declare version: string | null
 
+  // Server website, derived from the address (play.test.com -> test.com) on
+  // create/update, or provided by the owner. NULL when it can't be determined.
+  @column()
+  declare website: string | null
+
   @column()
   declare motd: string | null
 
@@ -76,6 +81,14 @@ export default class Server extends BaseModel {
 
   @column.dateTime({ columnName: 'last_stats_at' })
   declare lastStatsAt: DateTime | null
+
+  // Pic all-time de joueurs simultanés. Mis à jour à chaque ping réussi quand le
+  // compte courant dépasse l'ancien pic (cf. start/scheduler.ts).
+  @column()
+  declare peakPlayerCount: number | null
+
+  @column.dateTime({ columnName: 'peak_player_at' })
+  declare peakPlayerAt: DateTime | null
 
   // Quand le serveur doit être pingué prochainement (cadence différentielle, P.5.1).
   // NULL = "ASAP". Mis à jour à chaque ping selon le résultat (Hot / Normal / Cold / Dead).

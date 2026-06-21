@@ -12,6 +12,7 @@ import { DuplicateServerError } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { Category, Language } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import useSWRImmutable from "swr/immutable";
@@ -38,6 +39,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       address: z.string().min(1).trim(),
       type: z.enum(["java", "bedrock"]),
       port: z.string().min(1).max(5),
+      website: z.string().trim().optional(),
       categories: z.array(z.string()),
       languages: z.array(z.string()),
     })
@@ -67,6 +69,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       address: "",
       type: "java",
       port: DEFAULT_PORT.java,
+      website: "",
       categories: [],
       languages: [],
     },
@@ -85,14 +88,18 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await addServer({ ...credentials, port: parseInt(credentials.port) });
+      await addServer({
+        ...credentials,
+        port: parseInt(credentials.port),
+        website: credentials.website?.trim() || undefined,
+      });
       form.reset();
       toast({
         title: "Server added",
         description: "Your server has been added successfully, it will be available in a few minutes",
         variant: "success",
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof DuplicateServerError) {
         const safeServerId = encodeURIComponent(String(error.existingServer.id));
         toast({
@@ -100,12 +107,12 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
           description: (
             <span>
               This server is already on Minecraft Stats as{" "}
-              <a
+              <Link
                 className="font-semibold underline"
                 href={`/servers/${safeServerId}`}
               >
                 {error.existingServer.name}
-              </a>
+              </Link>
               .
             </span>
           ),
@@ -115,7 +122,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       }
       toast({
         title: "Error while adding server",
-        description: error?.message || "An error occurred while adding the server.",
+        description: error instanceof Error ? error.message : "An error occurred while adding the server.",
         variant: "error",
       });
     }
@@ -151,6 +158,20 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                   <FormDescription>The address of the server</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="website"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Website (optional)</FormLabel>
+                  <FormDescription>Left empty, we infer it from the address</FormDescription>
+                  <FormControl>
+                    <Input type="text" placeholder="example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -197,7 +218,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                       title="Select categories..."
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -219,7 +240,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                         label: `${language.flag} ${language.name}`
                       }))}
                       onSelectionChange={handleLanguageSelectionChange}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -240,7 +261,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button variant="accent" className="w-full" type="submit">
               Submit
             </Button>
           </form>

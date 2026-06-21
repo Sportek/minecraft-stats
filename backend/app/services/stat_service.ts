@@ -9,7 +9,7 @@ export default class StatsService {
     created_at: DateTime
     max_count: number
     player_count: number
-  }): any {
+  }): { serverId: number; createdAt: DateTime; playerCount: number; maxCount: number } {
     return {
       serverId: input.server_id,
       createdAt: input.created_at,
@@ -156,7 +156,7 @@ export default class StatsService {
         ORDER BY 1
       `
 
-      const bindings: any = { serverId }
+      const bindings: Record<string, string | number | number[]> = { serverId }
       if (fromDateSql) bindings.fromDate = fromDateSql
       if (toDateSql) bindings.toDate = toDateSql
 
@@ -198,7 +198,7 @@ export default class StatsService {
       ORDER BY 1
     `
 
-    const bindings: any = { serverId }
+    const bindings: Record<string, string | number | number[]> = { serverId }
     if (fromDateSql) bindings.fromDate = fromDateSql
     if (toDateSql) bindings.toDate = toDateSql
 
@@ -537,17 +537,23 @@ export default class StatsService {
       ORDER BY bucket
     `
 
-    const bindings: any = {}
+    const bindings: Record<string, string | number | number[]> = {}
     if (fromDateSql) bindings.fromDate = fromDateSql
     if (toDateSql) bindings.toDate = toDateSql
     if (params.categoryId) bindings.categoryId = params.categoryId
     if (params.languageId) bindings.languageId = params.languageId
 
     const result = await Database.rawQuery(rawQuery, bindings)
-    return result.rows.map((row: any) => ({
-      createdAt: row.created_at,
-      playerCount: Number(row.player_count),
-      maxCount: Number(row.max_count),
-    }))
+    return result.rows.map(
+      (row: {
+        created_at: string | Date
+        player_count: string | number
+        max_count: string | number
+      }) => ({
+        createdAt: row.created_at,
+        playerCount: Number(row.player_count),
+        maxCount: Number(row.max_count),
+      })
+    )
   }
 }

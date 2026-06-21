@@ -26,6 +26,7 @@ export const CreateServerValidator = vine.compile(
     imageUrl: vine.string().optional(),
     categories: vine.array(vine.string()),
     version: vine.string().optional(),
+    website: vine.string().optional(),
     motd: vine.string().optional(),
     languages: vine.array(vine.enum(Object.values(LanguageCode))),
   })
@@ -40,6 +41,7 @@ export const UpdateServerValidator = vine.compile(
     imageUrl: vine.string().optional(),
     categories: vine.array(vine.string()).optional(),
     version: vine.string().optional(),
+    website: vine.string().optional(),
     motd: vine.string().optional(),
     languages: vine.array(vine.enum(Object.values(LanguageCode))).optional(),
   })
