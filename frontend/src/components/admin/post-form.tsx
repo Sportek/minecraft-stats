@@ -4,6 +4,7 @@ import { TiptapEditor } from "@/components/blog/tiptap-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { resolveAssetUrl } from "@/lib/domain";
 import { ImageIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -79,7 +80,7 @@ export const PostForm = ({
             {values.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={values.coverImage}
+                src={resolveAssetUrl(values.coverImage)}
                 alt=""
                 className="h-24 w-full rounded-lg border border-border object-cover sm:w-40"
               />

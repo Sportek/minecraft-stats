@@ -105,6 +105,10 @@ router
       .use(middleware.auth())
       .use([throttleLight('change-password', 2), NO_STORE])
     router
+      .post('/account/avatar', '#controllers/auth_controller.updateAvatar')
+      .use(middleware.auth())
+      .use([throttleLight('account.avatar', 5), NO_STORE])
+    router
       .post('/logout', '#controllers/auth_controller.logout')
       .use(middleware.auth())
       .use([throttleLight('logout', 10), NO_STORE])

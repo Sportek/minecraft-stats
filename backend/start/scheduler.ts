@@ -1,16 +1,13 @@
 import Server from '#models/server'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
+import ImageStorageService from '#services/image_storage_service'
 import StatsService from '#services/stat_service'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import redis from '@adonisjs/redis/services/main'
 import scheduler from 'adonisjs-scheduler/services/main'
 import { DateTime } from 'luxon'
-import fs from 'node:fs'
-import path, { dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import pLimit from 'p-limit'
-import sharp from 'sharp'
 import { pingMinecraftServer } from '../minecraft-ping/minecraft_ping.js'
 
 type ServerStatRow = {
@@ -44,28 +41,6 @@ const HOT_THRESHOLD_PLAYERS = 100
  * Garantit qu'un ping abandonné/crashé ne bloque pas le serveur > 60s.
  */
 const PING_LOCK_TTL_SECONDS = 60
-
-/**
- * Taille max d'un favicon accepté. Un favicon Minecraft légitime est un PNG
- * 64x64 de quelques Ko ; les octets proviennent d'un serveur distant
- * (attaquant-contrôlé), donc on borne pour éviter l'écriture disque / le décodage
- * d'un blob géant (DoS), d'autant qu'il y a jusqu'à PING_CONCURRENCY pings en vol.
- */
-const MAX_FAVICON_BYTES = 128 * 1024
-
-/**
- * Convertit une chaîne base64 en fichier image et l'enregistre sur le système de fichiers.
- * Lève si le contenu décodé dépasse MAX_FAVICON_BYTES (capturé par l'appelant).
- */
-function saveBase64Image(base64Image: string, outputPath: string): Buffer {
-  const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '')
-  const buffer = Buffer.from(base64Data, 'base64')
-  if (buffer.byteLength > MAX_FAVICON_BYTES) {
-    throw new Error(`favicon too large: ${buffer.byteLength} bytes (max ${MAX_FAVICON_BYTES})`)
-  }
-  fs.writeFileSync(outputPath, buffer, { flag: 'w' })
-  return buffer
-}
 
 /**
  * Calcule quand on va re-pinger un serveur, en fonction du résultat du ping et de
@@ -143,30 +118,7 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
     if (data) {
       if (data.favicon && (overwriteImage || !server.imageUrl)) {
         try {
-          const filename = fileURLToPath(import.meta.url)
-          const pathDirname = dirname(filename)
-
-          const imageBase64 = data.favicon
-          const imagePath = path.join(pathDirname, '../public/images/servers')
-          const imageName = `${server.id}.png`
-          const imageFullPath = path.join(imagePath, imageName)
-          fs.mkdirSync(imagePath, { recursive: true })
-          const buffer = saveBase64Image(imageBase64, imageFullPath)
-
-          const webpImageName = `${server.id}.webp`
-          const webpImageFullPath = path.join(imagePath, webpImageName)
-          sharp(buffer, { limitInputPixels: 16_384 * 16_384, failOn: 'error' })
-            .resize(64, 64, { fit: 'inside', withoutEnlargement: true })
-            .toFormat('webp')
-            .toFile(webpImageFullPath, (err) => {
-              if (err) {
-                logger.error(
-                  `SCHEDULER: Failed to generate webp image for server ${server.name} (${server.address}:${server.port}): ${err.message}`
-                )
-              }
-            })
-
-          server.imageUrl = `/images/servers/${server.id}`
+          server.imageUrl = await ImageStorageService.storeServerFavicon(server.id, data.favicon)
         } catch (imgErr) {
           logger.warn(
             { serverId: server.id, err: (imgErr as Error).message },

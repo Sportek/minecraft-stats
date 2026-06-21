@@ -1,5 +1,6 @@
 import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
+import ImageStorageService from '#services/image_storage_service'
 import env from '#start/env'
 import {
   ChangePasswordValidator,
@@ -11,6 +12,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 import jwt from 'jsonwebtoken'
 import { DateTime } from 'luxon'
+import fs from 'node:fs/promises'
 
 export default class AuthController {
   /**
@@ -154,6 +156,35 @@ export default class AuthController {
   }
 
   /**
+   * @updateAvatar
+   * @operationId updateAvatar
+   * @tag AUTH
+   * @summary Upload the authenticated user's avatar
+   * @description Accepts a multipart upload under the form field `avatar` (max 5 MB, extensions `jpg`, `jpeg`, `png`, `webp`, `gif`). The image is converted to a 256x256 WebP, stored via Drive, and its relative URL is saved on the user. Returns the updated user. Requires authentication.
+   * @requestFormDataBody {"avatar": {"type": "string", "format": "binary"}}
+   * @responseBody 200 - {"user": {"id": 1, "username": "player", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "/images/avatars/1.webp", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 400 - {"error": "No image provided"}
+   * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
+   */
+  async updateAvatar({ request, response, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const image = request.file('avatar', {
+      size: '5mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+    })
+
+    if (!image) return response.badRequest({ error: 'No image provided' })
+    if (!image.isValid) return response.badRequest({ error: image.errors })
+    if (!image.tmpPath) return response.badRequest({ error: 'Invalid upload' })
+
+    const buffer = await fs.readFile(image.tmpPath)
+    user.avatarUrl = await ImageStorageService.storeUserAvatar(user.id, buffer)
+    await user.save()
+
+    return response.ok({ user: { ...user.serialize(), email: user.email } })
+  }
+
+  /**
    * @logout
    * @operationId logout
    * @tag AUTH
@@ -248,9 +279,26 @@ export default class AuthController {
     if (user.provider !== 'discord')
       return response.badRequest({ message: 'Cannot login with this third-party provider' })
 
+    await this.rehostProviderAvatar(user)
+
     return {
       user,
       accessToken: await User.accessTokens.create(user),
+    }
+  }
+
+  /**
+   * If the user's avatar is still an external provider URL, download it once and
+   * store it on our own storage so we don't depend on (or hotlink) the provider's
+   * CDN. Best-effort: on failure we keep the external URL.
+   */
+  private async rehostProviderAvatar(user: User): Promise<void> {
+    if (!user.avatarUrl || !/^https?:\/\//i.test(user.avatarUrl)) return
+
+    const stored = await ImageStorageService.storeUserAvatarFromUrl(user.id, user.avatarUrl)
+    if (stored) {
+      user.avatarUrl = stored
+      await user.save()
     }
   }
 
@@ -296,6 +344,8 @@ export default class AuthController {
 
     if (user.provider !== 'google')
       return response.badRequest({ message: 'Cannot login with this third-party provider' })
+
+    await this.rehostProviderAvatar(user)
 
     return {
       user,

@@ -1,9 +1,19 @@
+// Allow Next's image optimizer to fetch from the S3/CloudFront assets host when
+// one is configured (server favicons point there in production).
+const assetsUrl = process.env.NEXT_PUBLIC_ASSETS_URL;
+const assetsRemotePattern = assetsUrl ? [{ hostname: new URL(assetsUrl).hostname }] : [];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone output for optimized Docker builds
   output: "standalone",
 
   images: {
+    // En dev, le backend local sert les images depuis http://localhost:9000, qui
+    // résout vers une IP privée (::1/127.0.0.1). Next 16 bloque l'optimisation de
+    // ces sources (protection SSRF). On désactive donc l'optimiseur en dev pour
+    // servir les images directement ; la prod garde l'optimisation complète.
+    unoptimized: process.env.NODE_ENV === "development",
     remotePatterns: [
       { hostname: "avatars.githubusercontent.com" },
       { hostname: "cdn.discordapp.com" },
@@ -22,6 +32,7 @@ const nextConfig = {
       { hostname: "upload.wikimedia.org" },
       { hostname: "i.imgur.com" },
       { hostname: "picsum.photos" },
+      ...assetsRemotePattern,
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2678400,

@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
-import { getClientBackendUrl } from "@/lib/domain";
+import { getClientBackendUrl, resolveAssetUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react";
 import { X } from "lucide-react";
 import Link from "next/link";
@@ -120,7 +120,7 @@ const Header = () => {
         className="rounded-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <Avatar className="h-9 w-9">
-          <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
+          <AvatarImage src={resolveAssetUrl(user?.avatarUrl)} alt={user?.username ?? "User Avatar"} />
           <AvatarFallback
             className="text-white text-sm"
             style={{ background: letterTileGradient(user?.username ?? "") }}
@@ -305,7 +305,7 @@ const Header = () => {
                   {/* User card */}
                   <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user.avatarUrl ?? ""} alt={user.username} />
+                      <AvatarImage src={resolveAssetUrl(user.avatarUrl)} alt={user.username} />
                       <AvatarFallback
                         className="text-white text-sm"
                         style={{ background: letterTileGradient(user.username) }}
