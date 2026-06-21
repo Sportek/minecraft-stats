@@ -10,8 +10,10 @@ interface AdPreviewProps {
  * Utilisé pour la prévisualisation dans le panel admin.
  */
 const AdPreview = ({ htmlContent, className }: AdPreviewProps) => {
-  // Aucun CSS injecté : rendu identique à l'affichage réel sur le site.
-  const srcDoc = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${htmlContent}</body></html>`;
+  // Same minimal reset as the live AdSlot (no body margin, transparent background)
+  // so the preview matches the real rendering, including in dark mode.
+  const reset = "<style>html,body{margin:0;padding:0;background:transparent}</style>";
+  const srcDoc = `<!DOCTYPE html><html><head><meta charset="utf-8">${reset}</head><body>${htmlContent}</body></html>`;
 
   return (
     <iframe

@@ -70,8 +70,11 @@ function buildSrcDoc(
     anchor.setAttribute("rel", "noopener noreferrer nofollow sponsored");
   });
 
-  // Aucun CSS injecté : la publicité contrôle entièrement son propre rendu.
-  return `<!DOCTYPE html><html><head><meta charset="utf-8">${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
+  // Minimal reset only: drop the default 8px body margin and white background so
+  // the iframe blends with the page (incl. dark mode). The ad still controls its
+  // own visual — if it sets its own background, that wins.
+  const reset = "<style>html,body{margin:0;padding:0;background:transparent}</style>";
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">${reset}${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
 }
 
 /**
@@ -124,7 +127,7 @@ const AdSlot = ({ placement, serverId, serverCategoryIds, className }: AdSlotPro
         srcDoc={srcDoc}
         sandbox="allow-popups allow-popups-to-escape-sandbox"
         loading="lazy"
-        className="block h-[110px] w-full sm:h-[130px]"
+        className="block h-[110px] w-full bg-transparent sm:h-[130px]"
       />
     </div>
   );
