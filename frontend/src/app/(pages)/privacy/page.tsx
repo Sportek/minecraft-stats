@@ -189,8 +189,8 @@ const Privacy = () => {
         </ul>
         <p>
           To exercise any of these rights, contact us at:{" "}
-          <a href="mailto:gablandry31@gmail.com" className="font-medium text-accent hover:underline">
-            gablandry31@gmail.com
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           . No Data Protection Officer (DPO) has been appointed.
         </p>
@@ -200,8 +200,8 @@ const Privacy = () => {
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">Contact</h2>
         <p>
           For any question about this Privacy Policy or how your data is handled, reach us at:{" "}
-          <a href="mailto:gablandry31@gmail.com" className="font-medium text-accent hover:underline">
-            gablandry31@gmail.com
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>{" "}
           or through our{" "}
           <Link href="/contact" className="font-medium text-accent hover:underline">

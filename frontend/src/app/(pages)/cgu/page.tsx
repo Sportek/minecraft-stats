@@ -40,8 +40,8 @@ const CGU = () => {
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">1. Legal Information</h2>
         <p>
           This website is published by Gabriel Landry. For any question or complaint, you can contact us by email at:{" "}
-          <a href="mailto:gablandry31@gmail.com" className="font-medium text-accent hover:underline">
-            gablandry31@gmail.com
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           .
         </p>
@@ -110,8 +110,8 @@ const CGU = () => {
         </ul>
         <p>
           To exercise these rights, please contact us at:{" "}
-          <a href="mailto:gablandry31@gmail.com" className="font-medium text-accent hover:underline">
-            gablandry31@gmail.com
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           .
         </p>
@@ -139,8 +139,8 @@ const CGU = () => {
           Users may add Minecraft servers so that statistics can be collected. By adding a server, the user warrants
           that they have the right to do so. We are not responsible if a user adds a server without holding that right.
           To remove a server, please contact us at:{" "}
-          <a href="mailto:gablandry31@gmail.com" className="font-medium text-accent hover:underline">
-            gablandry31@gmail.com
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>{" "}
           with the subject &quot;Server removal request&quot;.
         </p>
@@ -176,8 +176,8 @@ const CGU = () => {
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">10. Contact</h2>
         <p>
           For any question or complaint regarding these Terms, please contact us at:{" "}
-          <a href="mailto:gablandry31@gmail.com" className="font-medium text-accent hover:underline">
-            gablandry31@gmail.com
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           .
         </p>

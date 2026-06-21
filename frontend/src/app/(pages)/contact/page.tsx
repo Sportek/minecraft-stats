@@ -50,7 +50,7 @@ const channels = [
   {
     name: "Email",
     description: "For private inquiries, GDPR requests, or server removal requests.",
-    href: "mailto:gablandry31@gmail.com",
+    href: "mailto:contact@minecraft-stats.com",
     icon: "mdi:email-outline",
     cta: "Send an email",
     external: false,
