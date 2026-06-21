@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LetterTile } from "@/components/ui/letter-tile";
+import { AvatarTile } from "@/components/ui/avatar-tile";
 
 interface DashboardHeroProps {
   title: string;
@@ -22,20 +22,13 @@ const DashboardHero = ({ title, subtitle, badge, action, avatar }: DashboardHero
       <div className="absolute inset-0 bg-[radial-gradient(120%_140%_at_100%_0%,rgba(255,255,255,0.18),transparent_60%)]" />
     </div>
     <div className="px-6 pb-5">
-      {avatar &&
-        (avatar.src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={avatar.src}
-            alt=""
-            className="-mt-10 h-[72px] w-[72px] rounded-2xl border-4 border-card object-cover shadow-md"
-          />
-        ) : (
-          <LetterTile
-            name={avatar.name}
-            className="-mt-10 h-[72px] w-[72px] rounded-2xl border-4 border-card text-2xl shadow-md"
-          />
-        ))}
+      {avatar && (
+        <AvatarTile
+          name={avatar.name}
+          src={avatar.src}
+          className="-mt-10 h-[72px] w-[72px] rounded-2xl border-4 border-card text-2xl shadow-md"
+        />
+      )}
       <div
         className={cn(
           "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
