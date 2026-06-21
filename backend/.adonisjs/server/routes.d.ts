@@ -6,6 +6,7 @@ export type ScannedRoutes = {
   ALL: {
     'prometheus.metrics': { paramsTuple?: []; params?: {} }
     'servers.paginate': { paramsTuple?: []; params?: {} }
+    'servers.mine': { paramsTuple?: []; params?: {} }
     'servers.index': { paramsTuple?: []; params?: {} }
     'servers.store': { paramsTuple?: []; params?: {} }
     'servers.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -33,6 +34,8 @@ export type ScannedRoutes = {
     'auth.verify_email': { paramsTuple?: []; params?: {} }
     'auth.retrieve_user': { paramsTuple?: []; params?: {} }
     'auth.change_password': { paramsTuple?: []; params?: {} }
+    'auth.logout': { paramsTuple?: []; params?: {} }
+    'auth.logout_all': { paramsTuple?: []; params?: {} }
     'auth.provider_login': { paramsTuple: [ParamValue]; params: {'provider': ParamValue} }
     'auth.google_callback': { paramsTuple?: []; params?: {} }
     'auth.discord_callback': { paramsTuple?: []; params?: {} }
@@ -62,6 +65,7 @@ export type ScannedRoutes = {
   GET: {
     'prometheus.metrics': { paramsTuple?: []; params?: {} }
     'servers.paginate': { paramsTuple?: []; params?: {} }
+    'servers.mine': { paramsTuple?: []; params?: {} }
     'servers.index': { paramsTuple?: []; params?: {} }
     'servers.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.categories.index': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
@@ -91,6 +95,7 @@ export type ScannedRoutes = {
   HEAD: {
     'prometheus.metrics': { paramsTuple?: []; params?: {} }
     'servers.paginate': { paramsTuple?: []; params?: {} }
+    'servers.mine': { paramsTuple?: []; params?: {} }
     'servers.index': { paramsTuple?: []; params?: {} }
     'servers.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.categories.index': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
@@ -126,6 +131,8 @@ export type ScannedRoutes = {
     'auth.register': { paramsTuple?: []; params?: {} }
     'auth.verify_email': { paramsTuple?: []; params?: {} }
     'auth.change_password': { paramsTuple?: []; params?: {} }
+    'auth.logout': { paramsTuple?: []; params?: {} }
+    'auth.logout_all': { paramsTuple?: []; params?: {} }
     'advertisements.record_impression': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.store': { paramsTuple?: []; params?: {} }
     'posts.publish': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }

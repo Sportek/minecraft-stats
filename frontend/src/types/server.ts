@@ -23,6 +23,8 @@ export interface Server {
   user: User;
   createdAt: Date;
   lastOnlineAt: Date | null;
+  lastPlayerCount: number | null;
+  lastMaxCount: number | null;
   languages: Language[];
 }
 

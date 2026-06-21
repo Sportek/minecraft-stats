@@ -15,7 +15,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
     return (
       <Link
         href={`/blog/${post.slug}`}
-        className="group grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xs transition-all hover:border-accent/50 hover:shadow-md md:grid-cols-2"
+        className="group grid grid-cols-1 overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs transition-all hover:border-accent/50 hover:shadow-md md:grid-cols-2"
       >
         <div className="relative aspect-video w-full overflow-hidden bg-secondary md:aspect-auto md:h-full md:min-h-[18rem]">
           {post.coverImage ? (
@@ -55,7 +55,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xs transition-all hover:border-accent/50 hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs transition-all hover:border-accent/50 hover:shadow-md"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-secondary">
         {post.coverImage ? (

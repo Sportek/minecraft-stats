@@ -134,6 +134,7 @@ const Header = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/account/my-servers")}>My servers</DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add a server</DropdownMenuItem>
         {(user?.role === "admin" || user?.role === "writer") && (
           <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage blog</DropdownMenuItem>
@@ -325,6 +326,13 @@ const Header = () => {
                     icon="material-symbols:settings-outline"
                     label="Profile settings"
                     active={isActive("/account/settings")}
+                    onClick={closeMobileMenu}
+                  />
+                  <MobileMenuLink
+                    href="/account/my-servers"
+                    icon="mynaui:servers"
+                    label="My servers"
+                    active={isActive("/account/my-servers", ["/account/my-servers"])}
                     onClick={closeMobileMenu}
                   />
                   {(user?.role === "admin" || user?.role === "writer") && (

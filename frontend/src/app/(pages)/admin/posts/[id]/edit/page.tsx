@@ -119,22 +119,21 @@ const EditPostPage = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto max-w-4xl animate-in fade-in slide-in-from-bottom-2 px-4 py-8 duration-300">
-        <AdminBackLink href="/admin/posts" label="Back to List" />
+    <div className="mx-auto max-w-4xl animate-in fade-in slide-in-from-bottom-2 py-8 duration-300">
+      <AdminBackLink href="/admin/posts" label="Back to List" />
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Edit Article</h1>
-        </div>
-
-        <PostForm
-          values={{ title, slug, excerpt, coverImage, content }}
-          onField={handleField}
-          onSubmit={handleSubmit}
-          submitting={loading}
-          submitLabel={loading ? "Updating..." : "Update Article"}
-        />
+      <div className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Edit article</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">{post.title}</h1>
       </div>
+
+      <PostForm
+        values={{ title, slug, excerpt, coverImage, content }}
+        onField={handleField}
+        onSubmit={handleSubmit}
+        submitting={loading}
+        submitLabel={loading ? "Updating..." : "Update Article"}
+      />
     </div>
   );
 };

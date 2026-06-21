@@ -159,14 +159,15 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
     return null;
   }
 
-  const toolbarButton = "rounded p-2 text-foreground hover:bg-secondary disabled:opacity-50";
-  const toolbarButtonActive = "bg-accent/15 text-accent";
-  const toolbarSeparator = "mx-1 w-px bg-border";
+  const toolbarButton =
+    "rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-50";
+  const toolbarButtonActive = "bg-accent/10 text-accent hover:bg-accent/10 hover:text-accent";
+  const toolbarSeparator = "mx-1 h-5 w-px self-center bg-border";
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-card">
+    <div className="bg-card">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 border-b border-border bg-secondary/50 p-2">
+      <div className="flex flex-wrap items-center gap-0.5 border-b border-border bg-secondary/40 p-2">
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}

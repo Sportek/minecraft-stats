@@ -1,4 +1,5 @@
 "use client";
+import AuthCard from "@/components/form/auth-card";
 import { Spinner } from "@/components/ui/spinner";
 import { verifyEmail } from "@/http/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -30,21 +31,15 @@ const VerifyEmail = () => {
   }, [decodedToken]);
 
   return (
-    <div className="rounded-lg border border-border bg-card text-card-foreground shadow-xs">
-      <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <Icon icon="material-symbols:mark-email-read-outline" className="h-4 w-4" />
-          </div>
-          <h1 className="text-lg font-semibold text-foreground">Verify your email</h1>
-        </div>
-        <p className="text-sm text-muted-foreground">Confirming your email address — hang on a moment.</p>
-      </div>
-
-      <div className="space-y-5 p-6 text-center">
+    <AuthCard
+      icon={<Icon icon="lucide:mail-check" className="h-[18px] w-[18px]" />}
+      title="Verify your email"
+      subtitle="Confirming your email address — hang on a moment."
+    >
+      <div className="space-y-5 text-center">
         {status === "loading" && (
           <>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 text-accent">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
               <Spinner size="lg" />
             </div>
             <p className="text-sm text-muted-foreground">Checking your link...</p>
@@ -53,8 +48,8 @@ const VerifyEmail = () => {
 
         {status === "verified" && (
           <>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-success">
-              <Icon icon="material-symbols:check-circle" className="h-8 w-8" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-success/10 text-success">
+              <Icon icon="material-symbols:check-circle" className="h-7 w-7" />
             </div>
             <div className="space-y-1.5">
               <p className="text-base font-semibold text-foreground">Email verified</p>
@@ -62,7 +57,7 @@ const VerifyEmail = () => {
             </div>
             <Link
               href="/login"
-              className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-xs transition-colors hover:bg-accent/90"
+              className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accent px-4 text-[15px] font-semibold text-accent-foreground shadow-xs transition-colors hover:bg-accent/90"
             >
               Continue to sign in
             </Link>
@@ -71,8 +66,8 @@ const VerifyEmail = () => {
 
         {status === "error" && (
           <>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-              <Icon icon="material-symbols:error-outline" className="h-8 w-8" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+              <Icon icon="material-symbols:error-outline" className="h-7 w-7" />
             </div>
             <div className="space-y-1.5">
               <p className="text-base font-semibold text-foreground">Verification failed</p>
@@ -83,13 +78,13 @@ const VerifyEmail = () => {
             <div className="flex flex-col gap-2">
               <Link
                 href="/sign-up"
-                className="inline-flex w-full items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-xs transition-colors hover:bg-accent/90"
+                className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accent px-4 text-[15px] font-semibold text-accent-foreground shadow-xs transition-colors hover:bg-accent/90"
               >
                 Create a new account
               </Link>
               <Link
                 href="/login"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 Back to sign in
               </Link>
@@ -97,7 +92,7 @@ const VerifyEmail = () => {
           </>
         )}
       </div>
-    </div>
+    </AuthCard>
   );
 };
 

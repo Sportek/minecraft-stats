@@ -1,20 +1,33 @@
 "use client";
 
 import ChangePasswordForm from "@/components/form/change-password-form";
+import DashboardLayout from "@/components/account/dashboard-layout";
+import DashboardHero from "@/components/account/dashboard-hero";
+import DangerZoneCard from "@/components/account/danger-zone-card";
+import InfoField from "@/components/account/info-field";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
-import { KeyRound, ShieldAlert, User as UserIcon } from "lucide-react";
+import { KeyRound, User as UserIcon } from "lucide-react";
+import { useState } from "react";
+
+const ROLE_LABELS: Record<string, string> = {
+  user: "Member",
+  writer: "Writer",
+  admin: "Admin",
+};
 
 const SettingsPage = () => {
   const { user, logoutAll } = useAuth();
   const { toast } = useToast();
+  const [isLoggingOutAll, setIsLoggingOutAll] = useState(false);
 
   const handleLogoutAll = async () => {
     const confirmed = window.confirm(
       "Log out of all devices? This revokes every active session, including this one."
     );
     if (!confirmed) return;
+    setIsLoggingOutAll(true);
     try {
       await logoutAll();
       toast({
@@ -28,6 +41,8 @@ const SettingsPage = () => {
         description: error instanceof Error ? error.message : "Something went wrong",
         variant: "error",
       });
+    } finally {
+      setIsLoggingOutAll(false);
     }
   };
 
@@ -35,69 +50,77 @@ const SettingsPage = () => {
     return <div className="text-muted-foreground">Loading...</div>;
   }
 
-  return (
-    <div className="mx-auto w-full max-w-3xl space-y-6 py-8">
-      <div>
-        <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-accent">Account</div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage your profile, password, and active sessions.</p>
-      </div>
+  const createdAt = new Date(user.createdAt);
+  const memberSince = createdAt.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const roleLabel = ROLE_LABELS[user.role] ?? user.role;
 
-      {/* Profile */}
-      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <UserIcon className="h-5 w-5" />
-          </div>
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">Your information</h2>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Username</div>
-            <div className="text-sm font-medium text-foreground">{user.username}</div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</div>
-            <div className="text-sm font-medium text-foreground">{user.email}</div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Registered at</div>
-            <div className="text-sm font-medium text-foreground">
-              {new Date(user.createdAt).toLocaleDateString()} {new Date(user.createdAt).toLocaleTimeString()}
+  return (
+    <DashboardLayout>
+      <DashboardHero
+        avatar={{ fallback: user.username[0].toUpperCase(), src: user.avatarUrl }}
+        title={user.username}
+        badge={roleLabel}
+        subtitle={`${user.email} · Member since ${memberSince}`}
+      />
+
+      {/* Your information (read-only) */}
+      <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
+              <UserIcon className="h-5 w-5" />
             </div>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">Your information</h2>
           </div>
+          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+            Read-only
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-5 px-6 py-5 sm:grid-cols-2">
+          <InfoField label="Username" value={user.username} />
+          <InfoField label="Email" value={user.email} />
+          <InfoField label="Role" value={roleLabel} />
+          <InfoField
+            label="Registered at"
+            value={`${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`}
+          />
         </div>
       </section>
 
-      {/* Password */}
-      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
+      {/* Manage password */}
+      <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+        <div className="flex items-center gap-3 border-b border-border px-6 py-4">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
             <KeyRound className="h-5 w-5" />
           </div>
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">Manage password</h2>
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold tracking-tight text-foreground">Manage password</h2>
+            <p className="text-sm text-muted-foreground">
+              Choose a strong password you don&apos;t use anywhere else.
+            </p>
+          </div>
         </div>
-        <div className="max-w-2xl">
+        <div className="max-w-2xl px-6 py-5">
           <ChangePasswordForm />
         </div>
       </section>
 
-      {/* Security */}
-      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-destructive/10 text-destructive">
-            <ShieldAlert className="h-5 w-5" />
-          </div>
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">Security</h2>
-        </div>
-        <p className="mb-4 text-sm text-muted-foreground">
-          Sign out of every device. Use this if you suspect your account has been compromised.
-        </p>
-        <Button variant="destructive" className="w-fit" onClick={handleLogoutAll}>
-          Log out of all devices
-        </Button>
-      </section>
-    </div>
+      {/* Danger zone */}
+      <DangerZoneCard
+        title="Log out of all devices"
+        description="Sign out of every active session, including this one. Use this if you suspect your account has been compromised."
+        action={
+          <Button
+            variant="outline"
+            className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={handleLogoutAll}
+            disabled={isLoggingOutAll}
+          >
+            {isLoggingOutAll ? "Logging out…" : "Log out everywhere"}
+          </Button>
+        }
+      />
+    </DashboardLayout>
   );
 };
 

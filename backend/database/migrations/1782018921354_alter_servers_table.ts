@@ -9,8 +9,8 @@ export default class extends BaseSchema {
       table.string('website').nullable()
     })
 
-    // Backfill : déduire le site web des serveurs existants depuis leur adresse
-    // (play.hypixel.net -> hypixel.net). Les adresses IP/locales restent NULL.
+    // Backfill: derive the website of existing servers from their address
+    // (play.hypixel.net -> hypixel.net). IP/local addresses stay NULL.
     this.defer(async (db) => {
       const rows = await db.from(this.tableName).select('id', 'address')
       for (const row of rows) {

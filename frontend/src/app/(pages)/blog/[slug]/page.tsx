@@ -75,28 +75,28 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
         />
 
         {/* Navigation */}
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
+        <div className="container mx-auto max-w-3xl px-4 py-6">
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+            className="group -ml-2 inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           >
             <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             <span>Back to Blog</span>
           </Link>
         </div>
 
-        <article className="container mx-auto px-4 max-w-5xl">
-          {/* Header Section */}
-          <header className="mx-auto mb-8 max-w-4xl px-4 text-center">
+        <article className="container mx-auto max-w-3xl px-4">
+          {/* Header */}
+          <header className="mb-8 text-center">
             <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
               News · {formatPostDate(post.createdAt)}
             </div>
-            <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight text-foreground md:text-5xl">
+            <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight text-balance text-foreground sm:text-4xl md:text-5xl">
               {post.title}
             </h1>
 
-            {/* Metadata Line: Author - Category */}
-            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+            {/* Author + category meta */}
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
               <PostAuthor username={post.author.username} />
               <span className="text-border">•</span>
               <Badge variant="accent" className="uppercase tracking-wide">
@@ -105,18 +105,16 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
             </div>
           </header>
 
-          {/* Hero Image */}
+          {/* Cover image */}
           {post.coverImage && (
-            <div className="relative mb-12 px-4 md:px-0">
-              <div className="relative h-[300px] w-full overflow-hidden rounded-lg border border-border bg-secondary md:h-[400px]">
-                <Image src={post.coverImage} alt={post.title} className="h-full w-full object-cover" unoptimized fill />
-              </div>
+            <div className="relative mb-10 h-[220px] w-full overflow-hidden rounded-xl border border-border bg-secondary sm:h-[320px] md:h-[400px]">
+              <Image src={post.coverImage} alt={post.title} className="h-full w-full object-cover" unoptimized fill />
             </div>
           )}
 
-          {/* Content Body */}
-          <div className="px-4 md:px-8">
-            <div className="max-w-prose mx-auto">
+          {/* Content body */}
+          <div>
+            <div className="mx-auto max-w-prose">
               {/* Summary / Lead */}
               {post.excerpt && (
                 <p className="relative mb-10 border-l-4 border-accent py-1 pl-6 font-sans text-lg font-medium italic leading-relaxed text-muted-foreground md:text-xl">
@@ -165,7 +163,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
     return (
       <div className="flex items-center justify-center">
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="mx-auto max-w-2xl rounded-lg border border-border bg-card p-12 text-card-foreground shadow-xs">
+          <div className="mx-auto max-w-2xl rounded-xl border border-border bg-card p-8 text-card-foreground shadow-xs sm:p-12">
             <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Article Not Found</h1>
             <p className="mb-8 text-muted-foreground">
               The article you are looking for does not exist or has been deleted.

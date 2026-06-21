@@ -45,6 +45,35 @@ export default class ServersController {
   }
 
   /**
+   * @mine
+   * @operationId listMyServers
+   * @tag SERVERS
+   * @summary List the authenticated user's servers
+   * @description Returns every server owned by the authenticated user, with preloaded categories, languages and growthStat, ordered by newest first. Used by the account "My Servers" dashboard. Requires authentication.
+   * @responseBody 200 - [{"server": "<Server>", "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}]
+   * @responseBody 401 - {"message": "Unauthorized"}
+   */
+  async mine({ auth, response }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ message: 'Unauthorized' })
+    }
+
+    const servers = await Server.query()
+      .where('user_id', user.id)
+      .preload('categories')
+      .preload('languages')
+      .preload('growthStat')
+      .orderBy('created_at', 'desc')
+
+    return servers.map((server) => ({
+      server,
+      categories: server.categories,
+      growthStat: server.growthStat,
+    }))
+  }
+
+  /**
    * @createServer
    * @operationId createServer
    * @tag SERVERS

@@ -16,7 +16,8 @@ import { ServerData } from "@/app/(pages)/(index)/page";
 import { AggregationSelect, AggregationType } from "@/components/home/selects/aggregation-select";
 import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
-import ServerCard from "@/components/serveur/card";
+import ServerDetailHeader from "@/components/serveur/server-detail-header";
+import ServerFAQ from "@/components/serveur/server-faq";
 import ImprovedCard from "@/components/serveur/improved-card";
 import AdSlot from "@/components/ads/ad-slot";
 import { Spinner } from "@/components/ui/spinner";
@@ -246,13 +247,11 @@ const ServerPage = () => {
         maxPlayers={serverData.lastMaxCount ?? 0}
       />
 
-      <ServerCard
+      <ServerDetailHeader
         server={serverData.server}
         stats={serverData.stats}
         categories={serverData.categories}
         growthStat={serverData.growthStat}
-        isFull={true}
-        showChart={false}
       />
 
       <AdSlot
@@ -288,7 +287,10 @@ const ServerPage = () => {
               <Spinner size="md" />
             </div>
           )}
-          <AgCharts options={options} />
+          {/* Smaller chart height on mobile, taller on larger screens */}
+          <div className="h-[280px] sm:h-[360px]">
+            <AgCharts options={options} className="h-full w-full" />
+          </div>
         </div>
       </section>
 
@@ -297,6 +299,12 @@ const ServerPage = () => {
         server={serverData.server}
         stats={stats}
         categories={serverData.categories}
+      />
+
+      <ServerFAQ
+        server={serverData.server}
+        currentPlayers={serverData.lastPlayerCount ?? 0}
+        maxPlayers={serverData.lastMaxCount ?? 0}
       />
     </main>
   );

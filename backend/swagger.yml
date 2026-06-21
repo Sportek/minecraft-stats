@@ -78,7 +78,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 473
+          example: 350
         name:
           type: "string"
           example: "John Doe"
@@ -93,7 +93,7 @@ components:
           example: true
         weight:
           type: "number"
-          example: 366
+          example: 644
         show_on_home:
           type: "boolean"
           example: true
@@ -133,10 +133,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 34
+          example: 782
         advertisement_id:
           type: "number"
-          example: 649
+          example: 874
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
@@ -145,7 +145,7 @@ components:
           example: "Lorem Ipsum"
         server_id:
           type: "number"
-          example: 488
+          example: 779
         target_url:
           type: "string"
           example: "Lorem Ipsum"
@@ -163,7 +163,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 45
+          example: 319
         name:
           type: "string"
           example: "John Doe"
@@ -182,7 +182,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 836
+          example: 999
         code:
           $ref: "#/components/schemas/LanguageCode"
           example: null
@@ -207,7 +207,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 769
+          example: 332
         title:
           type: "string"
           example: "Lorem Ipsum"
@@ -232,7 +232,7 @@ components:
           format: "date-time"
         user_id:
           type: "number"
-          example: 615
+          example: 990
         author:
           $ref: "#/components/schemas/User"
           example: null
@@ -251,7 +251,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 519
+          example: 805
         name:
           type: "string"
           example: "John Doe"
@@ -260,7 +260,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 707
+          example: 196
         type:
           $ref: "#/components/schemas/ServerType"
           example: null
@@ -287,7 +287,7 @@ components:
           example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 382
+          example: 537
         user:
           $ref: "#/components/schemas/User"
           example: null
@@ -310,10 +310,10 @@ components:
           format: "date-time"
         last_player_count:
           type: "number"
-          example: 438
+          example: 286
         last_max_count:
           type: "number"
-          example: 148
+          example: 503
         last_stats_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -337,22 +337,22 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 999
+          example: 957
         weekly_growth:
           type: "number"
-          example: 645
+          example: 482
         monthly_growth:
           type: "number"
-          example: 832
+          example: 259
         last_week_average:
           type: "number"
-          example: 435
+          example: 890
         previous_week_average:
           type: "number"
-          example: 51
+          example: 590
         last_month_average:
           type: "number"
-          example: 606
+          example: 980
         last_updated:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -364,19 +364,19 @@ components:
       properties:
         id:
           type: "number"
-          example: 48
+          example: 630
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 747
+          example: 928
         player_count:
           type: "number"
-          example: 921
+          example: 229
         max_count:
           type: "number"
-          example: 382
+          example: 939
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -388,7 +388,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 764
+          example: 388
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -433,7 +433,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 777
+          example: 302
           choices:
             - "custom"
             - "network"
@@ -467,10 +467,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 857
+            example: 465
       example:
         name: "Lorem Ipsum"
-        type: 777
+        type: 302
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -479,7 +479,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 857
+          - 465
       description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
       type: "object"
@@ -491,7 +491,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 338
+          example: 425
           choices:
             - "custom"
             - "network"
@@ -524,10 +524,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 431
+            example: 754
       example:
         name: "Lorem Ipsum"
-        type: 338
+        type: 425
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -536,17 +536,17 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 431
+          - 754
       description: "UpdateAdvertisementValidator (Validator)"
     CategoryIdValidator:
       type: "object"
       properties:
         id:
           type: "number"
-          example: 485
+          example: 545
           required: true
       example:
-        id: 485
+        id: 545
       description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
       type: "object"
@@ -563,14 +563,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 387
+          example: 977
           required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
           required: true
       example:
-        id: 387
+        id: 977
         name: "Lorem Ipsum"
       description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
@@ -578,13 +578,13 @@ components:
       properties:
         fromDate:
           type: "number"
-          example: 434
+          example: 599
         toDate:
           type: "number"
-          example: 675
+          example: 395
         interval:
           type: "number"
-          example: 364
+          example: 957
           choices:
             - "30 minutes"
             - "1 hour"
@@ -594,16 +594,16 @@ components:
             - "1 week"
         categoryId:
           type: "number"
-          example: 217
+          example: 477
         languageId:
           type: "number"
-          example: 690
+          example: 193
       example:
-        fromDate: 434
-        toDate: 675
-        interval: 364
-        categoryId: 217
-        languageId: 690
+        fromDate: 599
+        toDate: 395
+        interval: 957
+        categoryId: 477
+        languageId: 193
       description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
       type: "object"
@@ -648,11 +648,11 @@ components:
           required: true
         serverId:
           type: "number"
-          example: 608
+          example: 698
           required: true
       example:
         placeholderName: "Lorem Ipsum"
-        serverId: 608
+        serverId: 698
       description: "PreviewPlaceholderValidator (Validator)"
     UpdatePostValidator:
       type: "object"
@@ -705,7 +705,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 652
+          example: 68
           choices:
             - "java"
             - "bedrock"
@@ -716,7 +716,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 425
+            example: 188
           required: true
           properties:
             items:
@@ -735,13 +735,13 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 207
+            example: 825
           required: true
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 652
+        type: 68
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -749,7 +749,7 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 207
+          - 825
       description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
       type: "object"
@@ -767,7 +767,7 @@ components:
           minimum: 1
         type:
           type: "number"
-          example: 954
+          example: 148
           choices:
             - "java"
             - "bedrock"
@@ -778,7 +778,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 102
+            example: 222
           properties:
             items:
               type: "string"
@@ -796,12 +796,12 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 469
+            example: 0
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 954
+        type: 148
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -809,42 +809,42 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 469
+          - 0
       description: "UpdateServerValidator (Validator)"
     attachServerCategoryValidator:
       type: "object"
       properties:
         serverId:
           type: "number"
-          example: 629
+          example: 929
           required: true
         categoryId:
           type: "number"
-          example: 832
+          example: 686
           required: true
       example:
-        serverId: 629
-        categoryId: 832
+        serverId: 929
+        categoryId: 686
       description: "attachServerCategoryValidator (Validator)"
     StatValidator:
       type: "object"
       properties:
         server_id:
           type: "number"
-          example: 940
+          example: 542
           required: true
         exactTime:
           type: "number"
-          example: 240
+          example: 877
         fromDate:
           type: "number"
-          example: 975
+          example: 870
         toDate:
           type: "number"
-          example: 547
+          example: 396
         interval:
           type: "number"
-          example: 706
+          example: 117
           choices:
             - "30 minutes"
             - "1 hour"
@@ -853,11 +853,11 @@ components:
             - "6 hours"
             - "1 week"
       example:
-        server_id: 940
-        exactTime: 240
-        fromDate: 975
-        toDate: 547
-        interval: 706
+        server_id: 542
+        exactTime: 877
+        fromDate: 870
+        toDate: 396
+        interval: 117
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -980,6 +980,70 @@ paths:
           content:
             application/json: {}
       security: []
+  /api/v1/servers/mine:
+    get:
+      summary: "List the authenticated user's servers (mine)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/servers_controller.ts_ - **mine**"
+      operationId: "listMyServers"
+      parameters: []
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - server:
+                    id: 805
+                    name: "John Doe"
+                    address: "1028 Farland Street"
+                    port: 196
+                    type: {}
+                    version: "Lorem Ipsum"
+                    website: "Lorem Ipsum"
+                    motd: "Lorem Ipsum"
+                    image_url: "Lorem Ipsum"
+                    favicon_hash: "Lorem Ipsum"
+                    resolved_endpoint: "Lorem Ipsum"
+                    motd_hash: "Lorem Ipsum"
+                    user_id: 537
+                    last_online_at: "2021-03-23T16:13:08.489+01:00"
+                    last_player_count: 286
+                    last_max_count: 503
+                    last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                    next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
+                  categories:
+                    - "<Category>"
+                  growthStat:
+                    server_id: 957
+                    weekly_growth: 482
+                    monthly_growth: 259
+                    last_week_average: 890
+                    previous_week_average: 590
+                    last_month_average: 980
+                    last_updated: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Unauthorized"
+              example:
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/servers:
     get:
       summary: "Get a list of servers (index)"
@@ -2671,6 +2735,8 @@ paths:
                   format: "binary"
               required: []
 tags:
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
   - name: "SERVERS"
     description: "Everything related to SERVERS"
   - name: "LANGUAGES"

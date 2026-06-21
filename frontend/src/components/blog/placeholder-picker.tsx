@@ -61,7 +61,7 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="rounded p-2 text-foreground hover:bg-secondary"
+        className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         title="Insert Placeholder"
       >
         <BookText className="w-4 h-4" />

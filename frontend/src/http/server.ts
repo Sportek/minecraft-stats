@@ -1,5 +1,5 @@
 import { getBaseUrl } from "@/app/_cheatcode";
-import { Category, Server, ServerStat, ServerType } from "@/types/server";
+import { Category, Server, ServerGrowthStat, ServerStat, ServerType } from "@/types/server";
 
 export interface ServerPayload {
   name: string;
@@ -75,6 +75,28 @@ export const getServers = async () => {
   }
 
   return response.json() as Promise<{ server: Server }[]>;
+};
+
+export interface MyServerItem {
+  server: Server;
+  categories: Category[];
+  growthStat: ServerGrowthStat | null;
+}
+
+export const getMyServers = async (token: string) => {
+  const response = await fetch(`${getBaseUrl()}/servers/mine`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<MyServerItem[]>;
 };
 
 export const getServer = async (serverId: number) => {
