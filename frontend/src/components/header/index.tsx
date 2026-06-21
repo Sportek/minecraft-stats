@@ -1,12 +1,11 @@
 "use client";
 import { useAuth } from "@/contexts/auth";
-import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
 import { cn } from "@/lib/utils";
 import { getClientBackendUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react";
 import { X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import BrandLogo from "../brand-logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import RestrictedWidthLayout from "../restricted-width-layout";
@@ -157,14 +156,11 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-stats-blue-50/85 backdrop-blur-md supports-backdrop-filter:bg-stats-blue-50/80 dark:bg-stats-blue-1050/85 dark:supports-backdrop-filter:bg-stats-blue-1050/80">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/75">
         <RestrictedWidthLayout className="flex h-16 items-center justify-between gap-4">
           {/* Left: brand + nav */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
-              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
-            </Link>
+            <BrandLogo />
             <nav aria-label="Main" className="hidden md:flex items-center gap-6">
               {NAV_LINKS.map((link) => {
                 const active = isActive(link.href, link.matchPrefixes);
@@ -258,11 +254,8 @@ const Header = () => {
           )}
         >
           {/* Drawer header */}
-          <div className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-stats-blue-50/40 px-4 dark:bg-stats-blue-1050/40">
-            <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2">
-              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
-              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
-            </Link>
+          <div className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-secondary/40 px-4">
+            <BrandLogo onClick={closeMobileMenu} />
             <button
               type="button"
               onClick={closeMobileMenu}

@@ -204,7 +204,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
                       defaultSelected={field.value.map((category) => ({ value: category, label: category }))}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -233,7 +233,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                           label: language ? `${language.flag} ${language.name}` : code
                         };
                       })}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -254,7 +254,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button variant="accent" className="w-full" type="submit">
               Save
             </Button>
             {user.role === "admin" && (

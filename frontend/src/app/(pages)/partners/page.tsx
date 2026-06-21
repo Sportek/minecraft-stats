@@ -28,40 +28,36 @@ const partnersData = [
 
 const Partners = () => {
   return (
-    <main className="flex-1 space-y-4 py-4">
-      <div className="flex flex-col gap-4">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Our Partners</h1>
-          <p className="text-zinc-500 dark:text-zinc-400">
+    <main className="flex-1 space-y-6 py-8">
+      <div className="flex flex-col gap-6">
+        <div className="space-y-1">
+          <div className="text-xs font-bold uppercase tracking-[0.12em] text-accent">Partners</div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Our Partners</h1>
+          <p className="text-muted-foreground">
             Discover trusted services that can help improve your Minecraft server experience.
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {partnersData.map((partner) => (
-            <Link 
-              href={partner.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <Link
+              href={partner.url}
+              target="_blank"
+              rel="noopener noreferrer"
               key={partner.url}
-              className="transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
             >
-              <Card className="h-full p-6 flex flex-col gap-4 hover:shadow-lg transition-shadow">
+              <Card className="flex h-full flex-col gap-4 p-6 transition-all hover:border-accent/50 hover:shadow-md">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-md bg-stats-blue-600/10 dark:bg-stats-blue-400/10">
-                    <Icon 
-                      icon={partner.icon} 
-                      className="w-6 h-6 text-stats-blue-600 dark:text-stats-blue-400" 
-                    />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
+                    <Icon icon={partner.icon} className="h-5 w-5" />
                   </div>
-                  <h2 className="font-semibold">{partner.name}</h2>
+                  <h2 className="font-semibold tracking-tight text-foreground">{partner.name}</h2>
                 </div>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 flex-1">
-                  {partner.description}
-                </p>
-                <div className="flex items-center text-stats-blue-600 dark:text-stats-blue-400 text-sm font-medium">
+                <p className="flex-1 text-sm text-muted-foreground">{partner.description}</p>
+                <div className="flex items-center text-sm font-medium text-accent">
                   Visit Partner
-                  <Icon icon="lucide:arrow-right" className="w-4 h-4 ml-1" />
+                  <Icon icon="lucide:arrow-right" className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </Card>
             </Link>

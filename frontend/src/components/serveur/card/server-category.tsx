@@ -11,39 +11,37 @@ interface ServerCategoriesProps {
 }
 
 const ServerCategories = ({ categories, version, type, isFull }: ServerCategoriesProps) => {
+  const formattedVersion = formatVersion(extractVersions(version ?? ""));
+  const hasVersion = formattedVersion !== "N/A";
+  const visibleCategories = isFull ? categories : categories.slice(0, 2);
+  const hiddenCount = categories.length - visibleCategories.length;
+
   return (
-    <div className="flex flex-row items-center gap-1 truncate">
+    <div className="flex flex-row items-center gap-1.5 truncate">
       <Badge
         variant="outline"
         className={cn(
-          "text-xs",
-          type === "bedrock"
-            ? "border-emerald-500/60 text-emerald-600 dark:text-emerald-400"
-            : "border-sky-500/60 text-sky-600 dark:text-sky-400"
+          "text-xs font-semibold",
+          type === "bedrock" ? "border-success/60 text-success" : "border-accent/60 text-accent"
         )}
       >
         {type === "bedrock" ? "Bedrock" : "Java"}
       </Badge>
-      <Badge
-        variant="secondary"
-        className="bg-stats-blue-900 dark:bg-stats-blue-950 text-white hover:bg-stats-blue-800 dark:hover:bg-stats-blue-800/80"
-      >
-        {formatVersion(extractVersions(version ?? ""))}
+      <Badge variant={hasVersion ? "accent" : "secondary"} className="text-xs">
+        {formattedVersion}
       </Badge>
-      {categories
-        .map((category) => (
-          <Badge key={category.id} className="text-xs text-nowrap" variant="secondary">
-            {category.name}
-          </Badge>
-        ))
-        .slice(0, isFull ? categories.length : 2)}
-      {!isFull && categories.length > 2 ? (
-        <Badge className="text-xs text-nowrap" variant="secondary">
-          +{categories.length - 2}
+      {visibleCategories.map((category) => (
+        <Badge key={category.id} className="text-xs text-nowrap" variant="secondary">
+          {category.name}
         </Badge>
-      ) : null}
+      ))}
+      {hiddenCount > 0 && (
+        <Badge className="text-xs text-nowrap" variant="secondary">
+          +{hiddenCount}
+        </Badge>
+      )}
     </div>
   );
 };
 
-export default ServerCategories; 
+export default ServerCategories;

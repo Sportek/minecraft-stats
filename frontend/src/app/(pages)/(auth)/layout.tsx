@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       {/* Décorations subtiles cohérentes avec le hero */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/4 top-10 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
-        <div className="absolute right-1/4 bottom-10 h-64 w-64 translate-x-1/2 rounded-full bg-stats-blue-400/10 blur-3xl" />
+        <div className="absolute right-1/4 bottom-10 h-64 w-64 translate-x-1/2 rounded-full bg-accent/5 blur-3xl" />
       </div>
 
       <div className="w-full max-w-md">{children}</div>

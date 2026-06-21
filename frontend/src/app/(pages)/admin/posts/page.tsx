@@ -1,5 +1,10 @@
 "use client";
 
+import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
 import { deletePost, getAdminPosts, publishPost, unpublishPost } from "@/http/post";
 import { Post } from "@/types/post";
@@ -33,21 +38,16 @@ const AdminPostsPage = () => {
   }, [token, filter]);
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-900 dark:text-white">Loading...</div>
-      </div>
-    );
+    return <AdminLoadingState label="Loading..." />;
   }
 
   if (user.role !== "admin" && user.role !== "writer") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-slate-400">You must be a writer or administrator to access this page.</p>
-        </div>
-      </div>
+      <AdminMessageState
+        tone="destructive"
+        title="Access Denied"
+        description="You must be a writer or administrator to access this page."
+      />
     );
   }
 
@@ -88,137 +88,110 @@ const AdminPostsPage = () => {
     }
   };
 
-  const publishedCount = posts.filter((p) => p.published).length;
-  const draftCount = posts.filter((p) => !p.published).length;
-
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8 animate-in fade-in duration-300">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Manage Articles</h1>
-            <p className="text-gray-600 dark:text-slate-400">Create, edit and manage your blog posts.</p>
-          </div>
+      <div className="container mx-auto animate-in fade-in px-4 py-8 duration-300">
+        <AdminPageHeader
+          title="Manage Articles"
+          description="Create, edit and manage your blog posts."
+          action={
+            <Button asChild variant="accent">
+              <Link href="/admin/posts/new">
+                <Plus className="h-5 w-5" />
+                <span>New Article</span>
+              </Link>
+            </Button>
+          }
+        />
 
-          <Link
-            href="/admin/posts/new"
-            className="flex items-center gap-2 bg-stats-blue-600 hover:bg-stats-blue-500 text-white px-4 py-2 rounded-md font-medium transition-all shadow-lg shadow-stats-blue-900/20"
-          >
-            <Plus className="w-5 h-5" />
-            <span>New Article</span>
-          </Link>
-        </div>
-
-        {/* Tabs / Filters */}
-        <div className="flex items-center gap-2 mb-6">
-          <button
-            onClick={() => setFilter("all")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === "all"
-                ? "bg-stats-blue-600 text-white"
-                : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-            }`}
-          >
-            All ({posts.length})
-          </button>
-          <button
-            onClick={() => setFilter("published")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === "published"
-                ? "bg-stats-blue-600 text-white"
-                : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-            }`}
-          >
-            Published
-          </button>
-          <button
-            onClick={() => setFilter("draft")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === "draft"
-                ? "bg-stats-blue-600 text-white"
-                : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-            }`}
-          >
-            Drafts
-          </button>
-        </div>
+        <AdminFilterTabs
+          className="mb-6"
+          value={filter}
+          onChange={setFilter}
+          tabs={[
+            { value: "all", label: `All (${posts.length})` },
+            { value: "published", label: "Published" },
+            { value: "draft", label: "Drafts" },
+          ]}
+        />
 
         {/* Table */}
-        <div className="bg-white dark:bg-stats-blue-1000 border border-gray-300 dark:border-stats-blue-800 rounded-lg overflow-hidden shadow-xs">
+        <div className="overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="bg-gray-100 dark:bg-stats-blue-950 border-b border-gray-300 dark:border-stats-blue-800 text-xs uppercase tracking-wider text-gray-600 dark:text-slate-400 font-semibold">
+                <tr className="border-b border-border bg-secondary text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   <th className="px-6 py-4">Title</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4">Created Date</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-stats-blue-800">
+              <tbody className="divide-y divide-border">
                 {loading ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-slate-500">
+                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
                       Loading articles...
                     </td>
                   </tr>
                 ) : posts.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-slate-500">
+                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
                       No articles found. Click &quot;New Article&quot; to create one.
                     </td>
                   </tr>
                 ) : (
                   posts.map((post) => (
-                    <tr key={post.id} className="hover:bg-gray-50 dark:hover:bg-stats-blue-900 transition-colors group">
+                    <tr key={post.id} className="group transition-colors hover:bg-secondary/50">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="text-gray-900 dark:text-white font-medium group-hover:text-stats-blue-600 dark:group-hover:text-stats-blue-400 transition-colors">
+                          <span className="font-medium text-foreground transition-colors group-hover:text-accent">
                             {post.title}
                           </span>
-                          <span className="text-gray-500 dark:text-slate-500 text-xs font-mono mt-0.5">
+                          <span className="mt-0.5 font-mono text-xs text-muted-foreground">
                             {post.slug}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                            post.published
-                              ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
-                              : "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
-                          }`}
-                        >
+                        <Badge variant={post.published ? "success" : "secondary"}>
                           {post.published ? "Published" : "Draft"}
-                        </span>
+                        </Badge>
                       </td>
-                      <td className="px-6 py-4 text-gray-600 dark:text-slate-400 text-sm">
+                      <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(post.createdAt).toISOString().split("T")[0]}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-accent"
                             onClick={() => (post.published ? handleUnpublish(post.id) : handlePublish(post.id))}
-                            className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-stats-blue-600 dark:hover:text-stats-blue-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-stats-blue-500/10"
                             title="View"
                           >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <Link
-                            href={`/admin/posts/${post.id}/edit`}
-                            className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-green-500/10"
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            asChild
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-accent"
                             title="Edit"
                           >
-                            <Pencil className="w-4 h-4" />
-                          </Link>
-                          <button
+                            <Link href={`/admin/posts/${post.id}/edit`}>
+                              <Pencil className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
                             onClick={() => handleDelete(post.id)}
-                            className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-red-500/10"
                             title="Delete"
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </td>
                     </tr>

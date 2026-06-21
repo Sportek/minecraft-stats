@@ -3,6 +3,7 @@ import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import EditServerForm from "@/components/form/edit-server-form";
 import Loader from "@/components/loader";
 import { Category, Server, ServerStat } from "@/types/server";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 
@@ -15,20 +16,27 @@ const ServerEditPage = () => {
   );
 
   return isLoading ? (
-    <div className="flex flex-col items-center justify-center h-full flex-1 py-8">
+    <div className="flex flex-1 flex-col items-center justify-center py-10">
       <Loader message="Loading server..." />
     </div>
   ) : (
     server && (
-      <div className="flex flex-col items-center justify-center h-full flex-1 py-8">
-        <div className="bg-zinc-100 dark:bg-zinc-800 shadow-md rounded-md p-4 w-full sm:w-fit gap-4 flex flex-col">
-          <h1 className="text-2xl font-bold">Edit Server</h1>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-4">
-              <div className="w-screen max-w-2xl">
-                <EditServerForm server={server.server} serverCategories={server.categories} updateServer={mutate} />
+      <div className="flex flex-1 flex-col items-center justify-center py-10">
+        <div className="w-full max-w-2xl rounded-lg border border-border bg-card text-card-foreground shadow-xs">
+          <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
+                <Icon icon="material-symbols:edit-outline" className="h-4 w-4" />
               </div>
+              <h1 className="text-lg font-semibold text-foreground">Edit server</h1>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Update your server&apos;s details, categories, and languages.
+            </p>
+          </div>
+
+          <div className="p-6">
+            <EditServerForm server={server.server} serverCategories={server.categories} updateServer={mutate} />
           </div>
         </div>
       </div>

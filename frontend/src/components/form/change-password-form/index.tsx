@@ -104,7 +104,7 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit">
+          <Button variant="accent" className="w-full" type="submit">
             Submit
           </Button>
         </form>

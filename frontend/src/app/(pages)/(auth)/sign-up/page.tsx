@@ -6,7 +6,7 @@ import { FC } from "react";
 
 const SignUpPage: FC = () => {
   return (
-    <div className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+    <div className="rounded-lg border border-border bg-card text-card-foreground shadow-xs">
       <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">

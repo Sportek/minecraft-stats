@@ -226,6 +226,14 @@ const ServerPage = () => {
 
   return (
     <main className="flex-1 space-y-6 py-6">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link href="/" className="text-accent transition-colors hover:underline">
+          Servers
+        </Link>
+        <span aria-hidden="true">/</span>
+        <span className="truncate font-medium text-foreground">{serverData.server.name}</span>
+      </nav>
+
       <ServerStructuredData
         server={serverData.server}
         categories={serverData.categories}

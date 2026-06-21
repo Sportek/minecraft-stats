@@ -1,5 +1,17 @@
 "use client";
 
+import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
+import { Badge, BadgeProps } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/contexts/auth";
 import { getAdminUsers, updateUserRole } from "@/http/user";
 import { User } from "@/types/auth";
@@ -35,21 +47,16 @@ const AdminUsersPage = () => {
   }, [token, search, roleFilter]);
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-900 dark:text-white">Loading...</div>
-      </div>
-    );
+    return <AdminLoadingState label="Loading..." />;
   }
 
   if (user.role !== "admin") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-slate-400">You must be an administrator to access this page.</p>
-        </div>
-      </div>
+      <AdminMessageState
+        tone="destructive"
+        title="Access Denied"
+        description="You must be an administrator to access this page."
+      />
     );
   }
 
@@ -86,103 +93,61 @@ const AdminUsersPage = () => {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "admin":
-        return <ShieldCheck className="w-4 h-4 text-red-500" />;
+        return <ShieldCheck className="h-4 w-4" />;
       case "writer":
-        return <Shield className="w-4 h-4 text-blue-500" />;
+        return <Shield className="h-4 w-4" />;
       default:
-        return <UserIcon className="w-4 h-4 text-gray-500" />;
+        return <UserIcon className="h-4 w-4" />;
     }
   };
 
-  const getRoleBadgeClass = (role: string) => {
+  const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
     switch (role) {
       case "admin":
-        return "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20";
+        return "destructive";
       case "writer":
-        return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20";
+        return "accent";
       default:
-        return "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20";
+        return "secondary";
     }
   };
-
-  const adminCount = users.filter((u) => u.role === "admin").length;
-  const writerCount = users.filter((u) => u.role === "writer").length;
-  const userCount = users.filter((u) => u.role === "user").length;
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8 animate-in fade-in duration-300">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Manage Users</h1>
-            <p className="text-gray-600 dark:text-slate-400">View and manage user roles.</p>
-          </div>
-        </div>
+      <div className="container mx-auto animate-in fade-in px-4 py-8 duration-300">
+        <AdminPageHeader title="Manage Users" description="View and manage user roles." />
 
         {/* Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by username or email..."
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500 focus:border-transparent"
+              className="pl-10"
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setRoleFilter("all")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                roleFilter === "all"
-                  ? "bg-stats-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-              }`}
-            >
-              All ({users.length})
-            </button>
-            <button
-              onClick={() => setRoleFilter("admin")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                roleFilter === "admin"
-                  ? "bg-stats-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-              }`}
-            >
-              Admins
-            </button>
-            <button
-              onClick={() => setRoleFilter("writer")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                roleFilter === "writer"
-                  ? "bg-stats-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-              }`}
-            >
-              Writers
-            </button>
-            <button
-              onClick={() => setRoleFilter("user")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                roleFilter === "user"
-                  ? "bg-stats-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-stats-blue-900 text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-stats-blue-700/50"
-              }`}
-            >
-              Users
-            </button>
-          </div>
+          <AdminFilterTabs
+            value={roleFilter}
+            onChange={setRoleFilter}
+            tabs={[
+              { value: "all", label: `All (${users.length})` },
+              { value: "admin", label: "Admins" },
+              { value: "writer", label: "Writers" },
+              { value: "user", label: "Users" },
+            ]}
+          />
         </div>
 
         {/* Table */}
-        <div className="bg-white dark:bg-stats-blue-1000 border border-gray-300 dark:border-stats-blue-800 rounded-lg overflow-hidden shadow-xs">
+        <div className="overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="bg-gray-100 dark:bg-stats-blue-950 border-b border-gray-300 dark:border-stats-blue-800 text-xs uppercase tracking-wider text-gray-600 dark:text-slate-400 font-semibold">
+                <tr className="border-b border-border bg-secondary text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   <th className="px-6 py-4">User</th>
                   <th className="px-6 py-4">Email</th>
                   <th className="px-6 py-4">Current Role</th>
@@ -190,16 +155,16 @@ const AdminUsersPage = () => {
                   <th className="px-6 py-4 text-right">Change Role</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-stats-blue-800">
+              <tbody className="divide-y divide-border">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-slate-500">
+                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
                       Loading users...
                     </td>
                   </tr>
                 ) : users.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-slate-500">
+                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
                       No users found.
                     </td>
                   </tr>
@@ -207,54 +172,56 @@ const AdminUsersPage = () => {
                   users.map((u) => (
                     <tr
                       key={u.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-stats-blue-900 transition-colors ${
-                        u.id === user.id ? "bg-stats-blue-50 dark:bg-stats-blue-900/50" : ""
+                      className={`transition-colors hover:bg-secondary/50 ${
+                        u.id === user.id ? "bg-accent/5" : ""
                       }`}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-stats-blue-600 flex items-center justify-center text-white text-sm font-medium">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-medium text-accent-foreground">
                             {u.username[0].toUpperCase()}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-gray-900 dark:text-white font-medium">
+                            <span className="font-medium text-foreground">
                               {u.username}
                               {u.id === user.id && (
-                                <span className="ml-2 text-xs text-stats-blue-600 dark:text-stats-blue-400">(you)</span>
+                                <span className="ml-2 text-xs text-accent">(you)</span>
                               )}
                             </span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-600 dark:text-slate-400 text-sm">{u.email}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground">{u.email}</td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeClass(
-                            u.role
-                          )}`}
-                        >
+                        <Badge variant={getRoleBadgeVariant(u.role)} className="gap-1.5">
                           {getRoleIcon(u.role)}
                           {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
-                        </span>
+                        </Badge>
                       </td>
-                      <td className="px-6 py-4 text-gray-600 dark:text-slate-400 text-sm">
+                      <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(u.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end">
                           {u.id === user.id ? (
-                            <span className="text-xs text-gray-400 dark:text-slate-600">Cannot change own role</span>
+                            <span className="text-xs text-muted-foreground">Cannot change own role</span>
                           ) : (
-                            <select
+                            <Select
                               value={u.role}
-                              onChange={(e) => handleRoleChange(u.id, e.target.value as "admin" | "writer" | "user")}
+                              onValueChange={(value) =>
+                                handleRoleChange(u.id, value as "admin" | "writer" | "user")
+                              }
                               disabled={updatingUserId === u.id}
-                              className="px-3 py-1.5 bg-white dark:bg-stats-blue-900 border border-gray-300 dark:border-stats-blue-700 rounded-md text-sm text-gray-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500 disabled:opacity-50"
                             >
-                              <option value="user">User</option>
-                              <option value="writer">Writer</option>
-                              <option value="admin">Admin</option>
-                            </select>
+                              <SelectTrigger className="h-9 w-[130px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="writer">Writer</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
                           )}
                         </div>
                       </td>

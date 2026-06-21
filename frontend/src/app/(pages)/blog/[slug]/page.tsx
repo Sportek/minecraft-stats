@@ -1,5 +1,8 @@
+import { PostAuthor, formatPostDate } from "@/components/blog/post-meta";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getPostBySlug } from "@/http/post";
-import { Calendar, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -75,56 +78,38 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
         <div className="container mx-auto px-4 py-6 max-w-4xl">
           <Link
             href="/blog"
-            className="flex items-center gap-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition-colors group px-4 py-2 rounded-lg "
+            className="group inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium">Back to Blog</span>
+            <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Blog</span>
           </Link>
         </div>
 
         <article className="container mx-auto px-4 max-w-5xl">
           {/* Header Section */}
-          <header className="text-center mb-8 px-4 max-w-4xl mx-auto">
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 leading-tight tracking-tight">
+          <header className="mx-auto mb-8 max-w-4xl px-4 text-center">
+            <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
+              News · {formatPostDate(post.createdAt)}
+            </div>
+            <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight text-foreground md:text-5xl">
               {post.title}
             </h1>
 
-            {/* Metadata Line: Author - Date - Category */}
-            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 dark:text-slate-400">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-linear-to-tr from-stats-blue-600 to-indigo-500 flex items-center justify-center text-[10px] font-bold text-white border border-white/10">
-                  {post.author.username.charAt(0)}
-                </div>
-                <span className="font-medium text-gray-800 dark:text-slate-200">{post.author.username}</span>
-              </div>
-
-              <span className="text-gray-400 dark:text-slate-600">•</span>
-
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-gray-500 dark:text-slate-500" />
-                <span>
-                  {new Date(post.createdAt).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-
-              <span className="text-gray-400 dark:text-slate-600">•</span>
-
-              <span className="bg-stats-blue-500/10 text-stats-blue-600 dark:text-stats-blue-400 px-2.5 py-0.5 rounded-full text-xs font-bold border border-stats-blue-500/20 uppercase tracking-wide">
+            {/* Metadata Line: Author - Category */}
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+              <PostAuthor username={post.author.username} />
+              <span className="text-border">•</span>
+              <Badge variant="accent" className="uppercase tracking-wide">
                 News
-              </span>
+              </Badge>
             </div>
           </header>
 
           {/* Hero Image */}
           {post.coverImage && (
-            <div className="mb-12 relative px-4 md:px-0">
-              <div className="w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative group bg-gray-100 dark:bg-slate-900">
-                <div className="absolute inset-0 bg-linear-to-t from-stats-blue-1050 via-transparent to-transparent opacity-10 pointer-events-none z-10 dark:from-[#0B1221]" />
-                <Image src={post.coverImage} alt={post.title} className="w-full h-full object-cover" unoptimized fill />
+            <div className="relative mb-12 px-4 md:px-0">
+              <div className="relative h-[300px] w-full overflow-hidden rounded-lg border border-border bg-secondary md:h-[400px]">
+                <Image src={post.coverImage} alt={post.title} className="h-full w-full object-cover" unoptimized fill />
               </div>
             </div>
           )}
@@ -134,7 +119,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
             <div className="max-w-prose mx-auto">
               {/* Summary / Lead */}
               {post.excerpt && (
-                <p className="text-lg md:text-xl text-gray-700 dark:text-slate-200 font-medium leading-relaxed mb-10 font-sans border-l-4 border-stats-blue-500 pl-6 py-1 italic relative">
+                <p className="relative mb-10 border-l-4 border-accent py-1 pl-6 font-sans text-lg font-medium italic leading-relaxed text-muted-foreground md:text-xl">
                   {post.excerpt}
                 </p>
               )}
@@ -142,31 +127,31 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
               {/* Article Content */}
               <div
                 className="prose prose-lg dark:prose-invert max-w-none
-                prose-headings:font-bold prose-headings:tracking-tight
+                prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
                 prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4
-                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-slate-700 prose-h2:pb-2
+                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border prose-h2:pb-2
                 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                prose-p:leading-8 prose-p:mb-6
-                prose-a:text-stats-blue-600 dark:prose-a:text-stats-blue-400 prose-a:font-medium prose-a:no-underline hover:prose-a:underline
-                prose-strong:font-bold
-                prose-img:rounded-xl prose-img:shadow-xl prose-img:border prose-img:border-gray-200 dark:prose-img:border-stats-blue-800
-                prose-blockquote:border-l-stats-blue-500 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-slate-900/30 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                prose-p:leading-8 prose-p:mb-6 prose-p:text-foreground
+                prose-a:text-accent prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+                prose-strong:font-bold prose-strong:text-foreground
+                prose-img:rounded-lg prose-img:shadow-xs prose-img:border prose-img:border-border
+                prose-blockquote:border-l-accent prose-blockquote:bg-secondary prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-blockquote:not-italic prose-blockquote:text-muted-foreground
                 prose-ul:list-disc prose-ul:pl-6
                 prose-ol:list-decimal prose-ol:pl-6
-                prose-li:mb-2
-                prose-code:bg-gray-100 dark:prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-                prose-pre:bg-gray-100 dark:prose-pre:bg-slate-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-slate-700 prose-pre:rounded-lg prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-slate-800 dark:prose-pre:text-slate-100
+                prose-li:mb-2 prose-li:text-foreground
+                prose-code:bg-secondary prose-code:text-secondary-foreground prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+                prose-pre:bg-secondary prose-pre:border prose-pre:border-border prose-pre:rounded-md prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-secondary-foreground
                 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm
               "
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
               />
 
               {/* Footer Divider */}
-              <div className="mt-16 pt-8 border-t border-gray-200 dark:border-stats-blue-800 flex items-center justify-between">
+              <div className="mt-16 flex items-center justify-between border-t border-border pt-8">
                 <div className="flex items-center gap-4"></div>
                 <Link
                   href="/blog"
-                  className="text-stats-blue-600 dark:text-stats-blue-400 text-sm font-bold hover:text-stats-blue-500 dark:hover:text-stats-blue-300 transition-colors"
+                  className="text-sm font-bold text-accent transition-colors hover:text-accent/80"
                 >
                   Read more articles &rarr;
                 </Link>
@@ -180,18 +165,17 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
     return (
       <div className="flex items-center justify-center">
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="bg-white dark:bg-stats-blue-950 rounded-lg border border-gray-200 dark:border-stats-blue-800 p-12 max-w-2xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Article Not Found</h1>
-            <p className="text-gray-600 dark:text-slate-400 mb-8">
+          <div className="mx-auto max-w-2xl rounded-lg border border-border bg-card p-12 text-card-foreground shadow-xs">
+            <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Article Not Found</h1>
+            <p className="mb-8 text-muted-foreground">
               The article you are looking for does not exist or has been deleted.
             </p>
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-stats-blue-600 hover:bg-stats-blue-700 text-white rounded-lg transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back to Blog
-            </Link>
+            <Button asChild variant="accent">
+              <Link href="/blog">
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back to Blog
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

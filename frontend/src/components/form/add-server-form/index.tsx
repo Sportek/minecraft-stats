@@ -198,7 +198,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                       title="Select categories..."
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -220,7 +220,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                         label: `${language.flag} ${language.name}`
                       }))}
                       onSelectionChange={handleLanguageSelectionChange}
-                      className="dark:bg-zinc-950 dark:text-white bg-white border border-zinc-800"
+                      className="border border-input bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -241,7 +241,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button variant="accent" className="w-full" type="submit">
               Submit
             </Button>
           </form>

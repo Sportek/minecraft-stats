@@ -18,7 +18,9 @@ const AdPreview = ({ htmlContent, className }: AdPreviewProps) => {
       title="Prévisualisation de la publicité"
       srcDoc={srcDoc}
       sandbox=""
-      className={className ?? "block h-[130px] w-full"}
+      className={
+        className ?? "block h-[130px] w-full rounded-md border border-border bg-background"
+      }
     />
   );
 };
