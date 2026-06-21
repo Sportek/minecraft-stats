@@ -15,8 +15,8 @@ interface ServerInfoProps {
 
 const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
   const [copied, setCopied] = useState(false);
-  // Valeur persistée en base (déduite côté serveur), avec repli sur la
-  // dérivation côté client pour les serveurs pas encore backfillés.
+  // Persisted value (derived server-side), falling back to the client-side
+  // derivation for servers not backfilled yet.
   const resolvedWebsite = website ?? deriveServerWebsite(address);
 
   const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,8 +33,8 @@ const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
   };
 
   const openWebsite = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // La carte entière est un <Link> : on ouvre le site sans déclencher la navigation
-    // ni imbriquer une ancre dans une ancre.
+    // The whole card is a <Link>: open the site without triggering navigation
+    // or nesting an anchor inside an anchor.
     e.preventDefault();
     e.stopPropagation();
     if (resolvedWebsite) window.open(`https://${resolvedWebsite}`, "_blank", "noopener,noreferrer");

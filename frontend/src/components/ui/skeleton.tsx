@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  // `bg-foreground/10` reste visible sur n'importe quelle surface (canvas, card)
-  // dans les deux thèmes — contrairement à `bg-muted` qui se confond avec le fond clair.
+  // `bg-foreground/10` stays visible on any surface (canvas, card) in both themes —
+  // unlike `bg-muted`, which blends into the light background.
   return <div className={cn("animate-pulse rounded-md bg-foreground/10", className)} {...props} />;
 }
 

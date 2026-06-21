@@ -1,5 +1,5 @@
-// Suffixes à deux niveaux les plus courants : on garde alors les trois derniers labels
-// (ex. play.example.co.uk -> example.co.uk) plutôt que les deux derniers.
+// Most common two-level public suffixes: keep the last three labels
+// (e.g. play.example.co.uk -> example.co.uk) instead of the last two.
 const MULTIPART_TLDS = new Set([
   "co.uk",
   "org.uk",
@@ -20,9 +20,9 @@ const MULTIPART_TLDS = new Set([
 const IPV4 = /^\d{1,3}(\.\d{1,3}){3}$/;
 
 /**
- * Déduit le site web probable d'un serveur à partir de son adresse.
- * `play.hypixel.net` -> `hypixel.net`. Renvoie `null` quand on ne peut pas être sûr
- * (adresse IP, localhost, hostname sans TLD valide) : dans le doute, on n'affiche rien.
+ * Infers a server's likely website from its address.
+ * `play.hypixel.net` -> `hypixel.net`. Returns `null` when we can't be sure
+ * (IP address, localhost, hostname without a valid TLD): when in doubt, show nothing.
  */
 export function deriveServerWebsite(address: string | null | undefined): string | null {
   if (!address) return null;

@@ -25,7 +25,7 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
     >
       <ServerActions server={server} />
 
-      {/* Ligne 1 : avatar · identité (nom, drapeaux, adresse, site) · métriques */}
+      {/* Row 1: avatar · identity (name, flags, address, website) · metrics */}
       <div className="flex w-full items-start gap-3">
         <ServerImage imageUrl={server.imageUrl} name={server.name} />
         <div className="min-w-0 flex-1">
@@ -45,10 +45,10 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
         </div>
       </div>
 
-      {/* Ligne 2 : sparkline pleine largeur */}
+      {/* Row 2: full-width sparkline */}
       {showChart && <ServerChart stats={stats} />}
 
-      {/* Ligne 3 : badges (édition, version, catégories) · favori */}
+      {/* Row 3: badges (edition, version, categories) · favorite */}
       <div className="mt-auto flex w-full items-center justify-between gap-2">
         <ServerCategories categories={categories} version={server.version ?? undefined} type={server.type} isFull={isFull} />
         <FavoriteButton serverId={server.id} serverName={server.name} />

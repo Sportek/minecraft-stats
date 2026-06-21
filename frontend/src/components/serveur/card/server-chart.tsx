@@ -76,8 +76,8 @@ const ServerChart = ({ stats }: ServerChartProps) => {
           xName: "Time",
           yKey: "playerCount",
           yName: "Online players",
-          // Accent de marque (hsl(204 100% 38%) clair / 55% sombre) pour relier
-          // la sparkline à l'identité visuelle.
+          // Brand accent (hsl(204 100% 38%) light / 55% dark) to tie the sparkline
+          // to the visual identity.
           stroke: resolvedTheme === "dark" ? "#1a9fff" : "#0077c2",
           strokeWidth: 1.6,
           marker: { enabled: false },

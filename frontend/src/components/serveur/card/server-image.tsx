@@ -11,8 +11,8 @@ interface ServerImageProps {
   className?: string;
 }
 
-// Teinte stable dérivée du nom : sert de fond dégradé pour la tuile-initiale
-// affichée quand le serveur n'a pas (ou plus) de favicon.
+// Stable hue derived from the name: used as the gradient background for the
+// letter tile shown when the server has no (or no longer a) favicon.
 const hueFromName = (name: string) => {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -54,7 +54,7 @@ const ServerImage = ({ imageUrl, name, className }: ServerImageProps) => {
       className={cn("h-12 w-12 rounded-md object-cover", className)}
       onError={() => {
         const png = `${backendUrl}${imageUrl}.png`;
-        // 1er échec : on tente le PNG ; 2e échec : on bascule sur la tuile-initiale.
+        // First failure: try the PNG; second failure: fall back to the letter tile.
         setSrc((current) => (current !== png ? png : ""));
       }}
     />

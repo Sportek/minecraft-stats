@@ -112,7 +112,7 @@ export default class ServersController {
 
     const { categories, languages, ...dataToCreate } = validatedData
 
-    // Site web : fourni par le propriétaire, sinon déduit de l'adresse.
+    // Website: provided by the owner, otherwise derived from the address.
     const website = dataToCreate.website ?? deriveServerWebsite(validatedData.address)
 
     const server = await Server.create({
@@ -205,7 +205,7 @@ export default class ServersController {
 
     const { categories, languages, ...dataToUpdate } = validatedData
 
-    // Si l'adresse change sans site web explicite, on re-déduit le site web.
+    // If the address changes without an explicit website, re-derive it.
     if (dataToUpdate.website === undefined && validatedData.address) {
       const derived = deriveServerWebsite(validatedData.address)
       if (derived) dataToUpdate.website = derived

@@ -9,7 +9,7 @@ interface BrandLogoProps {
   onClick?: () => void;
 }
 
-/** Marque Minecraft Stats (logo en barres ascendantes + wordmark), réutilisée dans le header, le footer et le drawer mobile. */
+/** Minecraft Stats brand mark (ascending-bars logo + wordmark), reused in the header, footer and mobile drawer. */
 const BrandLogo = ({ className, size = 28, onClick }: BrandLogoProps) => (
   <Link href="/" onClick={onClick} className={cn("flex items-center gap-2", className)}>
     <Image src={MinecraftStatsLogo} alt="" width={size} height={size} priority />

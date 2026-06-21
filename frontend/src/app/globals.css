@@ -158,14 +158,14 @@
     /* Focus ring — match accent */
     --ring: 204 100% 38%;
 
-    /* Canvas — fond de page teinté (les cartes flottent au-dessus) */
+    /* Canvas — tinted page background (cards float above it) */
     --canvas: 210 60% 96%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Surfaces en couches : canvas (le plus sombre) < background < card (le plus clair) */
+    /* Layered surfaces: canvas (darkest) < background < card (lightest) */
     --background: 240 12% 6%;
     --foreground: 0 0% 98%;
 
