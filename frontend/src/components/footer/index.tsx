@@ -119,6 +119,16 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/contact" className={linkClass}>
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className={linkClass}>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
                 <Link href="/cgu" className={linkClass}>
                   Terms of service
                 </Link>
