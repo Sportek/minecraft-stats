@@ -21,7 +21,7 @@ const DashboardHero = ({ title, subtitle, badge, action, avatar }: DashboardHero
     <div className="relative h-20 bg-[linear-gradient(110deg,hsl(204_100%_32%),hsl(214_90%_22%))]">
       <div className="absolute inset-0 bg-[radial-gradient(120%_140%_at_100%_0%,rgba(255,255,255,0.18),transparent_60%)]" />
     </div>
-    <div className="px-6 pb-5">
+    <div className="relative z-10 px-6 pb-5">
       {avatar && (
         <AvatarTile
           name={avatar.name}
