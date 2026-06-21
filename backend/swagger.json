@@ -103,7 +103,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 290
+            "example": 269
           },
           "name": {
             "type": "string",
@@ -123,7 +123,7 @@
           },
           "weight": {
             "type": "number",
-            "example": 962
+            "example": 860
           },
           "show_on_home": {
             "type": "boolean",
@@ -176,11 +176,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 162
+            "example": 611
           },
           "advertisement_id": {
             "type": "number",
-            "example": 407
+            "example": 266
           },
           "type": {
             "$ref": "#/components/schemas/'impression'",
@@ -192,7 +192,7 @@
           },
           "server_id": {
             "type": "number",
-            "example": 214
+            "example": 930
           },
           "target_url": {
             "type": "string",
@@ -216,7 +216,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 998
+            "example": 528
           },
           "name": {
             "type": "string",
@@ -241,7 +241,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 585
+            "example": 50
           },
           "code": {
             "$ref": "#/components/schemas/LanguageCode",
@@ -274,7 +274,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 220
+            "example": 429
           },
           "title": {
             "type": "string",
@@ -307,7 +307,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 989
+            "example": 943
           },
           "author": {
             "$ref": "#/components/schemas/User",
@@ -332,7 +332,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 759
+            "example": 395
           },
           "name": {
             "type": "string",
@@ -344,7 +344,7 @@
           },
           "port": {
             "type": "number",
-            "example": 891
+            "example": 406
           },
           "type": {
             "$ref": "#/components/schemas/ServerType",
@@ -380,7 +380,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 171
+            "example": 484
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -411,13 +411,22 @@
           },
           "last_player_count": {
             "type": "number",
-            "example": 841
+            "example": 888
           },
           "last_max_count": {
             "type": "number",
-            "example": 469
+            "example": 75
           },
           "last_stats_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "peak_player_count": {
+            "type": "number",
+            "example": 260
+          },
+          "peak_player_at": {
             "type": "string",
             "example": "2021-03-23T16:13:08.489+01:00",
             "format": "date-time"
@@ -446,27 +455,27 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 450
+            "example": 827
           },
           "weekly_growth": {
             "type": "number",
-            "example": 714
+            "example": 575
           },
           "monthly_growth": {
             "type": "number",
-            "example": 334
+            "example": 223
           },
           "last_week_average": {
             "type": "number",
-            "example": 853
+            "example": 438
           },
           "previous_week_average": {
             "type": "number",
-            "example": 612
+            "example": 817
           },
           "last_month_average": {
             "type": "number",
-            "example": 293
+            "example": 467
           },
           "last_updated": {
             "type": "string",
@@ -482,7 +491,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 419
+            "example": 883
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -490,15 +499,15 @@
           },
           "server_id": {
             "type": "number",
-            "example": 174
+            "example": 0
           },
           "player_count": {
             "type": "number",
-            "example": 372
+            "example": 844
           },
           "max_count": {
             "type": "number",
-            "example": 43
+            "example": 916
           },
           "created_at": {
             "type": "string",
@@ -514,7 +523,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 744
+            "example": 482
           },
           "username": {
             "type": "string",
@@ -573,7 +582,7 @@
           },
           "type": {
             "type": "number",
-            "example": 734,
+            "example": 615,
             "choices": [
               "custom",
               "network"
@@ -616,13 +625,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 464
+              "example": 163
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 734,
+          "type": 615,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -631,7 +640,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            464
+            163
           ]
         },
         "description": "CreateAdvertisementValidator (Validator)"
@@ -647,7 +656,7 @@
           },
           "type": {
             "type": "number",
-            "example": 514,
+            "example": 405,
             "choices": [
               "custom",
               "network"
@@ -689,13 +698,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 531
+              "example": 914
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 514,
+          "type": 405,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -704,22 +713,44 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            531
+            914
           ]
         },
         "description": "UpdateAdvertisementValidator (Validator)"
+      },
+      "CreateApiTokenValidator": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "expiresInDays": {
+            "type": "number",
+            "example": 167,
+            "maximum": 3650
+          }
+        },
+        "example": {
+          "name": "Lorem Ipsum",
+          "expiresInDays": 167
+        },
+        "description": "CreateApiTokenValidator (Validator)"
       },
       "CategoryIdValidator": {
         "type": "object",
         "properties": {
           "id": {
             "type": "number",
-            "example": 812,
+            "example": 113,
             "required": true
           }
         },
         "example": {
-          "id": 812
+          "id": 113
         },
         "description": "CategoryIdValidator (Validator)"
       },
@@ -742,7 +773,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 875,
+            "example": 218,
             "required": true
           },
           "name": {
@@ -752,7 +783,7 @@
           }
         },
         "example": {
-          "id": 875,
+          "id": 218,
           "name": "Lorem Ipsum"
         },
         "description": "UpdateCategoryValidator (Validator)"
@@ -762,15 +793,15 @@
         "properties": {
           "fromDate": {
             "type": "number",
-            "example": 33
+            "example": 751
           },
           "toDate": {
             "type": "number",
-            "example": 312
+            "example": 445
           },
           "interval": {
             "type": "number",
-            "example": 335,
+            "example": 412,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -782,19 +813,19 @@
           },
           "categoryId": {
             "type": "number",
-            "example": 765
+            "example": 172
           },
           "languageId": {
             "type": "number",
-            "example": 274
+            "example": 443
           }
         },
         "example": {
-          "fromDate": 33,
-          "toDate": 312,
-          "interval": 335,
-          "categoryId": 765,
-          "languageId": 274
+          "fromDate": 751,
+          "toDate": 445,
+          "interval": 412,
+          "categoryId": 172,
+          "languageId": 443
         },
         "description": "GlobalStatValidator (Validator)"
       },
@@ -850,13 +881,13 @@
           },
           "serverId": {
             "type": "number",
-            "example": 714,
+            "example": 914,
             "required": true
           }
         },
         "example": {
           "placeholderName": "Lorem Ipsum",
-          "serverId": 714
+          "serverId": 914
         },
         "description": "PreviewPlaceholderValidator (Validator)"
       },
@@ -922,7 +953,7 @@
           },
           "type": {
             "type": "number",
-            "example": 381,
+            "example": 983,
             "choices": [
               "java",
               "bedrock"
@@ -936,7 +967,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 703
+              "example": 695
             },
             "required": true,
             "properties": {
@@ -962,7 +993,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 249
+              "example": 638
             },
             "required": true
           }
@@ -971,7 +1002,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 381,
+          "type": 983,
           "imageUrl": "Lorem Ipsum",
           "categories": [
             "Lorem Ipsum"
@@ -980,7 +1011,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            249
+            638
           ]
         },
         "description": "CreateServerValidator (Validator)"
@@ -1004,7 +1035,7 @@
           },
           "type": {
             "type": "number",
-            "example": 456,
+            "example": 174,
             "choices": [
               "java",
               "bedrock"
@@ -1018,7 +1049,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 214
+              "example": 363
             },
             "properties": {
               "items": {
@@ -1043,7 +1074,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 504
+              "example": 572
             }
           }
         },
@@ -1051,7 +1082,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 456,
+          "type": 174,
           "imageUrl": "Lorem Ipsum",
           "categories": [
             "Lorem Ipsum"
@@ -1060,7 +1091,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            504
+            572
           ]
         },
         "description": "UpdateServerValidator (Validator)"
@@ -1070,18 +1101,18 @@
         "properties": {
           "serverId": {
             "type": "number",
-            "example": 49,
+            "example": 851,
             "required": true
           },
           "categoryId": {
             "type": "number",
-            "example": 106,
+            "example": 415,
             "required": true
           }
         },
         "example": {
-          "serverId": 49,
-          "categoryId": 106
+          "serverId": 851,
+          "categoryId": 415
         },
         "description": "attachServerCategoryValidator (Validator)"
       },
@@ -1090,24 +1121,24 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 792,
+            "example": 119,
             "required": true
           },
           "exactTime": {
             "type": "number",
-            "example": 207
+            "example": 943
           },
           "fromDate": {
             "type": "number",
-            "example": 889
+            "example": 474
           },
           "toDate": {
             "type": "number",
-            "example": 743
+            "example": 462
           },
           "interval": {
             "type": "number",
-            "example": 616,
+            "example": 162,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -1119,11 +1150,11 @@
           }
         },
         "example": {
-          "server_id": 792,
-          "exactTime": 207,
-          "fromDate": 889,
-          "toDate": 743,
-          "interval": 616
+          "server_id": 119,
+          "exactTime": 943,
+          "fromDate": 474,
+          "toDate": 462,
+          "interval": 162
         },
         "description": "StatValidator (Validator)"
       },
@@ -1310,10 +1341,10 @@
                 "example": [
                   {
                     "server": {
-                      "id": 759,
+                      "id": 395,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 891,
+                      "port": 406,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -1322,11 +1353,13 @@
                       "favicon_hash": "Lorem Ipsum",
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
-                      "user_id": 171,
+                      "user_id": 484,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 841,
-                      "last_max_count": 469,
+                      "last_player_count": 888,
+                      "last_max_count": 75,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
+                      "peak_player_count": 260,
+                      "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "created_at": "2021-03-23T16:13:08.489+01:00",
                       "updated_at": "2021-03-23T16:13:08.489+01:00"
@@ -1335,12 +1368,12 @@
                       "<Category>"
                     ],
                     "growthStat": {
-                      "server_id": 450,
-                      "weekly_growth": 714,
-                      "monthly_growth": 334,
-                      "last_week_average": 853,
-                      "previous_week_average": 612,
-                      "last_month_average": 293,
+                      "server_id": 827,
+                      "weekly_growth": 575,
+                      "monthly_growth": 223,
+                      "last_week_average": 438,
+                      "previous_week_average": 817,
+                      "last_month_average": 467,
                       "last_updated": "2021-03-23T16:13:08.489+01:00"
                     }
                   }
@@ -2955,6 +2988,303 @@
         ]
       }
     },
+    "/api/v1/account/api-tokens": {
+      "get": {
+        "summary": "List the authenticated user's API tokens (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/api_tokens_controller.ts_ - **index**",
+        "operationId": "listApiTokens",
+        "parameters": [],
+        "tags": [
+          "API TOKENS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "example": [
+                  {
+                    "id": "1",
+                    "name": "SEO bot",
+                    "abilities": [
+                      "*"
+                    ],
+                    "lastUsedAt": "2026-06-21T12:00:00.000Z",
+                    "expiresAt": "2027-06-21T12:00:00.000Z",
+                    "createdAt": "2026-06-21T12:00:00.000Z"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "Unauthorized access"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "Unauthorized access"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create a new API token (store)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/api_tokens_controller.ts_ - **store**",
+        "operationId": "createApiToken",
+        "parameters": [],
+        "tags": [
+          "API TOKENS"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": "bearer",
+                    "name": "SEO bot",
+                    "token": "oat_...",
+                    "abilities": {
+                      "type": "object",
+                      "properties": {
+                        "0": "*"
+                      }
+                    },
+                    "lastUsedAt": "2026-06-21T12:00:00.000Z",
+                    "expiresAt": "2027-06-21T12:00:00.000Z"
+                  }
+                },
+                "example": {
+                  "type": "bearer",
+                  "name": "SEO bot",
+                  "token": "oat_...",
+                  "abilities": [
+                    "*"
+                  ],
+                  "lastUsedAt": "2026-06-21T12:00:00.000Z",
+                  "expiresAt": "2027-06-21T12:00:00.000Z"
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "Unauthorized access"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "Unauthorized access"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "The name field must be defined",
+                            "rule": "required",
+                            "field": "name"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "The name field must be defined",
+                      "rule": "required",
+                      "field": "name"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **422** (Unprocessable Entity) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiTokenValidator"
+              },
+              "example": {
+                "name": "Lorem Ipsum",
+                "expiresInDays": 167
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/account/api-tokens/{id}": {
+      "delete": {
+        "summary": "Revoke an API token (destroy)",
+        "description": "Permanently revokes one of the authenticated user's API tokens by id. Only named API tokens can be revoked through this endpoint.\n\n _app/controllers/api_tokens_controller.ts_ - **destroy**",
+        "operationId": "revokeApiToken",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The token identifier",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "API TOKENS"
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "text/plain": {
+                "example": "No content"
+              }
+            },
+            "description": "Returns **204** (No Content) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "Unauthorized access"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "Unauthorized access"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Token not found"
+                  }
+                },
+                "example": {
+                  "message": "Token not found"
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      }
+    },
     "/api/v1/login/{provider}": {
       "get": {
         "summary": "Start an OAuth login flow with a third-party provider (providerLogin)",
@@ -4090,6 +4420,18 @@
     {
       "name": "AUTH",
       "description": "Everything related to AUTH"
+    },
+    {
+      "name": "API TOKENS",
+      "description": "Everything related to API TOKENS"
+    },
+    {
+      "name": "API TOKENS",
+      "description": "Everything related to API TOKENS"
+    },
+    {
+      "name": "API TOKENS",
+      "description": "Everything related to API TOKENS"
     },
     {
       "name": "AUTH",

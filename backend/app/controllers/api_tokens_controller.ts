@@ -15,7 +15,7 @@ export default class ApiTokensController {
    * @tag API TOKENS
    * @summary List the authenticated user's API tokens
    * @description Returns the user's named API tokens (secrets are never included). Session tokens issued at login are excluded.
-   * @responseBody 200 - [{"id": "1", "name": "SEO bot", "abilities": ["*"], "lastUsedAt": null, "expiresAt": "2027-06-21T12:00:00.000Z", "createdAt": "2026-06-21T12:00:00.000Z"}]
+   * @responseBody 200 - [{"id": "1", "name": "SEO bot", "abilities": ["*"], "lastUsedAt": "2026-06-21T12:00:00.000Z", "expiresAt": "2027-06-21T12:00:00.000Z", "createdAt": "2026-06-21T12:00:00.000Z"}]
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    */
   async index({ auth }: HttpContext) {
@@ -40,7 +40,7 @@ export default class ApiTokensController {
    * @summary Create a new API token
    * @description Mints a named, long-lived access token for the authenticated user. The plaintext token is returned only once in this response and cannot be retrieved later. Defaults to a one-year expiry.
    * @requestBody <CreateApiTokenValidator>
-   * @responseBody 201 - {"type": "bearer", "name": "SEO bot", "token": "oat_...", "abilities": ["*"], "lastUsedAt": null, "expiresAt": "2027-06-21T12:00:00.000Z"}
+   * @responseBody 201 - {"type": "bearer", "name": "SEO bot", "token": "oat_...", "abilities": ["*"], "lastUsedAt": "2026-06-21T12:00:00.000Z", "expiresAt": "2027-06-21T12:00:00.000Z"}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    * @responseBody 422 - {"errors": [{"message": "The name field must be defined", "rule": "required", "field": "name"}]}
    */

@@ -1,399 +1,406 @@
-openapi: '3.0.0'
+openapi: "3.0.0"
 info:
-  title: 'Minecraft Stats API'
-  version: '1.0.0'
-  description: ''
+  title: "Minecraft Stats API"
+  version: "1.0.0"
+  description: ""
 components:
   responses:
     Forbidden:
-      description: 'Access token is missing or invalid'
+      description: "Access token is missing or invalid"
     Accepted:
-      description: 'The request was accepted'
+      description: "The request was accepted"
     Created:
-      description: 'The resource has been created'
+      description: "The resource has been created"
     NotFound:
-      description: 'The resource has been created'
+      description: "The resource has been created"
     NotAcceptable:
-      description: 'The resource has been created'
+      description: "The resource has been created"
   securitySchemes:
     BearerAuth:
-      type: 'http'
-      scheme: 'bearer'
+      type: "http"
+      scheme: "bearer"
     BasicAuth:
-      type: 'http'
-      scheme: 'basic'
+      type: "http"
+      scheme: "basic"
     ApiKeyAuth:
-      type: 'apiKey'
-      in: 'header'
-      name: 'X-API-Key'
+      type: "apiKey"
+      in: "header"
+      name: "X-API-Key"
   schemas:
     Any:
-      description: 'Any JSON object not defined as schema'
+      description: "Any JSON object not defined as schema"
     PaginationMeta:
-      type: 'object'
+      type: "object"
       properties:
         total:
-          type: 'number'
+          type: "number"
           example: 100
           nullable: false
         page:
-          type: 'number'
+          type: "number"
           example: 2
           nullable: false
         perPage:
-          type: 'number'
+          type: "number"
           example: 10
           nullable: false
         currentPage:
-          type: 'number'
+          type: "number"
           example: 3
           nullable: false
         lastPage:
-          type: 'number'
+          type: "number"
           example: 10
           nullable: false
         firstPage:
-          type: 'number'
+          type: "number"
           example: 1
           nullable: false
         lastPageUrl:
-          type: 'string'
-          example: '/?page=10'
+          type: "string"
+          example: "/?page=10"
           nullable: false
         firstPageUrl:
-          type: 'string'
-          example: '/?page=1'
+          type: "string"
+          example: "/?page=1"
           nullable: false
         nextPageUrl:
-          type: 'string'
-          example: '/?page=6'
+          type: "string"
+          example: "/?page=6"
           nullable: false
         previousPageUrl:
-          type: 'string'
-          example: '/?page=5'
+          type: "string"
+          example: "/?page=5"
           nullable: false
     Advertisement:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 290
+          type: "number"
+          example: 269
         name:
-          type: 'string'
-          example: 'John Doe'
+          type: "string"
+          example: "John Doe"
         type:
           $ref: "#/components/schemas/'custom'"
           example: null
         html_content:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         enabled:
-          type: 'boolean'
+          type: "boolean"
           example: true
         weight:
-          type: 'number'
-          example: 962
+          type: "number"
+          example: 860
         show_on_home:
-          type: 'boolean'
+          type: "boolean"
           example: true
         show_on_server:
-          type: 'boolean'
+          type: "boolean"
           example: true
         starts_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         ends_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         categories:
-          type: 'array'
+          type: "array"
           items:
-            $ref: '#/components/schemas/Category'
+            $ref: "#/components/schemas/Category"
             example: null
         events:
-          type: 'array'
+          type: "array"
           items:
-            $ref: '#/components/schemas/AdvertisementEvent'
+            $ref: "#/components/schemas/AdvertisementEvent"
             example: null
-      description: 'Advertisement (Model)'
+      description: "Advertisement (Model)"
     AdvertisementEvent:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 162
+          type: "number"
+          example: 611
         advertisement_id:
-          type: 'number'
-          example: 407
+          type: "number"
+          example: 266
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
         placement:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         server_id:
-          type: 'number'
-          example: 214
+          type: "number"
+          example: 930
         target_url:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         advertisement:
-          $ref: '#/components/schemas/Advertisement'
+          $ref: "#/components/schemas/Advertisement"
           example: null
-      description: 'AdvertisementEvent (Model)'
+      description: "AdvertisementEvent (Model)"
     Category:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 998
+          type: "number"
+          example: 528
         name:
-          type: 'string'
-          example: 'John Doe'
+          type: "string"
+          example: "John Doe"
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
-      description: 'Category (Model)'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Category (Model)"
     Language:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 585
+          type: "number"
+          example: 50
         code:
-          $ref: '#/components/schemas/LanguageCode'
+          $ref: "#/components/schemas/LanguageCode"
           example: null
         name:
-          type: 'string'
-          example: 'John Doe'
+          type: "string"
+          example: "John Doe"
         flag:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
-      description: 'Language (Model)'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Language (Model)"
     Post:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 220
+          type: "number"
+          example: 429
         title:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         slug:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         content:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         excerpt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         cover_image:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         published:
-          type: 'boolean'
+          type: "boolean"
           example: true
         published_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         user_id:
-          type: 'number'
-          example: 989
+          type: "number"
+          example: 943
         author:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
           example: null
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
-      description: 'Post (Model)'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Post (Model)"
     Server:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 759
+          type: "number"
+          example: 395
         name:
-          type: 'string'
-          example: 'John Doe'
+          type: "string"
+          example: "John Doe"
         address:
-          type: 'string'
-          example: '1028 Farland Street'
+          type: "string"
+          example: "1028 Farland Street"
         port:
-          type: 'number'
-          example: 891
+          type: "number"
+          example: 406
         type:
-          $ref: '#/components/schemas/ServerType'
+          $ref: "#/components/schemas/ServerType"
           example: null
         version:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         website:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         motd:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         image_url:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         favicon_hash:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         resolved_endpoint:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         motd_hash:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         user_id:
-          type: 'number'
-          example: 171
+          type: "number"
+          example: 484
         user:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
           example: null
         growth_stat:
-          $ref: '#/components/schemas/ServerGrowthStat'
+          $ref: "#/components/schemas/ServerGrowthStat"
           example: null
         categories:
-          type: 'array'
+          type: "array"
           items:
-            $ref: '#/components/schemas/Category'
+            $ref: "#/components/schemas/Category"
             example: null
         languages:
-          type: 'array'
+          type: "array"
           items:
-            $ref: '#/components/schemas/Language'
+            $ref: "#/components/schemas/Language"
             example: null
         last_online_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         last_player_count:
-          type: 'number'
-          example: 841
+          type: "number"
+          example: 888
         last_max_count:
-          type: 'number'
-          example: 469
+          type: "number"
+          example: 75
         last_stats_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        peak_player_count:
+          type: "number"
+          example: 260
+        peak_player_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         next_ping_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
-      description: 'Server (Model)'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Server (Model)"
     ServerGrowthStat:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         server_id:
-          type: 'number'
-          example: 450
+          type: "number"
+          example: 827
         weekly_growth:
-          type: 'number'
-          example: 714
+          type: "number"
+          example: 575
         monthly_growth:
-          type: 'number'
-          example: 334
+          type: "number"
+          example: 223
         last_week_average:
-          type: 'number'
-          example: 853
+          type: "number"
+          example: 438
         previous_week_average:
-          type: 'number'
-          example: 612
+          type: "number"
+          example: 817
         last_month_average:
-          type: 'number'
-          example: 293
+          type: "number"
+          example: 467
         last_updated:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
-      description: 'ServerGrowthStat (Model)'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerGrowthStat (Model)"
     ServerStat:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 419
+          type: "number"
+          example: 883
         server:
-          $ref: '#/components/schemas/Server'
+          $ref: "#/components/schemas/Server"
           example: null
         server_id:
-          type: 'number'
-          example: 174
+          type: "number"
+          example: 0
         player_count:
-          type: 'number'
-          example: 372
+          type: "number"
+          example: 844
         max_count:
-          type: 'number'
-          example: 43
+          type: "number"
+          example: 916
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
-      description: 'ServerStat (Model)'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerStat (Model)"
     User:
-      type: 'object'
+      type: "object"
       required: []
       properties:
         id:
-          type: 'number'
-          example: 744
+          type: "number"
+          example: 482
         username:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         verified:
-          type: 'boolean'
+          type: "boolean"
           example: true
         provider:
           $ref: "#/components/schemas/'discord'"
@@ -402,581 +409,598 @@ components:
           $ref: "#/components/schemas/'admin'"
           example: null
         avatar_url:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         verification_token_expires:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         created_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          example: '2021-03-23T16:13:08.489+01:00'
-          format: 'date-time'
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
         posts:
-          type: 'array'
+          type: "array"
           items:
-            $ref: '#/components/schemas/Post'
+            $ref: "#/components/schemas/Post"
             example: null
-      description: 'User (Model)'
+      description: "User (Model)"
     CreateAdvertisementValidator:
-      type: 'object'
+      type: "object"
       properties:
         name:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 2
           maxLength: 255
         type:
-          type: 'number'
-          example: 734
+          type: "number"
+          example: 615
           choices:
-            - 'custom'
-            - 'network'
+            - "custom"
+            - "network"
         htmlContent:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 1
           maxLength: 200000
         enabled:
-          type: 'boolean'
+          type: "boolean"
           example: true
         weight:
-          type: 'number'
+          type: "number"
           example: 1
           minimum: 1
           maximum: 1000
         showOnHome:
-          type: 'boolean'
+          type: "boolean"
           example: true
         showOnServer:
-          type: 'boolean'
+          type: "boolean"
           example: true
         startsAt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         endsAt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         categoryIds:
-          type: 'array'
+          type: "array"
           items:
-            type: 'number'
-            example: 464
+            type: "number"
+            example: 163
       example:
-        name: 'Lorem Ipsum'
-        type: 734
-        htmlContent: 'Lorem Ipsum'
+        name: "Lorem Ipsum"
+        type: 615
+        htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
         showOnHome: true
         showOnServer: true
-        startsAt: 'Lorem Ipsum'
-        endsAt: 'Lorem Ipsum'
+        startsAt: "Lorem Ipsum"
+        endsAt: "Lorem Ipsum"
         categoryIds:
-          - 464
-      description: 'CreateAdvertisementValidator (Validator)'
+          - 163
+      description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
-      type: 'object'
+      type: "object"
       properties:
         name:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 2
           maxLength: 255
         type:
-          type: 'number'
-          example: 514
+          type: "number"
+          example: 405
           choices:
-            - 'custom'
-            - 'network'
+            - "custom"
+            - "network"
         htmlContent:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 1
           maxLength: 200000
         enabled:
-          type: 'boolean'
+          type: "boolean"
           example: true
         weight:
-          type: 'number'
+          type: "number"
           example: 1
           minimum: 1
           maximum: 1000
         showOnHome:
-          type: 'boolean'
+          type: "boolean"
           example: true
         showOnServer:
-          type: 'boolean'
+          type: "boolean"
           example: true
         startsAt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         endsAt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         categoryIds:
-          type: 'array'
+          type: "array"
           items:
-            type: 'number'
-            example: 531
+            type: "number"
+            example: 914
       example:
-        name: 'Lorem Ipsum'
-        type: 514
-        htmlContent: 'Lorem Ipsum'
+        name: "Lorem Ipsum"
+        type: 405
+        htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
         showOnHome: true
         showOnServer: true
-        startsAt: 'Lorem Ipsum'
-        endsAt: 'Lorem Ipsum'
+        startsAt: "Lorem Ipsum"
+        endsAt: "Lorem Ipsum"
         categoryIds:
-          - 531
-      description: 'UpdateAdvertisementValidator (Validator)'
+          - 914
+      description: "UpdateAdvertisementValidator (Validator)"
+    CreateApiTokenValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 1
+          maxLength: 100
+        expiresInDays:
+          type: "number"
+          example: 167
+          maximum: 3650
+      example:
+        name: "Lorem Ipsum"
+        expiresInDays: 167
+      description: "CreateApiTokenValidator (Validator)"
     CategoryIdValidator:
-      type: 'object'
+      type: "object"
       properties:
         id:
-          type: 'number'
-          example: 812
+          type: "number"
+          example: 113
           required: true
       example:
-        id: 812
-      description: 'CategoryIdValidator (Validator)'
+        id: 113
+      description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
-      type: 'object'
+      type: "object"
       properties:
         name:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
       example:
-        name: 'Lorem Ipsum'
-      description: 'CreateCategoryValidator (Validator)'
+        name: "Lorem Ipsum"
+      description: "CreateCategoryValidator (Validator)"
     UpdateCategoryValidator:
-      type: 'object'
+      type: "object"
       properties:
         id:
-          type: 'number'
-          example: 875
+          type: "number"
+          example: 218
           required: true
         name:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
       example:
-        id: 875
-        name: 'Lorem Ipsum'
-      description: 'UpdateCategoryValidator (Validator)'
+        id: 218
+        name: "Lorem Ipsum"
+      description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
-      type: 'object'
+      type: "object"
       properties:
         fromDate:
-          type: 'number'
-          example: 33
+          type: "number"
+          example: 751
         toDate:
-          type: 'number'
-          example: 312
+          type: "number"
+          example: 445
         interval:
-          type: 'number'
-          example: 335
+          type: "number"
+          example: 412
           choices:
-            - '30 minutes'
-            - '1 hour'
-            - '1 day'
-            - '2 hours'
-            - '6 hours'
-            - '1 week'
+            - "30 minutes"
+            - "1 hour"
+            - "1 day"
+            - "2 hours"
+            - "6 hours"
+            - "1 week"
         categoryId:
-          type: 'number'
-          example: 765
+          type: "number"
+          example: 172
         languageId:
-          type: 'number'
-          example: 274
+          type: "number"
+          example: 443
       example:
-        fromDate: 33
-        toDate: 312
-        interval: 335
-        categoryId: 765
-        languageId: 274
-      description: 'GlobalStatValidator (Validator)'
+        fromDate: 751
+        toDate: 445
+        interval: 412
+        categoryId: 172
+        languageId: 443
+      description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
-      type: 'object'
+      type: "object"
       properties:
         title:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 3
           maxLength: 255
         slug:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 3
           maxLength: 255
         content:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 10
         excerpt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           maxLength: 500
         coverImage:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           maxLength: 500
       example:
-        title: 'Lorem Ipsum'
-        slug: 'Lorem Ipsum'
-        content: 'Lorem Ipsum'
-        excerpt: 'Lorem Ipsum'
-        coverImage: 'Lorem Ipsum'
-      description: 'CreatePostValidator (Validator)'
+        title: "Lorem Ipsum"
+        slug: "Lorem Ipsum"
+        content: "Lorem Ipsum"
+        excerpt: "Lorem Ipsum"
+        coverImage: "Lorem Ipsum"
+      description: "CreatePostValidator (Validator)"
     PreviewPlaceholderValidator:
-      type: 'object'
+      type: "object"
       properties:
         placeholderName:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
         serverId:
-          type: 'number'
-          example: 714
+          type: "number"
+          example: 914
           required: true
       example:
-        placeholderName: 'Lorem Ipsum'
-        serverId: 714
-      description: 'PreviewPlaceholderValidator (Validator)'
+        placeholderName: "Lorem Ipsum"
+        serverId: 914
+      description: "PreviewPlaceholderValidator (Validator)"
     UpdatePostValidator:
-      type: 'object'
+      type: "object"
       properties:
         title:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 3
           maxLength: 255
         slug:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 3
           maxLength: 255
         content:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 10
         excerpt:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           maxLength: 500
         coverImage:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           maxLength: 500
       example:
-        title: 'Lorem Ipsum'
-        slug: 'Lorem Ipsum'
-        content: 'Lorem Ipsum'
-        excerpt: 'Lorem Ipsum'
-        coverImage: 'Lorem Ipsum'
-      description: 'UpdatePostValidator (Validator)'
+        title: "Lorem Ipsum"
+        slug: "Lorem Ipsum"
+        content: "Lorem Ipsum"
+        excerpt: "Lorem Ipsum"
+        coverImage: "Lorem Ipsum"
+      description: "UpdatePostValidator (Validator)"
     CreateServerValidator:
-      type: 'object'
+      type: "object"
       properties:
         name:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
         address:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
         port:
-          type: 'number'
+          type: "number"
           example: 1
           maximum: 65535
           minimum: 1
           required: true
         type:
-          type: 'number'
-          example: 381
+          type: "number"
+          example: 983
           choices:
-            - 'java'
-            - 'bedrock'
+            - "java"
+            - "bedrock"
         imageUrl:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         categories:
-          type: 'array'
+          type: "array"
           items:
-            type: 'number'
-            example: 703
+            type: "number"
+            example: 695
           required: true
           properties:
             items:
-              type: 'string'
-              example: 'Lorem Ipsum'
+              type: "string"
+              example: "Lorem Ipsum"
         version:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         website:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         motd:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         languages:
-          type: 'array'
+          type: "array"
           items:
-            type: 'number'
-            example: 249
+            type: "number"
+            example: 638
           required: true
       example:
-        name: 'Lorem Ipsum'
-        address: 'Lorem Ipsum'
+        name: "Lorem Ipsum"
+        address: "Lorem Ipsum"
         port: 1
-        type: 381
-        imageUrl: 'Lorem Ipsum'
+        type: 983
+        imageUrl: "Lorem Ipsum"
         categories:
-          - 'Lorem Ipsum'
-        version: 'Lorem Ipsum'
-        website: 'Lorem Ipsum'
-        motd: 'Lorem Ipsum'
+          - "Lorem Ipsum"
+        version: "Lorem Ipsum"
+        website: "Lorem Ipsum"
+        motd: "Lorem Ipsum"
         languages:
-          - 249
-      description: 'CreateServerValidator (Validator)'
+          - 638
+      description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
-      type: 'object'
+      type: "object"
       properties:
         name:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         address:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         port:
-          type: 'number'
+          type: "number"
           example: 1
           maximum: 65535
           minimum: 1
         type:
-          type: 'number'
-          example: 456
+          type: "number"
+          example: 174
           choices:
-            - 'java'
-            - 'bedrock'
+            - "java"
+            - "bedrock"
         imageUrl:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         categories:
-          type: 'array'
+          type: "array"
           items:
-            type: 'number'
-            example: 214
+            type: "number"
+            example: 363
           properties:
             items:
-              type: 'string'
-              example: 'Lorem Ipsum'
+              type: "string"
+              example: "Lorem Ipsum"
         version:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         website:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         motd:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
         languages:
-          type: 'array'
+          type: "array"
           items:
-            type: 'number'
-            example: 504
+            type: "number"
+            example: 572
       example:
-        name: 'Lorem Ipsum'
-        address: 'Lorem Ipsum'
+        name: "Lorem Ipsum"
+        address: "Lorem Ipsum"
         port: 1
-        type: 456
-        imageUrl: 'Lorem Ipsum'
+        type: 174
+        imageUrl: "Lorem Ipsum"
         categories:
-          - 'Lorem Ipsum'
-        version: 'Lorem Ipsum'
-        website: 'Lorem Ipsum'
-        motd: 'Lorem Ipsum'
+          - "Lorem Ipsum"
+        version: "Lorem Ipsum"
+        website: "Lorem Ipsum"
+        motd: "Lorem Ipsum"
         languages:
-          - 504
-      description: 'UpdateServerValidator (Validator)'
+          - 572
+      description: "UpdateServerValidator (Validator)"
     attachServerCategoryValidator:
-      type: 'object'
+      type: "object"
       properties:
         serverId:
-          type: 'number'
-          example: 49
+          type: "number"
+          example: 851
           required: true
         categoryId:
-          type: 'number'
-          example: 106
+          type: "number"
+          example: 415
           required: true
       example:
-        serverId: 49
-        categoryId: 106
-      description: 'attachServerCategoryValidator (Validator)'
+        serverId: 851
+        categoryId: 415
+      description: "attachServerCategoryValidator (Validator)"
     StatValidator:
-      type: 'object'
+      type: "object"
       properties:
         server_id:
-          type: 'number'
-          example: 792
+          type: "number"
+          example: 119
           required: true
         exactTime:
-          type: 'number'
-          example: 207
+          type: "number"
+          example: 943
         fromDate:
-          type: 'number'
-          example: 889
+          type: "number"
+          example: 474
         toDate:
-          type: 'number'
-          example: 743
+          type: "number"
+          example: 462
         interval:
-          type: 'number'
-          example: 616
+          type: "number"
+          example: 162
           choices:
-            - '30 minutes'
-            - '1 hour'
-            - '1 day'
-            - '2 hours'
-            - '6 hours'
-            - '1 week'
+            - "30 minutes"
+            - "1 hour"
+            - "1 day"
+            - "2 hours"
+            - "6 hours"
+            - "1 week"
       example:
-        server_id: 792
-        exactTime: 207
-        fromDate: 889
-        toDate: 743
-        interval: 616
-      description: 'StatValidator (Validator)'
+        server_id: 119
+        exactTime: 943
+        fromDate: 474
+        toDate: 462
+        interval: 162
+      description: "StatValidator (Validator)"
     ChangePasswordValidator:
-      type: 'object'
+      type: "object"
       properties:
         oldPassword:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 8
           maxLength: 72
         newPassword:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 8
           maxLength: 72
       example:
-        oldPassword: 'Lorem Ipsum'
-        newPassword: 'Lorem Ipsum'
-      description: 'ChangePasswordValidator (Validator)'
+        oldPassword: "Lorem Ipsum"
+        newPassword: "Lorem Ipsum"
+      description: "ChangePasswordValidator (Validator)"
     CreateUserValidator:
-      type: 'object'
+      type: "object"
       properties:
         username:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 3
           maxLength: 254
         email:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           maxLength: 254
         password:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 8
           maxLength: 72
       example:
-        username: 'Lorem Ipsum'
-        email: 'Lorem Ipsum'
-        password: 'Lorem Ipsum'
-      description: 'CreateUserValidator (Validator)'
+        username: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "CreateUserValidator (Validator)"
     LoginUserValidator:
-      type: 'object'
+      type: "object"
       properties:
         email:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           maxLength: 254
         password:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
           minLength: 8
           maxLength: 72
       example:
-        email: 'Lorem Ipsum'
-        password: 'Lorem Ipsum'
-      description: 'LoginUserValidator (Validator)'
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "LoginUserValidator (Validator)"
     UpdateUserValidator:
-      type: 'object'
+      type: "object"
       properties:
         username:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 3
           maxLength: 254
         email:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           maxLength: 254
         password:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           minLength: 8
           maxLength: 72
       example:
-        username: 'Lorem Ipsum'
-        email: 'Lorem Ipsum'
-        password: 'Lorem Ipsum'
-      description: 'UpdateUserValidator (Validator)'
+        username: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "UpdateUserValidator (Validator)"
     VerifyEmailValidator:
-      type: 'object'
+      type: "object"
       properties:
         token:
-          type: 'string'
-          example: 'Lorem Ipsum'
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
       example:
-        token: 'Lorem Ipsum'
-      description: 'VerifyEmailValidator (Validator)'
+        token: "Lorem Ipsum"
+      description: "VerifyEmailValidator (Validator)"
 paths:
   /metrics:
     get:
-      summary: ' (handle)'
+      summary: " (handle)"
       description: "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\code\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**"
       parameters: []
       tags:
-        - ''
+        - ""
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/servers/paginate:
     get:
-      summary: ' (paginate)'
+      summary: " (paginate)"
       description: "\n\n _app/controllers/servers_controller.ts_ - **paginate**"
       parameters: []
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
@@ -984,187 +1008,189 @@ paths:
     get:
       summary: "List the authenticated user's servers (mine)"
       description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/servers_controller.ts_ - **mine**"
-      operationId: 'listMyServers'
+      operationId: "listMyServers"
       parameters: []
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'array'
+                type: "array"
                 items:
-                  type: 'object'
+                  type: "object"
               example:
                 - server:
-                    id: 759
-                    name: 'John Doe'
-                    address: '1028 Farland Street'
-                    port: 891
+                    id: 395
+                    name: "John Doe"
+                    address: "1028 Farland Street"
+                    port: 406
                     type: {}
-                    version: 'Lorem Ipsum'
-                    website: 'Lorem Ipsum'
-                    motd: 'Lorem Ipsum'
-                    image_url: 'Lorem Ipsum'
-                    favicon_hash: 'Lorem Ipsum'
-                    resolved_endpoint: 'Lorem Ipsum'
-                    motd_hash: 'Lorem Ipsum'
-                    user_id: 171
-                    last_online_at: '2021-03-23T16:13:08.489+01:00'
-                    last_player_count: 841
-                    last_max_count: 469
-                    last_stats_at: '2021-03-23T16:13:08.489+01:00'
-                    next_ping_at: '2021-03-23T16:13:08.489+01:00'
-                    created_at: '2021-03-23T16:13:08.489+01:00'
-                    updated_at: '2021-03-23T16:13:08.489+01:00'
+                    version: "Lorem Ipsum"
+                    website: "Lorem Ipsum"
+                    motd: "Lorem Ipsum"
+                    image_url: "Lorem Ipsum"
+                    favicon_hash: "Lorem Ipsum"
+                    resolved_endpoint: "Lorem Ipsum"
+                    motd_hash: "Lorem Ipsum"
+                    user_id: 484
+                    last_online_at: "2021-03-23T16:13:08.489+01:00"
+                    last_player_count: 888
+                    last_max_count: 75
+                    last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                    peak_player_count: 260
+                    peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                    next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
                   categories:
-                    - '<Category>'
+                    - "<Category>"
                   growthStat:
-                    server_id: 450
-                    weekly_growth: 714
-                    monthly_growth: 334
-                    last_week_average: 853
-                    previous_week_average: 612
-                    last_month_average: 293
-                    last_updated: '2021-03-23T16:13:08.489+01:00'
-          description: 'Returns **200** (OK) as **application/json**'
+                    server_id: 827
+                    weekly_growth: 575
+                    monthly_growth: 223
+                    last_week_average: 438
+                    previous_week_average: 817
+                    last_month_average: 467
+                    last_updated: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Unauthorized'
+                  message: "Unauthorized"
               example:
-                message: 'Unauthorized'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/servers:
     get:
-      summary: 'Get a list of servers (index)'
+      summary: "Get a list of servers (index)"
       description: "\n\n _app/controllers/servers_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
     post:
-      summary: 'Create servers (store)'
+      summary: "Create servers (store)"
       description: "\n\n _app/controllers/servers_controller.ts_ - **store**"
       parameters: []
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/servers/{id}:
     get:
-      summary: 'Get a single instance of servers (show)'
+      summary: "Get a single instance of servers (show)"
       description: "\n\n _app/controllers/servers_controller.ts_ - **show**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
     put:
-      summary: 'Update servers (update)'
+      summary: "Update servers (update)"
       description: "\n\n _app/controllers/servers_controller.ts_ - **update**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
     delete:
-      summary: 'Delete servers (destroy)'
+      summary: "Delete servers (destroy)"
       description: "\n\n _app/controllers/servers_controller.ts_ - **destroy**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/servers/{server_id}/categories:
     get:
-      summary: 'Get a list of servers (index)'
+      summary: "Get a list of servers (index)"
       description: "\n\n _app/controllers/server_categories_controller.ts_ - **index**"
       parameters:
-        - in: 'path'
-          name: 'server_id'
+        - in: "path"
+          name: "server_id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
     post:
-      summary: 'Create servers (store)'
+      summary: "Create servers (store)"
       description: "\n\n _app/controllers/server_categories_controller.ts_ - **store**"
       parameters:
-        - in: 'path'
-          name: 'server_id'
+        - in: "path"
+          name: "server_id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         201:
-          description: 'Created'
+          description: "Created"
           content:
             application/json: {}
       security: []
@@ -1173,1119 +1199,1302 @@ paths:
           application/json: {}
   /api/v1/servers/{server_id}/categories/{id}:
     delete:
-      summary: 'Delete servers (destroy)'
+      summary: "Delete servers (destroy)"
       description: "\n\n _app/controllers/server_categories_controller.ts_ - **destroy**"
       parameters:
-        - in: 'path'
-          name: 'server_id'
+        - in: "path"
+          name: "server_id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'SERVERS'
+        - "SERVERS"
       responses:
         202:
-          description: 'Accepted'
+          description: "Accepted"
           content:
             application/json: {}
       security: []
   /api/v1/languages:
     get:
-      summary: 'Get a list of languages (index)'
+      summary: "Get a list of languages (index)"
       description: "\n\n _app/controllers/languages_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'LANGUAGES'
+        - "LANGUAGES"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/categories:
     get:
-      summary: 'Get a list of categories (index)'
+      summary: "Get a list of categories (index)"
       description: "\n\n _app/controllers/categories_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'CATEGORIES'
+        - "CATEGORIES"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
     post:
-      summary: 'Create categories (store)'
+      summary: "Create categories (store)"
       description: "\n\n _app/controllers/categories_controller.ts_ - **store**"
       parameters: []
       tags:
-        - 'CATEGORIES'
+        - "CATEGORIES"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/categories/{id}:
     get:
-      summary: 'Get a single instance of categories (show)'
+      summary: "Get a single instance of categories (show)"
       description: "\n\n _app/controllers/categories_controller.ts_ - **show**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'CATEGORIES'
+        - "CATEGORIES"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
     put:
-      summary: 'Update categories (update)'
+      summary: "Update categories (update)"
       description: "\n\n _app/controllers/categories_controller.ts_ - **update**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'CATEGORIES'
+        - "CATEGORIES"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
     delete:
-      summary: 'Delete categories (destroy)'
+      summary: "Delete categories (destroy)"
       description: "\n\n _app/controllers/categories_controller.ts_ - **destroy**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'CATEGORIES'
+        - "CATEGORIES"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/servers/{server_id}/stats:
     get:
-      summary: 'Get stats for a single server (index)'
+      summary: "Get stats for a single server (index)"
       description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/stats_controller.ts_ - **index**"
-      operationId: 'getServerStats'
+      operationId: "getServerStats"
       parameters:
-        - in: 'path'
-          name: 'server_id'
-          description: 'Server id'
+        - in: "path"
+          name: "server_id"
+          description: "Server id"
           schema:
-            example: '125'
-            type: 'number'
+            example: "125"
+            type: "number"
           required: true
-        - in: 'query'
-          name: 'exactTime'
-          description: 'Point-in-time lookup as epoch milliseconds (or the literal string `now`). Returns the row at that timestamp, or an averaged interpolation between the nearest before/after rows.'
+        - in: "query"
+          name: "exactTime"
+          description: "Point-in-time lookup as epoch milliseconds (or the literal string `now`). Returns the row at that timestamp, or an averaged interpolation between the nearest before/after rows."
           schema:
-            example: '1717200000000'
-            type: 'number'
+            example: "1717200000000"
+            type: "number"
           required: false
-        - in: 'query'
-          name: 'fromDate'
-          description: 'Start of range as epoch milliseconds (or the literal string `now`). Required if neither interval nor exactTime is provided.'
+        - in: "query"
+          name: "fromDate"
+          description: "Start of range as epoch milliseconds (or the literal string `now`). Required if neither interval nor exactTime is provided."
           schema:
-            example: '1716854400000'
-            type: 'number'
+            example: "1716854400000"
+            type: "number"
           required: false
-        - in: 'query'
-          name: 'toDate'
-          description: 'End of range as epoch milliseconds (or the literal string `now`).'
+        - in: "query"
+          name: "toDate"
+          description: "End of range as epoch milliseconds (or the literal string `now`)."
           schema:
-            example: '1717459200000'
-            type: 'number'
+            example: "1717459200000"
+            type: "number"
           required: false
-        - in: 'query'
-          name: 'interval'
-          description: 'Bucket size for aggregation. When provided, stats are grouped per bucket. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`).'
+        - in: "query"
+          name: "interval"
+          description: "Bucket size for aggregation. When provided, stats are grouped per bucket. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`)."
           schema:
-            example: '1 hour'
-            type: 'string'
+            example: "1 hour"
+            type: "string"
           required: false
       tags:
-        - 'STATS'
+        - "STATS"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'array'
+                type: "array"
                 items:
-                  type: 'object'
+                  type: "object"
               example:
                 - serverId: 134
-                  createdAt: '2026-05-28T12:00:00.000Z'
+                  createdAt: "2026-05-28T12:00:00.000Z"
                   playerCount: 1250
                   maxCount: 2000
-          description: 'Returns **200** (OK) as **application/json**'
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'fromDate (or interval) is required when fetching raw stats — refusing to scan the full table'
+                  error: "fromDate (or interval) is required when fetching raw stats — refusing to scan the full table"
               example:
-                error: 'fromDate (or interval) is required when fetching raw stats — refusing to scan the full table'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                error: "fromDate (or interval) is required when fetching raw stats — refusing to scan the full table"
+          description: "Returns **400** (Bad Request) as **application/json**"
         500:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Internal server error'
+                  error: "Internal server error"
               example:
-                error: 'Internal server error'
-          description: 'Returns **500** (Internal Server Error) as **application/json**'
+                error: "Internal server error"
+          description: "Returns **500** (Internal Server Error) as **application/json**"
       security: []
   /api/v1/global-stats:
     get:
-      summary: 'Get aggregated global stats across all servers (globalStats)'
+      summary: "Get aggregated global stats across all servers (globalStats)"
       description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/stats_controller.ts_ - **globalStats**"
-      operationId: 'getGlobalStats'
+      operationId: "getGlobalStats"
       parameters:
-        - in: 'query'
-          name: 'fromDate'
-          description: 'Start of range as epoch milliseconds (or the literal string `now`).'
+        - in: "query"
+          name: "fromDate"
+          description: "Start of range as epoch milliseconds (or the literal string `now`)."
           schema:
-            example: '1716854400000'
-            type: 'number'
+            example: "1716854400000"
+            type: "number"
           required: false
-        - in: 'query'
-          name: 'toDate'
-          description: 'End of range as epoch milliseconds (or the literal string `now`).'
+        - in: "query"
+          name: "toDate"
+          description: "End of range as epoch milliseconds (or the literal string `now`)."
           schema:
-            example: '1717459200000'
-            type: 'number'
+            example: "1717459200000"
+            type: "number"
           required: false
-        - in: 'query'
-          name: 'interval'
-          description: 'Bucket size for aggregation. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`).'
+        - in: "query"
+          name: "interval"
+          description: "Bucket size for aggregation. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`)."
           schema:
-            example: '1 hour'
-            type: 'string'
+            example: "1 hour"
+            type: "string"
           required: false
-        - in: 'query'
-          name: 'categoryId'
-          description: 'Restrict aggregation to servers in this category.'
+        - in: "query"
+          name: "categoryId"
+          description: "Restrict aggregation to servers in this category."
           schema:
-            example: '3'
-            type: 'number'
+            example: "3"
+            type: "number"
           required: false
-        - in: 'query'
-          name: 'languageId'
-          description: 'Restrict aggregation to servers in this language.'
+        - in: "query"
+          name: "languageId"
+          description: "Restrict aggregation to servers in this language."
           schema:
-            example: '1'
-            type: 'number'
+            example: "1"
+            type: "number"
           required: false
       tags:
-        - 'STATS'
+        - "STATS"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'array'
+                type: "array"
                 items:
-                  type: 'object'
+                  type: "object"
               example:
-                - createdAt: '2026-05-28T12:00:00.000Z'
+                - createdAt: "2026-05-28T12:00:00.000Z"
                   playerCount: 48230
                   maxCount: 120000
-          description: 'Returns **200** (OK) as **application/json**'
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Invalid fromDate format'
+                  error: "Invalid fromDate format"
               example:
-                error: 'Invalid fromDate format'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                error: "Invalid fromDate format"
+          description: "Returns **400** (Bad Request) as **application/json**"
         500:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Internal server error'
+                  error: "Internal server error"
               example:
-                error: 'Internal server error'
-          description: 'Returns **500** (Internal Server Error) as **application/json**'
+                error: "Internal server error"
+          description: "Returns **500** (Internal Server Error) as **application/json**"
       security: []
   /api/v1/users:
     get:
-      summary: 'Get a list of users (index)'
+      summary: "Get a list of users (index)"
       description: "\n\n _app/controllers/users_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'USERS'
+        - "USERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
     post:
-      summary: 'Create users (store)'
+      summary: "Create users (store)"
       description: "\n\n _app/controllers/users_controller.ts_ - **store**"
       parameters: []
       tags:
-        - 'USERS'
+        - "USERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/users/{id}:
     get:
-      summary: 'Get a single instance of users (show)'
+      summary: "Get a single instance of users (show)"
       description: "\n\n _app/controllers/users_controller.ts_ - **show**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'USERS'
+        - "USERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
     put:
-      summary: 'Update users (update)'
+      summary: "Update users (update)"
       description: "\n\n _app/controllers/users_controller.ts_ - **update**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'USERS'
+        - "USERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
     delete:
-      summary: 'Delete users (destroy)'
+      summary: "Delete users (destroy)"
       description: "\n\n _app/controllers/users_controller.ts_ - **destroy**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'USERS'
+        - "USERS"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/website-stats:
     get:
-      summary: 'Get a list of website-stats (index)'
+      summary: "Get a list of website-stats (index)"
       description: "\n\n _app/controllers/website_stats_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'WEBSITE-STATS'
+        - "WEBSITE-STATS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/login:
     post:
-      summary: 'Login with email and password (login)'
+      summary: "Login with email and password (login)"
       description: "Authenticates a user using email and password credentials. Returns the user object and a newly created access token on success. Rejects unverified accounts and accounts that were registered via a third-party OAuth provider.\n\n _app/controllers/auth_controller.ts_ - **login**"
-      operationId: 'login'
+      operationId: "login"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   user:
-                    type: 'object'
+                    type: "object"
                     properties:
                       id: 1
-                      username: 'player'
+                      username: "player"
                       verified: true
-                      provider: ''
-                      role: 'user'
-                      avatarUrl: ''
-                      createdAt: '2026-05-28T12:00:00.000Z'
-                      updatedAt: '2026-05-28T12:00:00.000Z'
+                      provider: ""
+                      role: "user"
+                      avatarUrl: ""
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
                   accessToken:
-                    type: 'object'
+                    type: "object"
                     properties:
-                      type: 'bearer'
-                      token: 'oat_...'
-                      expiresAt: '2026-06-27T12:00:00.000Z'
+                      type: "bearer"
+                      token: "oat_..."
+                      expiresAt: "2026-06-27T12:00:00.000Z"
               example:
                 user:
                   id: 1
-                  username: 'player'
+                  username: "player"
                   verified: true
-                  provider: ''
-                  role: 'user'
-                  avatarUrl: ''
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
                 accessToken:
-                  type: 'bearer'
-                  token: 'oat_...'
-                  expiresAt: '2026-06-27T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                  type: "bearer"
+                  token: "oat_..."
+                  expiresAt: "2026-06-27T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'Invalid user credentials'
+                          message: "Invalid user credentials"
               example:
                 errors:
-                  - message: 'Invalid user credentials'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                  - message: "Invalid user credentials"
+          description: "Returns **400** (Bad Request) as **application/json**"
         422:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'The email field must be a valid email address'
-                          rule: 'email'
-                          field: 'email'
+                          message: "The email field must be a valid email address"
+                          rule: "email"
+                          field: "email"
               example:
                 errors:
-                  - message: 'The email field must be a valid email address'
-                    rule: 'email'
-                    field: 'email'
-          description: 'Returns **422** (Unprocessable Entity) as **application/json**'
+                  - message: "The email field must be a valid email address"
+                    rule: "email"
+                    field: "email"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginUserValidator'
+              $ref: "#/components/schemas/LoginUserValidator"
             example:
-              email: 'Lorem Ipsum'
-              password: 'Lorem Ipsum'
+              email: "Lorem Ipsum"
+              password: "Lorem Ipsum"
   /api/v1/register:
     post:
-      summary: 'Register a new user account (register)'
+      summary: "Register a new user account (register)"
       description: "Creates a new user (unverified), generates a JWT email verification token and queues a verification email via the mail service. Returns the created user. The account remains unverified until verifyEmail is called.\n\n _app/controllers/auth_controller.ts_ - **register**"
-      operationId: 'register'
+      operationId: "register"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   id: 1
-                  username: 'player'
+                  username: "player"
                   verified: false
-                  provider: ''
-                  role: 'user'
-                  avatarUrl: ''
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
               example:
                 id: 1
-                username: 'player'
+                username: "player"
                 verified: false
-                provider: ''
-                role: 'user'
-                avatarUrl: ''
-                createdAt: '2026-05-28T12:00:00.000Z'
-                updatedAt: '2026-05-28T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                provider: ""
+                role: "user"
+                avatarUrl: ""
+                createdAt: "2026-05-28T12:00:00.000Z"
+                updatedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Email already registered'
+                  message: "Email already registered"
               example:
-                message: 'Email already registered'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                message: "Email already registered"
+          description: "Returns **400** (Bad Request) as **application/json**"
         422:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'The email field must be a valid email address'
-                          rule: 'email'
-                          field: 'email'
+                          message: "The email field must be a valid email address"
+                          rule: "email"
+                          field: "email"
               example:
                 errors:
-                  - message: 'The email field must be a valid email address'
-                    rule: 'email'
-                    field: 'email'
-          description: 'Returns **422** (Unprocessable Entity) as **application/json**'
+                  - message: "The email field must be a valid email address"
+                    rule: "email"
+                    field: "email"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUserValidator'
+              $ref: "#/components/schemas/CreateUserValidator"
             example:
-              username: 'Lorem Ipsum'
-              email: 'Lorem Ipsum'
-              password: 'Lorem Ipsum'
+              username: "Lorem Ipsum"
+              email: "Lorem Ipsum"
+              password: "Lorem Ipsum"
   /api/v1/verify-email:
     post:
       summary: "Verify a user's email address (verifyEmail)"
       description: "Validates a JWT verification token previously sent by email, marks the matching user as verified, and clears the stored verification token and its expiry.\n\n _app/controllers/auth_controller.ts_ - **verifyEmail**"
-      operationId: 'verifyEmail'
+      operationId: "verifyEmail"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   id: 1
-                  username: 'player'
+                  username: "player"
                   verified: true
-                  provider: ''
-                  role: 'user'
-                  avatarUrl: ''
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
               example:
                 id: 1
-                username: 'player'
+                username: "player"
                 verified: true
-                provider: ''
-                role: 'user'
-                avatarUrl: ''
-                createdAt: '2026-05-28T12:00:00.000Z'
-                updatedAt: '2026-05-28T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                provider: ""
+                role: "user"
+                avatarUrl: ""
+                createdAt: "2026-05-28T12:00:00.000Z"
+                updatedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Verification token expired'
+                  message: "Verification token expired"
               example:
-                message: 'Verification token expired'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                message: "Verification token expired"
+          description: "Returns **400** (Bad Request) as **application/json**"
         404:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'User not found'
+                  message: "User not found"
               example:
-                message: 'User not found'
-          description: 'Returns **404** (Not Found) as **application/json**'
+                message: "User not found"
+          description: "Returns **404** (Not Found) as **application/json**"
         422:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'The token field must be defined'
-                          rule: 'required'
-                          field: 'token'
+                          message: "The token field must be defined"
+                          rule: "required"
+                          field: "token"
               example:
                 errors:
-                  - message: 'The token field must be defined'
-                    rule: 'required'
-                    field: 'token'
-          description: 'Returns **422** (Unprocessable Entity) as **application/json**'
+                  - message: "The token field must be defined"
+                    rule: "required"
+                    field: "token"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VerifyEmailValidator'
+              $ref: "#/components/schemas/VerifyEmailValidator"
             example:
-              token: 'Lorem Ipsum'
+              token: "Lorem Ipsum"
   /api/v1/me:
     get:
-      summary: 'Get the currently authenticated user (retrieveUser)'
+      summary: "Get the currently authenticated user (retrieveUser)"
       description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/auth_controller.ts_ - **retrieveUser**"
-      operationId: 'getCurrentUser'
+      operationId: "getCurrentUser"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   user:
-                    type: 'object'
+                    type: "object"
                     properties:
                       id: 1
-                      username: 'player'
-                      email: 'player@example.com'
+                      username: "player"
+                      email: "player@example.com"
                       verified: true
-                      provider: ''
-                      role: 'user'
-                      avatarUrl: ''
-                      createdAt: '2026-05-28T12:00:00.000Z'
-                      updatedAt: '2026-05-28T12:00:00.000Z'
+                      provider: ""
+                      role: "user"
+                      avatarUrl: ""
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
               example:
                 user:
                   id: 1
-                  username: 'player'
-                  email: 'player@example.com'
+                  username: "player"
+                  email: "player@example.com"
                   verified: true
-                  provider: ''
-                  role: 'user'
-                  avatarUrl: ''
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'Unauthorized access'
+                          message: "Unauthorized access"
               example:
                 errors:
-                  - message: 'Unauthorized access'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/change-password:
     post:
       summary: "Change the authenticated user's password (changePassword)"
       description: "Updates the password of the currently authenticated user after verifying the old password. Requires authentication and a verified email. Not usable for accounts created via a third-party provider that have no usable password.\n\n _app/controllers/auth_controller.ts_ - **changePassword**"
-      operationId: 'changePassword'
+      operationId: "changePassword"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   id: 1
-                  username: 'player'
+                  username: "player"
                   verified: true
-                  provider: ''
-                  role: 'user'
-                  avatarUrl: ''
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
               example:
                 id: 1
-                username: 'player'
+                username: "player"
                 verified: true
-                provider: ''
-                role: 'user'
-                avatarUrl: ''
-                createdAt: '2026-05-28T12:00:00.000Z'
-                updatedAt: '2026-05-28T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                provider: ""
+                role: "user"
+                avatarUrl: ""
+                createdAt: "2026-05-28T12:00:00.000Z"
+                updatedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Invalid old password'
+                  message: "Invalid old password"
               example:
-                message: 'Invalid old password'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                message: "Invalid old password"
+          description: "Returns **400** (Bad Request) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'Unauthorized access'
+                          message: "Unauthorized access"
               example:
                 errors:
-                  - message: 'Unauthorized access'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
         404:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'User not found'
+                  message: "User not found"
               example:
-                message: 'User not found'
-          description: 'Returns **404** (Not Found) as **application/json**'
+                message: "User not found"
+          description: "Returns **404** (Not Found) as **application/json**"
         422:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'The newPassword field must have at least 8 characters'
-                          rule: 'minLength'
-                          field: 'newPassword'
+                          message: "The newPassword field must have at least 8 characters"
+                          rule: "minLength"
+                          field: "newPassword"
               example:
                 errors:
-                  - message: 'The newPassword field must have at least 8 characters'
-                    rule: 'minLength'
-                    field: 'newPassword'
-          description: 'Returns **422** (Unprocessable Entity) as **application/json**'
+                  - message: "The newPassword field must have at least 8 characters"
+                    rule: "minLength"
+                    field: "newPassword"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChangePasswordValidator'
+              $ref: "#/components/schemas/ChangePasswordValidator"
             example:
-              oldPassword: 'Lorem Ipsum'
-              newPassword: 'Lorem Ipsum'
+              oldPassword: "Lorem Ipsum"
+              newPassword: "Lorem Ipsum"
   /api/v1/logout:
     post:
-      summary: 'Log out of the current session (logout)'
+      summary: "Log out of the current session (logout)"
       description: "Revokes the access token presented on this request, invalidating only the current session server-side. Requires authentication.\n\n _app/controllers/auth_controller.ts_ - **logout**"
-      operationId: 'logout'
+      operationId: "logout"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Logged out'
+                  message: "Logged out"
               example:
-                message: 'Logged out'
-          description: 'Returns **200** (OK) as **application/json**'
+                message: "Logged out"
+          description: "Returns **200** (OK) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'Unauthorized access'
+                          message: "Unauthorized access"
               example:
                 errors:
-                  - message: 'Unauthorized access'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/logout-all:
     post:
-      summary: 'Revoke all sessions (log out of every device) (logoutAll)'
+      summary: "Revoke all sessions (log out of every device) (logoutAll)"
       description: "Revokes every access token of the authenticated user, including the current one, signing them out on all devices. Useful after a suspected compromise. Requires authentication.\n\n _app/controllers/auth_controller.ts_ - **logoutAll**"
-      operationId: 'logoutAll'
+      operationId: "logoutAll"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'All sessions revoked'
+                  message: "All sessions revoked"
                   revoked: 3
               example:
-                message: 'All sessions revoked'
+                message: "All sessions revoked"
                 revoked: 3
-          description: 'Returns **200** (OK) as **application/json**'
+          description: "Returns **200** (OK) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'Unauthorized access'
+                          message: "Unauthorized access"
               example:
                 errors:
-                  - message: 'Unauthorized access'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
-  /api/v1/login/{provider}:
+            - "access"
+  /api/v1/account/api-tokens:
     get:
-      summary: 'Start an OAuth login flow with a third-party provider (providerLogin)'
-      description: "Issues an HTTP redirect to the chosen OAuth provider's authorization URL. The provider will redirect back to the corresponding callback endpoint (googleCallback or discordCallback) once the user has approved or denied access.\n\n _app/controllers/auth_controller.ts_ - **providerLogin**"
-      operationId: 'oauthProviderLogin'
+      summary: "List the authenticated user's API tokens (index)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/api_tokens_controller.ts_ - **index**"
+      operationId: "listApiTokens"
+      parameters: []
+      tags:
+        - "API TOKENS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - id: "1"
+                  name: "SEO bot"
+                  abilities:
+                    - "*"
+                  lastUsedAt: "2026-06-21T12:00:00.000Z"
+                  expiresAt: "2027-06-21T12:00:00.000Z"
+                  createdAt: "2026-06-21T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+    post:
+      summary: "Create a new API token (store)"
+      description: "Returns **201** (Created) as **application/json**\n\n _app/controllers/api_tokens_controller.ts_ - **store**"
+      operationId: "createApiToken"
+      parameters: []
+      tags:
+        - "API TOKENS"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  type: "bearer"
+                  name: "SEO bot"
+                  token: "oat_..."
+                  abilities:
+                    type: "object"
+                    properties:
+                      0: "*"
+                  lastUsedAt: "2026-06-21T12:00:00.000Z"
+                  expiresAt: "2027-06-21T12:00:00.000Z"
+              example:
+                type: "bearer"
+                name: "SEO bot"
+                token: "oat_..."
+                abilities:
+                  - "*"
+                lastUsedAt: "2026-06-21T12:00:00.000Z"
+                expiresAt: "2027-06-21T12:00:00.000Z"
+          description: "Returns **201** (Created) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The name field must be defined"
+                          rule: "required"
+                          field: "name"
+              example:
+                errors:
+                  - message: "The name field must be defined"
+                    rule: "required"
+                    field: "name"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApiTokenValidator"
+            example:
+              name: "Lorem Ipsum"
+              expiresInDays: 167
+  /api/v1/account/api-tokens/{id}:
+    delete:
+      summary: "Revoke an API token (destroy)"
+      description: "Permanently revokes one of the authenticated user's API tokens by id. Only named API tokens can be revoked through this endpoint.\n\n _app/controllers/api_tokens_controller.ts_ - **destroy**"
+      operationId: "revokeApiToken"
       parameters:
-        - in: 'path'
-          name: 'provider'
-          description: 'The OAuth provider to use'
+        - in: "path"
+          name: "id"
+          description: "The token identifier"
           schema:
-            example: 'google'
-            type: 'string'
-            enum:
-              - 'google'
-              - 'discord'
+            example: ""
+            type: "string"
           required: true
       tags:
-        - 'AUTH'
+        - "API TOKENS"
+      responses:
+        204:
+          content:
+            text/plain:
+              example: "No content"
+          description: "Returns **204** (No Content) as **text/plain**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Token not found"
+              example:
+                message: "Token not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/login/{provider}:
+    get:
+      summary: "Start an OAuth login flow with a third-party provider (providerLogin)"
+      description: "Issues an HTTP redirect to the chosen OAuth provider's authorization URL. The provider will redirect back to the corresponding callback endpoint (googleCallback or discordCallback) once the user has approved or denied access.\n\n _app/controllers/auth_controller.ts_ - **providerLogin**"
+      operationId: "oauthProviderLogin"
+      parameters:
+        - in: "path"
+          name: "provider"
+          description: "The OAuth provider to use"
+          schema:
+            example: "google"
+            type: "string"
+            enum:
+              - "google"
+              - "discord"
+          required: true
+      tags:
+        - "AUTH"
       responses:
         302:
           content:
             text/plain:
               example: "Redirect to the provider's authorization URL"
-          description: 'Returns **302** (Found) as **text/plain**'
+          description: "Returns **302** (Found) as **text/plain**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'Unknown OAuth provider'
+                          message: "Unknown OAuth provider"
               example:
                 errors:
-                  - message: 'Unknown OAuth provider'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                  - message: "Unknown OAuth provider"
+          description: "Returns **400** (Bad Request) as **application/json**"
       security: []
   /api/v1/callback/google:
     get:
-      summary: 'OAuth callback endpoint for Google (googleCallback)'
+      summary: "OAuth callback endpoint for Google (googleCallback)"
       description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/auth_controller.ts_ - **googleCallback**"
-      operationId: 'oauthGoogleCallback'
+      operationId: "oauthGoogleCallback"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   user:
-                    type: 'object'
+                    type: "object"
                     properties:
                       id: 1
-                      username: 'Google User'
+                      username: "Google User"
                       verified: true
-                      provider: 'google'
-                      role: 'user'
-                      avatarUrl: 'https://lh3.googleusercontent.com/...'
-                      createdAt: '2026-05-28T12:00:00.000Z'
-                      updatedAt: '2026-05-28T12:00:00.000Z'
+                      provider: "google"
+                      role: "user"
+                      avatarUrl: "https://lh3.googleusercontent.com/..."
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
                   accessToken:
-                    type: 'object'
+                    type: "object"
                     properties:
-                      type: 'bearer'
-                      token: 'oat_...'
-                      expiresAt: '2026-06-27T12:00:00.000Z'
+                      type: "bearer"
+                      token: "oat_..."
+                      expiresAt: "2026-06-27T12:00:00.000Z"
               example:
                 user:
                   id: 1
-                  username: 'Google User'
+                  username: "Google User"
                   verified: true
-                  provider: 'google'
-                  role: 'user'
-                  avatarUrl: 'https://lh3.googleusercontent.com/...'
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
+                  provider: "google"
+                  role: "user"
+                  avatarUrl: "https://lh3.googleusercontent.com/..."
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
                 accessToken:
-                  type: 'bearer'
-                  token: 'oat_...'
-                  expiresAt: '2026-06-27T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                  type: "bearer"
+                  token: "oat_..."
+                  expiresAt: "2026-06-27T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Cannot login with this third-party provider'
+                  message: "Cannot login with this third-party provider"
               example:
-                message: 'Cannot login with this third-party provider'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                message: "Cannot login with this third-party provider"
+          description: "Returns **400** (Bad Request) as **application/json**"
       security: []
   /api/v1/callback/discord:
     get:
-      summary: 'OAuth callback endpoint for Discord (discordCallback)'
+      summary: "OAuth callback endpoint for Discord (discordCallback)"
       description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/auth_controller.ts_ - **discordCallback**"
-      operationId: 'oauthDiscordCallback'
+      operationId: "oauthDiscordCallback"
       parameters: []
       tags:
-        - 'AUTH'
+        - "AUTH"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   user:
-                    type: 'object'
+                    type: "object"
                     properties:
                       id: 1
-                      username: 'discord_user'
+                      username: "discord_user"
                       verified: true
-                      provider: 'discord'
-                      role: 'user'
-                      avatarUrl: 'https://cdn.discordapp.com/avatars/...'
-                      createdAt: '2026-05-28T12:00:00.000Z'
-                      updatedAt: '2026-05-28T12:00:00.000Z'
+                      provider: "discord"
+                      role: "user"
+                      avatarUrl: "https://cdn.discordapp.com/avatars/..."
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
                   accessToken:
-                    type: 'object'
+                    type: "object"
                     properties:
-                      type: 'bearer'
-                      token: 'oat_...'
-                      expiresAt: '2026-06-27T12:00:00.000Z'
+                      type: "bearer"
+                      token: "oat_..."
+                      expiresAt: "2026-06-27T12:00:00.000Z"
               example:
                 user:
                   id: 1
-                  username: 'discord_user'
+                  username: "discord_user"
                   verified: true
-                  provider: 'discord'
-                  role: 'user'
-                  avatarUrl: 'https://cdn.discordapp.com/avatars/...'
-                  createdAt: '2026-05-28T12:00:00.000Z'
-                  updatedAt: '2026-05-28T12:00:00.000Z'
+                  provider: "discord"
+                  role: "user"
+                  avatarUrl: "https://cdn.discordapp.com/avatars/..."
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
                 accessToken:
-                  type: 'bearer'
-                  token: 'oat_...'
-                  expiresAt: '2026-06-27T12:00:00.000Z'
-          description: 'Returns **200** (OK) as **application/json**'
+                  type: "bearer"
+                  token: "oat_..."
+                  expiresAt: "2026-06-27T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  message: 'Cannot login with this third-party provider'
+                  message: "Cannot login with this third-party provider"
               example:
-                message: 'Cannot login with this third-party provider'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                message: "Cannot login with this third-party provider"
+          description: "Returns **400** (Bad Request) as **application/json**"
       security: []
   /api/v1/posts:
     get:
-      summary: 'Get a list of posts (index)'
+      summary: "Get a list of posts (index)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'POSTS'
+        - "POSTS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/posts/{slug}:
     get:
-      summary: 'Get a single instance of posts (show)'
+      summary: "Get a single instance of posts (show)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **show**"
       parameters:
-        - in: 'path'
-          name: 'slug'
+        - in: "path"
+          name: "slug"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'POSTS'
+        - "POSTS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/posts/placeholders/list:
     get:
-      summary: ' (getPlaceholders)'
+      summary: " (getPlaceholders)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **getPlaceholders**"
       parameters: []
       tags:
-        - 'POSTS'
+        - "POSTS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/advertisements:
     get:
-      summary: 'Get a list of advertisements (index)'
+      summary: "Get a list of advertisements (index)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **index**"
       parameters: []
       tags:
-        - 'ADVERTISEMENTS'
+        - "ADVERTISEMENTS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/advertisements/{id}/impression:
     post:
-      summary: ' (recordImpression)'
+      summary: " (recordImpression)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **recordImpression**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADVERTISEMENTS'
+        - "ADVERTISEMENTS"
       responses:
         201:
-          description: 'Created'
+          description: "Created"
           content:
             application/json: {}
       security: []
@@ -2294,494 +2503,500 @@ paths:
           application/json: {}
   /api/v1/advertisements/{id}/click:
     get:
-      summary: ' (click)'
+      summary: " (click)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **click**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADVERTISEMENTS'
+        - "ADVERTISEMENTS"
       responses:
         200:
-          description: 'OK'
+          description: "OK"
           content:
             application/json: {}
       security: []
   /api/v1/admin/posts:
     get:
-      summary: ' (adminIndex)'
+      summary: " (adminIndex)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **adminIndex**"
       parameters: []
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
     post:
-      summary: 'Create admin (store)'
+      summary: "Create admin (store)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **store**"
       parameters: []
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/admin/posts/{id}:
     put:
-      summary: 'Update admin (update)'
+      summary: "Update admin (update)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **update**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
     delete:
-      summary: 'Delete admin (destroy)'
+      summary: "Delete admin (destroy)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **destroy**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/admin/posts/{id}/publish:
     post:
-      summary: ' (publish)'
+      summary: " (publish)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **publish**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/admin/posts/{id}/unpublish:
     post:
-      summary: ' (unpublish)'
+      summary: " (unpublish)"
       description: "\n\n _app/controllers/posts_controller.ts_ - **unpublish**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/admin/posts/placeholders/preview:
     post:
-      summary: 'Preview a placeholder substitution (previewPlaceholder)'
+      summary: "Preview a placeholder substitution (previewPlaceholder)"
       description: "Resolves a single placeholder for a given server and returns both the raw placeholder string and the computed value, so the editor UI can show writers what the token will render to. Requires authentication and `manage` ability on the Post policy.\n\n _app/controllers/posts_controller.ts_ - **previewPlaceholder**"
-      operationId: 'previewPlaceholder'
+      operationId: "previewPlaceholder"
       parameters: []
       tags:
-        - 'POSTS_ADMIN'
+        - "POSTS_ADMIN"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  placeholder: '%PLAYER_COUNT_REALTIME_125%'
-                  value: '42'
+                  placeholder: "%PLAYER_COUNT_REALTIME_125%"
+                  value: "42"
                   serverId: 125
-                  placeholderName: 'PLAYER_COUNT_REALTIME'
+                  placeholderName: "PLAYER_COUNT_REALTIME"
               example:
-                placeholder: '%PLAYER_COUNT_REALTIME_125%'
-                value: '42'
+                placeholder: "%PLAYER_COUNT_REALTIME_125%"
+                value: "42"
                 serverId: 125
-                placeholderName: 'PLAYER_COUNT_REALTIME'
-          description: 'Returns **200** (OK) as **application/json**'
+                placeholderName: "PLAYER_COUNT_REALTIME"
+          description: "Returns **200** (OK) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Unauthorized'
+                  error: "Unauthorized"
               example:
-                error: 'Unauthorized'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                error: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Access denied. Writer privileges required.'
+                  error: "Access denied. Writer privileges required."
               example:
-                error: 'Access denied. Writer privileges required.'
-          description: 'Returns **403** (Forbidden) as **application/json**'
+                error: "Access denied. Writer privileges required."
+          description: "Returns **403** (Forbidden) as **application/json**"
         422:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
                   errors:
-                    type: 'object'
+                    type: "object"
                     properties:
                       0:
-                        type: 'object'
+                        type: "object"
                         properties:
-                          message: 'The serverId field must be defined'
-                          field: 'serverId'
-                          rule: 'required'
+                          message: "The serverId field must be defined"
+                          field: "serverId"
+                          rule: "required"
               example:
                 errors:
-                  - message: 'The serverId field must be defined'
-                    field: 'serverId'
-                    rule: 'required'
-          description: 'Returns **422** (Unprocessable Entity) as **application/json**'
+                  - message: "The serverId field must be defined"
+                    field: "serverId"
+                    rule: "required"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json:
             schema:
-              type: 'object'
+              type: "object"
               properties:
-                placeholderName: 'PLAYER_COUNT_REALTIME'
-                serverId: '125'
+                placeholderName: "PLAYER_COUNT_REALTIME"
+                serverId: "125"
             example:
-              placeholderName: 'PLAYER_COUNT_REALTIME'
-              serverId: '125'
+              placeholderName: "PLAYER_COUNT_REALTIME"
+              serverId: "125"
   /api/v1/admin/users:
     get:
-      summary: ' (adminIndex)'
+      summary: " (adminIndex)"
       description: "\n\n _app/controllers/users_controller.ts_ - **adminIndex**"
       parameters: []
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/admin/users/{id}/role:
     patch:
-      summary: ' (updateRole)'
+      summary: " (updateRole)"
       description: "\n\n _app/controllers/users_controller.ts_ - **updateRole**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/admin/advertisements:
     get:
-      summary: ' (adminIndex)'
+      summary: " (adminIndex)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **adminIndex**"
       parameters: []
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
     post:
-      summary: 'Create admin (store)'
+      summary: "Create admin (store)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **store**"
       parameters: []
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
   /api/v1/admin/advertisements/{id}/stats:
     get:
-      summary: ' (stats)'
+      summary: " (stats)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **stats**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/admin/advertisements/{id}:
     get:
-      summary: 'Get a single instance of admin (show)'
+      summary: "Get a single instance of admin (show)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **show**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
     put:
-      summary: 'Update admin (update)'
+      summary: "Update admin (update)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **update**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           application/json: {}
     delete:
-      summary: 'Delete admin (destroy)'
+      summary: "Delete admin (destroy)"
       description: "\n\n _app/controllers/advertisements_controller.ts_ - **destroy**"
       parameters:
-        - in: 'path'
-          name: 'id'
+        - in: "path"
+          name: "id"
           schema:
-            type: 'string'
+            type: "string"
           required: true
       tags:
-        - 'ADMIN'
+        - "ADMIN"
       responses:
         401:
-          description: 'Returns **401** (Unauthorized)'
+          description: "Returns **401** (Unauthorized)"
         403:
-          description: 'Returns **403** (Forbidden)'
+          description: "Returns **403** (Forbidden)"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
   /api/v1/uploads/image:
     post:
-      summary: 'Upload a blog image (uploadImage)'
+      summary: "Upload a blog image (uploadImage)"
       description: "Accepts a multipart upload under the form field `image`. The file is validated (max 5 MB, extensions `jpg`, `jpeg`, `png`, `webp`, `gif`), converted to WebP at quality 85, resized to fit within 1920x1080 without enlargement, and stored in `public/images/blog/`. Returns the relative URL of the stored image. Requires authentication and `manage` ability on the Post policy.\n\n _app/controllers/uploads_controller.ts_ - **uploadImage**"
-      operationId: 'uploadImage'
+      operationId: "uploadImage"
       parameters: []
       tags:
-        - 'UPLOADS'
+        - "UPLOADS"
       responses:
         200:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  url: '/images/blog/3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp'
+                  url: "/images/blog/3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp"
               example:
-                url: '/images/blog/3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp'
-          description: 'Returns **200** (OK) as **application/json**'
+                url: "/images/blog/3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp"
+          description: "Returns **200** (OK) as **application/json**"
         400:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'No image provided'
+                  error: "No image provided"
               example:
-                error: 'No image provided'
-          description: 'Returns **400** (Bad Request) as **application/json**'
+                error: "No image provided"
+          description: "Returns **400** (Bad Request) as **application/json**"
         401:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Unauthorized'
+                  error: "Unauthorized"
               example:
-                error: 'Unauthorized'
-          description: 'Returns **401** (Unauthorized) as **application/json**'
+                error: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
         403:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Access denied. Writer privileges required.'
+                  error: "Access denied. Writer privileges required."
               example:
-                error: 'Access denied. Writer privileges required.'
-          description: 'Returns **403** (Forbidden) as **application/json**'
+                error: "Access denied. Writer privileges required."
+          description: "Returns **403** (Forbidden) as **application/json**"
         500:
           content:
             application/json:
               schema:
-                type: 'object'
+                type: "object"
                 properties:
-                  error: 'Failed to process image'
+                  error: "Failed to process image"
                   details:
-                    $ref: '#/components/schemas/sharp error message'
+                    $ref: "#/components/schemas/sharp error message"
               example:
-                error: 'Failed to process image'
+                error: "Failed to process image"
                 details: {}
-          description: 'Returns **500** (Internal Server Error) as **application/json**'
+          description: "Returns **500** (Internal Server Error) as **application/json**"
       security:
         - BearerAuth:
-            - 'access'
+            - "access"
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: 'object'
+              type: "object"
               properties:
                 image:
-                  type: 'string'
-                  format: 'binary'
+                  type: "string"
+                  format: "binary"
               required: []
 tags:
-  - name: 'SERVERS'
-    description: 'Everything related to SERVERS'
-  - name: 'SERVERS'
-    description: 'Everything related to SERVERS'
-  - name: 'LANGUAGES'
-    description: 'Everything related to LANGUAGES'
-  - name: 'CATEGORIES'
-    description: 'Everything related to CATEGORIES'
-  - name: 'STATS'
-    description: 'Everything related to STATS'
-  - name: 'STATS'
-    description: 'Everything related to STATS'
-  - name: 'USERS'
-    description: 'Everything related to USERS'
-  - name: 'WEBSITE-STATS'
-    description: 'Everything related to WEBSITE-STATS'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'AUTH'
-    description: 'Everything related to AUTH'
-  - name: 'POSTS'
-    description: 'Everything related to POSTS'
-  - name: 'ADVERTISEMENTS'
-    description: 'Everything related to ADVERTISEMENTS'
-  - name: 'ADMIN'
-    description: 'Everything related to ADMIN'
-  - name: 'POSTS_ADMIN'
-    description: 'Everything related to POSTS_ADMIN'
-  - name: 'UPLOADS'
-    description: 'Everything related to UPLOADS'
-  - name: 'UPLOADS'
-    description: 'Everything related to UPLOADS'
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
+  - name: "LANGUAGES"
+    description: "Everything related to LANGUAGES"
+  - name: "CATEGORIES"
+    description: "Everything related to CATEGORIES"
+  - name: "STATS"
+    description: "Everything related to STATS"
+  - name: "STATS"
+    description: "Everything related to STATS"
+  - name: "USERS"
+    description: "Everything related to USERS"
+  - name: "WEBSITE-STATS"
+    description: "Everything related to WEBSITE-STATS"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "API TOKENS"
+    description: "Everything related to API TOKENS"
+  - name: "API TOKENS"
+    description: "Everything related to API TOKENS"
+  - name: "API TOKENS"
+    description: "Everything related to API TOKENS"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "POSTS"
+    description: "Everything related to POSTS"
+  - name: "ADVERTISEMENTS"
+    description: "Everything related to ADVERTISEMENTS"
+  - name: "ADMIN"
+    description: "Everything related to ADMIN"
+  - name: "POSTS_ADMIN"
+    description: "Everything related to POSTS_ADMIN"
+  - name: "UPLOADS"
+    description: "Everything related to UPLOADS"
+  - name: "UPLOADS"
+    description: "Everything related to UPLOADS"
