@@ -6,3 +6,6 @@ analytics/data
 .claude/
 _bmad/
 _bmad-output/
+
+ds-bundle
+.ds-sync

@@ -29,6 +29,11 @@ export default class Server extends BaseModel {
   @column()
   declare version: string | null
 
+  // Server website, derived from the address (play.test.com -> test.com) on
+  // create/update, or provided by the owner. NULL when it can't be determined.
+  @column()
+  declare website: string | null
+
   @column()
   declare motd: string | null
 

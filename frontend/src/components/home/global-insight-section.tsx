@@ -47,15 +47,29 @@ const GlobalInsightSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Avoids a hydration mismatch: `isLoading` is true during SSR, but Radix Select
+  // serializes `disabled` differently on the server. We only apply the disabled
+  // state after mount so the first client render matches the server output.
+  const [mounted, setMounted] = useState(false);
   const apiUrl = getClientApiUrl();
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
   const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("30 Minutes");
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   const selectedServers = useMemo(
     () => manualSelection ?? favorites,
     [manualSelection, favorites]
   );
+
+  // The controls stay enabled until mount to keep SSR and the first client render
+  // identical; once mounted, they reflect the real loading/selection state.
+  const filtersDisabled = mounted && (isLoading || selectedServers.length > 0);
+  const controlsDisabled = mounted && isLoading;
 
   const handleSelectionChange = useCallback(
     (next: number[]) => {
@@ -186,38 +200,29 @@ const GlobalInsightSection = () => {
 
   return (
     <section className="w-full rounded-xl border border-border bg-card text-card-foreground shadow-xs">
-      <div className="flex flex-col gap-2 border-b border-border px-6 py-5">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <Icon icon="material-symbols:analytics-outline" className="h-4 w-4" />
-          </div>
-          <h2 className="text-lg font-semibold text-foreground">Global Insight</h2>
+      <div className="flex flex-col gap-1.5 border-b border-border px-5 py-4 sm:px-6 sm:py-5">
+        <div className="flex items-center gap-2.5">
+          <Icon icon="material-symbols:analytics-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">Global Insight</h2>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground sm:pl-9">
           Compare aggregated player counts across servers, categories, and languages.
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 p-6">
-        <div className="flex flex-row flex-wrap gap-2">
-          <CategorySelect
-            value={selectedCategory}
-            onChange={setSelectedCategory}
-            disabled={isLoading || selectedServers.length > 0}
-          />
-          <LanguageSelect
-            value={selectedLanguage}
-            onChange={setSelectedLanguage}
-            disabled={isLoading || selectedServers.length > 0}
-          />
-          <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={isLoading} />
+      <div className="flex flex-col gap-4 p-4 sm:p-6">
+        {/* Filters wrap freely; each select grows on mobile so the row stays tidy. */}
+        <div className="flex flex-wrap gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
+          <CategorySelect value={selectedCategory} onChange={setSelectedCategory} disabled={filtersDisabled} />
+          <LanguageSelect value={selectedLanguage} onChange={setSelectedLanguage} disabled={filtersDisabled} />
+          <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={controlsDisabled} />
           <AggregationSelect
             value={dataAggregationInterval}
             onChange={setDataAggregationInterval}
-            disabled={isLoading}
+            disabled={controlsDisabled}
           />
         </div>
-        <ServerSelect selectedServers={selectedServers} onChange={handleSelectionChange} disabled={isLoading} />
+        <ServerSelect selectedServers={selectedServers} onChange={handleSelectionChange} disabled={controlsDisabled} />
         {hasFavorites && (
           <div className="flex flex-row flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {followingFavorites ? (

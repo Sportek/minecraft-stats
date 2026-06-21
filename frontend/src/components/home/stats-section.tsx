@@ -38,8 +38,8 @@ const StatsSection = () => {
 
   if (isServersLoading || isWebsiteStatsLoading) {
     return (
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-        {[0, 1].map((i) => (
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+        {[0, 1, 2].map((i) => (
           <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-xs">
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-md" />
@@ -64,17 +64,24 @@ const StatsSection = () => {
     return null;
   }
 
+  const playersOnline = servers.reduce((total, { lastPlayerCount }) => total + (lastPlayerCount ?? 0), 0);
+
   return (
-    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-      <StatCard
-        title="Total Data Rows"
-        value={new Intl.NumberFormat("en-US").format(websiteStats.totalRecords)}
-        icon={<Icon icon="material-symbols:database-sharp" className="h-5 w-5" />}
-      />
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
       <StatCard
         title="Monitored Servers"
         value={new Intl.NumberFormat("en-US").format(servers.length)}
         icon={<Icon icon="mynaui:servers-solid" className="h-5 w-5" />}
+      />
+      <StatCard
+        title="Players Online Now"
+        value={new Intl.NumberFormat("en-US").format(playersOnline)}
+        icon={<Icon icon="mdi:account-multiple" className="h-5 w-5" />}
+      />
+      <StatCard
+        title="Total Data Rows"
+        value={new Intl.NumberFormat("en-US").format(websiteStats.totalRecords)}
+        icon={<Icon icon="material-symbols:database-sharp" className="h-5 w-5" />}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
@@ -62,13 +62,15 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
     <div className={cn("flex flex-col", className)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
+          <p className="text-sm text-muted-foreground">
+            Use at least 8 characters. You&apos;ll stay signed in on this device.
+          </p>
           <FormField
             control={form.control}
             name="oldPassword"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Old Password</FormLabel>
-                <FormDescription>Your current password</FormDescription>
                 <FormControl>
                   <Input type="password" placeholder="" {...field} />
                 </FormControl>
@@ -76,36 +78,36 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>New Password</FormLabel>
-                <FormDescription>Your new password</FormDescription>
-                <FormControl>
-                  <Input type="password" placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormDescription>Confirm your new password</FormDescription>
-                <FormControl>
-                  <Input type="password" placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button className="w-full" type="submit">
-            Submit
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button variant="accent" className="w-full" type="submit">
+            Update password
           </Button>
         </form>
       </Form>

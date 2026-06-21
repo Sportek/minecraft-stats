@@ -104,11 +104,16 @@ export default class AuthController {
    * @tag AUTH
    * @summary Get the currently authenticated user
    * @description Returns the user record associated with the bearer access token provided in the Authorization header. Requires authentication.
-   * @responseBody 200 - {"user": {"id": 1, "username": "player", "verified": true, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 200 - {"user": {"id": 1, "username": "player", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    */
   async retrieveUser({ response, auth }: HttpContext) {
-    return response.ok({ user: auth.user })
+    const user = auth.getUserOrFail()
+    // `email` is `serializeAs: null` on the User model, so it is never included
+    // in any public response (server.user, post authors, admin user lists…).
+    // We re-attach it here only: /me is behind auth middleware and returns the
+    // requester's OWN record, so an email can only ever reach its owner.
+    return response.ok({ user: { ...user.serialize(), email: user.email } })
   }
 
   /**

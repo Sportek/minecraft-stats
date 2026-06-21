@@ -6,14 +6,14 @@ export const generateMetadata = async (): Promise<Metadata> => {
   const { baseUrl } = await getDomainConfig();
 
   return {
-    title: "Terms of Service & Privacy Policy",
+    title: "Terms of Service",
     description:
-      "Read our Terms of Service and Privacy Policy to understand how we collect and use data, your rights under GDPR, and the conditions for using Minecraft Stats platform.",
-    keywords: "terms of service, privacy policy, CGU, GDPR, data protection, minecraft stats legal",
+      "Read our Terms of Service to understand the conditions for using the Minecraft Stats platform, user responsibilities, and your rights under the GDPR.",
+    keywords: "terms of service, terms of use, GDPR, data protection, minecraft stats legal",
     openGraph: {
-      title: "Terms of Service & Privacy Policy - Minecraft Stats",
+      title: "Terms of Service - Minecraft Stats",
       description:
-        "Detailed Terms of Service and Privacy Policy for Minecraft Stats platform. Learn about user responsibilities, data collection, and privacy protection.",
+        "Detailed Terms of Service for the Minecraft Stats platform. Learn about user responsibilities and the conditions for using the service.",
       type: "website",
       url: `${baseUrl}/cgu`,
     },
@@ -29,190 +29,169 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 const CGU = () => {
   return (
-    <div className="py-4">
-      <h1 className="text-2xl font-bold mb-4">Conditions Générales d&apos;Utilisation (CGU)</h1>
-      <p className="mb-2">Dernière mise à jour : 2 Juin 2024 16h00</p>
+    <div className="mx-auto max-w-3xl space-y-8 py-8">
+      <div>
+        <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-accent">Legal</div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Terms of Service</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Last updated: June 2, 2024</p>
+      </div>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">1. Informations légales</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">1. Legal Information</h2>
         <p>
-          Le présent site internet est édité par Gabriel Landry. Pour toute question ou réclamation, vous pouvez nous
-          contacter par email à :{" "}
-          <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
-            gablandry31@gmail.com
+          This website is published by Gabriel Landry. For any question or complaint, you can contact us by email at:{" "}
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           .
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">2. Objet</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">2. Purpose</h2>
         <p>
-          Les présentes Conditions Générales d&apos;Utilisation (CGU) ont pour objet de définir les conditions
-          d&apos;accès et d&apos;utilisation des services de statistiques proposés gratuitement sur le site{" "}
-          <Link href="/" className="text-blue-500">
+          These Terms of Service define the conditions of access to and use of the statistics services offered free of
+          charge on the{" "}
+          <Link href="/" className="font-medium text-accent hover:underline">
             Minecraft-Stats
-          </Link>
-          . Toute inscription ou utilisation du site implique l&apos;acceptation sans réserve des présentes CGU.
+          </Link>{" "}
+          website. Any registration or use of the website implies full and unreserved acceptance of these Terms.
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">3. Inscription et Compte Utilisateur</h2>
-        <p>Pour utiliser notre service de collecte et de partage de statistiques, les utilisateurs doivent :</p>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">3. Registration and User Account</h2>
+        <p>To use our statistics collection and sharing service, users must:</p>
         <ul className="list-disc list-inside pl-4">
-          <li>Créer un compte en fournissant un pseudonyme, une adresse email et un mot de passe.</li>
+          <li>Create an account by providing a username, an email address, and a password.</li>
           <li>
-            Il est également possible de s&apos;authentifier via Google ou Discord, ce qui peut entraîner la collecte de
-            données supplémentaires telles que la photo de profil.
+            Alternatively, you may authenticate via Google or Discord, which may involve the collection of additional
+            data such as your profile picture.
           </li>
         </ul>
-        <p>Aucune condition d&apos;âge minimale n&apos;est requise pour l&apos;inscription.</p>
+        <p>No minimum age requirement applies to registration.</p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">4. Collecte et Traitement des Données Personnelles</h2>
-        <h3 className="text-lg font-medium mb-1">Types de Données Collectées</h3>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">
+          4. Collection and Processing of Personal Data
+        </h2>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Types of Data Collected</h3>
         <p>
-          Nous recueillons et traitons uniquement les données fournies lors de l&apos;inscription : pseudonyme, adresse
-          email, et mot de passe. Si vous vous inscrivez via Google ou Discord, des informations supplémentaires telles
-          que la photo de profil peuvent être collectées.
+          We collect and process only the data provided during registration: username, email address, and password. If
+          you register via Google or Discord, additional information such as your profile picture may be collected.
         </p>
-        <h3 className="text-lg font-medium mb-1">Utilisation des Données</h3>
-        <p>Les données sont utilisées pour :</p>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Use of Data</h3>
+        <p>The data is used to:</p>
         <ul className="list-disc list-inside pl-4">
-          <li>Gérer les comptes utilisateurs.</li>
-          <li>Permettre l&apos;accès aux services et fonctionnalités du site.</li>
-          <li>Assurer la sécurité et le bon fonctionnement du site.</li>
+          <li>Manage user accounts.</li>
+          <li>Provide access to the website&apos;s services and features.</li>
+          <li>Ensure the security and proper functioning of the website.</li>
         </ul>
-        <h3 className="text-lg font-medium mb-1">Cookies et Local Storage</h3>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Cookies and Local Storage</h3>
         <p>
-          Nous utilisons le local storage pour gérer l&apos;authentification. Pour plus d&apos;informations, veuillez
-          consulter notre politique de confidentialité{" "}
-          <Link href="/cgu" className="text-blue-500">
-            ici
+          We use local storage to manage authentication. For more information, please refer to our{" "}
+          <Link href="/privacy" className="font-medium text-accent hover:underline">
+            Privacy Policy
           </Link>
           .
         </p>
-        <h3 className="text-lg font-medium mb-1">Stockage et Sécurité des Données</h3>
-        <p>Les données collectées sont stockées sur un VPS de Pulseheberg situé en France.</p>
-        <h3 className="text-lg font-medium mb-1">Droits des Utilisateurs</h3>
-        <p>Conformément au RGPD, vous disposez des droits suivants sur vos données personnelles :</p>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Data Storage and Security</h3>
+        <p>The collected data is stored on a Pulseheberg VPS located in France.</p>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">User Rights</h3>
+        <p>In accordance with the GDPR, you have the following rights over your personal data:</p>
         <ul className="list-disc list-inside pl-4">
-          <li>Droit d&apos;accès</li>
-          <li>Droit de rectification</li>
-          <li>Droit à l&apos;effacement</li>
-          <li>Droit de limitation du traitement</li>
-          <li>Droit d&apos;opposition</li>
-          <li>Droit à la portabilité des données</li>
+          <li>Right of access</li>
+          <li>Right to rectification</li>
+          <li>Right to erasure</li>
+          <li>Right to restriction of processing</li>
+          <li>Right to object</li>
+          <li>Right to data portability</li>
         </ul>
         <p>
-          Pour exercer ces droits, veuillez nous contacter à :{" "}
-          <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
-            gablandry31@gmail.com
+          To exercise these rights, please contact us at:{" "}
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           .
         </p>
-        <h3 className="text-lg font-medium mb-1">Absence de DPO</h3>
-        <p>Aucun Data Protection Officer (DPO) n&apos;a été nommé.</p>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">No DPO</h3>
+        <p>No Data Protection Officer (DPO) has been appointed.</p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">5. Propriété Intellectuelle</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">5. Intellectual Property</h2>
         <p>
-          Les images des serveurs sont la propriété des serveurs Minecraft respectifs. Le reste du contenu est la
-          propriété de Gabriel Landry. Les termes &quot;Minecraft&quot; et autres marques associées appartiennent à
-          Mojang (Microsoft).
+          Server images are the property of their respective Minecraft servers. All other content is the property of
+          Gabriel Landry. The terms &quot;Minecraft&quot; and other associated trademarks belong to Mojang (Microsoft).
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">6. Obligations et Responsabilités des Utilisateurs</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">
+          6. User Obligations and Responsibilities
+        </h2>
         <p>
-          Les utilisateurs s&apos;engagent à ne pas créer inutilement une multitude de serveurs. Tout abus pourra
-          entraîner un bannissement de la plateforme.
+          Users agree not to needlessly create a large number of servers. Any abuse may result in a ban from the
+          platform.
         </p>
         <p>
-          Les utilisateurs ont la possibilité d&apos;ajouter des serveurs Minecraft pour que des statistiques soient
-          collectées. En ajoutant un serveur, l&apos;utilisateur garantit qu&apos;il a le droit de le faire. Nous ne
-          sommes pas responsables si l&apos;utilisateur ajoute un serveur sans avoir ce droit. Pour retirer un serveur,
-          veuillez nous contacter à :{" "}
-          <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
-            gablandry31@gmail.com
+          Users may add Minecraft servers so that statistics can be collected. By adding a server, the user warrants
+          that they have the right to do so. We are not responsible if a user adds a server without holding that right.
+          To remove a server, please contact us at:{" "}
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>{" "}
-          avec l&apos;objet &quot;Demande de retrait de serveur&quot;.
+          with the subject &quot;Server removal request&quot;.
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">7. Limitation de Responsabilité</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">7. Limitation of Liability</h2>
         <p>
-          Le site et ses services sont fournis &quot;tels quels&quot; sans aucune garantie de fonctionnement continu ou
-          ininterrompu. Gabriel Landry ne pourra être tenu responsable des dysfonctionnements ou interruptions de
-          service, ainsi que des éventuelles pertes de données.
+          The website and its services are provided &quot;as is&quot; without any guarantee of continuous or
+          uninterrupted operation. Gabriel Landry cannot be held liable for any malfunction or service interruption, nor
+          for any potential data loss.
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">8. Juridiction et Droit Applicable</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">8. Jurisdiction and Governing Law</h2>
         <p>
-          Les présentes CGU sont régies par le droit québécois. En cas de litige, et après une tentative de résolution
-          amiable, les tribunaux de Montréal (Québec) seront seuls compétents.
+          These Terms are governed by the laws of Quebec. In the event of a dispute, and after an attempt at amicable
+          resolution, the courts of Montreal (Quebec) shall have sole jurisdiction.
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">9. Modification des CGU</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">9. Amendments to the Terms</h2>
         <p>
-          Gabriel Landry se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront
-          informés de toute modification par une notification sur le site. L&apos;utilisation continue du site après
-          notification des modifications vaut acceptation des nouvelles CGU.
+          Gabriel Landry reserves the right to modify these Terms at any time. Users will be informed of any change
+          through a notification on the website. Continued use of the website after notification of the changes
+          constitutes acceptance of the new Terms.
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">10. Contact</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">10. Contact</h2>
         <p>
-          Pour toute question ou réclamation concernant ces CGU, veuillez nous contacter à :{" "}
-          <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
-            gablandry31@gmail.com
+          For any question or complaint regarding these Terms, please contact us at:{" "}
+          <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">
+            legal@minecraft-stats.com
           </a>
           .
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Politique de Confidentialité (Annexe aux CGU)</h2>
-        <h3 className="text-lg font-medium mb-1">Collecte des Données</h3>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">Privacy</h2>
         <p>
-          Les données collectées sont limitées à celles nécessaires pour l’inscription : pseudonyme, adresse email, et
-          mot de passe. En cas d’authentification via Google ou Discord, des informations supplémentaires (comme la
-          photo de profil) peuvent être collectées.
-        </p>
-        <h3 className="text-lg font-medium mb-1">Usage des Données</h3>
-        <p>
-          Les données sont utilisées exclusivement pour permettre l’accès au site et maintenir un environnement
-          sécurisé.
-        </p>
-        <h3 className="text-lg font-medium mb-1">Droits des Utilisateurs</h3>
-        <p>
-          Conformément au Règlement Général sur la Protection des Données (RGPD), les utilisateurs bénéficient de droits
-          d&apos;accès, de rectification, de suppression, de limitation et de portabilité de leurs données. Pour exercer
-          ces droits, contactez-nous à :{" "}
-          <a href="mailto:gablandry31@gmail.com" className="text-blue-500">
-            gablandry31@gmail.com
-          </a>
+          For details on how we collect, use, and protect your personal data, including third-party services such as
+          analytics and advertising, please read our dedicated{" "}
+          <Link href="/privacy" className="font-medium text-accent hover:underline">
+            Privacy Policy
+          </Link>
           .
-        </p>
-        <h3 className="text-lg font-medium mb-1">Sécurité des Données</h3>
-        <p>
-          Les données sont hébergées sur un VPS Pulseheberg en France et sont soumises à des mesures de sécurité pour
-          éviter tout accès non autorisé.
-        </p>
-        <h3 className="text-lg font-medium mb-1">Durée de Conservation des Données</h3>
-        <p>
-          Les données personnelles sont conservées aussi longtemps que nécessaire pour l’utilisation des services
-          offerts par le site.
         </p>
       </section>
     </div>

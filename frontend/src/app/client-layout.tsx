@@ -32,7 +32,7 @@ export default function ClientLayout({
             <FavoriteProvider>
               <Header />
               <Toaster />
-              <div className="flex-1 flex flex-col items-center justify-center text-stats-blue-1050 dark:text-stats-blue-50 bg-stats-blue-50 dark:bg-stats-blue-1050">
+              <div className="flex-1 flex flex-col items-center bg-canvas text-foreground">
                 <RestrictedWidthLayout className="flex-1 flex flex-col">{children}</RestrictedWidthLayout>
                 <Metrics />
               </div>

@@ -7,15 +7,15 @@ import Link from "next/link";
 import useSWR from "swr";
 
 const LatestArticlesSection = () => {
-  const { data, isLoading } = useSWR(["posts", 1, 3], () => getPosts(1, 3));
+  const { data, isLoading } = useSWR(["posts", 1, 2], () => getPosts(1, 2));
   const posts = data?.data ?? [];
 
   if (isLoading) {
     return (
       <section className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl border border-border bg-muted" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-24 animate-pulse rounded-xl border border-border bg-foreground/10" />
           ))}
         </div>
       </section>
@@ -30,10 +30,8 @@ const LatestArticlesSection = () => {
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <Icon icon="material-symbols:article-outline" className="h-4 w-4" />
-          </div>
-          <h2 className="text-lg font-semibold text-foreground">From the blog</h2>
+          <Icon icon="material-symbols:article-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">From the blog</h2>
         </div>
         <Link
           href="/blog"

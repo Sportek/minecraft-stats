@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { getPlaceholders, PlaceholderInfo } from "@/http/post";
 import { BookText, Copy, Info, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -58,7 +61,7 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800"
+        className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         title="Insert Placeholder"
       >
         <BookText className="w-4 h-4" />
@@ -66,33 +69,32 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-stats-blue-950 rounded-lg border border-gray-300 dark:border-stats-blue-700 max-w-3xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+          <div className="flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-lg">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-300 dark:border-stats-blue-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Insert Placeholder</h2>
-              <button
+            <div className="flex items-center justify-between border-b border-border p-4">
+              <h2 className="text-xl font-bold text-foreground">Insert Placeholder</h2>
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground"
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded hover:bg-gray-200 dark:hover:bg-stats-blue-800 text-gray-600 dark:text-slate-400"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Server ID Input */}
-            <div className="p-4 border-b border-gray-300 dark:border-stats-blue-700 bg-gray-50 dark:bg-stats-blue-900/30">
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Server ID
-              </label>
-              <input
+            <div className="border-b border-border bg-secondary/50 p-4">
+              <Label className="mb-2 block">Server ID</Label>
+              <Input
                 type="number"
                 value={serverId}
                 onChange={(e) => setServerId(e.target.value)}
                 placeholder="Enter server ID (e.g., 125)"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-stats-blue-700 rounded-lg bg-white dark:bg-stats-blue-950 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-stats-blue-500"
               />
-              <p className="mt-2 text-xs text-gray-600 dark:text-slate-400 flex items-start gap-1">
-                <Info className="w-3 h-3 mt-0.5 shrink-0" />
+              <p className="mt-2 flex items-start gap-1 text-xs text-muted-foreground">
+                <Info className="mt-0.5 w-3 h-3 shrink-0" />
                 <span>
                   Enter the ID of the server you want to reference. You can find server IDs in the URL when
                   viewing a server page (e.g., /server/125).
@@ -109,53 +111,45 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
                   return (
                     <div
                       key={placeholder.name}
-                      className="p-4 rounded-lg border transition-all border-gray-200 dark:border-stats-blue-800 bg-gray-50 dark:bg-stats-blue-900/20"
+                      className="rounded-lg border border-border bg-secondary/50 p-4 transition-all"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-mono text-sm font-bold text-stats-blue-600 dark:text-stats-blue-400">
+                          <div className="mb-1 flex items-center gap-2">
+                            <h3 className="font-mono text-sm font-bold text-accent">
                               {placeholder.name}
                             </h3>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
+                          <p className="mb-2 text-sm text-muted-foreground">
                             {placeholder.description}
                           </p>
-                          <code className="text-xs bg-gray-200 dark:bg-stats-blue-800 px-2 py-1 rounded text-gray-800 dark:text-slate-200">
+                          <code className="rounded bg-secondary px-2 py-1 text-xs text-foreground">
                             {serverId
                               ? `%${placeholder.name}_${serverId}%`
                               : placeholder.example}
                           </code>
                         </div>
                         <div className="flex gap-2">
-                          <button
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="icon"
+                            className={isCopied ? "bg-success text-success-foreground hover:bg-success/90" : ""}
                             onClick={() => handleCopy(placeholder.name)}
                             disabled={!serverId}
-                            className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                              !serverId
-                                ? "bg-gray-200 dark:bg-stats-blue-800 text-gray-400 dark:text-slate-600 cursor-not-allowed"
-                                : isCopied
-                                  ? "bg-green-600 text-white"
-                                  : "bg-gray-300 dark:bg-stats-blue-700 text-gray-800 dark:text-white hover:bg-gray-400 dark:hover:bg-stats-blue-600"
-                            }`}
                             title={!serverId ? "Enter a server ID first" : "Copy to clipboard"}
                           >
                             <Copy className="w-4 h-4" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="accent"
                             onClick={() => handleInsert(placeholder.name)}
                             disabled={!serverId}
-                            className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-                              !serverId
-                                ? "bg-gray-300 dark:bg-stats-blue-800 text-gray-400 dark:text-slate-600 cursor-not-allowed"
-                                : "bg-stats-blue-600 text-white hover:bg-stats-blue-700"
-                            }`}
                             title={!serverId ? "Enter a server ID first" : "Insert into editor"}
                           >
                             Insert
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -165,11 +159,11 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-gray-300 dark:border-stats-blue-700 bg-gray-50 dark:bg-stats-blue-900/30">
-              <p className="text-xs text-gray-600 dark:text-slate-400">
+            <div className="border-t border-border bg-secondary/50 p-4">
+              <p className="text-xs text-muted-foreground">
                 <strong>How it works:</strong> Placeholders are replaced with real-time server data when the
                 article is displayed. The format is{" "}
-                <code className="bg-gray-200 dark:bg-stats-blue-800 px-1 py-0.5 rounded">
+                <code className="rounded bg-secondary px-1 py-0.5">
                   %PLACEHOLDER_NAME_SERVER_ID%
                 </code>
               </p>

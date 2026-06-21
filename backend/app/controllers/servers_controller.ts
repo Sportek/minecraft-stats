@@ -14,6 +14,7 @@ import CacheService from '#services/cache_service'
 import ServerListingService from '#services/server_listing_service'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import Language from '#models/language'
+import { deriveServerWebsite } from '#utils/server_website'
 
 export default class ServersController {
   /**
@@ -44,6 +45,35 @@ export default class ServersController {
   }
 
   /**
+   * @mine
+   * @operationId listMyServers
+   * @tag SERVERS
+   * @summary List the authenticated user's servers
+   * @description Returns every server owned by the authenticated user, with preloaded categories, languages and growthStat, ordered by newest first. Used by the account "My Servers" dashboard. Requires authentication.
+   * @responseBody 200 - [{"server": "<Server>", "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}]
+   * @responseBody 401 - {"message": "Unauthorized"}
+   */
+  async mine({ auth, response }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ message: 'Unauthorized' })
+    }
+
+    const servers = await Server.query()
+      .where('user_id', user.id)
+      .preload('categories')
+      .preload('languages')
+      .preload('growthStat')
+      .orderBy('created_at', 'desc')
+
+    return servers.map((server) => ({
+      server,
+      categories: server.categories,
+      growthStat: server.growthStat,
+    }))
+  }
+
+  /**
    * @createServer
    * @operationId createServer
    * @tag SERVERS
@@ -63,6 +93,7 @@ export default class ServersController {
       'port',
       'type',
       'imageUrl',
+      'website',
       'categories',
       'languages',
     ])
@@ -110,9 +141,13 @@ export default class ServersController {
 
     const { categories, languages, ...dataToCreate } = validatedData
 
+    // Website: provided by the owner, otherwise derived from the address.
+    const website = dataToCreate.website ?? deriveServerWebsite(validatedData.address)
+
     const server = await Server.create({
       ...dataToCreate,
       type,
+      website,
       version: fingerprint.version,
       faviconHash: fingerprint.faviconHash,
       resolvedEndpoint: fingerprint.resolvedEndpoint,
@@ -187,6 +222,7 @@ export default class ServersController {
       'port',
       'type',
       'imageUrl',
+      'website',
       'categories',
       'languages',
     ])
@@ -197,6 +233,12 @@ export default class ServersController {
     }
 
     const { categories, languages, ...dataToUpdate } = validatedData
+
+    // If the address changes without an explicit website, re-derive it.
+    if (dataToUpdate.website === undefined && validatedData.address) {
+      const derived = deriveServerWebsite(validatedData.address)
+      if (derived) dataToUpdate.website = derived
+    }
 
     const successPing = await isPingPossible(
       validatedData.type ?? server.type,

@@ -1,10 +1,9 @@
 "use client";
 
-import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
 import Link from "next/link";
 import RestrictedWidthLayout from "../restricted-width-layout";
+import BrandLogo from "../brand-logo";
 import { getClientBackendUrl } from "@/lib/domain";
 
 const linkClass = "text-sm text-muted-foreground hover:text-foreground transition-colors";
@@ -19,15 +18,12 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border/60 bg-stats-blue-50 dark:bg-stats-blue-1050">
+    <footer className="border-t border-border bg-background">
       <RestrictedWidthLayout className="py-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Image src={MinecraftStatsLogo} alt="" width={28} height={28} />
-              <span className="text-base font-bold text-foreground">Minecraft Stats</span>
-            </Link>
+            <BrandLogo />
             <p className="max-w-sm text-sm text-muted-foreground">
               The free, open-source Minecraft server directory with real-time player statistics and historical
               data.
@@ -120,6 +116,16 @@ const Footer = () => {
               <li>
                 <Link href="/about" className={linkClass}>
                   About
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className={linkClass}>
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className={linkClass}>
+                  Privacy Policy
                 </Link>
               </li>
               <li>

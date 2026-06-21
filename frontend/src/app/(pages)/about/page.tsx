@@ -28,11 +28,14 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 const About = () => {
   return (
-    <div className="py-4">
-      <h1 className="text-2xl font-bold mb-4">About</h1>
+    <div className="mx-auto max-w-3xl space-y-8 py-8">
+      <div>
+        <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-accent">Company</div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">About</h1>
+      </div>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">About Us</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">About Us</h2>
         <p className="mb-4">Our platform was created with a simple goal:</p>
         <p className="mb-4">
           to provide <strong>a transparent, public, and free comparison of Minecraft servers</strong>, based on
@@ -48,8 +51,8 @@ const About = () => {
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">A Tool for Players First</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">A Tool for Players First</h2>
         <p className="mb-4">
           Minecraft has thousands of servers, but reliable and neutral information is often hard to find.
         </p>
@@ -66,8 +69,8 @@ const About = () => {
         </p>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Transparency &amp; Fair Ranking</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">Transparency &amp; Fair Ranking</h2>
         <p className="mb-4">
           All rankings and statistics are generated using the same methodology for every server.
         </p>
@@ -88,8 +91,8 @@ const About = () => {
         </ul>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">An Evolving Project</h2>
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">An Evolving Project</h2>
         <p className="mb-4">This platform is continuously evolving.</p>
         <p className="mb-4">
           We improve data accuracy, performance, and user experience based on feedback from the community and ongoing

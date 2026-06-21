@@ -318,9 +318,11 @@ export class ServerSchema extends BaseModel {
     'nextPingAt',
     'port',
     'resolvedEndpoint',
+    'type',
     'updatedAt',
     'userId',
     'version',
+    'website',
   ] as const
   $columns = ServerSchema.$columns
   @column()
@@ -355,12 +357,16 @@ export class ServerSchema extends BaseModel {
   declare port: number
   @column()
   declare resolvedEndpoint: string | null
+  @column()
+  declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()
   declare userId: number | null
   @column()
   declare version: string | null
+  @column()
+  declare website: string | null
 }
 
 export class UserSchema extends BaseModel {
