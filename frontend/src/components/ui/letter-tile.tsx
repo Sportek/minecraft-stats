@@ -7,6 +7,12 @@ export const hueFromName = (name: string) => {
   return Math.abs(hash) % 360;
 };
 
+/** Name-hashed gradient shared by server cards, user rows and the profile avatar. */
+export const letterTileGradient = (name: string) => {
+  const hue = hueFromName(name);
+  return `linear-gradient(135deg, hsl(${hue} 62% 46%), hsl(${hue + 26} 70% 26%))`;
+};
+
 interface LetterTileProps {
   name: string;
   className?: string;
@@ -16,18 +22,15 @@ interface LetterTileProps {
  * Initial-on-gradient avatar tile. Shared fallback for servers (no favicon) and
  * users (no avatar). Size and radius are controlled by the caller via `className`.
  */
-export const LetterTile = ({ name, className }: LetterTileProps) => {
-  const hue = hueFromName(name);
-  return (
-    <div
-      aria-hidden="true"
-      className={cn(
-        "flex shrink-0 select-none items-center justify-center font-extrabold text-white",
-        className
-      )}
-      style={{ background: `linear-gradient(135deg, hsl(${hue} 62% 46%), hsl(${hue + 26} 70% 26%))` }}
-    >
-      {name.trim().charAt(0).toUpperCase() || "?"}
-    </div>
-  );
-};
+export const LetterTile = ({ name, className }: LetterTileProps) => (
+  <div
+    aria-hidden="true"
+    className={cn(
+      "flex shrink-0 select-none items-center justify-center font-extrabold text-white",
+      className
+    )}
+    style={{ background: letterTileGradient(name) }}
+  >
+    {name.trim().charAt(0).toUpperCase() || "?"}
+  </div>
+);

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import RestrictedWidthLayout from "../restricted-width-layout";
 import { ModeToggle } from "../dark-mode/toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { letterTileGradient } from "../ui/letter-tile";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -120,7 +121,10 @@ const Header = () => {
       >
         <Avatar className="h-9 w-9">
           <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.username ?? "User Avatar"} />
-          <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
+          <AvatarFallback
+            className="text-white text-sm"
+            style={{ background: letterTileGradient(user?.username ?? "") }}
+          >
             {user?.username?.[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
@@ -302,7 +306,10 @@ const Header = () => {
                   <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={user.avatarUrl ?? ""} alt={user.username} />
-                      <AvatarFallback className="bg-stats-blue-700 text-white text-sm">
+                      <AvatarFallback
+                        className="text-white text-sm"
+                        style={{ background: letterTileGradient(user.username) }}
+                      >
                         {user.username[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>

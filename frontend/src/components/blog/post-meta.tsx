@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { letterTileGradient } from "@/components/ui/letter-tile";
 
 export const formatPostDate = (value: Date | string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -16,7 +17,10 @@ export const PostEyebrow = ({ date }: { date: Date | string }) => (
 export const PostAuthor = ({ username }: { username: string }) => (
   <div className="flex items-center gap-2 text-xs text-muted-foreground">
     <Avatar className="h-6 w-6">
-      <AvatarFallback className="bg-accent/10 text-[10px] font-bold text-accent">
+      <AvatarFallback
+        className="text-[10px] font-bold text-white"
+        style={{ background: letterTileGradient(username) }}
+      >
         {username.charAt(0).toUpperCase()}
       </AvatarFallback>
     </Avatar>
