@@ -70,10 +70,12 @@ function buildSrcDoc(
     anchor.setAttribute("rel", "noopener noreferrer nofollow sponsored");
   });
 
-  // Minimal reset only: drop the default 8px body margin and white background so
-  // the iframe blends with the page (incl. dark mode). The ad still controls its
-  // own visual — if it sets its own background, that wins.
-  const reset = "<style>html,body{margin:0;padding:0;background:transparent}</style>";
+  // Minimal reset: drop the default body margin/white background, and give
+  // html/body full height so ads built with `height:100%` actually fill the
+  // iframe (otherwise they collapse to their content height and leave an empty
+  // band). The ad still controls its own visual — its own background wins.
+  const reset =
+    "<style>html,body{margin:0;padding:0;height:100%;background:transparent}</style>";
   return `<!DOCTYPE html><html><head><meta charset="utf-8">${reset}${doc.head.innerHTML}</head><body>${doc.body.innerHTML}</body></html>`;
 }
 
