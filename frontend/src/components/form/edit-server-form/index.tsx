@@ -44,6 +44,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
      address: z.string().min(1).trim(),
      type: z.enum(["java", "bedrock"]),
      port: z.string().min(1).max(5),
+     website: z.string().trim().optional(),
      categories: z.array(z.string()),
      languages: z.array(z.string()),
    })
@@ -74,6 +75,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       address: server.address,
       type: server.type,
       port: server.port.toString(),
+      website: server.website ?? "",
       categories: serverCategories.map((category) => category.name),
       languages: server.languages.map((language) => language.code),
     },
@@ -96,7 +98,11 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await editServer(server.id, { ...credentials, port: parseInt(credentials.port) }, getToken() ?? "");
+      await editServer(
+        server.id,
+        { ...credentials, port: parseInt(credentials.port), website: credentials.website?.trim() || undefined },
+        getToken() ?? ""
+      );
       form.reset();
       toast({
         title: "Server edited",
@@ -164,6 +170,20 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                   <FormDescription>The address of the server</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="website"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Website (optional)</FormLabel>
+                  <FormDescription>Left empty, we infer it from the address</FormDescription>
+                  <FormControl>
+                    <Input type="text" placeholder="example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

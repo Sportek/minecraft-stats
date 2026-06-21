@@ -14,6 +14,7 @@ import CacheService from '#services/cache_service'
 import ServerListingService from '#services/server_listing_service'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import Language from '#models/language'
+import { deriveServerWebsite } from '#utils/server_website'
 
 export default class ServersController {
   /**
@@ -63,6 +64,7 @@ export default class ServersController {
       'port',
       'type',
       'imageUrl',
+      'website',
       'categories',
       'languages',
     ])
@@ -110,9 +112,13 @@ export default class ServersController {
 
     const { categories, languages, ...dataToCreate } = validatedData
 
+    // Site web : fourni par le propriétaire, sinon déduit de l'adresse.
+    const website = dataToCreate.website ?? deriveServerWebsite(validatedData.address)
+
     const server = await Server.create({
       ...dataToCreate,
       type,
+      website,
       version: fingerprint.version,
       faviconHash: fingerprint.faviconHash,
       resolvedEndpoint: fingerprint.resolvedEndpoint,
@@ -187,6 +193,7 @@ export default class ServersController {
       'port',
       'type',
       'imageUrl',
+      'website',
       'categories',
       'languages',
     ])
@@ -197,6 +204,12 @@ export default class ServersController {
     }
 
     const { categories, languages, ...dataToUpdate } = validatedData
+
+    // Si l'adresse change sans site web explicite, on re-déduit le site web.
+    if (dataToUpdate.website === undefined && validatedData.address) {
+      const derived = deriveServerWebsite(validatedData.address)
+      if (derived) dataToUpdate.website = derived
+    }
 
     const successPing = await isPingPossible(
       validatedData.type ?? server.type,

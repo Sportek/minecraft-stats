@@ -7,6 +7,8 @@ export interface ServerPayload {
   port: number;
   type: ServerType;
   categories: string[];
+  languages?: string[];
+  website?: string;
 }
 // Note: GET /api/v1/servers is a lightweight endpoint that returns only { server } (no stats/categories).
 // For richer data, use /servers/paginate or /servers/:id.

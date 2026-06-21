@@ -1,17 +1,23 @@
 "use client";
 
-import { Check, Copy, Globe } from "lucide-react";
+import { Check, Copy, ExternalLink, Gamepad2, Globe } from "lucide-react";
 import { useState } from "react";
 import { deriveServerWebsite } from "@/utils/server-website";
+import { Language } from "@/types/server";
+import ServerLanguages from "./server-languages";
 
 interface ServerInfoProps {
   name: string;
   address: string | null;
+  website?: string | null;
+  languages?: Language[];
 }
 
-const ServerInfo = ({ name, address }: ServerInfoProps) => {
+const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
   const [copied, setCopied] = useState(false);
-  const website = deriveServerWebsite(address);
+  // Valeur persistée en base (déduite côté serveur), avec repli sur la
+  // dérivation côté client pour les serveurs pas encore backfillés.
+  const resolvedWebsite = website ?? deriveServerWebsite(address);
 
   const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -31,12 +37,15 @@ const ServerInfo = ({ name, address }: ServerInfoProps) => {
     // ni imbriquer une ancre dans une ancre.
     e.preventDefault();
     e.stopPropagation();
-    if (website) window.open(`https://${website}`, "_blank", "noopener,noreferrer");
+    if (resolvedWebsite) window.open(`https://${resolvedWebsite}`, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <div className="min-w-0 shrink flex flex-col gap-0.5">
-      <div className="text-xl font-semibold truncate text-foreground">{name}</div>
+    <div className="min-w-0 flex flex-col gap-0.5">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="truncate text-lg font-bold leading-tight text-foreground">{name}</span>
+        {languages && languages.length > 0 && <ServerLanguages languages={languages} className="shrink-0" />}
+      </div>
       {address ? (
         <button
           type="button"
@@ -45,7 +54,8 @@ const ServerInfo = ({ name, address }: ServerInfoProps) => {
           title={copied ? "Copied!" : "Click to copy"}
           className="group/copy inline-flex max-w-full items-center gap-1.5 self-start text-sm text-muted-foreground hover:text-accent transition-colors"
         >
-          <span className="truncate">{address.toLowerCase()}</span>
+          <Gamepad2 className="h-3.5 w-3.5 shrink-0 opacity-70" />
+          <span className="truncate font-mono text-[13px]">{address.toLowerCase()}</span>
           {copied ? (
             <Check className="h-3.5 w-3.5 shrink-0 text-success" />
           ) : (
@@ -53,16 +63,17 @@ const ServerInfo = ({ name, address }: ServerInfoProps) => {
           )}
         </button>
       ) : null}
-      {website ? (
+      {resolvedWebsite ? (
         <button
           type="button"
           onClick={openWebsite}
-          aria-label={`Visit ${website}`}
-          title={`Visit ${website}`}
-          className="inline-flex max-w-full items-center gap-1.5 self-start text-xs text-muted-foreground hover:text-accent transition-colors"
+          aria-label={`Visit ${resolvedWebsite}`}
+          title={`Visit ${resolvedWebsite}`}
+          className="group/web inline-flex max-w-full items-center gap-1.5 self-start text-xs text-muted-foreground hover:text-accent transition-colors"
         >
           <Globe className="h-3.5 w-3.5 shrink-0 opacity-70" />
-          <span className="truncate">{website}</span>
+          <span className="truncate">{resolvedWebsite}</span>
+          <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-60 transition-opacity md:opacity-0 md:group-hover/web:opacity-100" />
         </button>
       ) : null}
     </div>

@@ -10,7 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
   ssr: false,
-  loading: () => <div className="h-72 w-full bg-muted animate-pulse rounded-md" />,
+  loading: () => <div className="h-72 w-full bg-foreground/10 animate-pulse rounded-md" />,
 });
 
 interface ChartDatum {

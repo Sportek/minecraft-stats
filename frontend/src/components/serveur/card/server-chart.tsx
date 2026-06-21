@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 
 const AgCharts = dynamic(() => import("ag-charts-react").then((mod) => mod.AgCharts), {
   ssr: false,
-  loading: () => <div className="h-[40px] w-full bg-muted animate-pulse rounded-sm" />,
+  loading: () => <div className="h-[40px] w-full bg-foreground/10 animate-pulse rounded-sm" />,
 });
 
 interface ServerChartProps {
@@ -76,12 +76,14 @@ const ServerChart = ({ stats }: ServerChartProps) => {
           xName: "Time",
           yKey: "playerCount",
           yName: "Online players",
-          stroke: resolvedTheme === "dark" ? "#60A5FA" : "#2563EB",
-          strokeWidth: 2,
+          // Accent de marque (hsl(204 100% 38%) clair / 55% sombre) pour relier
+          // la sparkline à l'identité visuelle.
+          stroke: resolvedTheme === "dark" ? "#1a9fff" : "#0077c2",
+          strokeWidth: 1.6,
           marker: { enabled: false },
           tooltip: { enabled: false },
-          fillOpacity: 0.1,
-          fill: resolvedTheme === "dark" ? "#60A5FA" : "#2563EB",
+          fillOpacity: 0.14,
+          fill: resolvedTheme === "dark" ? "#1a9fff" : "#0077c2",
           strokeOpacity: 1,
           interpolation: { type: "smooth" },
         },

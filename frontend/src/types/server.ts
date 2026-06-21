@@ -18,6 +18,7 @@ export interface Server {
   port: number;
   type: ServerType;
   version: string | null;
+  website: string | null;
   imageUrl: string;
   user: User;
   createdAt: Date;

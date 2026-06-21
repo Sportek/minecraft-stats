@@ -39,6 +39,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       address: z.string().min(1).trim(),
       type: z.enum(["java", "bedrock"]),
       port: z.string().min(1).max(5),
+      website: z.string().trim().optional(),
       categories: z.array(z.string()),
       languages: z.array(z.string()),
     })
@@ -68,6 +69,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       address: "",
       type: "java",
       port: DEFAULT_PORT.java,
+      website: "",
       categories: [],
       languages: [],
     },
@@ -86,7 +88,11 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await addServer({ ...credentials, port: parseInt(credentials.port) });
+      await addServer({
+        ...credentials,
+        port: parseInt(credentials.port),
+        website: credentials.website?.trim() || undefined,
+      });
       form.reset();
       toast({
         title: "Server added",
@@ -152,6 +158,20 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
                   <FormDescription>The address of the server</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="website"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Website (optional)</FormLabel>
+                  <FormDescription>Left empty, we infer it from the address</FormDescription>
+                  <FormControl>
+                    <Input type="text" placeholder="example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
