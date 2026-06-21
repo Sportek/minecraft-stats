@@ -112,6 +112,21 @@ router
       .post('/logout-all', '#controllers/auth_controller.logoutAll')
       .use(middleware.auth())
       .use([throttleLight('logout-all', 5), NO_STORE])
+
+    // Personal API tokens (for automated clients)
+    router
+      .get('/account/api-tokens', '#controllers/api_tokens_controller.index')
+      .use(middleware.auth())
+      .use([throttleLight('api-tokens.index', 20), NO_STORE])
+    router
+      .post('/account/api-tokens', '#controllers/api_tokens_controller.store')
+      .use(middleware.auth())
+      .use([throttleLight('api-tokens.store', 5), NO_STORE])
+    router
+      .delete('/account/api-tokens/:id', '#controllers/api_tokens_controller.destroy')
+      .use(middleware.auth())
+      .use([throttleLight('api-tokens.destroy', 10), NO_STORE])
+
     router
       .get('/login/:provider', '#controllers/auth_controller.providerLogin')
       .where('provider', /google|discord/)

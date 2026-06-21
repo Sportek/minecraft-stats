@@ -145,7 +145,8 @@ export default class AuthController {
     const tokens = await User.accessTokens.all(user)
     await Promise.all(
       tokens
-        .filter((token) => token.identifier !== currentTokenId)
+        // Revoke other sessions, but keep named API tokens (e.g. automation tokens).
+        .filter((token) => token.identifier !== currentTokenId && token.name === null)
         .map((token) => User.accessTokens.delete(user, token.identifier))
     )
 
@@ -179,8 +180,10 @@ export default class AuthController {
   async logoutAll({ auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
     const tokens = await User.accessTokens.all(user)
-    await Promise.all(tokens.map((token) => User.accessTokens.delete(user, token.identifier)))
-    return response.ok({ message: 'All sessions revoked', revoked: tokens.length })
+    // Only revoke session tokens; named API tokens are managed separately.
+    const sessions = tokens.filter((token) => token.name === null)
+    await Promise.all(sessions.map((token) => User.accessTokens.delete(user, token.identifier)))
+    return response.ok({ message: 'All sessions revoked', revoked: sessions.length })
   }
 
   /**
