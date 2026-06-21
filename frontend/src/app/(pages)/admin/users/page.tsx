@@ -8,6 +8,7 @@ import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-s
 import { Badge, BadgeProps } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { LetterTile } from "@/components/ui/letter-tile";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -19,7 +20,9 @@ import { useAuth } from "@/contexts/auth";
 import { getAdminUsers, updateUserRole } from "@/http/user";
 import { User } from "@/types/auth";
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+
+const PAGE_SIZE = 20;
 
 const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
   switch (role) {
@@ -36,22 +39,26 @@ const AdminUsersPage = () => {
   const { user, getToken } = useAuth();
   const token = getToken();
   const [users, setUsers] = useState<User[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [counts, setCounts] = useState({ admin: 0, writer: 0, user: 0 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "writer" | "user">("all");
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+  // Bumped after a role change to refresh both the current page and the counts.
+  const [refresh, setRefresh] = useState(0);
 
-  // Filtered fetch (search + role) that drives the table rows.
+  // Paginated, filtered fetch (search + role) that drives the table rows.
   useEffect(() => {
     if (!token) return;
 
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await getAdminUsers(token, 1, 100, search, roleFilter);
+        const response = await getAdminUsers(token, page, PAGE_SIZE, search, roleFilter);
         setUsers(response.data);
+        setLastPage(response.meta.lastPage);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       } finally {
@@ -61,29 +68,45 @@ const AdminUsersPage = () => {
 
     const debounce = setTimeout(fetchUsers, 300);
     return () => clearTimeout(debounce);
-  }, [token, search, roleFilter]);
+  }, [token, page, search, roleFilter, refresh]);
 
-  // Separate unfiltered fetch so the stat tiles always reflect the full set of
-  // users, independent of the active role filter tab.
+  // Accurate per-role totals via the paginator's `meta.total` (limit 1, cheap) —
+  // independent of the active tab and the current page, and scales to any volume.
   useEffect(() => {
     if (!token) return;
 
-    const fetchAllUsers = async () => {
+    const fetchCounts = async () => {
       try {
-        const response = await getAdminUsers(token, 1, 100, "", "all");
-        setAllUsers(response.data);
-        setTotal(response.meta.total);
+        const [admins, writers, members] = await Promise.all([
+          getAdminUsers(token, 1, 1, "", "admin"),
+          getAdminUsers(token, 1, 1, "", "writer"),
+          getAdminUsers(token, 1, 1, "", "user"),
+        ]);
+        setCounts({
+          admin: admins.meta.total,
+          writer: writers.meta.total,
+          user: members.meta.total,
+        });
       } catch (error) {
-        console.error("Failed to fetch users:", error);
+        console.error("Failed to fetch user counts:", error);
       }
     };
 
-    fetchAllUsers();
-  }, [token]);
+    fetchCounts();
+  }, [token, refresh]);
 
-  const adminCount = useMemo(() => allUsers.filter((u) => u.role === "admin").length, [allUsers]);
-  const writerCount = useMemo(() => allUsers.filter((u) => u.role === "writer").length, [allUsers]);
-  const memberCount = useMemo(() => allUsers.filter((u) => u.role === "user").length, [allUsers]);
+  const total = counts.admin + counts.writer + counts.user;
+
+  // Filters/search reset pagination to the first page.
+  const updateSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const updateRoleFilter = (value: "all" | "admin" | "writer" | "user") => {
+    setRoleFilter(value);
+    setPage(1);
+  };
 
   if (!user) {
     return <AdminLoadingState label="Loading..." />;
@@ -120,8 +143,9 @@ const AdminUsersPage = () => {
     try {
       setUpdatingUserId(userId);
       const updatedUser = await updateUserRole(userId, newRole, token);
-      setUsers(users.map((u) => (u.id === userId ? updatedUser : u)));
-      setAllUsers(allUsers.map((u) => (u.id === userId ? updatedUser : u)));
+      setUsers((current) => current.map((u) => (u.id === userId ? updatedUser : u)));
+      // Refresh the page (the user may now fall outside the active filter) and the counts.
+      setRefresh((r) => r + 1);
     } catch (error) {
       console.error("Failed to update user role:", error);
       alert("Failed to update user role");
@@ -141,9 +165,9 @@ const AdminUsersPage = () => {
       {/* Stat tiles */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <DashboardStatTile label="Total Users" value={String(total)} />
-        <DashboardStatTile label="Admins" value={String(adminCount)} dot="success" />
-        <DashboardStatTile label="Writers" value={String(writerCount)} dot="success" />
-        <DashboardStatTile label="Members" value={String(memberCount)} />
+        <DashboardStatTile label="Admins" value={String(counts.admin)} dot="success" />
+        <DashboardStatTile label="Writers" value={String(counts.writer)} dot="success" />
+        <DashboardStatTile label="Members" value={String(counts.user)} />
       </div>
 
       {/* Users card */}
@@ -152,7 +176,7 @@ const AdminUsersPage = () => {
         <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
           <AdminFilterTabs
             value={roleFilter}
-            onChange={setRoleFilter}
+            onChange={updateRoleFilter}
             tabs={[
               { value: "all", label: "All" },
               { value: "admin", label: "Admins" },
@@ -165,7 +189,7 @@ const AdminUsersPage = () => {
             <Input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => updateSearch(e.target.value)}
               placeholder="Search by username..."
               className="pl-9"
             />
@@ -235,6 +259,10 @@ const AdminUsersPage = () => {
           </ul>
         )}
       </div>
+
+      {!loading && users.length > 0 && lastPage > 1 && (
+        <Pagination currentPage={page} totalPages={lastPage} onPageChange={setPage} />
+      )}
     </DashboardLayout>
   );
 };

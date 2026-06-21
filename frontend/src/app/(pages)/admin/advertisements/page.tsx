@@ -1,9 +1,14 @@
 "use client";
 
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import DashboardHero from "@/components/account/dashboard-hero";
+import DashboardLayout from "@/components/account/dashboard-layout";
+import DashboardStatTile from "@/components/account/dashboard-stat-tile";
+import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { LetterTile } from "@/components/ui/letter-tile";
 import { useAuth } from "@/contexts/auth";
 import {
   deleteAdvertisement,
@@ -11,15 +16,17 @@ import {
   updateAdvertisement,
 } from "@/http/advertisement";
 import { Advertisement } from "@/types/advertisement";
-import { BarChart3, Pencil, Plus, Power, Trash2 } from "lucide-react";
+import { BarChart3, Pencil, Plus, Power, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const AdminAdvertisementsPage = () => {
   const { user, getToken } = useAuth();
   const token = getToken();
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "active" | "disabled">("all");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -37,6 +44,24 @@ const AdminAdvertisementsPage = () => {
 
     fetchAds();
   }, [token]);
+
+  const activeCount = useMemo(() => ads.filter((a) => a.enabled).length, [ads]);
+  const disabledCount = ads.length - activeCount;
+  const totalImpressions = useMemo(
+    () => ads.reduce((sum, a) => sum + (a.impressionsCount ?? 0), 0),
+    [ads]
+  );
+
+  // Status tab + name search applied client-side (ads are typically few).
+  const visibleAds = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    return ads.filter((ad) => {
+      if (filter === "active" && !ad.enabled) return false;
+      if (filter === "disabled" && ad.enabled) return false;
+      if (term && !ad.name.toLowerCase().includes(term)) return false;
+      return true;
+    });
+  }, [ads, filter, query]);
 
   if (!user) {
     return <AdminLoadingState label="Chargement..." />;
@@ -83,122 +108,150 @@ const AdminAdvertisementsPage = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto animate-in fade-in px-4 py-8 duration-300">
-        <AdminPageHeader
-          title="Gérer les publicités"
-          description="Créez, activez et suivez les performances de vos bannières publicitaires."
-          action={
-            <Button asChild variant="accent">
-              <Link href="/admin/advertisements/new">
-                <Plus className="h-5 w-5" />
-                <span>Nouvelle publicité</span>
-              </Link>
-            </Button>
-          }
-        />
+    <DashboardLayout>
+      <DashboardHero
+        title="Advertisements"
+        subtitle="Créez, activez et suivez les performances de vos bannières publicitaires."
+        badge={`${ads.length} total`}
+        action={
+          <Button asChild variant="accent">
+            <Link href="/admin/advertisements/new">
+              <Plus className="h-5 w-5" />
+              <span>Nouvelle publicité</span>
+            </Link>
+          </Button>
+        }
+      />
 
-        {/* Table */}
-        <div className="overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xs">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left">
-              <thead>
-                <tr className="border-b border-border bg-secondary text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <th className="px-6 py-4">Nom</th>
-                  <th className="px-6 py-4">Emplacements</th>
-                  <th className="px-6 py-4">Statut</th>
-                  <th className="px-6 py-4">Vues / Clics</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {loading ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                      Chargement des publicités...
-                    </td>
-                  </tr>
-                ) : ads.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                      Aucune publicité. Cliquez sur «&nbsp;Nouvelle publicité&nbsp;» pour commencer.
-                    </td>
-                  </tr>
-                ) : (
-                  ads.map((ad) => (
-                    <tr key={ad.id} className="group transition-colors hover:bg-secondary/50">
-                      <td className="px-6 py-4">
-                        <span className="font-medium text-foreground">{ad.name}</span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">
-                        {placementLabel(ad)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <Badge variant={ad.enabled ? "success" : "secondary"}>
-                          {ad.enabled ? "Active" : "Inactive"}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">
-                        {(ad.impressionsCount ?? 0).toLocaleString("fr-FR")} /{" "}
-                        {(ad.clicksCount ?? 0).toLocaleString("fr-FR")}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className={`h-8 w-8 ${
-                              ad.enabled
-                                ? "text-success hover:text-success"
-                                : "text-muted-foreground hover:text-foreground"
-                            }`}
-                            onClick={() => handleToggle(ad)}
-                            title={ad.enabled ? "Désactiver" : "Activer"}
-                          >
-                            <Power className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            asChild
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-accent"
-                            title="Statistiques"
-                          >
-                            <Link href={`/admin/advertisements/${ad.id}/stats`}>
-                              <BarChart3 className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button
-                            asChild
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-accent"
-                            title="Modifier"
-                          >
-                            <Link href={`/admin/advertisements/${ad.id}/edit`}>
-                              <Pencil className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                            onClick={() => handleDelete(ad.id)}
-                            title="Supprimer"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+      {/* Stat tiles */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <DashboardStatTile label="Total" value={String(ads.length)} />
+        <DashboardStatTile label="Actives" value={String(activeCount)} dot="success" />
+        <DashboardStatTile label="Inactives" value={String(disabledCount)} dot="muted" />
+        <DashboardStatTile label="Vues" value={totalImpressions.toLocaleString("fr-FR")} />
+      </div>
+
+      {/* Advertisements card */}
+      <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+        {/* Toolbar */}
+        <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <AdminFilterTabs
+            value={filter}
+            onChange={setFilter}
+            tabs={[
+              { value: "all", label: `Toutes (${ads.length})` },
+              { value: "active", label: `Actives (${activeCount})` },
+              { value: "disabled", label: `Inactives (${disabledCount})` },
+            ]}
+          />
+          <div className="relative sm:w-64">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher une publicité..."
+              className="pl-9"
+            />
           </div>
         </div>
+
+        {/* Rows */}
+        {loading ? (
+          <div className="px-6 py-12 text-center text-muted-foreground">
+            Chargement des publicités...
+          </div>
+        ) : visibleAds.length === 0 ? (
+          <div className="px-6 py-14 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
+              <Search className="h-5 w-5" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">Aucune publicité</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Cliquez sur «&nbsp;Nouvelle publicité&nbsp;» pour commencer.
+            </p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {visibleAds.map((ad) => (
+              <li
+                key={ad.id}
+                className="flex flex-col gap-3 p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center"
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <LetterTile name={ad.name} className="h-10 w-10 rounded-md text-sm" />
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-foreground">{ad.name}</p>
+                    <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="truncate">{placementLabel(ad)}</span>
+                      <span aria-hidden className="opacity-50">
+                        ·
+                      </span>
+                      <span className="shrink-0">
+                        {(ad.impressionsCount ?? 0).toLocaleString("fr-FR")} vues /{" "}
+                        {(ad.clicksCount ?? 0).toLocaleString("fr-FR")} clics
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 sm:justify-end">
+                  <Badge variant={ad.enabled ? "success" : "secondary"}>
+                    {ad.enabled ? "Active" : "Inactive"}
+                  </Badge>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={`h-8 w-8 ${
+                        ad.enabled
+                          ? "text-success hover:text-success"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      onClick={() => handleToggle(ad)}
+                      title={ad.enabled ? "Désactiver" : "Activer"}
+                    >
+                      <Power className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-accent"
+                      title="Statistiques"
+                    >
+                      <Link href={`/admin/advertisements/${ad.id}/stats`}>
+                        <BarChart3 className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-accent"
+                      title="Modifier"
+                    >
+                      <Link href={`/admin/advertisements/${ad.id}/edit`}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => handleDelete(ad.id)}
+                      title="Supprimer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
