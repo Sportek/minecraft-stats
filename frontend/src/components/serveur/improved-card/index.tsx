@@ -22,6 +22,11 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
     }
   };
 
+  // Pic all-time persisté côté serveur. Repli sur le max de l'intervalle affiché
+  // tant qu'aucun ping n'a renseigné la colonne (nouveau serveur).
+  const windowedPeak = stats.reduce((acc, curr) => Math.max(acc, curr.playerCount), 0);
+  const allTimePeak = server.peakPlayerCount ?? windowedPeak;
+
   if (isLoading) {
     return (
       <section className="space-y-3">
@@ -55,8 +60,8 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
-          title="Peak Players"
-          value={new Intl.NumberFormat("en-US").format(stats.reduce((acc, curr) => Math.max(acc, curr.playerCount), 0))}
+          title="Peak Players (All-Time)"
+          value={new Intl.NumberFormat("en-US").format(allTimePeak)}
           icon={<Icon icon="mdi:crown" className="h-5 w-5" />}
         />
         <StatCard

@@ -2,41 +2,32 @@
 
 import { Icon } from "@iconify/react/dist/iconify.js";
 import StatCard from "../serveur/stat-card";
-import { Server, ServerStat, Category, ServerGrowthStat } from "@/types/server";
 import { fetcher } from "@/app/_cheatcode";
 import useSWR from "swr";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClientApiUrl } from "@/lib/domain";
 
-interface ServerData {
-  server: Server;
-  stats: ServerStat[];
-  categories: Category[];
-  growthStat: ServerGrowthStat | null;
-  lastOnlineAt: string | null;
-  lastPlayerCount: number | null;
-  lastStatsAt: string | null;
-  lastMaxCount: number | null;
+interface WebsiteStats {
+  totalRecords: number;
+  totalServers: number;
+  playersOnline: number;
 }
 
 const StatsSection = () => {
   const apiUrl = getClientApiUrl();
 
-  const { data: servers, error: serversError, isLoading: isServersLoading } = useSWR<ServerData[]>(
-    `${apiUrl}/servers`,
-    fetcher,
-    {
-      refreshInterval: 1000 * 60 * 5,
-    }
-  );
-
-  const { data: websiteStats, error: websiteStatsError, isLoading: isWebsiteStatsLoading } = useSWR<{
-    totalRecords: number;
-  }>(`${apiUrl}/website-stats`, fetcher, {
+  // Toutes les agrégations (serveurs surveillés, joueurs en ligne, lignes de
+  // données) sont calculées côté backend : un seul endpoint léger plutôt que de
+  // rapatrier la liste complète des serveurs juste pour la sommer côté client.
+  const {
+    data: websiteStats,
+    error: websiteStatsError,
+    isLoading: isWebsiteStatsLoading,
+  } = useSWR<WebsiteStats>(`${apiUrl}/website-stats`, fetcher, {
     refreshInterval: 1000 * 60 * 5,
   });
 
-  if (isServersLoading || isWebsiteStatsLoading) {
+  if (isWebsiteStatsLoading) {
     return (
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
         {[0, 1, 2].map((i) => (
@@ -52,35 +43,35 @@ const StatsSection = () => {
     );
   }
 
-  if (serversError || websiteStatsError) {
+  if (websiteStatsError) {
     return (
       <div className="w-full text-center text-sm text-destructive">
-        {serversError?.message ?? websiteStatsError?.message ?? "Error loading stats"}
+        {websiteStatsError?.message ?? "Error loading stats"}
       </div>
     );
   }
 
-  if (!servers || !websiteStats) {
+  if (!websiteStats) {
     return null;
   }
 
-  const playersOnline = servers.reduce((total, { lastPlayerCount }) => total + (lastPlayerCount ?? 0), 0);
+  const format = (value: number) => new Intl.NumberFormat("en-US").format(value);
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
       <StatCard
         title="Monitored Servers"
-        value={new Intl.NumberFormat("en-US").format(servers.length)}
+        value={format(websiteStats.totalServers)}
         icon={<Icon icon="mynaui:servers-solid" className="h-5 w-5" />}
       />
       <StatCard
         title="Players Online Now"
-        value={new Intl.NumberFormat("en-US").format(playersOnline)}
+        value={format(websiteStats.playersOnline)}
         icon={<Icon icon="mdi:account-multiple" className="h-5 w-5" />}
       />
       <StatCard
         title="Total Data Rows"
-        value={new Intl.NumberFormat("en-US").format(websiteStats.totalRecords)}
+        value={format(websiteStats.totalRecords)}
         icon={<Icon icon="material-symbols:database-sharp" className="h-5 w-5" />}
       />
     </div>

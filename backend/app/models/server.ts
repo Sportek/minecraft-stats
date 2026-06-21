@@ -82,6 +82,14 @@ export default class Server extends BaseModel {
   @column.dateTime({ columnName: 'last_stats_at' })
   declare lastStatsAt: DateTime | null
 
+  // Pic all-time de joueurs simultanés. Mis à jour à chaque ping réussi quand le
+  // compte courant dépasse l'ancien pic (cf. start/scheduler.ts).
+  @column()
+  declare peakPlayerCount: number | null
+
+  @column.dateTime({ columnName: 'peak_player_at' })
+  declare peakPlayerAt: DateTime | null
+
   // Quand le serveur doit être pingué prochainement (cadence différentielle, P.5.1).
   // NULL = "ASAP". Mis à jour à chaque ping selon le résultat (Hot / Normal / Cold / Dead).
   @column.dateTime({ columnName: 'next_ping_at' })

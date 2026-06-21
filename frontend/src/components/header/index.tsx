@@ -319,47 +319,16 @@ const Header = () => {
                     </div>
                   </div>
 
-                  <MobileMenuLink
-                    href="/account/settings"
-                    icon="material-symbols:settings-outline"
-                    label="Profile settings"
-                    active={isActive("/account/settings")}
-                    onClick={closeMobileMenu}
-                  />
+                  {/* Un seul point d'entrée : le dashboard fournit sa propre nav
+                      (Profile, My Servers, Add Server, Articles, Users, Ads) via
+                      la barre d'onglets responsive de DashboardSidebar. */}
                   <MobileMenuLink
                     href="/account/my-servers"
-                    icon="mynaui:servers"
-                    label="My servers"
-                    active={isActive("/account/my-servers", ["/account/my-servers"])}
+                    icon="material-symbols:dashboard-outline"
+                    label="Dashboard"
+                    active={isActive("/account", ["/account", "/admin"])}
                     onClick={closeMobileMenu}
                   />
-                  {(user?.role === "admin" || user?.role === "writer") && (
-                    <MobileMenuLink
-                      href="/admin/posts"
-                      icon="material-symbols:article-outline"
-                      label="Manage blog"
-                      active={isActive("/admin/posts", ["/admin/posts"])}
-                      onClick={closeMobileMenu}
-                    />
-                  )}
-                  {user?.role === "admin" && (
-                    <MobileMenuLink
-                      href="/admin/users"
-                      icon="material-symbols:group"
-                      label="Manage users"
-                      active={isActive("/admin/users", ["/admin/users"])}
-                      onClick={closeMobileMenu}
-                    />
-                  )}
-                  {user?.role === "admin" && (
-                    <MobileMenuLink
-                      href="/admin/advertisements"
-                      icon="material-symbols:ad-group-outline"
-                      label="Manage advertisements"
-                      active={isActive("/admin/advertisements", ["/admin/advertisements"])}
-                      onClick={closeMobileMenu}
-                    />
-                  )}
                   <button
                     type="button"
                     onClick={() => {

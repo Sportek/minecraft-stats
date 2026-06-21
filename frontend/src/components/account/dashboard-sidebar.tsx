@@ -42,11 +42,10 @@ const DashboardSidebar = () => {
   const items = buildItems(user?.role);
 
   return (
-    <aside className="hidden lg:block">
-      <nav className="sticky top-20 flex flex-col gap-0.5 rounded-xl border border-border bg-card p-3 shadow-xs">
-        <p className="px-2 pb-2 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
-          Dashboard
-        </p>
+    <>
+      {/* Mobile / tablette : la sidebar desktop est cachée, donc la nav du
+          dashboard passe par cette barre d'onglets horizontale scrollable. */}
+      <nav className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 lg:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {items.map((item) => {
           const active = isActive(pathname, item.href);
           return (
@@ -55,10 +54,10 @@ const DashboardSidebar = () => {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex h-9 items-center gap-2.5 rounded-lg px-3 text-sm transition-colors",
+                "flex h-9 shrink-0 items-center gap-2 rounded-lg border px-3 text-sm transition-colors",
                 active
-                  ? "bg-accent/10 font-semibold text-accent"
-                  : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "border-accent/30 bg-accent/10 font-semibold text-accent"
+                  : "border-border bg-card font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
               )}
             >
               <Icon icon={item.icon} className="h-4 w-4 shrink-0" />
@@ -67,7 +66,35 @@ const DashboardSidebar = () => {
           );
         })}
       </nav>
-    </aside>
+
+      {/* Desktop : sidebar verticale sticky */}
+      <aside className="hidden lg:block">
+        <nav className="sticky top-20 flex flex-col gap-0.5 rounded-xl border border-border bg-card p-3 shadow-xs">
+          <p className="px-2 pb-2 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
+            Dashboard
+          </p>
+          {items.map((item) => {
+            const active = isActive(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "flex h-9 items-center gap-2.5 rounded-lg px-3 text-sm transition-colors",
+                  active
+                    ? "bg-accent/10 font-semibold text-accent"
+                    : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                <Icon icon={item.icon} className="h-4 w-4 shrink-0" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
   );
 };
 

@@ -148,7 +148,7 @@ const MyServersPage = () => {
                     <div className="text-sm font-bold tabular-nums text-foreground">
                       {formatNumber(server.lastPlayerCount ?? 0)}
                     </div>
-                    <div className="text-[11px] text-muted-foreground">peak {formatNumber(server.lastMaxCount ?? 0)}</div>
+                    <div className="text-[11px] text-muted-foreground">peak {formatNumber(server.peakPlayerCount ?? 0)}</div>
                   </div>
                   <div className="flex items-center gap-1">
                     <Link

@@ -183,6 +183,12 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
       server.lastMaxCount = maxPlayer
       server.lastStatsAt = DateTime.fromJSDate(createdAt)
 
+      // Pic all-time : on ne le déplace que vers le haut.
+      if (playerOnline > (server.peakPlayerCount ?? 0)) {
+        server.peakPlayerCount = playerOnline
+        server.peakPlayerAt = DateTime.fromJSDate(createdAt)
+      }
+
       // Rafraîchit les empreintes de détection de doublon. favicon + MOTD sont
       // recalculés à chaque ping (le MOTD bouge souvent) ; l'endpoint DNS, qui
       // ne change quasi jamais, n'est re-résolu que lors du job 6h (overwriteImage).

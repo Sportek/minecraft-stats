@@ -25,6 +25,8 @@ export interface Server {
   lastOnlineAt: Date | null;
   lastPlayerCount: number | null;
   lastMaxCount: number | null;
+  peakPlayerCount: number | null;
+  peakPlayerAt: Date | null;
   languages: Language[];
 }
 
