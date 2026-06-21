@@ -96,7 +96,7 @@ const SettingsPage = () => {
             </p>
           </div>
         </div>
-        <div className="max-w-2xl px-6 py-5">
+        <div className="px-6 py-5">
           <ChangePasswordForm />
         </div>
       </section>
