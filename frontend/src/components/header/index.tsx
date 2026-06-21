@@ -133,22 +133,13 @@ const Header = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/account/settings")}>Profile</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/account/my-servers")}>My servers</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/account/add-server")}>Add a server</DropdownMenuItem>
-        {(user?.role === "admin" || user?.role === "writer") && (
-          <DropdownMenuItem onClick={() => router.push("/admin/posts")}>Manage blog</DropdownMenuItem>
-        )}
-        {user?.role === "admin" && (
-          <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage users</DropdownMenuItem>
-        )}
-        {user?.role === "admin" && (
-          <DropdownMenuItem onClick={() => router.push("/admin/advertisements")}>
-            Manage advertisements
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem onClick={() => router.push("/account/my-servers")}>
+          <Icon icon="material-symbols:dashboard-outline" className="mr-2 h-4 w-4" />
+          Dashboard
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:text-destructive">
+          <Icon icon="material-symbols:logout" className="mr-2 h-4 w-4" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

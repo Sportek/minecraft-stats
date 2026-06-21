@@ -30,9 +30,7 @@ const LatestArticlesSection = () => {
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <Icon icon="material-symbols:article-outline" className="h-4 w-4" />
-          </div>
+          <Icon icon="material-symbols:article-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
           <h2 className="text-lg font-semibold tracking-tight text-foreground">From the blog</h2>
         </div>
         <Link

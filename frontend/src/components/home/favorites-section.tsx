@@ -54,9 +54,7 @@ const FavoritesSection = () => {
   return (
     <section id="favorites-section" className="w-full scroll-mt-8 space-y-4">
       <div className="flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-          <Icon icon="material-symbols:star-rounded" className="h-4 w-4" />
-        </div>
+        <Icon icon="material-symbols:star-rounded" className="h-5 w-5 shrink-0 text-muted-foreground" />
         <h2 className="text-lg font-semibold tracking-tight text-foreground">Your favorites</h2>
         <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-muted-foreground">
           {favorites.length}/{MAX_FAVORITES}

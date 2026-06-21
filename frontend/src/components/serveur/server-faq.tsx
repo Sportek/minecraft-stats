@@ -47,9 +47,7 @@ const ServerFAQ = ({ server, currentPlayers = 0, maxPlayers = 0 }: ServerFAQProp
   return (
     <section className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
       <div className="flex items-center gap-2 border-b border-border px-6 py-5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-          <Icon icon="material-symbols:help-outline" className="h-4 w-4" />
-        </div>
+        <Icon icon="material-symbols:help-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
         <h2 className="text-lg font-semibold text-foreground">Frequently Asked Questions</h2>
       </div>
 

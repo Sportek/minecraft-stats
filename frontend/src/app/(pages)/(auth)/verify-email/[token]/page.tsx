@@ -39,7 +39,7 @@ const VerifyEmail = () => {
       <div className="space-y-5 text-center">
         {status === "loading" && (
           <>
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
               <Spinner size="lg" />
             </div>
             <p className="text-sm text-muted-foreground">Checking your link...</p>

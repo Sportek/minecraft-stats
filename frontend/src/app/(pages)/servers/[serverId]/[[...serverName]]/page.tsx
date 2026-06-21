@@ -127,7 +127,7 @@ const ServerNotFound = () => {
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="bg-card text-card-foreground border border-border rounded-lg shadow-xs p-8 space-y-6 max-w-md w-full">
             <div className="space-y-2 text-center">
-              <div className="w-16 h-16 mx-auto bg-accent/10 text-accent rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto bg-secondary text-muted-foreground rounded-full flex items-center justify-center">
                 <Icon icon="mdi:server-off" className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-semibold text-foreground">Server Not Found</h2>
@@ -263,9 +263,7 @@ const ServerPage = () => {
       <section className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         <div className="flex flex-col gap-2 border-b border-border px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
-              <Icon icon="material-symbols:show-chart" className="h-4 w-4" />
-            </div>
+            <Icon icon="material-symbols:show-chart" className="h-5 w-5 shrink-0 text-muted-foreground" />
             <div>
               <h2 className="text-lg font-semibold text-foreground">Player Count History</h2>
               <p className="text-xs text-muted-foreground">Online players over time.</p>

@@ -57,7 +57,7 @@ const SettingsPage = () => {
   return (
     <DashboardLayout>
       <DashboardHero
-        avatar={{ fallback: user.username[0].toUpperCase(), src: user.avatarUrl }}
+        avatar={{ name: user.username, src: user.avatarUrl }}
         title={user.username}
         badge={roleLabel}
         subtitle={`${user.email} · Member since ${memberSince}`}
@@ -66,10 +66,8 @@ const SettingsPage = () => {
       {/* Your information (read-only) */}
       <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-              <UserIcon className="h-5 w-5" />
-            </div>
+          <div className="flex items-center gap-2.5">
+            <UserIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
             <h2 className="text-base font-semibold tracking-tight text-foreground">Your information</h2>
           </div>
           <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
@@ -89,10 +87,8 @@ const SettingsPage = () => {
 
       {/* Manage password */}
       <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
-        <div className="flex items-center gap-3 border-b border-border px-6 py-4">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <KeyRound className="h-5 w-5" />
-          </div>
+        <div className="flex items-center gap-2.5 border-b border-border px-6 py-4">
+          <KeyRound className="h-5 w-5 shrink-0 text-muted-foreground" />
           <div className="min-w-0">
             <h2 className="text-base font-semibold tracking-tight text-foreground">Manage password</h2>
             <p className="text-sm text-muted-foreground">

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { getClientBackendUrl } from "@/lib/domain";
 import { cn } from "@/lib/utils";
+import { LetterTile } from "@/components/ui/letter-tile";
 
 interface ServerImageProps {
   imageUrl: string;
@@ -11,36 +12,12 @@ interface ServerImageProps {
   className?: string;
 }
 
-// Stable hue derived from the name: used as the gradient background for the
-// letter tile shown when the server has no (or no longer a) favicon.
-const hueFromName = (name: string) => {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return Math.abs(hash) % 360;
-};
-
-const LetterTile = ({ name, className }: { name: string; className?: string }) => {
-  const hue = hueFromName(name);
-  return (
-    <div
-      aria-hidden="true"
-      className={cn(
-        "flex h-12 w-12 shrink-0 select-none items-center justify-center rounded-md text-lg font-extrabold text-white",
-        className
-      )}
-      style={{ background: `linear-gradient(135deg, hsl(${hue} 62% 46%), hsl(${hue + 26} 70% 26%))` }}
-    >
-      {name.trim().charAt(0).toUpperCase() || "?"}
-    </div>
-  );
-};
-
 const ServerImage = ({ imageUrl, name, className }: ServerImageProps) => {
   const backendUrl = getClientBackendUrl();
   const [src, setSrc] = useState(imageUrl ? `${backendUrl}${imageUrl}.webp` : "");
 
   if (!src) {
-    return <LetterTile name={name} className={className} />;
+    return <LetterTile name={name} className={cn("h-12 w-12 rounded-md text-lg", className)} />;
   }
 
   return (

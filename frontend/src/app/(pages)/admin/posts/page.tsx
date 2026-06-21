@@ -33,6 +33,7 @@ const AdminPostsPage = () => {
   const { user, getToken } = useAuth();
   const token = getToken();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
   const [query, setQuery] = useState("");
@@ -55,8 +56,25 @@ const AdminPostsPage = () => {
     fetchPosts();
   }, [token, filter]);
 
-  const publishedCount = useMemo(() => posts.filter((p) => p.published).length, [posts]);
-  const draftCount = posts.length - publishedCount;
+  // Separate unfiltered fetch so the stat tiles and tab counts always reflect
+  // the full set of posts, independent of the active filter tab.
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchAllPosts = async () => {
+      try {
+        const response = await getAdminPosts(token, 1, 50, "all");
+        setAllPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+
+    fetchAllPosts();
+  }, [token]);
+
+  const publishedCount = useMemo(() => allPosts.filter((p) => p.published).length, [allPosts]);
+  const draftCount = allPosts.length - publishedCount;
 
   const visiblePosts = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -87,6 +105,7 @@ const AdminPostsPage = () => {
     try {
       await deletePost(postId, token);
       setPosts(posts.filter((p) => p.id !== postId));
+      setAllPosts(allPosts.filter((p) => p.id !== postId));
     } catch (error) {
       console.error("Failed to delete post:", error);
       alert("Failed to delete article");
@@ -99,6 +118,7 @@ const AdminPostsPage = () => {
     try {
       const updatedPost = await publishPost(postId, token);
       setPosts(posts.map((p) => (p.id === postId ? updatedPost : p)));
+      setAllPosts(allPosts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to publish post:", error);
       alert("Failed to publish article");
@@ -111,6 +131,7 @@ const AdminPostsPage = () => {
     try {
       const updatedPost = await unpublishPost(postId, token);
       setPosts(posts.map((p) => (p.id === postId ? updatedPost : p)));
+      setAllPosts(allPosts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to unpublish post:", error);
       alert("Failed to unpublish article");
@@ -134,7 +155,7 @@ const AdminPostsPage = () => {
 
       {/* Stat tiles */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <DashboardStatTile label="Total Articles" value={String(posts.length)} />
+        <DashboardStatTile label="Total Articles" value={String(allPosts.length)} />
         <DashboardStatTile label="Published" value={String(publishedCount)} dot="success" />
         <DashboardStatTile label="Drafts" value={String(draftCount)} dot="muted" />
       </div>
@@ -147,7 +168,7 @@ const AdminPostsPage = () => {
             value={filter}
             onChange={setFilter}
             tabs={[
-              { value: "all", label: `All (${posts.length})` },
+              { value: "all", label: `All (${allPosts.length})` },
               { value: "published", label: `Published (${publishedCount})` },
               { value: "draft", label: `Drafts (${draftCount})` },
             ]}

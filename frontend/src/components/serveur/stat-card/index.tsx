@@ -6,14 +6,12 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon }: StatCardProps) => {
   return (
-    <div className="group relative overflow-hidden rounded-lg border border-border bg-card text-card-foreground p-4 shadow-xs transition-all hover:border-accent/40 hover:shadow-md">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-          {icon}
-        </div>
-        <div className="text-sm font-medium text-muted-foreground">{title}</div>
+    <div className="rounded-lg border border-border bg-card text-card-foreground p-4 shadow-xs transition-all hover:border-accent/40 hover:shadow-md">
+      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+        <span className="shrink-0 text-muted-foreground">{icon}</span>
+        {title}
       </div>
-      <div className="mt-3 text-2xl font-bold tracking-tight text-foreground">{value}</div>
+      <div className="mt-2.5 text-2xl font-bold tracking-tight text-foreground">{value}</div>
     </div>
   );
 };

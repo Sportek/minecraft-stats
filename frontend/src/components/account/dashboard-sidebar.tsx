@@ -18,19 +18,28 @@ const BASE_ITEMS: NavItem[] = [
   { href: "/account/add-server", label: "Add Server", icon: "material-symbols:add-rounded" },
 ];
 
-const ARTICLES_ITEM: NavItem = {
-  href: "/admin/posts",
-  label: "Articles",
-  icon: "material-symbols:article-outline",
-};
+const WRITER_ITEMS: NavItem[] = [
+  { href: "/admin/posts", label: "Articles", icon: "material-symbols:article-outline" },
+];
+
+const ADMIN_ITEMS: NavItem[] = [
+  { href: "/admin/users", label: "Users", icon: "material-symbols:group-outline" },
+  { href: "/admin/advertisements", label: "Advertisements", icon: "material-symbols:ad-group-outline" },
+];
 
 const isActive = (pathname: string | null, href: string) =>
   pathname === href || (pathname?.startsWith(`${href}/`) ?? false);
 
+const buildItems = (role: string | undefined): NavItem[] => {
+  if (role === "admin") return [...BASE_ITEMS, ...WRITER_ITEMS, ...ADMIN_ITEMS];
+  if (role === "writer") return [...BASE_ITEMS, ...WRITER_ITEMS];
+  return BASE_ITEMS;
+};
+
 const DashboardSidebar = () => {
   const pathname = usePathname();
   const { user } = useAuth();
-  const items = user?.role === "admin" || user?.role === "writer" ? [...BASE_ITEMS, ARTICLES_ITEM] : BASE_ITEMS;
+  const items = buildItems(user?.role);
 
   return (
     <aside className="hidden lg:block">

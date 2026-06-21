@@ -48,10 +48,8 @@ const Partners = () => {
               className="group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
             >
               <Card className="flex h-full flex-col gap-4 p-6 transition-all hover:border-accent/50 hover:shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-                    <Icon icon={partner.icon} className="h-5 w-5" />
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <Icon icon={partner.icon} className="h-6 w-6 shrink-0 text-muted-foreground" />
                   <h2 className="font-semibold tracking-tight text-foreground">{partner.name}</h2>
                 </div>
                 <p className="flex-1 text-sm text-muted-foreground">{partner.description}</p>

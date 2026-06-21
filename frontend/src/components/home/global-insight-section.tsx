@@ -202,9 +202,7 @@ const GlobalInsightSection = () => {
     <section className="w-full rounded-xl border border-border bg-card text-card-foreground shadow-xs">
       <div className="flex flex-col gap-1.5 border-b border-border px-5 py-4 sm:px-6 sm:py-5">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <Icon icon="material-symbols:analytics-outline" className="h-4 w-4" />
-          </div>
+          <Icon icon="material-symbols:analytics-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
           <h2 className="text-lg font-semibold tracking-tight text-foreground">Global Insight</h2>
         </div>
         <p className="text-sm text-muted-foreground sm:pl-9">
