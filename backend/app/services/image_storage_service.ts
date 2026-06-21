@@ -80,12 +80,14 @@ class ImageStorageService {
   }
 
   /**
-   * Stocke l'avatar d'un utilisateur en WebP carré 256x256. La clé est stable
-   * (écrasée à chaque upload) ; un cache court évite de servir un ancien avatar.
-   * Retourne le chemin relatif (`/images/avatars/<userId>.webp`).
+   * Stocke l'avatar d'un utilisateur en WebP carré 256x256. La clé inclut un UUID
+   * aléatoire : chaque upload produit une URL différente, donc aucun cache
+   * (navigateur, CDN, Next) ne sert l'ancienne image. L'appelant doit supprimer
+   * l'ancien fichier via `deletePublicAsset` pour éviter les orphelins.
+   * Retourne le chemin relatif (`/images/avatars/<userId>-<uuid>.webp`).
    */
   async storeUserAvatar(userId: number, buffer: Buffer): Promise<string> {
-    const key = `images/avatars/${userId}.webp`
+    const key = `images/avatars/${userId}-${randomUUID()}.webp`
     const webp = await sharp(buffer)
       .webp({ quality: 90 })
       .resize(256, 256, { fit: 'cover' })
@@ -93,10 +95,26 @@ class ImageStorageService {
 
     await this.disk.put(key, webp, {
       contentType: 'image/webp',
-      cacheControl: 'public, max-age=300',
+      cacheControl: 'public, max-age=31536000, immutable',
     })
 
     return `/${key}`
+  }
+
+  /**
+   * Supprime un asset à partir de son chemin public (`/images/...`). Best-effort :
+   * on log et on continue si l'objet n'existe pas ou si la suppression échoue.
+   */
+  async deletePublicAsset(publicPath: string): Promise<void> {
+    const key = publicPath.replace(/^\//, '')
+    try {
+      await this.disk.delete(key)
+    } catch (error) {
+      logger.warn(
+        { key, err: error instanceof Error ? error.message : String(error) },
+        'STORAGE: failed to delete asset'
+      )
+    }
   }
 
   /**

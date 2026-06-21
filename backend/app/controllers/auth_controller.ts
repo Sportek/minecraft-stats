@@ -162,7 +162,7 @@ export default class AuthController {
    * @summary Upload the authenticated user's avatar
    * @description Accepts a multipart upload under the form field `avatar` (max 5 MB, extensions `jpg`, `jpeg`, `png`, `webp`, `gif`). The image is converted to a 256x256 WebP, stored via Drive, and its relative URL is saved on the user. Returns the updated user. Requires authentication.
    * @requestFormDataBody {"avatar": {"type": "string", "format": "binary"}}
-   * @responseBody 200 - {"user": {"id": 1, "username": "player", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "/images/avatars/1.webp", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 200 - {"user": {"id": 1, "username": "player", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "/images/avatars/1-3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
    * @responseBody 400 - {"error": "No image provided"}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    */
@@ -178,8 +178,14 @@ export default class AuthController {
     if (!image.tmpPath) return response.badRequest({ error: 'Invalid upload' })
 
     const buffer = await fs.readFile(image.tmpPath)
+    const previousAvatar = user.avatarUrl
     user.avatarUrl = await ImageStorageService.storeUserAvatar(user.id, buffer)
     await user.save()
+
+    // Remove the previous avatar (only our own uploads — never an OAuth URL).
+    if (previousAvatar?.startsWith('/images/avatars/')) {
+      await ImageStorageService.deletePublicAsset(previousAvatar)
+    }
 
     return response.ok({ user: { ...user.serialize(), email: user.email } })
   }

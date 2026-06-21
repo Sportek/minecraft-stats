@@ -4,7 +4,7 @@ import { AvatarTile } from "@/components/ui/avatar-tile";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { uploadUserAvatar } from "@/http/auth";
-import { resolveAvatarUrl } from "@/lib/domain";
+import { resolveAssetUrl } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 import { Camera, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
@@ -57,7 +57,7 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
     <div className={cn("group relative overflow-hidden", className)}>
       <AvatarTile
         name={name}
-        src={resolveAvatarUrl(user?.avatarUrl, user?.updatedAt)}
+        src={resolveAssetUrl(user?.avatarUrl)}
         className="h-full w-full rounded-[inherit]"
       />
       <button
