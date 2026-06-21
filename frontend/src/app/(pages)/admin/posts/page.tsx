@@ -9,6 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AvatarTile } from "@/components/ui/avatar-tile";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/auth";
 import { deletePost, getAdminPosts, publishPost, unpublishPost } from "@/http/post";
 import { Post } from "@/types/post";
@@ -30,6 +38,8 @@ const AdminPostsPage = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
   const [query, setQuery] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<Post | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -91,17 +101,20 @@ const AdminPostsPage = () => {
     );
   }
 
-  const handleDelete = async (postId: number) => {
-    if (!token) return;
-    if (!confirm("Are you sure you want to delete this article?")) return;
-
+  const confirmDelete = async () => {
+    if (!token || !pendingDelete) return;
+    const postId = pendingDelete.id;
+    setIsDeleting(true);
     try {
       await deletePost(postId, token);
-      setPosts(posts.filter((p) => p.id !== postId));
-      setAllPosts(allPosts.filter((p) => p.id !== postId));
+      setPosts((current) => current.filter((p) => p.id !== postId));
+      setAllPosts((current) => current.filter((p) => p.id !== postId));
+      setPendingDelete(null);
     } catch (error) {
       console.error("Failed to delete post:", error);
       alert("Failed to delete article");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -248,7 +261,7 @@ const AdminPostsPage = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => handleDelete(post.id)}
+                      onClick={() => setPendingDelete(post)}
                       title="Delete"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -260,6 +273,30 @@ const AdminPostsPage = () => {
           </ul>
         )}
       </div>
+
+      <Dialog open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this article?</DialogTitle>
+            <DialogDescription>
+              {pendingDelete ? (
+                <>
+                  <span className="font-medium text-foreground">{pendingDelete.title}</span> will be
+                  permanently deleted. This action cannot be undone.
+                </>
+              ) : null}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingDelete(null)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={isDeleting}>
+              {isDeleting ? "Deleting…" : "Delete article"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };
