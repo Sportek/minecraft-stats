@@ -1,6 +1,11 @@
->0.5%
-last 2 versions
-Firefox ESR
+# Target modern evergreen browsers (Baseline 2022+). This drops the legacy
+# JS polyfills (Array.prototype.at/flat/flatMap, Object.fromEntries/hasOwn,
+# String.prototype.trimStart/End…) that Next would otherwise ship for older
+# engines — all of these are natively supported by the versions below.
+chrome >= 100
+edge >= 100
+firefox >= 100
+safari >= 15.4
+ios_saf >= 15.4
 not dead
-not ie 11
 not op_mini all

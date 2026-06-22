@@ -11,7 +11,7 @@ import Database from '@adonisjs/lucid/services/db'
  * - PLAYER_COUNT_PEAK_HIGH: Highest player count recorded
  * - PLAYER_COUNT_PEAK_LOW: Lowest player count recorded
  * - PLAYER_COUNT_AVERAGE: Average player count
- * - PLAYER_COUNT_MEDIAN: Median player count
+ * - PLAYER_COUNT_MEDIAN: Median player count (last 30 days)
  * - SERVER_VERSION: Server version
  * - DATA_SINCE_DATE: Date since data collection started
  * - ADDRESS: Server address
@@ -49,11 +49,12 @@ export default class PlaceholderService {
       return content
     }
 
-    // Group placeholders by server ID to minimize database queries
-    const serverIds = [...new Set(matches.map((match) => Number.parseInt(match[2])))]
-
-    // Preload all server data
-    const serversData = await this.preloadServerData(serverIds)
+    // Preload only the data actually referenced by these placeholders
+    const pairs = matches.map((match) => ({
+      name: match[1],
+      serverId: Number.parseInt(match[2]),
+    }))
+    const serversData = await this.preloadServerData(pairs)
 
     // Replace each placeholder
     let result = content
@@ -84,8 +85,11 @@ export default class PlaceholderService {
       .map((token) => ({ token, match: token.match(/^%([A-Z_]+)_(\d+)%$/) }))
       .filter((entry): entry is { token: string; match: RegExpMatchArray } => entry.match !== null)
 
-    const serverIds = [...new Set(parsed.map((entry) => Number.parseInt(entry.match[2])))]
-    const serversData = await this.preloadServerData(serverIds)
+    const pairs = parsed.map((entry) => ({
+      name: entry.match[1],
+      serverId: Number.parseInt(entry.match[2]),
+    }))
+    const serversData = await this.preloadServerData(pairs)
 
     const result: Record<string, string> = {}
     for (const { token, match } of parsed) {
@@ -97,50 +101,118 @@ export default class PlaceholderService {
   }
 
   /**
-   * Preload server data for multiple servers at once.
+   * Charge, pour un ensemble de placeholders, uniquement les données dont ils ont
+   * besoin — et seulement pour les serveurs concernés par chaque métrique.
    *
-   * Toutes les données sont récupérées avec des requêtes ensemblistes
-   * (`whereIn` / `GROUP BY server_id`) pour éviter le N+1 : un serveur absent du
-   * résultat `whereIn` est traité comme introuvable (`exists: false`), et les
-   * erreurs DB ne sont plus avalées — elles remontent.
+   * REALTIME / PEAK_HIGH / VERSION / ADDRESS se lisent sur `servers` et ne
+   * déclenchent aucune requête `server_stats`. Les métriques coûteuses
+   * (first-stat, peak-low, AVG, médiane) ne sont calculées que si un placeholder
+   * les demande, et le `PERCENTILE_CONT` (médiane, qui trie tout l'historique)
+   * n'est ajouté que si une médiane est réellement demandée. Les requêtes
+   * restantes tournent en parallèle.
    */
-  private static async preloadServerData(serverIds: number[]): Promise<Map<number, ServerData>> {
+  private static async preloadServerData(
+    pairs: { name: string; serverId: number }[]
+  ): Promise<Map<number, ServerData>> {
     const serversData = new Map<number, ServerData>()
 
-    if (serverIds.length === 0) {
+    const allIds = [...new Set(pairs.map((pair) => pair.serverId))]
+    if (allIds.length === 0) {
       return serversData
     }
 
-    const servers = await Server.query().whereIn('id', serverIds)
+    const servers = await Server.query().whereIn('id', allIds)
+    for (const server of servers) {
+      serversData.set(server.id, { exists: true, server })
+    }
+    for (const id of allIds) {
+      if (!serversData.has(id)) {
+        serversData.set(id, { exists: false })
+      }
+    }
 
-    // PLAYER_COUNT_REALTIME et PLAYER_COUNT_PEAK_HIGH sont lus directement sur
-    // `servers` (last_player_count / peak_player_count, maintenus à chaque ping) :
-    // inutile de scanner server_stats pour ces deux-là.
+    // Serveurs (existants) qui réclament chaque métrique dérivée de server_stats.
+    const idsNeeding = (...names: string[]) => [
+      ...new Set(
+        pairs
+          .filter((pair) => names.includes(pair.name) && serversData.get(pair.serverId)?.exists)
+          .map((pair) => pair.serverId)
+      ),
+    ]
 
-    // First stat per server (lowest createdAt) — équivalent à orderBy createdAt asc + first
-    const firstStats = await ServerStat.query()
-      .whereIn('serverId', serverIds)
-      .select('*')
-      .distinctOn('serverId')
-      .orderBy('serverId', 'asc')
-      .orderBy('createdAt', 'asc')
+    const firstIds = idsNeeding('DATA_SINCE_DATE')
+    const peakLowIds = idsNeeding('PLAYER_COUNT_PEAK_LOW')
+    const aggIds = idsNeeding('PLAYER_COUNT_AVERAGE', 'PLAYER_COUNT_MEDIAN')
+    const needAvg = pairs.some((pair) => pair.name === 'PLAYER_COUNT_AVERAGE')
+    const needMedian = pairs.some((pair) => pair.name === 'PLAYER_COUNT_MEDIAN')
 
-    // Peak low per server (lowest playerCount > 0) — équivalent à where > 0 + orderBy playerCount asc + first
-    const peakLowStats = await ServerStat.query()
-      .whereIn('serverId', serverIds)
-      .where('playerCount', '>', 0)
-      .select('*')
-      .distinctOn('serverId')
-      .orderBy('serverId', 'asc')
-      .orderBy('playerCount', 'asc')
+    const [firstStats, peakLowStats, aggregatesByServer] = await Promise.all([
+      firstIds.length
+        ? ServerStat.query()
+            .whereIn('serverId', firstIds)
+            .select('*')
+            .distinctOn('serverId')
+            .orderBy('serverId', 'asc')
+            .orderBy('createdAt', 'asc')
+        : Promise.resolve([] as ServerStat[]),
+      peakLowIds.length
+        ? ServerStat.query()
+            .whereIn('serverId', peakLowIds)
+            .where('playerCount', '>', 0)
+            .select('*')
+            .distinctOn('serverId')
+            .orderBy('serverId', 'asc')
+            .orderBy('playerCount', 'asc')
+        : Promise.resolve([] as ServerStat[]),
+      aggIds.length
+        ? this.loadAggregates(aggIds, needAvg, needMedian)
+        : Promise.resolve(new Map<number, { avg: number; median: number }>()),
+    ])
 
-    // Average and median per server, en une seule requête groupée
-    const aggregatesQuery = await Database.rawQuery(
+    const byServerId = <T extends { serverId: number }>(rows: T[]): Map<number, T> =>
+      new Map(rows.map((row) => [row.serverId, row]))
+
+    const firstByServer = byServerId(firstStats)
+    const peakLowByServer = byServerId(peakLowStats)
+
+    for (const id of allIds) {
+      const data = serversData.get(id)
+      if (!data?.exists) continue
+
+      const aggregates = aggregatesByServer.get(id)
+      data.firstStat = firstByServer.get(id)
+      data.peakLow = peakLowByServer.get(id)
+      data.average = aggregates?.avg ?? 0
+      data.median = aggregates?.median ?? 0
+    }
+
+    return serversData
+  }
+
+  /**
+   * AVG / médiane par serveur en une requête groupée. `PERCENTILE_CONT` est le
+   * calcul le plus lourd (il trie les lignes) : on ne l'inclut que si une médiane
+   * est demandée, et on la borne aux 30 derniers jours via `FILTER` pour que le
+   * tri ne porte que sur ~1 mois de points (la clause de date s'appuie sur
+   * l'index server_id/created_at) au lieu de tout l'historique. La moyenne reste
+   * all-time : c'est un agrégat en streaming (pas de tri), donc bon marché.
+   */
+  private static async loadAggregates(
+    serverIds: number[],
+    needAvg: boolean,
+    needMedian: boolean
+  ): Promise<Map<number, { avg: number; median: number }>> {
+    const columns = [
+      needAvg ? 'AVG(player_count)::int AS avg_players' : 'NULL::int AS avg_players',
+      needMedian
+        ? `(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY player_count)
+             FILTER (WHERE created_at >= now() - interval '30 days'))::int AS median_players`
+        : 'NULL::int AS median_players',
+    ]
+
+    const query = await Database.rawQuery(
       `
-      SELECT
-        server_id,
-        AVG(player_count)::int as avg_players,
-        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY player_count)::int as median_players
+      SELECT server_id, ${columns.join(', ')}
       FROM server_stats
       WHERE server_id IN (${serverIds.map(() => '?').join(', ')})
       GROUP BY server_id
@@ -148,35 +220,12 @@ export default class PlaceholderService {
       serverIds
     )
 
-    const byServerId = <T extends { serverId: number }>(rows: T[]): Map<number, T> =>
-      new Map(rows.map((row) => [row.serverId, row]))
-
-    const firstByServer = byServerId(firstStats)
-    const peakLowByServer = byServerId(peakLowStats)
-    const aggregatesByServer = new Map<number, { avg_players: number; median_players: number }>(
-      aggregatesQuery.rows.map((row: any) => [Number(row.server_id), row])
+    return new Map(
+      query.rows.map((row: any) => [
+        Number(row.server_id),
+        { avg: row.avg_players ?? 0, median: row.median_players ?? 0 },
+      ])
     )
-
-    for (const server of servers) {
-      const aggregates = aggregatesByServer.get(server.id)
-
-      serversData.set(server.id, {
-        exists: true,
-        server,
-        firstStat: firstByServer.get(server.id),
-        peakLow: peakLowByServer.get(server.id),
-        average: aggregates?.avg_players || 0,
-        median: aggregates?.median_players || 0,
-      })
-    }
-
-    for (const serverId of serverIds) {
-      if (!serversData.has(serverId)) {
-        serversData.set(serverId, { exists: false })
-      }
-    }
-
-    return serversData
   }
 
   /**
@@ -254,7 +303,7 @@ export default class PlaceholderService {
       },
       {
         name: 'PLAYER_COUNT_MEDIAN',
-        description: 'Median number of players',
+        description: 'Median number of players (last 30 days)',
         example: '%PLAYER_COUNT_MEDIAN_125%',
       },
       {
