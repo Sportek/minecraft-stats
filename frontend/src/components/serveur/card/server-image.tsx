@@ -29,8 +29,11 @@ const ServerImage = ({ imageUrl, name, className }: ServerImageProps) => {
         alt={name}
         width={48}
         height={48}
-        quality={75}
-        priority
+        // Favicons are already tiny 64x64 WebP, so the Next optimizer adds ~2s of
+        // cold server-side work per image for no gain. Serve them straight from the
+        // CDN (`unoptimized`) and lazy-load (no `priority`) so only visible cards fetch.
+        unoptimized
+        loading="lazy"
         onLoad={() => setLoaded(true)}
         className={cn(
           "h-full w-full object-cover transition-opacity duration-300",
