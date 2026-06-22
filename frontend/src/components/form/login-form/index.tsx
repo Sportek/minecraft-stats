@@ -6,10 +6,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { Turnstile, isTurnstileEnabled } from "@/components/form/turnstile";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -31,12 +32,23 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
 
   const { login, loginWithDiscord, loginWithGoogle } = useAuth();
   const { toast } = useToast();
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Bumping this key remounts the widget to get a fresh token after a failure
+  // (Turnstile tokens are single-use).
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const isSubmitting = form.formState.isSubmitting;
+  const captchaMissing = isTurnstileEnabled && !captchaToken;
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    setCaptchaKey((key) => key + 1);
+  };
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
-    const response = await login(credentials.email, credentials.password);
+    const response = await login(credentials.email, credentials.password, captchaToken);
     if (response?.message) {
+      resetCaptcha();
       toast({
         title: "Error while logging in",
         description: response.message,
@@ -87,7 +99,14 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
             )}
           />
 
-          <Button variant="accent" className="h-11 w-full text-[15px]" type="submit" disabled={isSubmitting}>
+          <Turnstile key={captchaKey} onToken={setCaptchaToken} className="flex justify-center" />
+
+          <Button
+            variant="accent"
+            className="h-11 w-full text-[15px]"
+            type="submit"
+            disabled={isSubmitting || captchaMissing}
+          >
             {isSubmitting ? (
               <>
                 <Spinner size="xs" tone="current" className="mr-2" />

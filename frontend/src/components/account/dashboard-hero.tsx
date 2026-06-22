@@ -1,14 +1,21 @@
 import { cn } from "@/lib/utils";
 import { AvatarTile } from "@/components/ui/avatar-tile";
+import { EditableAvatar } from "@/components/account/editable-avatar";
 
 interface DashboardHeroProps {
   title: string;
   subtitle?: string;
   badge?: string;
   action?: React.ReactNode;
-  /** When provided, a square avatar tile floats over the gradient band. */
-  avatar?: { name: string; src?: string | null };
+  /**
+   * When provided, a square avatar tile floats over the gradient band. Set
+   * `editable` to let the user upload a new picture by clicking the tile.
+   */
+  avatar?: { name: string; src?: string | null; editable?: boolean };
 }
+
+const AVATAR_TILE_CLASSES =
+  "-mt-10 h-[72px] w-[72px] rounded-2xl border-4 border-card text-2xl shadow-md";
 
 /**
  * Gradient banner used at the top of every dashboard page. With `avatar` it
@@ -22,13 +29,12 @@ const DashboardHero = ({ title, subtitle, badge, action, avatar }: DashboardHero
       <div className="absolute inset-0 bg-[radial-gradient(120%_140%_at_100%_0%,rgba(255,255,255,0.18),transparent_60%)]" />
     </div>
     <div className="relative z-10 px-6 pb-5">
-      {avatar && (
-        <AvatarTile
-          name={avatar.name}
-          src={avatar.src}
-          className="-mt-10 h-[72px] w-[72px] rounded-2xl border-4 border-card text-2xl shadow-md"
-        />
-      )}
+      {avatar &&
+        (avatar.editable ? (
+          <EditableAvatar name={avatar.name} className={AVATAR_TILE_CLASSES} />
+        ) : (
+          <AvatarTile name={avatar.name} src={avatar.src} className={AVATAR_TILE_CLASSES} />
+        ))}
       <div
         className={cn(
           "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",

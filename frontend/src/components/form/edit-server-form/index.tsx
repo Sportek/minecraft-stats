@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/auth";
 import { deleteServer, editServer } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { Category, Language, Server } from "@/types/server";
+import { cleanWebsiteHost } from "@/utils/server-website";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
@@ -100,7 +101,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
     try {
       await editServer(
         server.id,
-        { ...credentials, port: parseInt(credentials.port), website: credentials.website?.trim() || undefined },
+        { ...credentials, port: parseInt(credentials.port), website: cleanWebsiteHost(credentials.website) || undefined },
         getToken() ?? ""
       );
       form.reset();

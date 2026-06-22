@@ -1,10 +1,10 @@
 "use client";
 
+import { CoverImageField } from "@/components/admin/cover-image-field";
 import { TiptapEditor } from "@/components/blog/tiptap-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ImageIcon } from "lucide-react";
 import Link from "next/link";
 
 export interface PostFormValues {
@@ -73,35 +73,10 @@ export const PostForm = ({
           />
         </div>
 
-        <div className="space-y-2">
-          <Label>Cover image (optional)</Label>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-            {values.coverImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={values.coverImage}
-                alt=""
-                className="h-24 w-full rounded-lg border border-border object-cover sm:w-40"
-              />
-            ) : (
-              <div className="flex h-24 w-full flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-secondary/40 text-muted-foreground sm:w-40">
-                <ImageIcon className="h-5 w-5" />
-                <span className="text-xs">No cover yet</span>
-              </div>
-            )}
-            <div className="flex flex-1 flex-col justify-center gap-2">
-              <Input
-                type="text"
-                value={values.coverImage}
-                onChange={(e) => onField("coverImage", e.target.value)}
-                placeholder="https://example.com/image.jpg"
-              />
-              <span className="text-xs text-muted-foreground">
-                Used as the hero image on the blog card and article page.
-              </span>
-            </div>
-          </div>
-        </div>
+        <CoverImageField
+          value={values.coverImage}
+          onChange={(value) => onField("coverImage", value)}
+        />
 
         <div className="space-y-2">
           <Label>Summary (optional)</Label>

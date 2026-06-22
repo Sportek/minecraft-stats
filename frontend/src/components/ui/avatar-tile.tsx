@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { resolveAssetUrl } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 import { LetterTile } from "./letter-tile";
 
@@ -23,6 +24,11 @@ export const AvatarTile = ({ name, src, className }: AvatarTileProps) => {
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt="" onError={() => setFailed(true)} className={cn("object-cover", className)} />
+    <img
+      src={resolveAssetUrl(src)}
+      alt=""
+      onError={() => setFailed(true)}
+      className={cn("object-cover", className)}
+    />
   );
 };

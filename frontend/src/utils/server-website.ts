@@ -20,6 +20,29 @@ const MULTIPART_TLDS = new Set([
 const IPV4 = /^\d{1,3}(\.\d{1,3}){3}$/;
 
 /**
+ * Strips any leading scheme from a website value, tolerating malformed ones like
+ * `https//host` (missing colon) or duplicated slashes, plus trailing slashes.
+ * `https://example.com/` -> `example.com`, `https//example.com` -> `example.com`.
+ */
+export function cleanWebsiteHost(value: string | null | undefined): string {
+  if (!value) return "";
+  return value
+    .trim()
+    .replace(/^\s*https?:?\/\/+/i, "")
+    .replace(/\/+$/, "");
+}
+
+/**
+ * Builds a safe absolute URL for opening a server website, regardless of whether
+ * the stored value already includes a (possibly malformed) scheme. Always returns
+ * a clean single `https://` prefix. Returns "" for empty input.
+ */
+export function toWebsiteHref(value: string | null | undefined): string {
+  const host = cleanWebsiteHost(value);
+  return host ? `https://${host}` : "";
+}
+
+/**
  * Infers a server's likely website from its address.
  * `play.hypixel.net` -> `hypixel.net`. Returns `null` when we can't be sure
  * (IP address, localhost, hostname without a valid TLD): when in doubt, show nothing.

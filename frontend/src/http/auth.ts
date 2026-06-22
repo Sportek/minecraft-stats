@@ -3,7 +3,12 @@
 import { getBaseUrl } from "@/app/_cheatcode";
 import { AccessToken, User } from "@/types/auth";
 
-export const registerUser = async (credentials: { username: string; email: string; password: string }) => {
+export const registerUser = async (credentials: {
+  username: string;
+  email: string;
+  password: string;
+  turnstileToken?: string | null;
+}) => {
   const response = await fetch(`${getBaseUrl()}/register`, {
     method: "POST",
     body: JSON.stringify(credentials),
@@ -36,7 +41,11 @@ export const verifyEmail = async (credentials: { token: string }) => {
   return response.json() as Promise<User>;
 };
 
-export const loginUser = async (credentials: { email: string; password: string }) => {
+export const loginUser = async (credentials: {
+  email: string;
+  password: string;
+  turnstileToken?: string | null;
+}) => {
   const response = await fetch(`${getBaseUrl()}/login`, {
     method: "POST",
     headers: {
@@ -90,6 +99,27 @@ export const changeUserPassword = async (credentials: { oldPassword: string; new
   }
 
   return response.json() as Promise<User>;
+};
+
+export const uploadUserAvatar = async (file: File, token: string) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const response = await fetch(`${getBaseUrl()}/account/avatar`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  const body = (await response.json()) as { user: User };
+  return body.user;
 };
 
 export const logoutUser = async (token: string) => {

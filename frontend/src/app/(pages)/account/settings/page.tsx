@@ -57,7 +57,7 @@ const SettingsPage = () => {
   return (
     <DashboardLayout>
       <DashboardHero
-        avatar={{ name: user.username, src: user.avatarUrl }}
+        avatar={{ name: user.username, src: user.avatarUrl, editable: true }}
         title={user.username}
         badge={roleLabel}
         subtitle={`${user.email} · Member since ${memberSince}`}

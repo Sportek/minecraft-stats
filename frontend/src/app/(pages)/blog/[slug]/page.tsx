@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
+import { resolveAssetUrl } from "@/lib/domain";
 import { renderMarkdown } from "@/lib/markdown";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
@@ -31,13 +32,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         type: "article",
         publishedTime: post.publishedAt?.toString(),
         authors: [post.author.username],
-        images: post.coverImage ? [post.coverImage] : [],
+        images: post.coverImage ? [resolveAssetUrl(post.coverImage)] : [],
       },
       twitter: {
         card: "summary_large_image",
         title: post.title,
         description: post.excerpt || post.title,
-        images: post.coverImage ? [post.coverImage] : [],
+        images: post.coverImage ? [resolveAssetUrl(post.coverImage)] : [],
       },
     };
   } catch {
@@ -108,7 +109,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
           {/* Cover image */}
           {post.coverImage && (
             <div className="relative mb-10 h-[220px] w-full overflow-hidden rounded-xl border border-border bg-secondary sm:h-[320px] md:h-[400px]">
-              <Image src={post.coverImage} alt={post.title} className="h-full w-full object-cover" unoptimized fill />
+              <Image src={resolveAssetUrl(post.coverImage)} alt={post.title} className="h-full w-full object-cover" unoptimized fill />
             </div>
           )}
 

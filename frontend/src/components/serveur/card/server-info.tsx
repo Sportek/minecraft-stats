@@ -2,7 +2,7 @@
 
 import { Check, Copy, ExternalLink, Gamepad2, Globe } from "lucide-react";
 import { useState } from "react";
-import { deriveServerWebsite } from "@/utils/server-website";
+import { cleanWebsiteHost, deriveServerWebsite, toWebsiteHref } from "@/utils/server-website";
 import { Language } from "@/types/server";
 import ServerLanguages from "./server-languages";
 
@@ -16,8 +16,9 @@ interface ServerInfoProps {
 const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
   const [copied, setCopied] = useState(false);
   // Persisted value (derived server-side), falling back to the client-side
-  // derivation for servers not backfilled yet.
-  const resolvedWebsite = website ?? deriveServerWebsite(address);
+  // derivation for servers not backfilled yet. Normalised so a stored scheme
+  // (or a malformed one like `https//host`) never doubles up when we open it.
+  const resolvedWebsite = cleanWebsiteHost(website) || deriveServerWebsite(address);
 
   const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
     // or nesting an anchor inside an anchor.
     e.preventDefault();
     e.stopPropagation();
-    if (resolvedWebsite) window.open(`https://${resolvedWebsite}`, "_blank", "noopener,noreferrer");
+    if (resolvedWebsite) window.open(toWebsiteHref(resolvedWebsite), "_blank", "noopener,noreferrer");
   };
 
   return (

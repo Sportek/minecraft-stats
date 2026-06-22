@@ -11,6 +11,7 @@ import { useServers } from "@/contexts/servers";
 import { DuplicateServerError } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { Category, Language } from "@/types/server";
+import { cleanWebsiteHost } from "@/utils/server-website";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FC } from "react";
@@ -91,7 +92,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       await addServer({
         ...credentials,
         port: parseInt(credentials.port),
-        website: credentials.website?.trim() || undefined,
+        website: cleanWebsiteHost(credentials.website) || undefined,
       });
       form.reset();
       toast({

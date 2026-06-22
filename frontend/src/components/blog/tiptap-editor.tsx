@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/auth";
+import { resolveAssetUrl } from "@/lib/domain";
 import { uploadImage } from "@/http/post";
 import Color from "@tiptap/extension-color";
 import Image from "@tiptap/extension-image";
@@ -118,8 +119,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
       if (file) {
         try {
           const { url } = await uploadImage(file, token);
-          const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
-          editor.chain().focus().setImage({ src: fullUrl }).run();
+          editor.chain().focus().setImage({ src: resolveAssetUrl(url) }).run();
         } catch (error) {
           console.error("Failed to upload image:", error instanceof Error ? error.message : error);
           alert("Failed to upload image");

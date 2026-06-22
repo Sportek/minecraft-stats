@@ -12,13 +12,14 @@ export const generateMetadata = async (props: {
 }): Promise<Metadata> => {
   const params = await props.params;
   const { baseUrl, backendUrl } = await getDomainConfig();
+  const assetsBase = process.env.NEXT_PUBLIC_ASSETS_URL || backendUrl;
   try {
     const server = await getServer(Number(params.serverId));
     const lastStat = getLastStat(server.stats);
     const playerCount = lastStat.playerCount ?? 0;
     const categories = server.categories.map((c) => c.name).join(", ");
     const languages = server.server.languages.map((l) => l.name).join(", ");
-    const imageUrl = `${backendUrl}${server.server.imageUrl}.webp`;
+    const imageUrl = `${assetsBase}${server.server.imageUrl}.webp`;
 
     // Create a clean slug for the canonical URL
     const slug = server.server.name

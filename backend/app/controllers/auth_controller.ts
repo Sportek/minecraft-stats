@@ -1,5 +1,7 @@
 import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
+import ImageStorageService from '#services/image_storage_service'
+import TurnstileService from '#services/turnstile_service'
 import env from '#start/env'
 import {
   ChangePasswordValidator,
@@ -11,6 +13,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 import jwt from 'jsonwebtoken'
 import { DateTime } from 'luxon'
+import fs from 'node:fs/promises'
 
 export default class AuthController {
   /**
@@ -21,12 +24,16 @@ export default class AuthController {
    * @description Authenticates a user using email and password credentials. Returns the user object and a newly created access token on success. Rejects unverified accounts and accounts that were registered via a third-party OAuth provider.
    * @requestBody <LoginUserValidator>
    * @responseBody 200 - {"user": {"id": 1, "username": "player", "verified": true, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "accessToken": {"type": "bearer", "token": "oat_...", "expiresAt": "2026-06-27T12:00:00.000Z"}}
+   * @responseBody 400 - {"message": "Captcha verification failed"}
    * @responseBody 400 - {"message": "Email not verified"}
    * @responseBody 400 - {"message": "You are using a third-party provider"}
    * @responseBody 400 - {"errors": [{"message": "Invalid user credentials"}]}
    * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
    */
   async login({ request, response }: HttpContext) {
+    if (!(await TurnstileService.verify(request.input('turnstileToken'), request.ip()))) {
+      return response.badRequest({ message: 'Captcha verification failed' })
+    }
     const data = await request.validateUsing(LoginUserValidator)
     const user = await User.verifyCredentials(data.email, data.password)
     if (!user.verified) return response.badRequest({ message: 'Email not verified' })
@@ -81,10 +88,14 @@ export default class AuthController {
    * @description Creates a new user (unverified), generates a JWT email verification token and queues a verification email via the mail service. Returns the created user. The account remains unverified until verifyEmail is called.
    * @requestBody <CreateUserValidator>
    * @responseBody 200 - {"id": 1, "username": "player", "verified": false, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}
+   * @responseBody 400 - {"message": "Captcha verification failed"}
    * @responseBody 400 - {"message": "Email already registered"}
    * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
    */
   async register({ request, response }: HttpContext) {
+    if (!(await TurnstileService.verify(request.input('turnstileToken'), request.ip()))) {
+      return response.badRequest({ message: 'Captcha verification failed' })
+    }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
     const user = await User.findBy('email', validatedUserData.email)
@@ -151,6 +162,41 @@ export default class AuthController {
     )
 
     return response.ok(user)
+  }
+
+  /**
+   * @updateAvatar
+   * @operationId updateAvatar
+   * @tag AUTH
+   * @summary Upload the authenticated user's avatar
+   * @description Accepts a multipart upload under the form field `avatar` (max 5 MB, extensions `jpg`, `jpeg`, `png`, `webp`, `gif`). The image is converted to a 256x256 WebP, stored via Drive, and its relative URL is saved on the user. Returns the updated user. Requires authentication.
+   * @requestFormDataBody {"avatar": {"type": "string", "format": "binary"}}
+   * @responseBody 200 - {"user": {"id": 1, "username": "player", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "/images/avatars/1-3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 400 - {"error": "No image provided"}
+   * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
+   */
+  async updateAvatar({ request, response, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const image = request.file('avatar', {
+      size: '5mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+    })
+
+    if (!image) return response.badRequest({ error: 'No image provided' })
+    if (!image.isValid) return response.badRequest({ error: image.errors })
+    if (!image.tmpPath) return response.badRequest({ error: 'Invalid upload' })
+
+    const buffer = await fs.readFile(image.tmpPath)
+    const previousAvatar = user.avatarUrl
+    user.avatarUrl = await ImageStorageService.storeUserAvatar(user.id, buffer)
+    await user.save()
+
+    // Remove the previous avatar (only our own uploads — never an OAuth URL).
+    if (previousAvatar?.startsWith('/images/avatars/')) {
+      await ImageStorageService.deletePublicAsset(previousAvatar)
+    }
+
+    return response.ok({ user: { ...user.serialize(), email: user.email } })
   }
 
   /**
@@ -248,9 +294,26 @@ export default class AuthController {
     if (user.provider !== 'discord')
       return response.badRequest({ message: 'Cannot login with this third-party provider' })
 
+    await this.rehostProviderAvatar(user)
+
     return {
       user,
       accessToken: await User.accessTokens.create(user),
+    }
+  }
+
+  /**
+   * If the user's avatar is still an external provider URL, download it once and
+   * store it on our own storage so we don't depend on (or hotlink) the provider's
+   * CDN. Best-effort: on failure we keep the external URL.
+   */
+  private async rehostProviderAvatar(user: User): Promise<void> {
+    if (!user.avatarUrl || !/^https?:\/\//i.test(user.avatarUrl)) return
+
+    const stored = await ImageStorageService.storeUserAvatarFromUrl(user.id, user.avatarUrl)
+    if (stored) {
+      user.avatarUrl = stored
+      await user.save()
     }
   }
 
@@ -296,6 +359,8 @@ export default class AuthController {
 
     if (user.provider !== 'google')
       return response.badRequest({ message: 'Cannot login with this third-party provider' })
+
+    await this.rehostProviderAvatar(user)
 
     return {
       user,

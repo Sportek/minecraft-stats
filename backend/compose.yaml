@@ -32,6 +32,13 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - APP_NAME=${APP_NAME}
       - WEBSITE_URL=${WEBSITE_URL}
+      - DRIVE_DISK=${DRIVE_DISK}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_CDN_URL=${S3_CDN_URL}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
     networks:
       - sail
     logging:
@@ -75,6 +82,13 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - APP_NAME=${APP_NAME}
       - WEBSITE_URL=${WEBSITE_URL}
+      - DRIVE_DISK=${DRIVE_DISK}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_CDN_URL=${S3_CDN_URL}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
     networks:
       - sail
     logging:
