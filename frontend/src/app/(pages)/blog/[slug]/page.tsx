@@ -6,12 +6,18 @@ import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { cache } from "react";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
+import ArticleBody from "@/components/blog/article-body";
 import { resolveAssetUrl } from "@/lib/domain";
 import { renderMarkdown } from "@/lib/markdown";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
 export const revalidate = 600;
+
+// generateMetadata et le composant de page demandent le même article : on
+// mémoïse l'appel sur la durée de la requête pour ne taper le backend qu'une fois.
+const loadPost = cache(getPostBySlug);
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
   try {
-    const post = await getPostBySlug(slug);
+    const post = await loadPost(slug);
 
     return {
       title: `${post.title} - Minecraft Stats Blog`,
@@ -53,7 +59,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
   const { slug } = await params;
 
   try {
-    const post = await getPostBySlug(slug);
+    const post = await loadPost(slug);
 
     return (
       <div className="min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
@@ -98,7 +104,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
 
             {/* Author + category meta */}
             <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-              <PostAuthor username={post.author.username} />
+              <PostAuthor username={post.author.username} avatarUrl={post.author.avatarUrl} />
               <span className="text-border">•</span>
               <Badge variant="accent" className="uppercase tracking-wide">
                 News
@@ -124,7 +130,8 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
               )}
 
               {/* Article Content */}
-              <div
+              <ArticleBody
+                html={renderMarkdown(post.content)}
                 className="prose prose-lg dark:prose-invert max-w-none
                 prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
                 prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4
@@ -142,7 +149,6 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
                 prose-pre:bg-secondary prose-pre:border prose-pre:border-border prose-pre:rounded-md prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-secondary-foreground
                 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm
               "
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
               />
 
               {/* Footer Divider */}

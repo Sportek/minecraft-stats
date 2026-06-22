@@ -74,6 +74,29 @@ export default class PlaceholderService {
   }
 
   /**
+   * Resolve a batch of placeholder tokens (e.g. `%PLAYER_COUNT_REALTIME_125%`) to
+   * their current values, returning a `token -> value` map. Server data is
+   * preloaded once for every referenced server, so the cost is independent of the
+   * number of tokens. Powers the public async resolution endpoint.
+   */
+  static async resolveTokens(tokens: string[]): Promise<Record<string, string>> {
+    const parsed = tokens
+      .map((token) => ({ token, match: token.match(/^%([A-Z_]+)_(\d+)%$/) }))
+      .filter((entry): entry is { token: string; match: RegExpMatchArray } => entry.match !== null)
+
+    const serverIds = [...new Set(parsed.map((entry) => Number.parseInt(entry.match[2])))]
+    const serversData = await this.preloadServerData(serverIds)
+
+    const result: Record<string, string> = {}
+    for (const { token, match } of parsed) {
+      const serverId = Number.parseInt(match[2])
+      result[token] = await this.getPlaceholderValue(match[1], serverId, serversData.get(serverId))
+    }
+
+    return result
+  }
+
+  /**
    * Preload server data for multiple servers at once.
    *
    * Toutes les données sont récupérées avec des requêtes ensemblistes
@@ -90,13 +113,9 @@ export default class PlaceholderService {
 
     const servers = await Server.query().whereIn('id', serverIds)
 
-    // Latest stat per server (highest createdAt) — équivalent à orderBy createdAt desc + first
-    const latestStats = await ServerStat.query()
-      .whereIn('serverId', serverIds)
-      .select('*')
-      .distinctOn('serverId')
-      .orderBy('serverId', 'asc')
-      .orderBy('createdAt', 'desc')
+    // PLAYER_COUNT_REALTIME et PLAYER_COUNT_PEAK_HIGH sont lus directement sur
+    // `servers` (last_player_count / peak_player_count, maintenus à chaque ping) :
+    // inutile de scanner server_stats pour ces deux-là.
 
     // First stat per server (lowest createdAt) — équivalent à orderBy createdAt asc + first
     const firstStats = await ServerStat.query()
@@ -105,14 +124,6 @@ export default class PlaceholderService {
       .distinctOn('serverId')
       .orderBy('serverId', 'asc')
       .orderBy('createdAt', 'asc')
-
-    // Peak high per server (highest playerCount) — équivalent à orderBy playerCount desc + first
-    const peakHighStats = await ServerStat.query()
-      .whereIn('serverId', serverIds)
-      .select('*')
-      .distinctOn('serverId')
-      .orderBy('serverId', 'asc')
-      .orderBy('playerCount', 'desc')
 
     // Peak low per server (lowest playerCount > 0) — équivalent à where > 0 + orderBy playerCount asc + first
     const peakLowStats = await ServerStat.query()
@@ -140,9 +151,7 @@ export default class PlaceholderService {
     const byServerId = <T extends { serverId: number }>(rows: T[]): Map<number, T> =>
       new Map(rows.map((row) => [row.serverId, row]))
 
-    const latestByServer = byServerId(latestStats)
     const firstByServer = byServerId(firstStats)
-    const peakHighByServer = byServerId(peakHighStats)
     const peakLowByServer = byServerId(peakLowStats)
     const aggregatesByServer = new Map<number, { avg_players: number; median_players: number }>(
       aggregatesQuery.rows.map((row: any) => [Number(row.server_id), row])
@@ -154,9 +163,7 @@ export default class PlaceholderService {
       serversData.set(server.id, {
         exists: true,
         server,
-        latestStat: latestByServer.get(server.id),
         firstStat: firstByServer.get(server.id),
-        peakHigh: peakHighByServer.get(server.id),
         peakLow: peakLowByServer.get(server.id),
         average: aggregates?.avg_players || 0,
         median: aggregates?.median_players || 0,
@@ -186,10 +193,10 @@ export default class PlaceholderService {
 
     switch (placeholderName) {
       case 'PLAYER_COUNT_REALTIME':
-        return String(data.latestStat?.playerCount ?? 0)
+        return String(data.server?.lastPlayerCount ?? 0)
 
       case 'PLAYER_COUNT_PEAK_HIGH':
-        return String(data.peakHigh?.playerCount ?? 0)
+        return String(data.server?.peakPlayerCount ?? 0)
 
       case 'PLAYER_COUNT_PEAK_LOW':
         return String(data.peakLow?.playerCount ?? 0)
@@ -275,9 +282,7 @@ export default class PlaceholderService {
 interface ServerData {
   exists: boolean
   server?: Server
-  latestStat?: ServerStat
   firstStat?: ServerStat
-  peakHigh?: ServerStat
   peakLow?: ServerStat
   average?: number
   median?: number

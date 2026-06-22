@@ -20,6 +20,23 @@ export const getPosts = async (page: number = 1, limit: number = 10) => {
   return response.json() as Promise<PostsListResponse>
 }
 
+export const resolvePlaceholders = async (placeholders: string[]) => {
+  const response = await fetch(`${getBaseUrl()}/posts/placeholders/resolve`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ placeholders }),
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return response.json() as Promise<Record<string, string>>
+}
+
 export const getPostBySlug = async (slug: string) => {
   const response = await fetch(`${getBaseUrl()}/posts/${slug}`, {
     headers: {
