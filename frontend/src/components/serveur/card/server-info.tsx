@@ -53,7 +53,7 @@ const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
           onClick={handleCopy}
           aria-label={copied ? "Address copied" : "Copy server address"}
           title={copied ? "Copied!" : "Click to copy"}
-          className="group/copy inline-flex max-w-full items-center gap-1.5 self-start text-sm text-muted-foreground hover:text-accent transition-colors"
+          className="group/copy inline-flex min-h-[24px] max-w-full items-center gap-1.5 self-start text-sm text-muted-foreground hover:text-accent transition-colors"
         >
           <Gamepad2 className="h-3.5 w-3.5 shrink-0 opacity-70" />
           <span className="truncate font-mono text-[13px]">{address.toLowerCase()}</span>
@@ -70,7 +70,7 @@ const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
           onClick={openWebsite}
           aria-label={`Visit ${resolvedWebsite}`}
           title={`Visit ${resolvedWebsite}`}
-          className="group/web inline-flex max-w-full items-center gap-1.5 self-start text-xs text-muted-foreground hover:text-accent transition-colors"
+          className="group/web inline-flex min-h-[24px] max-w-full items-center gap-1.5 self-start text-xs text-muted-foreground hover:text-accent transition-colors"
         >
           <Globe className="h-3.5 w-3.5 shrink-0 opacity-70" />
           <span className="truncate">{resolvedWebsite}</span>

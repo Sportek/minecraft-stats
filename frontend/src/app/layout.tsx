@@ -102,10 +102,14 @@ export default async function RootLayout({
 }>) {
   const locale = await getCurrentLocale();
   const htmlLang = locale.split("-")[0];
+  // Only mount GTM when a container id is configured. Otherwise the component
+  // requests `gtm.js?id=undefined`, which Google answers with a 400 (the console
+  // error seen in Lighthouse) and ships a heavy script for nothing.
+  const gtmId = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER;
 
   return (
     <html lang={htmlLang} suppressHydrationWarning>
-      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER} />
+      {gtmId && <GoogleTagManager gtmId={gtmId} />}
       <head>
         <link rel="preconnect" href="https://www.clarity.ms" crossOrigin="" />
         <link rel="preconnect" href="https://cloud.umami.is" crossOrigin="" />

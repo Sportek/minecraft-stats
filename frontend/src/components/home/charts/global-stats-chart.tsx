@@ -1,6 +1,5 @@
-import "@/lib/ag-charts";
 import { ServerStat } from "@/types/server";
-import { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
+import type { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { Server } from "../selects/server-select";
@@ -8,10 +7,20 @@ import dynamic from 'next/dynamic';
 import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 import { Spinner } from "@/components/ui/spinner";
 
-const AgCharts = dynamic(() => import('ag-charts-react').then(mod => mod.AgCharts), {
-  ssr: false,
-  loading: () => <div className="h-72 w-full bg-foreground/10 animate-pulse rounded-md" />,
-});
+// Load the AG Charts core (module registration) and renderer together in this
+// async chunk so the heavy `ag-charts-community` bundle stays out of the shared
+// home chunk. Only the TypeScript option types above are imported statically
+// (`import type` is erased at build time).
+const AgCharts = dynamic(
+  async () => {
+    await import("@/lib/ag-charts");
+    return (await import("ag-charts-react")).AgCharts;
+  },
+  {
+    ssr: false,
+    loading: () => <div className="h-72 w-full bg-foreground/10 animate-pulse rounded-md" />,
+  }
+);
 
 interface ChartDatum {
   time: Date;
