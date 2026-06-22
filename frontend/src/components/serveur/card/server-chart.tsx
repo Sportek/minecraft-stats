@@ -1,14 +1,22 @@
-import "@/lib/ag-charts";
 import { ServerStat } from "@/types/server";
-import { AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
+import type { AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
 
-const AgCharts = dynamic(() => import("ag-charts-react").then((mod) => mod.AgCharts), {
-  ssr: false,
-  loading: () => <div className="h-[40px] w-full bg-foreground/10 animate-pulse rounded-sm" />,
-});
+// Register the AG Charts community modules and load the renderer in the same
+// async chunk, keeping the heavy core out of the shared home chunk (every server
+// card renders this sparkline). Option types above are `import type` (erased).
+const AgCharts = dynamic(
+  async () => {
+    await import("@/lib/ag-charts");
+    return (await import("ag-charts-react")).AgCharts;
+  },
+  {
+    ssr: false,
+    loading: () => <div className="h-[40px] w-full bg-foreground/10 animate-pulse rounded-sm" />,
+  }
+);
 
 interface ServerChartProps {
   stats: ServerStat[];
