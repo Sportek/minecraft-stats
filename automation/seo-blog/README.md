@@ -14,6 +14,9 @@ generates a fresh, data-backed topic.
   connected to the routine.
 - **Writes** (create the draft) → REST `POST /admin/posts` with an **API token**, because the
   MCP cannot publish.
+- **Cover image** → generated with kie.ai **Nano Banana Pro** (`KIE_API_KEY`), then re-hosted via
+  our own `POST /uploads/image` endpoint; the returned `/images/blog/…webp` path is stored as
+  `coverImage`. Best-effort: a draft is still created if generation fails.
 - `.fr` and `.com` share one database, so everything targets the `.fr` API and the article shows
   on both domains.
 
@@ -27,6 +30,7 @@ generates a fresh, data-backed topic.
    environment settings), never in the repo:
    - `MCSTATS_API_URL=https://api.minecraft-stats.fr/api/v1`
    - `MCSTATS_TOKEN=oat_…`
+   - `KIE_API_KEY=…` (kie.ai API key, from https://kie.ai → API Key Management)
 4. **MCP connector** — the routine attaches the read-only MCP at
    `https://mcp.minecraft-stats.fr/mcp` (ensure that URL is publicly deployed).
 
