@@ -3,6 +3,28 @@
 const assetsUrl = process.env.NEXT_PUBLIC_ASSETS_URL;
 const assetsRemotePattern = assetsUrl ? [{ hostname: new URL(assetsUrl).hostname }] : [];
 
+// Content-Security-Policy in REPORT-ONLY mode: it never blocks anything, it only
+// reports violations to the console. This is the safe first step toward enforcing
+// a CSP — it lets us discover what the real third parties (GTM/GA, Clarity, Umami,
+// Cloudflare Insights/Zaraz, Turnstile, S3 assets) actually need before flipping
+// to an enforced policy (which would require script nonces to be truly effective).
+// `'unsafe-inline'`/`'unsafe-eval'` are kept for now because Next's inline bootstrap
+// and GTM rely on them; tightening them is the follow-up nonce work.
+const cspReportOnly = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.google-analytics.com https://*.clarity.ms https://cloud.umami.is https://static.cloudflareinsights.com https://challenges.cloudflare.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "frame-src 'self' https://challenges.cloudflare.com https://www.googletagmanager.com",
+  "worker-src 'self' blob:",
+  "connect-src 'self' https://*.google-analytics.com https://*.clarity.ms https://cloud.umami.is https://static.cloudflareinsights.com https://challenges.cloudflare.com https://*.minecraft-stats.fr https://*.minecraft-stats.com https://*.amazonaws.com",
+].join("; ");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone output for optimized Docker builds
@@ -62,6 +84,7 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
         ],
       },
     ];
