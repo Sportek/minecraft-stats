@@ -11,7 +11,7 @@ import Database from '@adonisjs/lucid/services/db'
  * - PLAYER_COUNT_PEAK_HIGH: Highest player count recorded
  * - PLAYER_COUNT_PEAK_LOW: Lowest player count recorded
  * - PLAYER_COUNT_AVERAGE: Average player count
- * - PLAYER_COUNT_MEDIAN: Median player count
+ * - PLAYER_COUNT_MEDIAN: Median player count (last 30 days)
  * - SERVER_VERSION: Server version
  * - DATA_SINCE_DATE: Date since data collection started
  * - ADDRESS: Server address
@@ -191,8 +191,11 @@ export default class PlaceholderService {
 
   /**
    * AVG / médiane par serveur en une requête groupée. `PERCENTILE_CONT` est le
-   * calcul le plus lourd (tri de tout l'historique) : on ne l'inclut que si une
-   * médiane est demandée, sinon on ne calcule que la moyenne.
+   * calcul le plus lourd (il trie les lignes) : on ne l'inclut que si une médiane
+   * est demandée, et on la borne aux 30 derniers jours via `FILTER` pour que le
+   * tri ne porte que sur ~1 mois de points (la clause de date s'appuie sur
+   * l'index server_id/created_at) au lieu de tout l'historique. La moyenne reste
+   * all-time : c'est un agrégat en streaming (pas de tri), donc bon marché.
    */
   private static async loadAggregates(
     serverIds: number[],
@@ -202,7 +205,8 @@ export default class PlaceholderService {
     const columns = [
       needAvg ? 'AVG(player_count)::int AS avg_players' : 'NULL::int AS avg_players',
       needMedian
-        ? 'PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY player_count)::int AS median_players'
+        ? `(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY player_count)
+             FILTER (WHERE created_at >= now() - interval '30 days'))::int AS median_players`
         : 'NULL::int AS median_players',
     ]
 
@@ -299,7 +303,7 @@ export default class PlaceholderService {
       },
       {
         name: 'PLAYER_COUNT_MEDIAN',
-        description: 'Median number of players',
+        description: 'Median number of players (last 30 days)',
         example: '%PLAYER_COUNT_MEDIAN_125%',
       },
       {
