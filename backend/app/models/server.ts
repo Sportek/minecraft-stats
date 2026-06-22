@@ -1,4 +1,4 @@
-import { BaseModel, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeSave, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import * as relations from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Category from './category.js'
@@ -7,6 +7,7 @@ import ServerGrowthStat from './server_growth_stat.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
 import type { ServerType } from '../constants/server_type.js'
+import { normalizeWebsite } from '#utils/website'
 import db from '@adonisjs/lucid/services/db'
 
 export default class Server extends BaseModel {
@@ -100,6 +101,17 @@ export default class Server extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  // Standardise the website at the persistence layer so the column never stores
+  // a scheme (https://…), regardless of the write path (controllers, API, MCP).
+  // Idempotent: clean values are left untouched; already-polluted rows self-heal
+  // on their next save (e.g. the scheduler's ping updates).
+  @beforeSave()
+  static normalizeWebsiteColumn(server: Server) {
+    if (server.website) {
+      server.website = normalizeWebsite(server.website)
+    }
+  }
 
   async syncLanguages(languageCodes: LanguageCode[]) {
     const trx = await db.transaction()
