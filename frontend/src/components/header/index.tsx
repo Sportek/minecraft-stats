@@ -228,6 +228,9 @@ const Header = () => {
           isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}
         aria-hidden={!isMobileMenuOpen}
+        // `inert` removes the hidden drawer's buttons/links from the tab order and
+        // a11y tree (aria-hidden alone leaves focusable descendants reachable).
+        inert={!isMobileMenuOpen}
       >
         {/* Backdrop */}
         <div
