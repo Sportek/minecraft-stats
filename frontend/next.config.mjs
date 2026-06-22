@@ -16,7 +16,7 @@ const cspReportOnly = [
   "object-src 'none'",
   "frame-ancestors 'self'",
   "form-action 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.google-analytics.com https://*.clarity.ms https://cloud.umami.is https://static.cloudflareinsights.com https://challenges.cloudflare.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.google-analytics.com https://*.clarity.ms https://*.umami.is https://static.cloudflareinsights.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -24,7 +24,7 @@ const cspReportOnly = [
   "worker-src 'self' blob:",
   // api.iconify.design (+ its fallback hosts) is hit at runtime by @iconify/react
   // to fetch icon data.
-  "connect-src 'self' https://*.google-analytics.com https://*.clarity.ms https://cloud.umami.is https://static.cloudflareinsights.com https://challenges.cloudflare.com https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://*.minecraft-stats.fr https://*.minecraft-stats.com https://*.amazonaws.com",
+  "connect-src 'self' https://*.google-analytics.com https://*.clarity.ms https://*.umami.is https://static.cloudflareinsights.com https://challenges.cloudflare.com https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://*.minecraft-stats.fr https://*.minecraft-stats.com https://*.amazonaws.com",
 ].join("; ");
 
 /** @type {import('next').NextConfig} */
