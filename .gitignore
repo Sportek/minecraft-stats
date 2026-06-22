@@ -1,7 +1,3 @@
-analytics/extracted_data/
-analytics/minecraft_stats.db
-analytics/data
-
 # Claude Code / BMAD
 .claude/
 _bmad/
@@ -14,3 +10,10 @@ ds-bundle/
 .design-sync/learnings/
 .design-sync/node_modules
 frontend/ds-tailwind.css
+
+# Design exports / working files (keep only SPEC.md)
+docs/new-design/*.html
+docs/new-design/*.dc*
+docs/new-design/_*
+docs/new-design/*support*.js
+docs/new-design/*(1)*

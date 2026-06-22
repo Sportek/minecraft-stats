@@ -316,6 +316,8 @@ export class ServerSchema extends BaseModel {
     'motdHash',
     'name',
     'nextPingAt',
+    'peakPlayerAt',
+    'peakPlayerCount',
     'port',
     'resolvedEndpoint',
     'type',
@@ -353,6 +355,10 @@ export class ServerSchema extends BaseModel {
   declare name: string
   @column.dateTime()
   declare nextPingAt: DateTime | null
+  @column.dateTime()
+  declare peakPlayerAt: DateTime | null
+  @column()
+  declare peakPlayerCount: number | null
   @column()
   declare port: number
   @column()
