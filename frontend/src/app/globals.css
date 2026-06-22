@@ -137,7 +137,9 @@
 
     /* Texte muet, surfaces désactivées */
     --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    /* 42% (vs 46.1%) garde un gris "muet" tout en passant le ratio AA 4.5:1
+       sur le canvas clair (l'ancienne valeur échouait de justesse). */
+    --muted-foreground: 240 4% 42%;
 
     /* Accent de marque — darkened to pass WCAG AA on white (#0077c2, ratio 4.57:1) */
     --accent: 204 100% 38%;
