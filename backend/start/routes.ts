@@ -154,6 +154,10 @@ router
       .get('posts/placeholders/list', '#controllers/posts_controller.getPlaceholders')
       .use(throttleLight('posts.placeholders.list', 20))
 
+    router
+      .post('posts/placeholders/resolve', '#controllers/posts_controller.resolvePlaceholders')
+      .use(throttleLight('posts.placeholders.resolve', 60))
+
     // Publicités - Diffusion publique
     router
       .get('advertisements', '#controllers/advertisements_controller.index')

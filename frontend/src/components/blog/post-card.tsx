@@ -43,7 +43,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
             <p className="line-clamp-3 text-sm text-muted-foreground md:text-base">{post.excerpt}</p>
           )}
           <div className="mt-auto flex items-center justify-between pt-2">
-            <PostAuthor username={post.author.username} />
+            <PostAuthor username={post.author.username} avatarUrl={post.author.avatarUrl} />
             <span className="text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
               Read article &rarr;
             </span>
@@ -83,7 +83,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
           <p className="line-clamp-2 text-sm text-muted-foreground">{post.excerpt}</p>
         )}
         <div className="mt-auto pt-2">
-          <PostAuthor username={post.author.username} />
+          <PostAuthor username={post.author.username} avatarUrl={post.author.avatarUrl} />
         </div>
       </div>
     </Link>

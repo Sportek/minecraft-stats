@@ -26,3 +26,12 @@ export const PreviewPlaceholderValidator = vine.compile(
     serverId: vine.number().positive(),
   })
 )
+
+export const ResolvePlaceholdersValidator = vine.compile(
+  vine.object({
+    placeholders: vine
+      .array(vine.string().regex(/^%[A-Z_]+_\d+%$/))
+      .minLength(1)
+      .maxLength(50),
+  })
+)

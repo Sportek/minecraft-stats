@@ -4,6 +4,7 @@ import PlaceholderService from '#services/placeholder_service'
 import {
   CreatePostValidator,
   PreviewPlaceholderValidator,
+  ResolvePlaceholdersValidator,
   UpdatePostValidator,
 } from '#validators/post'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -41,7 +42,7 @@ export default class PostsController {
    * @operationId showPost
    * @tag POSTS
    * @summary Get a published post by slug
-   * @description Returns a single published post identified by its slug. Placeholders in the content (e.g. `%PLAYER_COUNT_REALTIME_125%`) are resolved server-side before the response is sent. Returns 404 if no published post matches the slug. Publicly accessible.
+   * @description Returns a single published post identified by its slug. Content is returned with its raw placeholder tokens (e.g. `%PLAYER_COUNT_REALTIME_125%`) intact — the client resolves them asynchronously via `POST /posts/placeholders/resolve` so the article renders immediately. Returns 404 if no published post matches the slug. Publicly accessible.
    * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
    * @responseBody 200 - <Post>
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
@@ -55,10 +56,23 @@ export default class PostsController {
       })
       .firstOrFail()
 
-    // Replace placeholders in content
-    post.content = await PlaceholderService.replacePlaceholders(post.content)
-
     return response.ok(post)
+  }
+
+  /**
+   * @resolvePlaceholders
+   * @operationId resolvePlaceholders
+   * @tag POSTS
+   * @summary Resolve content placeholders to their current values
+   * @description Resolves a batch of placeholder tokens (e.g. `%PLAYER_COUNT_REALTIME_125%`) to their live values in a single request. Returns a map of token → value. Unknown servers resolve to a `[Server N not found]` marker. Used by the blog client to fill placeholders after the article has rendered. Publicly accessible.
+   * @requestBody {"placeholders": ["%PLAYER_COUNT_REALTIME_125%", "%SERVER_VERSION_125%"]}
+   * @responseBody 200 - {"%PLAYER_COUNT_REALTIME_125%": "42", "%SERVER_VERSION_125%": "1.21.4"}
+   * @responseBody 422 - {"errors": [{"message": "The placeholders field must be defined", "field": "placeholders", "rule": "required"}]}
+   */
+  async resolvePlaceholders({ request, response }: HttpContext) {
+    const { placeholders } = await request.validateUsing(ResolvePlaceholdersValidator)
+    const values = await PlaceholderService.resolveTokens(placeholders)
+    return response.ok(values)
   }
 
   /**

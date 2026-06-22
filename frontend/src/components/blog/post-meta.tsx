@@ -1,5 +1,6 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { letterTileGradient } from "@/components/ui/letter-tile";
+import { resolveAssetUrl } from "@/lib/domain";
 
 export const formatPostDate = (value: Date | string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -14,9 +15,16 @@ export const PostEyebrow = ({ date }: { date: Date | string }) => (
   </div>
 );
 
-export const PostAuthor = ({ username }: { username: string }) => (
+export const PostAuthor = ({
+  username,
+  avatarUrl,
+}: {
+  username: string;
+  avatarUrl?: string | null;
+}) => (
   <div className="flex items-center gap-2 text-xs text-muted-foreground">
     <Avatar className="h-6 w-6">
+      {avatarUrl && <AvatarImage src={resolveAssetUrl(avatarUrl)} alt={username} />}
       <AvatarFallback
         className="text-[10px] font-bold text-white"
         style={{ background: letterTileGradient(username) }}
