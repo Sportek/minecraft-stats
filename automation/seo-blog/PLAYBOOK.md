@@ -40,11 +40,48 @@ API; published articles appear on both domains.
   `GET {MCSTATS_API_URL}/admin/posts?status=all&limit=100` with `Authorization: Bearer {MCSTATS_TOKEN}`.
 - This combined list is the authoritative "already covered" set.
 
-### 2. Choose the content type, then the topic
-- Read `automation/seo-blog/content-types.md`. Classify existing posts by type and pick the
-  **least-covered** type (ties → free choice; avoid repeating last run's type).
-- Invent one specific, search-worthy topic within that type, with a clear primary keyword. It
-  must NOT overlap an existing post (loose match on title/keyword).
+### 2. Find the topic (signal-driven ideation)
+Don't invent a topic from thin air — **discover** one from real signals, then frame it as an
+archetype. The archetype is how you *frame* the signal, not the starting point. Run this funnel:
+
+**2a. Mine our own data first (the moat).** This is the unique angle no competitor can copy.
+Via MCP, scan for what's genuinely newsworthy *this run*:
+- **Biggest mover** — the server with the largest weekly/monthly growth, or the sharpest drop
+  (`getServers`/`getServersPaginate` + `getServerStats`, growth stats).
+- **Milestone / record just crossed** — a server passing a round number (10k/50k peak), a new
+  all-time peak, or a category total crossing a threshold (`getGlobalStats`, `getCategories`).
+- **Fast-climbing newcomer**, or an unusual pattern (weekend vs weekday, month-over-month shift).
+Keep 3–5 candidate "data angles", each backed by a striking real number.
+
+**2b. Pull external trend & demand signals.** Confirm a candidate matches real-world interest, or
+surface a fresher angle. These sources are **verified to work in this environment** (see tool
+notes below):
+- **New Minecraft versions/features — timely, high demand.** WebFetch
+  `https://minecraft.wiki/w/Java_Edition` for the current release, then
+  `https://minecraft.wiki/w/Java_Edition_<version>` for its changelog. New mobs/features drive
+  predictable search spikes ("what's new in `<version>`", "update your server to `<version>`").
+- **Long-tail search demand.** WebSearch real user questions — `how to …`, `why is …`,
+  `best … 2026`. The related-question cluster that comes back is both your outline and proof of
+  demand.
+- **Rising server genres & names.** WebSearch `best Minecraft <genre> servers 2026` or
+  `trending Minecraft servers <month> 2026`. Surfaces hot game modes (e.g. lifesteal, oneblock)
+  and server names even though the list sites block direct fetching.
+- **Community discussion.** WebSearch `reddit admincraft <topic> 2026` for what admins/players
+  actively debate (hosting, lag, software). Qualitative signal only.
+- **Opportunistic macro trends.** WebFetch `https://trends.google.com/trending/rss?geo=US`; act
+  only if a Minecraft-adjacent term actually spikes (usually none — never force it).
+
+**2c. Pick & frame.** Choose the single best topic by combining: a striking real number we own
+(2a) ✚ proven search demand or timeliness (2b) ✚ not already covered (step 1) ✚ fills an
+under-represented archetype (`content-types.md`; tie-break for variety — don't repeat last run's
+type). Settle on one specific, search-worthy topic with a clear primary keyword.
+
+**Tool notes (this environment).** WebSearch is Google-style, **US-only**, and knows the current
+month/year — include the year (and month for trends) in queries for fresh results, and **don't
+use the `site:` operator** (it's ignored; put the site name in as a plain keyword instead).
+WebFetch only works reliably on **minecraft.wiki** and the Google Trends RSS URL above — Reddit,
+minecraft.net, and server-list sites are bot-blocked, so reach those **through WebSearch** rather
+than fetching them directly.
 
 ### 3. Gather real data (our SEO moat)
 Original, factual data is what ranks. Via MCP:
