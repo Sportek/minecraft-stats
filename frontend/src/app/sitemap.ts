@@ -11,6 +11,17 @@ interface ServerListItem {
   server: Server;
 }
 
+interface Post {
+  slug: string;
+  publishedAt: string | null;
+  updatedAt: string;
+}
+
+interface PostsPage {
+  meta: { lastPage: number };
+  data: Post[];
+}
+
 async function getAllServers(apiUrl: string): Promise<Server[]> {
   try {
     const response = await fetch(`${apiUrl}/servers`, {
@@ -34,9 +45,39 @@ async function getAllServers(apiUrl: string): Promise<Server[]> {
   }
 }
 
+async function getAllPosts(apiUrl: string): Promise<Post[]> {
+  try {
+    const posts: Post[] = [];
+    let page = 1;
+    let lastPage = 1;
+
+    // `/posts` only returns published posts; paginate through every page.
+    do {
+      const response = await fetch(`${apiUrl}/posts?page=${page}&limit=100`, {
+        next: { revalidate: 3600 },
+      });
+
+      if (!response.ok) {
+        console.error('Failed to fetch posts for sitemap');
+        break;
+      }
+
+      const body: PostsPage = await response.json();
+      posts.push(...body.data);
+      lastPage = body.meta.lastPage;
+      page += 1;
+    } while (page <= lastPage);
+
+    return posts;
+  } catch (error) {
+    console.error('Error fetching posts for sitemap:', error);
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { baseUrl, apiUrl } = await getDomainConfig();
-  const servers = await getAllServers(apiUrl);
+  const [servers, posts] = await Promise.all([getAllServers(apiUrl), getAllPosts(apiUrl)]);
 
   // Static routes
   const routes: MetadataRoute.Sitemap = [
@@ -45,6 +86,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'hourly',
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/partners`,
@@ -59,6 +106,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
   ];
+
+  // Dynamic blog post routes
+  const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt || post.publishedAt || Date.now()),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }));
 
   // Dynamic server routes
   const serverRoutes: MetadataRoute.Sitemap = servers.map((server) => {
@@ -75,5 +130,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  return [...routes, ...serverRoutes];
+  return [...routes, ...postRoutes, ...serverRoutes];
 }
