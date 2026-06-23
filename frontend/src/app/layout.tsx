@@ -88,6 +88,9 @@ export const generateMetadata = async (): Promise<Metadata> => {
     alternates: {
       canonical: baseUrl,
       languages: alternateLanguages,
+      types: {
+        "application/rss+xml": `${baseUrl}/feed.xml`,
+      },
     },
     verification: {
       google: googleSearchId,

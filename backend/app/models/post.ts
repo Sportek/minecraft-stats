@@ -43,16 +43,20 @@ export default class Post extends BaseModel {
 
   @beforeCreate()
   static async generateSlug(post: Post) {
-    if (!post.slug && post.title) {
-      let slug = string.slug(post.title, { lower: true })
+    // Slugifie soit le slug fourni (admin), soit le titre. `strict` retire les
+    // caractères non URL-safe (apostrophes, deux-points, parenthèses, « ? »…)
+    // qui sinon finissent tels quels dans l'URL publique.
+    const source = post.slug || post.title
+    if (!source) return
 
-      // Vérifier si le slug existe déjà et ajouter un suffixe si nécessaire
-      const existingPost = await Post.query().where('slug', slug).first()
-      if (existingPost) {
-        slug = `${slug}-${Date.now()}`
-      }
+    let slug = string.slug(source, { lower: true, strict: true }) || `post-${Date.now()}`
 
-      post.slug = slug
+    // Vérifier si le slug existe déjà et ajouter un suffixe si nécessaire
+    const existingPost = await Post.query().where('slug', slug).first()
+    if (existingPost) {
+      slug = `${slug}-${Date.now()}`
     }
+
+    post.slug = slug
   }
 }
