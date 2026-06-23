@@ -43,6 +43,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       alternates: {
         canonical,
         languages: getAlternateLanguages(`/blog/${post.slug}`),
+        types: {
+          "application/rss+xml": `${baseUrl}/feed.xml`,
+        },
       },
       openGraph: {
         title: post.title,
