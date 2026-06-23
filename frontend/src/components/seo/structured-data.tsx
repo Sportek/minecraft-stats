@@ -196,7 +196,6 @@ interface BlogPost {
   updatedAt: string;
   author?: {
     name: string;
-    email?: string;
   };
 }
 
@@ -206,6 +205,8 @@ interface BlogPostStructuredDataProps {
 
 export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredDataProps>) {
   const { baseUrl } = getClientDomainConfig();
+  const postUrl = `${baseUrl}/blog/${post.slug}`;
+  const inLanguage = baseUrl.includes("minecraft-stats.fr") ? "fr-FR" : "en-US";
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -220,7 +221,6 @@ export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredData
     author: {
       "@type": "Person",
       name: post.author?.name || "Sportek",
-      email: post.author?.email,
     },
     publisher: {
       "@type": "Organization",
@@ -234,12 +234,20 @@ export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredData
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${baseUrl}/blog/${post.slug}`,
+      "@id": postUrl,
     },
-    url: `${baseUrl}/blog/${post.slug}`,
+    url: postUrl,
     articleSection: "Minecraft Server News & Guides",
-    inLanguage: "en-US",
+    inLanguage,
     keywords: "minecraft server, server stats, gaming, minecraft",
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+        { "@type": "ListItem", position: 2, name: "Blog", item: `${baseUrl}/blog` },
+        { "@type": "ListItem", position: 3, name: post.title, item: postUrl },
+      ],
+    },
   };
 
   return (
