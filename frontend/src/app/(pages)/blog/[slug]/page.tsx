@@ -1,15 +1,16 @@
 import { PostAuthor, formatPostDate } from "@/components/blog/post-meta";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { getPostBySlug } from "@/http/post";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { cache } from "react";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
 import ArticleBody from "@/components/blog/article-body";
 import { resolveAssetUrl } from "@/lib/domain";
+import { getAlternateLanguages, getDomainConfig } from "@/lib/domain-server";
 import { renderMarkdown } from "@/lib/markdown";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
@@ -25,32 +26,46 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const { baseUrl } = await getDomainConfig();
 
   try {
     const post = await loadPost(slug);
 
+    const canonical = `${baseUrl}/blog/${post.slug}`;
+    // Fall back to the site OG image so cover-less posts still get a social card.
+    const image = post.coverImage
+      ? resolveAssetUrl(post.coverImage)
+      : `${baseUrl}/images/minecraft-stats/og-image.webp`;
+
     return {
-      title: `${post.title} - Minecraft Stats Blog`,
+      title: post.title,
       description: post.excerpt || post.title,
+      alternates: {
+        canonical,
+        languages: getAlternateLanguages(`/blog/${post.slug}`),
+      },
       openGraph: {
         title: post.title,
         description: post.excerpt || post.title,
         type: "article",
+        url: canonical,
         publishedTime: post.publishedAt?.toString(),
+        modifiedTime: post.updatedAt?.toString(),
         authors: [post.author.username],
-        images: post.coverImage ? [resolveAssetUrl(post.coverImage)] : [],
+        images: [image],
       },
       twitter: {
         card: "summary_large_image",
         title: post.title,
         description: post.excerpt || post.title,
-        images: post.coverImage ? [resolveAssetUrl(post.coverImage)] : [],
+        images: [image],
       },
     };
   } catch {
     return {
-      title: "Article not found - Minecraft Stats",
+      title: "Article not found",
       description: "The requested article does not exist",
+      robots: { index: false, follow: true },
     };
   }
 }
@@ -76,7 +91,6 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
             updatedAt: post.updatedAt?.toString() || post.createdAt.toString(),
             author: {
               name: post.author.username,
-              email: post.author.email,
             },
           }}
         />
@@ -96,7 +110,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
           {/* Header */}
           <header className="mb-8 text-center">
             <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
-              News · {formatPostDate(post.createdAt)}
+              News · {formatPostDate(post.publishedAt ?? post.createdAt)}
             </div>
             <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight text-balance text-foreground sm:text-4xl md:text-5xl">
               {post.title}
@@ -115,7 +129,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
           {/* Cover image */}
           {post.coverImage && (
             <div className="relative mb-10 h-[220px] w-full overflow-hidden rounded-xl border border-border bg-secondary sm:h-[320px] md:h-[400px]">
-              <Image src={resolveAssetUrl(post.coverImage)} alt={post.title} className="h-full w-full object-cover" unoptimized fill />
+              <Image src={resolveAssetUrl(post.coverImage)} alt={post.title} className="h-full w-full object-cover" priority unoptimized fill />
             </div>
           )}
 
@@ -167,23 +181,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
       </div>
     );
   } catch {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <div className="mx-auto max-w-2xl rounded-xl border border-border bg-card p-8 text-card-foreground shadow-xs sm:p-12">
-            <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Article Not Found</h1>
-            <p className="mb-8 text-muted-foreground">
-              The article you are looking for does not exist or has been deleted.
-            </p>
-            <Button asChild variant="accent">
-              <Link href="/blog">
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Blog
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    // Return a real 404 (not a soft 200 page) so search engines drop missing posts.
+    notFound();
   }
 }
