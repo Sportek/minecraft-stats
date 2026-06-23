@@ -71,9 +71,23 @@ Generate one original cover illustration for the article's topic with kie.ai's N
 then upload it to our own storage and use the returned path as `coverImage`. Never put a raw
 kie.ai URL in `coverImage` — those expire; always re-host via our upload endpoint.
 
-1. **Write the image prompt** from the article's topic: a clean, editorial blog-hero illustration
-   in a Minecraft-inspired voxel/blocky style, no text/watermark/logos in the image, landscape
-   composition. Keep it specific to the angle (e.g. a server spotlight vs. a growth chart vibe).
+1. **Write the image prompt** from the article's topic. Every cover must read as part of the
+   Minecraft-Stats brand, so the blog feels like one consistent visual family run after run.
+   Build the prompt from this fixed **brand brief** plus a per-article subject:
+   - **Identity:** Minecraft-Stats is a *data/analytics* product, not a generic blocky-Minecraft
+     skin. The hero motif is **server statistics**: ascending bar charts, glowing line/growth
+     curves, dashboard panels, leaderboards — visualised with a tasteful Minecraft-world accent
+     (a few voxel/cube elements, a blocky server silhouette), never a full pixel-art scene.
+   - **Palette (use these, don't drift):** deep navy background (`#0b1622` → `#002e4d`), with the
+     "stats-blue" scale for the data and glow — `#0099FF` (hero blue), `#66C2FF` and `#CCEBFF`
+     (light highlights), `#005C99` (dark blue). Cool blues on dark navy is the signature look;
+     keep accents to this blue family rather than rainbow colours.
+   - **Style:** clean, modern, editorial — soft depth, subtle gradients and glow, generous
+     negative space. Cohesive with a dark-mode analytics dashboard. No text, no watermark, no
+     logos, no UI chrome/cursors. 16:9 landscape composition.
+   - **Per-article angle:** specialise the subject to the topic (e.g. a server spotlight → a
+     blocky server lit by a rising bar chart; a growth piece → an upward line graph over a voxel
+     landscape; a ranking piece → a podium of chart bars). Keep the palette and style above fixed.
 2. **Create the task:**
    ```
    POST https://api.kie.ai/api/v1/jobs/createTask
