@@ -5,6 +5,8 @@
 
 export const controllers = {
   Advertisements: () => import('#controllers/advertisements_controller'),
+  Analytics: () => import('#controllers/analytics_controller'),
+  ApiTokens: () => import('#controllers/api_tokens_controller'),
   Auth: () => import('#controllers/auth_controller'),
   Categories: () => import('#controllers/categories_controller'),
   Languages: () => import('#controllers/languages_controller'),

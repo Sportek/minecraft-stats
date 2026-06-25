@@ -8,8 +8,9 @@ export const generateMetadata = async (): Promise<Metadata> => {
   return {
     title: "Privacy Policy",
     description:
-      "Learn what data Minecraft Stats collects, how we use cookies, the third-party services we rely on (Google Analytics, Google AdSense), your GDPR rights, and how to contact us.",
-    keywords: "privacy policy, GDPR, data protection, cookies, google analytics, google adsense, minecraft stats",
+      "Learn what data Minecraft Stats collects, our consent-based first-party analytics, how we use cookies, the third-party services we rely on (Google Analytics, Google AdSense), your GDPR rights, and how to contact us.",
+    keywords:
+      "privacy policy, GDPR, data protection, cookies, first-party analytics, consent, google analytics, google adsense, minecraft stats",
     openGraph: {
       title: "Privacy Policy - Minecraft Stats",
       description:
@@ -33,7 +34,7 @@ const Privacy = () => {
       <div>
         <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-accent">Legal</div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Privacy Policy</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Last updated: June 21, 2026</p>
+        <p className="mt-1 text-sm text-muted-foreground">Last updated: June 24, 2026</p>
       </div>
 
       <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
@@ -65,8 +66,9 @@ const Privacy = () => {
         <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Usage and Analytics Data</h3>
         <p>
           Like most websites, we automatically receive certain technical information (such as your IP address, browser
-          type, and the pages you visit) and use analytics tools to understand how the site is used. See the
-          third-party services section below for details.
+          type, and the pages you visit) and use analytics to understand how the site is used. This is done both through
+          our own first-party analytics and through third-party tools. Our first-party analytics only run after you give
+          your consent, and we never store your IP address in clear text. See the dedicated sections below for details.
         </p>
       </section>
 
@@ -84,22 +86,81 @@ const Privacy = () => {
       <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">Cookies and Local Storage</h2>
         <p>
-          We use browser local storage to keep you signed in. Our third-party providers (analytics and advertising) may
-          also set cookies or similar identifiers on your device. You can control or delete cookies through your browser
-          settings, and you can manage advertising preferences as described below. Disabling some cookies may affect how
-          parts of the site work.
+          We use browser local storage to keep you signed in, to remember your analytics consent choice, and — once you
+          have consented — to store the anonymous visitor identifier used by our first-party analytics. Our third-party
+          providers (analytics and advertising) may also set cookies or similar identifiers on your device. You can
+          control or delete cookies and local storage through your browser settings, and you can manage advertising
+          preferences as described below. Disabling some of these may affect how parts of the site work.
+        </p>
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">First-Party Analytics</h2>
+        <p>
+          In addition to the third-party tools below, we run our own analytics, with the data stored on our own servers
+          rather than shared with an external provider. This helps us measure how much traffic the site receives and how
+          our pages are used, so we can improve them.
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">What we collect</h3>
+        <ul className="list-disc list-inside pl-4">
+          <li>An anonymous visitor identifier we generate and store in your browser&apos;s local storage.</li>
+          <li>The pages you visit, the page that referred you, and your browser type (user agent).</li>
+          <li>An approximate country, derived from your connection.</li>
+          <li>
+            A hashed, non-reversible form of your IP address. We never store your IP address in clear text; the hash
+            only lets us group visits from the same connection without keeping the address itself.
+          </li>
+        </ul>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Consent</h3>
+        <p>
+          This first-party tracking only starts after you accept it through the consent banner shown on your first
+          visit. If you decline, no first-party analytics events are recorded. You can change your mind at any time by
+          clearing your browser&apos;s local storage for this site, which also resets your anonymous visitor identifier.
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Link with your account</h3>
+        <p>
+          If you are signed in, we may associate your anonymous visits with your account so we can understand usage by
+          logged-in members. A single device or connection can be linked to more than one account, and a single account
+          to several devices. You can request deletion of this data at any time (see Your Rights below).
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Retention</h3>
+        <p>
+          Individual page-view records are automatically deleted after 90 days. Only aggregated, anonymized statistics
+          (such as daily page counts) are kept beyond that period.
         </p>
       </section>
 
       <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">Third-Party Services</h2>
 
-        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Google Analytics 4</h3>
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Umami</h3>
         <p>
-          We use Google Analytics 4 to measure audience and understand how visitors use the site. Google Analytics sets
-          cookies and assigns identifiers to recognize returning visitors, and processes data such as your IP address.
-          IP addresses are handled by Google in accordance with its policies and may be anonymized or truncated. This
-          helps us see aggregate trends rather than identify individuals.
+          We use Umami, a privacy-focused analytics service, to measure aggregate audience and traffic. Umami does not
+          use cookies and does not collect data that identifies you individually; it reports anonymized, aggregated
+          metrics. Analytics data is processed by Umami on our behalf.
+        </p>
+        <p className="mt-2">
+          For more information, see{" "}
+          <a
+            href="https://umami.is/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-accent hover:underline"
+          >
+            Umami&apos;s Privacy Policy
+          </a>
+          .
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Google Tag Manager</h3>
+        <p>
+          We use Google Tag Manager to load and manage the measurement scripts described in this policy. Google Tag
+          Manager itself does not collect personal data, but it loads other tags that may. It is provided by Google,
+          which processes data in accordance with its policies.
         </p>
         <p className="mt-2">
           For more information, see{" "}
@@ -111,14 +172,25 @@ const Privacy = () => {
           >
             Google&apos;s Privacy Policy
           </a>
-          . You can opt out of Google Analytics across websites using the{" "}
+          .
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Microsoft Clarity</h3>
+        <p>
+          We use Microsoft Clarity to understand how visitors interact with the site through aggregated metrics and, in
+          some cases, session recordings (such as mouse movements, clicks, and scrolling). Clarity may set cookies and
+          process data such as your IP address; recordings are masked to avoid capturing sensitive input. Microsoft uses
+          this data in accordance with its policies.
+        </p>
+        <p className="mt-2">
+          For more information, see the{" "}
           <a
-            href="https://tools.google.com/dlpage/gaoptout"
+            href="https://privacy.microsoft.com/privacystatement"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-accent hover:underline"
           >
-            Google Analytics Opt-out Browser Add-on
+            Microsoft Privacy Statement
           </a>
           .
         </p>
@@ -172,7 +244,8 @@ const Privacy = () => {
         <p>
           We keep your personal data for as long as your account is active and the services are provided. If you delete
           your account or ask us to remove your data, we will delete it unless we are required to retain it for legal
-          reasons. Aggregate, anonymized statistics may be kept indefinitely.
+          reasons. First-party analytics page-view records are deleted after 90 days, as described above. Aggregate,
+          anonymized statistics may be kept indefinitely.
         </p>
       </section>
 

@@ -157,6 +157,51 @@ export class LanguageSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class PageViewDailySchema extends BaseModel {
+  static $columns = ['date', 'id', 'path', 'uniqueVisitors', 'views'] as const
+  $columns = PageViewDailySchema.$columns
+  @column.date()
+  declare date: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare path: string
+  @column()
+  declare uniqueVisitors: number
+  @column()
+  declare views: number
+}
+
+export class PageViewSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'durationMs',
+    'id',
+    'path',
+    'referrer',
+    'title',
+    'userId',
+    'visitorId',
+  ] as const
+  $columns = PageViewSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare durationMs: number | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare path: string
+  @column()
+  declare referrer: string | null
+  @column()
+  declare title: string | null
+  @column()
+  declare userId: number | null
+  @column()
+  declare visitorId: number
+}
+
 export class PostSchema extends BaseModel {
   static $columns = [
     'content',
@@ -375,6 +420,19 @@ export class ServerSchema extends BaseModel {
   declare website: string | null
 }
 
+export class TrafficStatSchema extends BaseModel {
+  static $columns = ['bucket', 'errors', 'id', 'requests'] as const
+  $columns = TrafficStatSchema.$columns
+  @column.dateTime()
+  declare bucket: DateTime
+  @column()
+  declare errors: number
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare requests: number
+}
+
 export class UserSchema extends BaseModel {
   static $columns = [
     'avatarUrl',
@@ -415,4 +473,46 @@ export class UserSchema extends BaseModel {
   declare verificationTokenExpires: DateTime | null
   @column()
   declare verified: boolean | null
+}
+
+export class VisitorAccountSchema extends BaseModel {
+  static $columns = ['id', 'lastActiveAt', 'linkedAt', 'userId', 'visitorId'] as const
+  $columns = VisitorAccountSchema.$columns
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare lastActiveAt: DateTime | null
+  @column.dateTime()
+  declare linkedAt: DateTime | null
+  @column()
+  declare userId: number
+  @column()
+  declare visitorId: number
+}
+
+export class VisitorSchema extends BaseModel {
+  static $columns = [
+    'country',
+    'firstSeenAt',
+    'id',
+    'ipHash',
+    'lastSeenAt',
+    'userAgent',
+    'uuid',
+  ] as const
+  $columns = VisitorSchema.$columns
+  @column()
+  declare country: string | null
+  @column.dateTime()
+  declare firstSeenAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare ipHash: string | null
+  @column.dateTime()
+  declare lastSeenAt: DateTime | null
+  @column()
+  declare userAgent: string | null
+  @column()
+  declare uuid: string
 }

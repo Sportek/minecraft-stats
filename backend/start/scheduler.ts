@@ -2,6 +2,7 @@ import Server from '#models/server'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import ImageStorageService from '#services/image_storage_service'
 import StatsService from '#services/stat_service'
+import { drainBuffer } from '#services/traffic_buffer'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import redis from '@adonisjs/redis/services/main'
@@ -352,3 +353,76 @@ scheduler
     logger.info('SCHEDULER: partition_maintenance — ensured next month partition exists')
   })
   .everySixHours()
+
+// ============================================================================
+// Analytics first-party
+// ============================================================================
+
+// Flush du buffer de trafic en mémoire vers `traffic_stats` (incrément par heure).
+scheduler
+  .call(async () => {
+    const entries = drainBuffer()
+    if (entries.length === 0) return
+
+    for (const entry of entries) {
+      await Database.table('traffic_stats')
+        .insert({ bucket: entry.bucket, requests: entry.requests, errors: entry.errors })
+        .onConflict('bucket')
+        .merge({
+          requests: Database.raw('traffic_stats.requests + ?', [entry.requests]),
+          errors: Database.raw('traffic_stats.errors + ?', [entry.errors]),
+        })
+    }
+    logger.info(`SCHEDULER: traffic flush — ${entries.length} hourly bucket(s) upserted`)
+  })
+  .everyFiveMinutes()
+
+// Agrégation des pages vues vers `page_view_daily`. Recalcule hier + aujourd'hui
+// à chaque heure (idempotent) pour rattraper les vues arrivées en retard.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const result = await Database.rawQuery(`
+      INSERT INTO page_view_daily (date, path, views, unique_visitors)
+      SELECT created_at::date AS date,
+             path,
+             count(*)::int AS views,
+             count(distinct visitor_id)::int AS unique_visitors
+      FROM page_views
+      WHERE created_at >= date_trunc('day', now() - interval '1 day')
+      GROUP BY created_at::date, path
+      ON CONFLICT (date, path) DO UPDATE SET
+        views = EXCLUDED.views,
+        unique_visitors = EXCLUDED.unique_visitors
+    `)
+    logger.info(
+      `SCHEDULER: page_view_daily aggregation completed in ${Date.now() - start}ms (${result.rowCount ?? 0} rows)`
+    )
+  })
+  .hourly()
+
+// Purge de rétention (RGPD / Loi 25) : les pages vues brutes de plus de 90 jours
+// sont supprimées (les agrégats `page_view_daily` sont conservés). On nettoie
+// aussi les visiteurs anonymes orphelins, plus vus depuis 90 jours.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const views = await Database.from('page_views')
+      .where('created_at', '<', DateTime.now().minus({ days: 90 }).toSQL())
+      .delete()
+
+    const visitors = await Database.from('visitors')
+      .where('last_seen_at', '<', DateTime.now().minus({ days: 90 }).toSQL())
+      .whereNotExists((sub) => {
+        sub.from('page_views').whereRaw('page_views.visitor_id = visitors.id')
+      })
+      .whereNotExists((sub) => {
+        sub.from('visitor_accounts').whereRaw('visitor_accounts.visitor_id = visitors.id')
+      })
+      .delete()
+
+    logger.info(
+      `SCHEDULER: analytics retention purge in ${Date.now() - start}ms — ${views} page_views, ${visitors} visitors removed`
+    )
+  })
+  .dailyAt('03:30')

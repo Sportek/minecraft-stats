@@ -172,6 +172,15 @@ router
       .get('advertisements/:id/click', '#controllers/advertisements_controller.click')
       .use([throttleLight('advertisements.click', 120), NO_STORE])
 
+    // Analytics first-party — tracking d'usage du site
+    router
+      .post('analytics/pageview', '#controllers/analytics_controller.pageview')
+      .use([throttleLight('analytics.pageview', 120), NO_STORE])
+    router
+      .post('analytics/identify', '#controllers/analytics_controller.identify')
+      .use(middleware.auth())
+      .use([throttleLight('analytics.identify', 20), NO_STORE])
+
     // Blog - Posts management (writers and admins via policy)
     router
       .group(() => {
@@ -198,6 +207,11 @@ router
         router
           .post('posts/placeholders/preview', '#controllers/posts_controller.previewPlaceholder')
           .use(throttleLight('admin.posts.placeholders.preview', 20))
+
+        // Analytics dashboard (admin only)
+        router
+          .get('analytics', '#controllers/analytics_controller.dashboard')
+          .use([middleware.admin(), throttleLight('admin.analytics', 30), NO_STORE])
 
         // User management (admin only via policy)
         router
