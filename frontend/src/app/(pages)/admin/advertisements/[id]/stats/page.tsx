@@ -16,9 +16,9 @@ import { useEffect, useMemo, useState } from "react";
 type RangeKey = "7d" | "30d" | "90d";
 
 const RANGES: Record<RangeKey, { label: string; ms: number; interval: "hour" | "day" }> = {
-  "7d": { label: "7 jours", ms: 7 * 86400000, interval: "hour" },
-  "30d": { label: "30 jours", ms: 30 * 86400000, interval: "day" },
-  "90d": { label: "90 jours", ms: 90 * 86400000, interval: "day" },
+  "7d": { label: "7 days", ms: 7 * 86400000, interval: "hour" },
+  "30d": { label: "30 days", ms: 30 * 86400000, interval: "day" },
+  "90d": { label: "90 days", ms: 90 * 86400000, interval: "day" },
 };
 
 const AdvertisementStatsPage = () => {
@@ -95,7 +95,7 @@ const AdvertisementStatsPage = () => {
           type: "line" as const,
           xKey: "time",
           yKey: "clicks",
-          yName: "Clics",
+          yName: "Clicks",
           stroke: "#16A34A",
           marker: { enabled: false },
         },
@@ -108,15 +108,15 @@ const AdvertisementStatsPage = () => {
   }, [chartData, resolvedTheme]);
 
   if (!user) {
-    return <AdminLoadingState label="Chargement..." />;
+    return <AdminLoadingState label="Loading…" />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Accès refusé"
-        description="Vous devez être administrateur pour accéder à cette page."
+        title="Access denied"
+        description="You must be an administrator to access this page."
       />
     );
   }
@@ -128,14 +128,14 @@ const AdvertisementStatsPage = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-5xl animate-in fade-in px-4 py-8 duration-300">
-        <AdminBackLink href="/admin/advertisements" label="Retour à la liste" />
+        <AdminBackLink href="/admin/advertisements" label="Back to the list" />
 
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Statistiques{ad ? ` — ${ad.name}` : ""}
+            Statistics{ad ? ` — ${ad.name}` : ""}
           </h1>
           <p className="text-muted-foreground">
-            Évolution des impressions et des clics dans le temps.
+            Impressions and clicks over time.
           </p>
         </div>
 
@@ -154,8 +154,8 @@ const AdvertisementStatsPage = () => {
         <div className="mb-6 grid gap-4 sm:grid-cols-3">
           {[
             { label: "Impressions", value: totals.impressions.toLocaleString("fr-FR") },
-            { label: "Clics", value: totals.clicks.toLocaleString("fr-FR") },
-            { label: "Taux de clic (CTR)", value: `${ctr} %` },
+            { label: "Clicks", value: totals.clicks.toLocaleString("fr-FR") },
+            { label: "Click-through rate (CTR)", value: `${ctr} %` },
           ].map((card) => (
             <div
               key={card.label}
@@ -173,11 +173,11 @@ const AdvertisementStatsPage = () => {
         <div className="rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs">
           {loading ? (
             <div className="flex h-[320px] items-center justify-center text-muted-foreground">
-              Chargement des statistiques...
+              Loading statistics…
             </div>
           ) : chartData.length === 0 ? (
             <div className="flex h-[320px] items-center justify-center text-muted-foreground">
-              Aucune donnée sur cette période.
+              No data for this period.
             </div>
           ) : (
             <div className="h-[320px]">

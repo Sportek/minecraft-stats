@@ -64,15 +64,15 @@ const AdminAdvertisementsPage = () => {
   }, [ads, filter, query]);
 
   if (!user) {
-    return <AdminLoadingState label="Chargement..." />;
+    return <AdminLoadingState label="Loading…" />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Accès refusé"
-        description="Vous devez être administrateur pour accéder à cette page."
+        title="Access denied"
+        description="You must be an administrator to access this page."
       />
     );
   }
@@ -84,40 +84,40 @@ const AdminAdvertisementsPage = () => {
       setAds((prev) => prev.map((a) => (a.id === ad.id ? { ...a, enabled: updated.enabled } : a)));
     } catch (error) {
       console.error("Failed to toggle advertisement:", error);
-      alert("Impossible de modifier la publicité");
+      alert("Unable to update the advertisement");
     }
   };
 
   const handleDelete = async (adId: number) => {
     if (!token) return;
-    if (!confirm("Supprimer définitivement cette publicité et ses statistiques ?")) return;
+    if (!confirm("Permanently delete this advertisement and its statistics?")) return;
     try {
       await deleteAdvertisement(adId, token);
       setAds((prev) => prev.filter((a) => a.id !== adId));
     } catch (error) {
       console.error("Failed to delete advertisement:", error);
-      alert("Impossible de supprimer la publicité");
+      alert("Unable to delete the advertisement");
     }
   };
 
   const placementLabel = (ad: Advertisement) => {
     const slots: string[] = [];
-    if (ad.showOnHome) slots.push("Accueil");
-    if (ad.showOnServer) slots.push("Serveurs");
-    return slots.length > 0 ? slots.join(" + ") : "Aucun";
+    if (ad.showOnHome) slots.push("Home");
+    if (ad.showOnServer) slots.push("Servers");
+    return slots.length > 0 ? slots.join(" + ") : "None";
   };
 
   return (
     <DashboardLayout>
       <DashboardHero
         title="Advertisements"
-        subtitle="Créez, activez et suivez les performances de vos bannières publicitaires."
+        subtitle="Create, enable and track the performance of your ad banners."
         badge={`${ads.length} total`}
         action={
           <Button asChild variant="accent">
             <Link href="/admin/advertisements/new">
               <Plus className="h-5 w-5" />
-              <span>Nouvelle publicité</span>
+              <span>New advertisement</span>
             </Link>
           </Button>
         }
@@ -126,9 +126,9 @@ const AdminAdvertisementsPage = () => {
       {/* Stat tiles */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <DashboardStatTile label="Total" value={String(ads.length)} />
-        <DashboardStatTile label="Actives" value={String(activeCount)} dot="success" />
-        <DashboardStatTile label="Inactives" value={String(disabledCount)} dot="muted" />
-        <DashboardStatTile label="Vues" value={totalImpressions.toLocaleString("fr-FR")} />
+        <DashboardStatTile label="Active" value={String(activeCount)} dot="success" />
+        <DashboardStatTile label="Inactive" value={String(disabledCount)} dot="muted" />
+        <DashboardStatTile label="Views" value={totalImpressions.toLocaleString("fr-FR")} />
       </div>
 
       {/* Advertisements card */}
@@ -139,9 +139,9 @@ const AdminAdvertisementsPage = () => {
             value={filter}
             onChange={setFilter}
             tabs={[
-              { value: "all", label: `Toutes (${ads.length})` },
-              { value: "active", label: `Actives (${activeCount})` },
-              { value: "disabled", label: `Inactives (${disabledCount})` },
+              { value: "all", label: `All (${ads.length})` },
+              { value: "active", label: `Active (${activeCount})` },
+              { value: "disabled", label: `Inactive (${disabledCount})` },
             ]}
           />
           <div className="relative sm:w-64">
@@ -150,7 +150,7 @@ const AdminAdvertisementsPage = () => {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher une publicité..."
+              placeholder="Search an advertisement…"
               className="pl-9"
             />
           </div>
@@ -159,16 +159,16 @@ const AdminAdvertisementsPage = () => {
         {/* Rows */}
         {loading ? (
           <div className="px-6 py-12 text-center text-muted-foreground">
-            Chargement des publicités...
+            Loading advertisements…
           </div>
         ) : visibleAds.length === 0 ? (
           <div className="px-6 py-14 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
               <Search className="h-5 w-5" />
             </div>
-            <p className="text-sm font-semibold text-foreground">Aucune publicité</p>
+            <p className="text-sm font-semibold text-foreground">No advertisements</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Cliquez sur «&nbsp;Nouvelle publicité&nbsp;» pour commencer.
+              Click &laquo;&nbsp;New advertisement&nbsp;&raquo; to get started.
             </p>
           </div>
         ) : (
@@ -188,8 +188,8 @@ const AdminAdvertisementsPage = () => {
                         ·
                       </span>
                       <span className="shrink-0">
-                        {(ad.impressionsCount ?? 0).toLocaleString("fr-FR")} vues /{" "}
-                        {(ad.clicksCount ?? 0).toLocaleString("fr-FR")} clics
+                        {(ad.impressionsCount ?? 0).toLocaleString("fr-FR")} views /{" "}
+                        {(ad.clicksCount ?? 0).toLocaleString("fr-FR")} clicks
                       </span>
                     </div>
                   </div>
@@ -209,7 +209,7 @@ const AdminAdvertisementsPage = () => {
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => handleToggle(ad)}
-                      title={ad.enabled ? "Désactiver" : "Activer"}
+                      title={ad.enabled ? "Disable" : "Enable"}
                     >
                       <Power className="h-4 w-4" />
                     </Button>
@@ -218,7 +218,7 @@ const AdminAdvertisementsPage = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-accent"
-                      title="Statistiques"
+                      title="Statistics"
                     >
                       <Link href={`/admin/advertisements/${ad.id}/stats`}>
                         <BarChart3 className="h-4 w-4" />
@@ -229,7 +229,7 @@ const AdminAdvertisementsPage = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-accent"
-                      title="Modifier"
+                      title="Edit"
                     >
                       <Link href={`/admin/advertisements/${ad.id}/edit`}>
                         <Pencil className="h-4 w-4" />
@@ -240,7 +240,7 @@ const AdminAdvertisementsPage = () => {
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       onClick={() => handleDelete(ad.id)}
-                      title="Supprimer"
+                      title="Delete"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

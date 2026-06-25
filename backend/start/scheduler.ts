@@ -352,3 +352,59 @@ scheduler
     logger.info('SCHEDULER: partition_maintenance — ensured next month partition exists')
   })
   .everySixHours()
+
+// ============================================================================
+// Analytics first-party
+// ============================================================================
+// Le volume de trafic et les visiteurs uniques anonymes vivent dans Redis
+// (compteurs + HyperLogLog), pas en base — voir `#services/analytics_counters`.
+
+// Agrégation des pages vues vers `page_view_daily`. Recalcule hier + aujourd'hui
+// à chaque heure (idempotent) pour rattraper les vues arrivées en retard.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const result = await Database.rawQuery(`
+      INSERT INTO page_view_daily (date, path, views, unique_visitors)
+      SELECT created_at::date AS date,
+             path,
+             count(*)::int AS views,
+             count(distinct visitor_id)::int AS unique_visitors
+      FROM page_views
+      WHERE created_at >= date_trunc('day', now() - interval '1 day')
+      GROUP BY created_at::date, path
+      ON CONFLICT (date, path) DO UPDATE SET
+        views = EXCLUDED.views,
+        unique_visitors = EXCLUDED.unique_visitors
+    `)
+    logger.info(
+      `SCHEDULER: page_view_daily aggregation completed in ${Date.now() - start}ms (${result.rowCount ?? 0} rows)`
+    )
+  })
+  .hourly()
+
+// Purge de rétention (RGPD / Loi 25) : les pages vues brutes de plus de 90 jours
+// sont supprimées (les agrégats `page_view_daily` sont conservés). On nettoie
+// aussi les visiteurs anonymes orphelins, plus vus depuis 90 jours.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const views = await Database.from('page_views')
+      .where('created_at', '<', DateTime.now().minus({ days: 90 }).toSQL())
+      .delete()
+
+    const visitors = await Database.from('visitors')
+      .where('last_seen_at', '<', DateTime.now().minus({ days: 90 }).toSQL())
+      .whereNotExists((sub) => {
+        sub.from('page_views').whereRaw('page_views.visitor_id = visitors.id')
+      })
+      .whereNotExists((sub) => {
+        sub.from('visitor_accounts').whereRaw('visitor_accounts.visitor_id = visitors.id')
+      })
+      .delete()
+
+    logger.info(
+      `SCHEDULER: analytics retention purge in ${Date.now() - start}ms — ${views} page_views, ${visitors} visitors removed`
+    )
+  })
+  .dailyAt('03:30')

@@ -24,6 +24,7 @@ const WRITER_ITEMS: NavItem[] = [
 ];
 
 const ADMIN_ITEMS: NavItem[] = [
+  { href: "/admin/analytics", label: "Analytics", icon: "material-symbols:bar-chart-4-bars" },
   { href: "/admin/users", label: "Users", icon: "material-symbols:group-outline" },
   { href: "/admin/advertisements", label: "Advertisements", icon: "material-symbols:ad-group-outline" },
 ];

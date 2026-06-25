@@ -56,15 +56,15 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
     setError(null);
 
     if (name.trim().length < 2) {
-      setError("Le nom doit contenir au moins 2 caractères.");
+      setError("The name must contain at least 2 characters.");
       return;
     }
     if (htmlContent.trim().length === 0) {
-      setError("Le code HTML/CSS ne peut pas être vide.");
+      setError("The HTML/CSS code cannot be empty.");
       return;
     }
     if (!showOnHome && !showOnServer) {
-      setError("Sélectionnez au moins un emplacement d'affichage.");
+      setError("Select at least one display placement.");
       return;
     }
 
@@ -92,49 +92,49 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Nom */}
       <div className="space-y-2">
         <Label>
-          Nom de la publicité <span className="text-destructive">*</span>
+          Advertisement name <span className="text-destructive">*</span>
         </Label>
         <Input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="ex. Bannière partenaire Hypixel"
+          placeholder="e.g. Hypixel partner banner"
         />
       </div>
 
       {/* Code HTML/CSS */}
       <div className="space-y-2">
         <Label>
-          Code HTML / CSS <span className="text-destructive">*</span>
+          HTML / CSS code <span className="text-destructive">*</span>
         </Label>
         <textarea
           value={htmlContent}
           onChange={(e) => setHtmlContent(e.target.value)}
           rows={12}
           spellCheck={false}
-          placeholder={'<a href="https://exemple.com">\n  <img src="..." alt="..." />\n</a>'}
+          placeholder={'<a href="https://example.com">\n  <img src="..." alt="..." />\n</a>'}
           className="flex w-full resize-y rounded-md border border-input bg-background px-3 py-2 font-mono text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
         <p className="text-xs text-muted-foreground">
-          Le CSS peut être inclus dans une balise <code>&lt;style&gt;</code>. Le rendu est isolé :
-          il ne peut pas casser la mise en page du site. Les liens <code>&lt;a href&gt;</code> sont
-          traqués automatiquement.
+          CSS can be included inside a <code>&lt;style&gt;</code> tag. The rendering is isolated:
+          it cannot break the site&apos;s layout. <code>&lt;a href&gt;</code> links are tracked
+          automatically.
         </p>
       </div>
 
       {/* Prévisualisation pleine largeur */}
       <div className="space-y-2">
-        <Label>Prévisualisation</Label>
+        <Label>Preview</Label>
         <AdPreview htmlContent={htmlContent} />
         <p className="text-xs text-muted-foreground">
-          Aperçu à la largeur réelle de l&apos;emplacement publicitaire sur le site.
+          Preview at the real width of the ad placement on the site.
         </p>
       </div>
 
       {/* Emplacements */}
       <div className="space-y-2">
         <Label>
-          Emplacements <span className="text-destructive">*</span>
+          Placements <span className="text-destructive">*</span>
         </Label>
         <div className="flex flex-wrap gap-4">
           <Label className="flex items-center gap-2 text-sm font-normal text-foreground">
@@ -142,14 +142,14 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
               checked={showOnHome}
               onCheckedChange={(checked) => setShowOnHome(checked === true)}
             />
-            Page d&apos;accueil
+            Home page
           </Label>
           <Label className="flex items-center gap-2 text-sm font-normal text-foreground">
             <Checkbox
               checked={showOnServer}
               onCheckedChange={(checked) => setShowOnServer(checked === true)}
             />
-            Pages des serveurs
+            Server pages
           </Label>
         </div>
       </div>
@@ -157,10 +157,9 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Ciblage par catégorie */}
       {showOnServer && (
         <div className="space-y-2">
-          <Label>Ciblage par catégorie (pages serveur)</Label>
+          <Label>Category targeting (server pages)</Label>
           <p className="text-xs text-muted-foreground">
-            Aucune catégorie sélectionnée = la publicité s&apos;affiche sur toutes les pages
-            serveur.
+            No category selected = the advertisement is shown on all server pages.
           </p>
           <div className="flex flex-wrap gap-2">
             {(categories ?? []).map((category) => {
@@ -187,7 +186,7 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Poids + planification */}
       <div className="grid gap-6 sm:grid-cols-3">
         <div className="space-y-2">
-          <Label>Poids (rotation)</Label>
+          <Label>Weight (rotation)</Label>
           <Input
             type="number"
             min={1}
@@ -195,10 +194,10 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
             value={weight}
             onChange={(e) => setWeight(Math.max(1, Number(e.target.value) || 1))}
           />
-          <p className="text-xs text-muted-foreground">Plus élevé = affichée plus souvent.</p>
+          <p className="text-xs text-muted-foreground">Higher = shown more often.</p>
         </div>
         <div className="space-y-2">
-          <Label>Début (optionnel)</Label>
+          <Label>Start (optional)</Label>
           <Input
             type="datetime-local"
             value={startsAt}
@@ -206,7 +205,7 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
           />
         </div>
         <div className="space-y-2">
-          <Label>Fin (optionnel)</Label>
+          <Label>End (optional)</Label>
           <Input
             type="datetime-local"
             value={endsAt}
@@ -218,13 +217,13 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Activation */}
       <Label className="flex items-center gap-3 text-sm font-medium text-foreground">
         <Checkbox checked={enabled} onCheckedChange={(checked) => setEnabled(checked === true)} />
-        Activer la publicité (visible sur le site)
+        Enable the advertisement (visible on the site)
       </Label>
 
       {/* Actions */}
       <div className="flex items-center gap-4 border-t border-border pt-4">
         <Button type="submit" variant="accent" disabled={submitting}>
-          {submitting ? "Enregistrement..." : submitLabel}
+          {submitting ? "Saving…" : submitLabel}
         </Button>
       </div>
     </form>

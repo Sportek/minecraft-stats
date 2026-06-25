@@ -31,6 +31,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     alternates: {
       canonical: `${baseUrl}${path}`,
       languages: getAlternateLanguages(path),
+      types: {
+        "application/rss+xml": `${baseUrl}/feed.xml`,
+      },
     },
   };
 }
