@@ -1,14 +1,15 @@
 export interface AnalyticsTotals {
-  pageViews: number;
+  httpRequests: number;
+  httpErrors: number;
   uniqueVisitors: number;
+  uniqueVisitorsThisMonth: number;
+  pageViews: number;
   loggedInViews: number;
-  requests: number;
-  errors: number;
 }
 
 export interface AnalyticsSeriesPoint {
   time: string;
-  pageViews: number;
+  requests: number;
   uniqueVisitors: number;
 }
 

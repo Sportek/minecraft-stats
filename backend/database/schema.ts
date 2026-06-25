@@ -420,19 +420,6 @@ export class ServerSchema extends BaseModel {
   declare website: string | null
 }
 
-export class TrafficStatSchema extends BaseModel {
-  static $columns = ['bucket', 'errors', 'id', 'requests'] as const
-  $columns = TrafficStatSchema.$columns
-  @column.dateTime()
-  declare bucket: DateTime
-  @column()
-  declare errors: number
-  @column({ isPrimary: true })
-  declare id: number
-  @column()
-  declare requests: number
-}
-
 export class UserSchema extends BaseModel {
   static $columns = [
     'avatarUrl',

@@ -174,6 +174,9 @@ router
 
     // Analytics first-party — tracking d'usage du site
     router
+      .post('analytics/hit', '#controllers/analytics_controller.hit')
+      .use([throttleLight('analytics.hit', 240), NO_STORE])
+    router
       .post('analytics/pageview', '#controllers/analytics_controller.pageview')
       .use([throttleLight('analytics.pageview', 120), NO_STORE])
     router

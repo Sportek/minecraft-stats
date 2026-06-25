@@ -1,3 +1,4 @@
+import { recordAnonymousHit } from '#services/analytics_counters'
 import AnalyticsService from '#services/analytics_service'
 import { IdentifyVisitorValidator, TrackPageViewValidator } from '#validators/analytics'
 import { parseEpochMs } from '#validators/helpers'
@@ -84,24 +85,39 @@ export default class AnalyticsController {
   }
 
   /**
+   * @trackAnonymousHit
+   * @operationId trackAnonymousHit
+   * @tag ANALYTICS
+   * @summary Record an anonymous, consent-free visitor hit
+   * @description Records a fully anonymous visitor hit used only for aggregate audience measurement (unique visitor counts and per-country traffic). No identifier is stored: the visitor's IP and user agent are folded into a HyperLogLog estimator that cannot enumerate or reveal individuals. Because it stores no personal data, it runs without consent (opt-outs included). Always responds `204 No Content`. Publicly accessible.
+   * @responseBody 204 - No content
+   */
+  async hit({ request, response }: HttpContext) {
+    recordAnonymousHit(
+      realIp(request),
+      request.header('user-agent') ?? null,
+      normalizeCountry(request.header('CF-IPCountry'))
+    )
+    return response.noContent()
+  }
+
+  /**
    * @getAnalyticsDashboard
    * @operationId getAnalyticsDashboard
    * @tag ANALYTICS_ADMIN
    * @summary Website usage analytics dashboard (admin)
-   * @description Returns aggregated first-party analytics over the requested window: totals (page views, unique visitors, logged-in views, raw HTTP requests/errors), a per-bucket time series (`hour` or `day`, default `day`), and the top pages, referrers and countries. The window is narrowed with the optional `fromDate`/`toDate` query parameters (epoch milliseconds). Requires authentication and administrator privileges.
-   * @paramQuery interval - Bucket size for the series. `hour` or `day` (defaults to `day`). - @type(string) @example(day)
+   * @description Returns aggregated first-party analytics over the requested window: totals (anonymous unique visitors over the window and for the current month, raw HTTP requests/errors, consented page views and logged-in views), a per-day time series of requests and unique visitors, the top pages and referrers, and the per-country breakdown. The window is narrowed with the optional `fromDate`/`toDate` query parameters (epoch milliseconds; default: last 30 days). Requires authentication and administrator privileges.
    * @paramQuery fromDate - Lower bound of the window, in epoch milliseconds (or the literal string `now`). - @type(number) @example(1716854400000)
    * @paramQuery toDate - Upper bound of the window, in epoch milliseconds (or the literal string `now`). - @type(number) @example(1717459200000)
-   * @responseBody 200 - {"totals": {"pageViews": 12000, "uniqueVisitors": 3400, "loggedInViews": 1200, "requests": 98000, "errors": 120}, "series": [{"time": "2026-05-01T00:00:00.000Z", "pageViews": 400, "uniqueVisitors": 120}], "topPages": [{"path": "/", "views": 5000, "uniqueVisitors": 2100}], "topReferrers": [{"referrer": "https://google.com", "views": 800}], "countries": [{"country": "FR", "views": 6000}]}
+   * @responseBody 200 - {"totals": {"httpRequests": 98000, "httpErrors": 120, "uniqueVisitors": 3400, "uniqueVisitorsThisMonth": 5200, "pageViews": 12000, "loggedInViews": 1200}, "series": [{"time": "2026-05-01", "requests": 3200, "uniqueVisitors": 120}], "topPages": [{"path": "/servers/:id", "views": 5000, "uniqueVisitors": 2100}], "topReferrers": [{"referrer": "https://google.com", "views": 800}], "countries": [{"country": "FR", "views": 6000}]}
    * @responseBody 401 - {"message": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    */
   async dashboard({ request, response }: HttpContext) {
-    const interval = request.input('interval') === 'hour' ? 'hour' : 'day'
     const fromDate = parseEpochMs(request.input('fromDate'))
     const toDate = parseEpochMs(request.input('toDate'))
 
-    const data = await AnalyticsService.getDashboard({ interval, fromDate, toDate })
+    const data = await AnalyticsService.getDashboard({ fromDate, toDate })
 
     return response.ok(data)
   }

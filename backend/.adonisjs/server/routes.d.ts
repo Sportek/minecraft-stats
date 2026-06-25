@@ -50,6 +50,7 @@ export type ScannedRoutes = {
     'advertisements.index': { paramsTuple?: []; params?: {} }
     'advertisements.record_impression': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.click': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'analytics.hit': { paramsTuple?: []; params?: {} }
     'analytics.pageview': { paramsTuple?: []; params?: {} }
     'analytics.identify': { paramsTuple?: []; params?: {} }
     'posts.admin_index': { paramsTuple?: []; params?: {} }
@@ -149,6 +150,7 @@ export type ScannedRoutes = {
     'api_tokens.store': { paramsTuple?: []; params?: {} }
     'posts.resolve_placeholders': { paramsTuple?: []; params?: {} }
     'advertisements.record_impression': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'analytics.hit': { paramsTuple?: []; params?: {} }
     'analytics.pageview': { paramsTuple?: []; params?: {} }
     'analytics.identify': { paramsTuple?: []; params?: {} }
     'posts.store': { paramsTuple?: []; params?: {} }

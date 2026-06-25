@@ -2,7 +2,6 @@ import Server from '#models/server'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import ImageStorageService from '#services/image_storage_service'
 import StatsService from '#services/stat_service'
-import { drainBuffer } from '#services/traffic_buffer'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import redis from '@adonisjs/redis/services/main'
@@ -357,25 +356,8 @@ scheduler
 // ============================================================================
 // Analytics first-party
 // ============================================================================
-
-// Flush du buffer de trafic en mémoire vers `traffic_stats` (incrément par heure).
-scheduler
-  .call(async () => {
-    const entries = drainBuffer()
-    if (entries.length === 0) return
-
-    for (const entry of entries) {
-      await Database.table('traffic_stats')
-        .insert({ bucket: entry.bucket, requests: entry.requests, errors: entry.errors })
-        .onConflict('bucket')
-        .merge({
-          requests: Database.raw('traffic_stats.requests + ?', [entry.requests]),
-          errors: Database.raw('traffic_stats.errors + ?', [entry.errors]),
-        })
-    }
-    logger.info(`SCHEDULER: traffic flush — ${entries.length} hourly bucket(s) upserted`)
-  })
-  .everyFiveMinutes()
+// Le volume de trafic et les visiteurs uniques anonymes vivent dans Redis
+// (compteurs + HyperLogLog), pas en base — voir `#services/analytics_counters`.
 
 // Agrégation des pages vues vers `page_view_daily`. Recalcule hier + aujourd'hui
 // à chaque heure (idempotent) pour rattraper les vues arrivées en retard.

@@ -99,7 +99,25 @@ const Privacy = () => {
         <p>
           In addition to the third-party tools below, we run our own analytics, with the data stored on our own servers
           rather than shared with an external provider. This helps us measure how much traffic the site receives and how
-          our pages are used, so we can improve them.
+          our pages are used, so we can improve them. It works at two levels, described below.
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">
+          Anonymous measurement (no consent required)
+        </h3>
+        <p>
+          To count overall traffic and how many distinct visitors we receive — including those who decline the detailed
+          analytics below — we keep a purely anonymous, aggregate tally. It sets no identifier on your device and stores
+          no personal data: your IP address and browser type are folded into a statistical estimator (a HyperLogLog)
+          that can produce counts but cannot single out, re-identify, or list any individual. Because this processing is
+          anonymous, it runs without consent, in line with audience-measurement guidance.
+        </p>
+
+        <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">
+          Detailed analytics (with your consent)
+        </h3>
+        <p>
+          The richer measurement described next only runs after you opt in through the consent banner.
         </p>
 
         <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">What we collect</h3>
@@ -115,9 +133,10 @@ const Privacy = () => {
 
         <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Consent</h3>
         <p>
-          This first-party tracking only starts after you accept it through the consent banner shown on your first
-          visit. If you decline, no first-party analytics events are recorded. You can change your mind at any time by
-          clearing your browser&apos;s local storage for this site, which also resets your anonymous visitor identifier.
+          You opt in to the detailed analytics above through the consent banner shown on your first visit. If you
+          decline, we do not record those detailed events — only the anonymous aggregate count described earlier
+          continues. You can change your mind at any time by clearing your browser&apos;s local storage for this site,
+          which also resets your anonymous visitor identifier.
         </p>
 
         <h3 className="mb-1 mt-4 text-base font-semibold text-foreground">Link with your account</h3>

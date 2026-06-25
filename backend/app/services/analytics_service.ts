@@ -1,10 +1,9 @@
 import PageView from '#models/page_view'
+import { getTrafficCounters } from '#services/analytics_counters'
 import env from '#start/env'
 import db from '@adonisjs/lucid/services/db'
 import { createHmac } from 'node:crypto'
 import { DateTime } from 'luxon'
-
-type Interval = 'hour' | 'day'
 
 interface VisitorContext {
   ip: string | null
@@ -22,10 +21,13 @@ interface PageViewInput extends VisitorContext {
 }
 
 interface DashboardParams {
-  interval: Interval
   fromDate: number | null
   toDate: number | null
 }
+
+// Collapse numeric path segments (/servers/42 → /servers/:id) so the ~500 real
+// URLs aggregate into a readable handful of route patterns in the dashboard.
+const NORMALIZED_PATH = "regexp_replace(path, '/[0-9]+', '/:id', 'g')"
 
 export default class AnalyticsService {
   /**
@@ -100,42 +102,37 @@ export default class AnalyticsService {
   }
 
   /**
-   * Agrège les statistiques d'usage du site sur la fenêtre demandée pour le
-   * dashboard admin : séries temporelles, top pages/référents/pays et totaux.
+   * Agrège les statistiques d'usage du site pour le dashboard admin. Le trafic,
+   * les visiteurs uniques anonymes (opt-out inclus) et la répartition par pays
+   * viennent de Redis ; le top des pages et référents (qui nécessite le chemin
+   * exact, donc le consentement) vient de `page_views`.
    */
   static async getDashboard(params: DashboardParams) {
-    const { interval, fromDate, toDate } = params
-    const from = fromDate !== null ? new Date(fromDate) : null
-    const to = toDate !== null ? new Date(toDate) : null
+    const { fromDate, toDate } = params
+    const from =
+      fromDate !== null ? DateTime.fromMillis(fromDate) : DateTime.now().minus({ days: 30 })
+    const to = toDate !== null ? DateTime.fromMillis(toDate) : DateTime.now()
+    const fromJs = from.toJSDate()
+    const toJs = to.toJSDate()
 
-    const withWindow = (column: string) => (query: ReturnType<typeof db.from>) => {
-      if (from) query.where(column, '>=', from)
-      if (to) query.where(column, '<=', to)
-      return query
-    }
-    const onPageViews = withWindow('created_at')
+    const onPageViews = (query: ReturnType<typeof db.from>) =>
+      query.where('created_at', '>=', fromJs).where('created_at', '<=', toJs)
 
-    const [totalsRow, series, topPages, topReferrers, countries, trafficRow] = await Promise.all([
+    const [counters, totalsRow, topPages, topReferrers] = await Promise.all([
+      getTrafficCounters(from, to),
+
       onPageViews(db.from('page_views'))
         .select(db.raw('count(*) as page_views'))
-        .select(db.raw('count(distinct visitor_id) as unique_visitors'))
         .select(db.raw('count(*) filter (where user_id is not null) as logged_in_views'))
         .first(),
 
       onPageViews(db.from('page_views'))
-        .select(db.raw('date_trunc(?, created_at) as bucket', [interval]))
-        .select(db.raw('count(*) as page_views'))
-        .select(db.raw('count(distinct visitor_id) as unique_visitors'))
-        .groupByRaw('bucket')
-        .orderByRaw('bucket asc'),
-
-      onPageViews(db.from('page_views'))
-        .select('path')
+        .select(db.raw(`${NORMALIZED_PATH} as path`))
         .select(db.raw('count(*) as views'))
         .select(db.raw('count(distinct visitor_id) as unique_visitors'))
-        .groupBy('path')
+        .groupByRaw(NORMALIZED_PATH)
         .orderByRaw('views desc')
-        .limit(15),
+        .limit(25),
 
       onPageViews(db.from('page_views'))
         .select('referrer')
@@ -144,36 +141,19 @@ export default class AnalyticsService {
         .whereNot('referrer', '')
         .groupBy('referrer')
         .orderByRaw('views desc')
-        .limit(15),
-
-      onPageViews(db.from('page_views as pv'))
-        .join('visitors as v', 'v.id', 'pv.visitor_id')
-        .select('v.country')
-        .select(db.raw('count(*) as views'))
-        .whereNotNull('v.country')
-        .groupBy('v.country')
-        .orderByRaw('views desc')
-        .limit(30),
-
-      withWindow('bucket')(db.from('traffic_stats'))
-        .select(db.raw('coalesce(sum(requests), 0) as requests'))
-        .select(db.raw('coalesce(sum(errors), 0) as errors'))
-        .first(),
+        .limit(25),
     ])
 
     return {
       totals: {
+        httpRequests: counters.httpRequests,
+        httpErrors: counters.httpErrors,
+        uniqueVisitors: counters.uniqueVisitors,
+        uniqueVisitorsThisMonth: counters.uniqueVisitorsThisMonth,
         pageViews: Number(totalsRow?.page_views ?? 0),
-        uniqueVisitors: Number(totalsRow?.unique_visitors ?? 0),
         loggedInViews: Number(totalsRow?.logged_in_views ?? 0),
-        requests: Number(trafficRow?.requests ?? 0),
-        errors: Number(trafficRow?.errors ?? 0),
       },
-      series: series.map((row) => ({
-        time: row.bucket,
-        pageViews: Number(row.page_views),
-        uniqueVisitors: Number(row.unique_visitors),
-      })),
+      series: counters.series,
       topPages: topPages.map((row) => ({
         path: row.path,
         views: Number(row.views),
@@ -183,10 +163,7 @@ export default class AnalyticsService {
         referrer: row.referrer,
         views: Number(row.views),
       })),
-      countries: countries.map((row) => ({
-        country: row.country,
-        views: Number(row.views),
-      })),
+      countries: counters.countries,
     }
   }
 }

@@ -2,21 +2,27 @@
 
 import { useAuth } from "@/contexts/auth";
 import { useConsent } from "@/contexts/consent";
-import { identifyVisitor, trackPageView } from "@/http/analytics";
+import { identifyVisitor, recordHit, trackPageView } from "@/http/analytics";
 import { getVisitorId } from "@/lib/visitor-id";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 /**
  * First-party usage tracker. Mounted once (inside Auth + Consent providers).
- * Emits a page view on every route change and links the anonymous visitor to the
- * authenticated account once per logged-in user. Inert until consent is granted.
+ * - Anonymous hit on every route change (no identifier) — fires regardless of
+ *   consent, for aggregate visitor/traffic counts.
+ * - Consent-gated page view + account linking, only once consent is granted.
  */
 const AnalyticsTracker = () => {
   const { consent } = useConsent();
   const { user, getToken } = useAuth();
   const pathname = usePathname();
   const identifiedUserId = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!pathname) return;
+    recordHit();
+  }, [pathname]);
 
   useEffect(() => {
     if (consent !== "granted" || !pathname) return;
