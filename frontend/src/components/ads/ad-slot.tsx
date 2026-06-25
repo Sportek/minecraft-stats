@@ -122,10 +122,10 @@ const AdSlot = ({ placement, serverId, serverCategoryIds, className }: AdSlotPro
   return (
     <div className={`w-full ${className ?? ""}`}>
       <p className="mb-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground/70">
-        Publicité
+        Advertisement
       </p>
       <iframe
-        title={`Publicité — ${selectedAd.name}`}
+        title={`Advertisement — ${selectedAd.name}`}
         srcDoc={srcDoc}
         sandbox="allow-popups allow-popups-to-escape-sandbox"
         loading="lazy"

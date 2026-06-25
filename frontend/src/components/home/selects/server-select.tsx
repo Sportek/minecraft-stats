@@ -48,7 +48,7 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
     ? data
         .map((obtainData) => ({
           id: obtainData.server?.id,
-          name: obtainData.server?.name ?? `Serveur ${obtainData.server?.id ?? "Inconnu"}`,
+          name: obtainData.server?.name ?? `Server ${obtainData.server?.id ?? "Unknown"}`,
         }))
         .filter((server): server is Server => server.id != null)
     : [];

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Inscription",
+  title: "Sign up",
   description:
-    "Créez votre compte Minecraft Stats gratuit pour ajouter vos serveurs, suivre vos statistiques et analyser la croissance de votre communauté.",
-  keywords: "inscription minecraft stats, créer compte serveur minecraft, s'inscrire minecraft, nouveau compte",
+    "Create your free Minecraft Stats account to add your servers, track your statistics, and analyze your community's growth.",
+  keywords: "sign up minecraft stats, create minecraft server account, register minecraft, new account",
   robots: {
     index: false, // Pages d'inscription ne doivent pas être indexées
     follow: true,
   },
   openGraph: {
-    title: "Inscription - Minecraft Stats",
-    description: "Créez votre compte gratuit pour gérer vos serveurs Minecraft",
+    title: "Sign up - Minecraft Stats",
+    description: "Create your free account to manage your Minecraft servers",
     type: "website",
   },
 };

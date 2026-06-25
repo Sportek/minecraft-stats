@@ -16,15 +16,15 @@ const NewAdvertisementPage = () => {
   const [submitting, setSubmitting] = useState(false);
 
   if (!user) {
-    return <AdminLoadingState label="Chargement..." />;
+    return <AdminLoadingState label="Loading…" />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Accès refusé"
-        description="Vous devez être administrateur pour accéder à cette page."
+        title="Access denied"
+        description="You must be an administrator to access this page."
       />
     );
   }
@@ -37,7 +37,7 @@ const NewAdvertisementPage = () => {
       router.push("/admin/advertisements");
     } catch (error) {
       console.error("Failed to create advertisement:", error);
-      alert(error instanceof Error ? error.message : "Impossible de créer la publicité");
+      alert(error instanceof Error ? error.message : "Unable to create the advertisement");
       setSubmitting(false);
     }
   };
@@ -45,13 +45,13 @@ const NewAdvertisementPage = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-6xl animate-in fade-in slide-in-from-bottom-2 px-4 py-8 duration-300">
-        <AdminBackLink href="/admin/advertisements" label="Retour à la liste" />
+        <AdminBackLink href="/admin/advertisements" label="Back to the list" />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Nouvelle publicité</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">New advertisement</h1>
         </div>
 
-        <AdForm submitting={submitting} submitLabel="Créer la publicité" onSubmit={handleSubmit} />
+        <AdForm submitting={submitting} submitLabel="Create advertisement" onSubmit={handleSubmit} />
       </div>
     </div>
   );

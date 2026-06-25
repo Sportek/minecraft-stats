@@ -199,7 +199,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
           return createAreaSeries(
             'time',
             `playerCount_${server.id}`,
-            server.name || `Serveur ${server.id}`,
+            server.name || `Server ${server.id}`,
             COLORS[colorIndex],
             resolvedTheme
           );

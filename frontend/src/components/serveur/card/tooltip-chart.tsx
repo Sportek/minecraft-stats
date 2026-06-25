@@ -17,7 +17,7 @@ export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions) 
   const shadowColor = isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)';
 
   // Formatage de la date
-  const formattedTime = data.time.toLocaleString("fr-FR", {
+  const formattedTime = data.time.toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
@@ -26,7 +26,7 @@ export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions) 
   });
 
   // Formatage du nombre de joueurs avec séparateur de milliers
-  const formattedPlayerCount = data.playerCount.toLocaleString('fr-FR');
+  const formattedPlayerCount = data.playerCount.toLocaleString('en-US');
 
   return `
     <div style="

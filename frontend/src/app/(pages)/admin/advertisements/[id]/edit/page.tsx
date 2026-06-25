@@ -38,15 +38,15 @@ const EditAdvertisementPage = () => {
   }, [token, adId]);
 
   if (!user) {
-    return <AdminLoadingState label="Chargement..." />;
+    return <AdminLoadingState label="Loading…" />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Accès refusé"
-        description="Vous devez être administrateur pour accéder à cette page."
+        title="Access denied"
+        description="You must be an administrator to access this page."
       />
     );
   }
@@ -59,7 +59,7 @@ const EditAdvertisementPage = () => {
       router.push("/admin/advertisements");
     } catch (error) {
       console.error("Failed to update advertisement:", error);
-      alert(error instanceof Error ? error.message : "Impossible de mettre à jour la publicité");
+      alert(error instanceof Error ? error.message : "Unable to update the advertisement");
       setSubmitting(false);
     }
   };
@@ -67,23 +67,23 @@ const EditAdvertisementPage = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-6xl animate-in fade-in slide-in-from-bottom-2 px-4 py-8 duration-300">
-        <AdminBackLink href="/admin/advertisements" label="Retour à la liste" />
+        <AdminBackLink href="/admin/advertisements" label="Back to the list" />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Modifier la publicité</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Edit advertisement</h1>
         </div>
 
         {loading ? (
-          <div className="text-muted-foreground">Chargement de la publicité...</div>
+          <div className="text-muted-foreground">Loading advertisement…</div>
         ) : ad ? (
           <AdForm
             initial={ad}
             submitting={submitting}
-            submitLabel="Enregistrer les modifications"
+            submitLabel="Save changes"
             onSubmit={handleSubmit}
           />
         ) : (
-          <div className="text-destructive">Publicité introuvable.</div>
+          <div className="text-destructive">Advertisement not found.</div>
         )}
       </div>
     </div>

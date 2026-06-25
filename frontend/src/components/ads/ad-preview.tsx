@@ -19,7 +19,7 @@ const AdPreview = ({ htmlContent, className }: AdPreviewProps) => {
 
   return (
     <iframe
-      title="Prévisualisation de la publicité"
+      title="Advertisement preview"
       srcDoc={srcDoc}
       sandbox=""
       className={

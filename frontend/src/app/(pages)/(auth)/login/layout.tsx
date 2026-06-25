@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Connexion",
+  title: "Sign in",
   description:
-    "Connectez-vous à Minecraft Stats pour gérer vos serveurs Minecraft et suivre vos statistiques de joueurs en temps réel.",
-  keywords: "connexion minecraft stats, login serveur minecraft, compte minecraft, authentification serveur",
+    "Sign in to Minecraft Stats to manage your Minecraft servers and track your player statistics in real time.",
+  keywords: "sign in minecraft stats, minecraft server login, minecraft account, server authentication",
   robots: {
     index: false, // Pages de connexion ne doivent pas être indexées
     follow: true,
   },
   openGraph: {
-    title: "Connexion - Minecraft Stats",
-    description: "Connectez-vous pour gérer vos serveurs Minecraft",
+    title: "Sign in - Minecraft Stats",
+    description: "Sign in to manage your Minecraft servers",
     type: "website",
   },
 };
