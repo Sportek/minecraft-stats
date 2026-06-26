@@ -215,7 +215,13 @@ export async function getTrafficCounters(from: DateTime, to: DateTime): Promise<
 
     // Redis has nothing for this day → use the persisted snapshot instead.
     const snap = snapshots.get(day.toFormat('yyyy-LL-dd'))
-    if (snap && requests === 0 && errors === 0 && uniqueVisitors === 0 && !Object.keys(geo).length) {
+    if (
+      snap &&
+      requests === 0 &&
+      errors === 0 &&
+      uniqueVisitors === 0 &&
+      !Object.keys(geo).length
+    ) {
       requests = snap.httpRequests
       errors = snap.httpErrors
       uniqueVisitors = snap.uniqueVisitors

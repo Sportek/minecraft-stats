@@ -224,13 +224,18 @@ export default class UsersController {
     const visitorIds = ownLinks.map((row) => row.visitor_id)
     if (visitorIds.length === 0) return []
 
-    const ipHashes = (
-      await db.from('visitors').whereIn('id', visitorIds).whereNotNull('ip_hash').select('ip_hash')
-    ).map((row) => row.ip_hash)
+    const ipHashRows = await db
+      .from('visitors')
+      .whereIn('id', visitorIds)
+      .whereNotNull('ip_hash')
+      .select('ip_hash')
+    const ipHashes = ipHashRows.map((row) => row.ip_hash)
 
-    const sharedIpVisitorIds = ipHashes.length
-      ? (await db.from('visitors').whereIn('ip_hash', ipHashes).select('id')).map((row) => row.id)
-      : []
+    let sharedIpVisitorIds: number[] = []
+    if (ipHashes.length > 0) {
+      const ipVisitorRows = await db.from('visitors').whereIn('ip_hash', ipHashes).select('id')
+      sharedIpVisitorIds = ipVisitorRows.map((row) => row.id)
+    }
 
     // candidate userId → which signals tie them back to the target user.
     const signals = new Map<number, { sameDevice: boolean; sameIp: boolean }>()
@@ -243,15 +248,18 @@ export default class UsersController {
       }
     }
 
-    flag(
-      await db.from('visitor_accounts').whereIn('visitor_id', visitorIds).select('user_id'),
-      'sameDevice'
-    )
+    const deviceRows = await db
+      .from('visitor_accounts')
+      .whereIn('visitor_id', visitorIds)
+      .select('user_id')
+    flag(deviceRows, 'sameDevice')
+
     if (sharedIpVisitorIds.length > 0) {
-      flag(
-        await db.from('visitor_accounts').whereIn('visitor_id', sharedIpVisitorIds).select('user_id'),
-        'sameIp'
-      )
+      const ipRows = await db
+        .from('visitor_accounts')
+        .whereIn('visitor_id', sharedIpVisitorIds)
+        .select('user_id')
+      flag(ipRows, 'sameIp')
     }
 
     if (signals.size === 0) return []
