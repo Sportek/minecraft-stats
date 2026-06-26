@@ -26,6 +26,11 @@ export default class Post extends BaseModel {
   @column()
   declare published: boolean
 
+  // Compteur de vues brut (cf. migration). Incrémenté pour chaque lecteur, sans
+  // donnée personnelle ; l'attribution détaillée passe par l'analytics (page_views).
+  @column()
+  declare viewCount: number
+
   @column.dateTime()
   declare publishedAt: DateTime | null
 

@@ -30,6 +30,12 @@ export interface Server {
   languages: Language[];
 }
 
+/**
+ * A server as listed under a user in the admin user-detail view. Same shape as
+ * `Server` minus the owner relation (the owner is already the page's subject).
+ */
+export type AdminUserServer = Omit<Server, "user">;
+
 export interface ServerStat {
   id: number;
   serverId: number;

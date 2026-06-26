@@ -1,5 +1,5 @@
 import { getBaseUrl } from '@/app/_cheatcode'
-import { CreatePostInput, Post, PostsListResponse, UpdatePostInput } from '@/types/post'
+import { CreatePostInput, Post, PostStats, PostsListResponse, UpdatePostInput } from '@/types/post'
 import { getErrorMessage } from './auth'
 
 // Public endpoints
@@ -53,6 +53,49 @@ export const getPostBySlug = async (slug: string) => {
   return response.json() as Promise<Post>
 }
 
+/**
+ * Records a view for the article. Consent-exempt and best-effort: it only bumps
+ * an aggregate counter (no identifier), so failures are swallowed and never
+ * surface to the reader. `keepalive` lets it complete even if the page unloads.
+ */
+export const recordPostView = async (slug: string) => {
+  try {
+    await fetch(`${getBaseUrl()}/posts/${slug}/view`, {
+      method: 'POST',
+      keepalive: true,
+    })
+  } catch {
+    // Best-effort: a missed view must never break the page.
+  }
+}
+
+/**
+ * Submits "was this article helpful?" feedback. Deduplicated server-side by the
+ * anonymous visitor id; passing a token additionally attributes it to the account.
+ */
+export const submitPostFeedback = async (
+  slug: string,
+  helpful: boolean,
+  visitorId: string,
+  token?: string | null
+) => {
+  const response = await fetch(`${getBaseUrl()}/posts/${slug}/feedback`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ helpful, visitorId }),
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return true
+}
+
 // Admin endpoints
 
 export const getAdminPosts = async (
@@ -77,6 +120,22 @@ export const getAdminPosts = async (
   }
 
   return response.json() as Promise<PostsListResponse>
+}
+
+export const getAdminPostStats = async (postId: number, token: string) => {
+  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}/stats`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return response.json() as Promise<PostStats>
 }
 
 export const createPost = async (data: CreatePostInput, token: string) => {

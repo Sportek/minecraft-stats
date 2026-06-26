@@ -1,4 +1,4 @@
-import { PostAuthor, PostEyebrow } from "@/components/blog/post-meta";
+import { PostAuthor, PostEyebrow, PostViews } from "@/components/blog/post-meta";
 import { resolveAssetUrl } from "@/lib/domain";
 import { Post } from "@/types/post";
 import Image from "next/image";
@@ -35,7 +35,10 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
         </div>
 
         <div className="flex flex-col gap-4 p-6 md:p-8">
-          <PostEyebrow date={date} />
+          <div className="flex items-center justify-between gap-2">
+            <PostEyebrow date={date} />
+            <PostViews count={post.viewCount} />
+          </div>
           <h2 className="text-2xl font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-accent md:text-3xl">
             {post.title}
           </h2>
@@ -75,7 +78,10 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <PostEyebrow date={date} />
+        <div className="flex items-center justify-between gap-2">
+          <PostEyebrow date={date} />
+          <PostViews count={post.viewCount} />
+        </div>
         <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-accent">
           {post.title}
         </h3>

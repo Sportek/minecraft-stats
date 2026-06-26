@@ -20,7 +20,8 @@ import {
 import { useAuth } from "@/contexts/auth";
 import { deletePost, getAdminPosts, publishPost, unpublishPost } from "@/http/post";
 import { Post } from "@/types/post";
-import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { PostViews } from "@/components/blog/post-meta";
+import { BarChart3, Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -225,6 +226,10 @@ const AdminPostsPage = () => {
                         ·
                       </span>
                       <span className="shrink-0">{estimateReadTime(post.content)}</span>
+                      <span aria-hidden className="opacity-50">
+                        ·
+                      </span>
+                      <PostViews count={post.viewCount} className="shrink-0" />
                     </div>
                   </div>
                 </div>
@@ -245,6 +250,17 @@ const AdminPostsPage = () => {
                       title="View"
                     >
                       <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-accent"
+                      title="Statistics"
+                    >
+                      <Link href={`/admin/posts/${post.id}/stats`}>
+                        <BarChart3 className="h-4 w-4" />
+                      </Link>
                     </Button>
                     <Button
                       asChild

@@ -1,4 +1,4 @@
-import { PostAuthor, formatPostDate } from "@/components/blog/post-meta";
+import { PostAuthor, PostViews, formatPostDate } from "@/components/blog/post-meta";
 import { Badge } from "@/components/ui/badge";
 import { getPostBySlug } from "@/http/post";
 import { ChevronLeft } from "lucide-react";
@@ -9,6 +9,8 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
 import ArticleBody from "@/components/blog/article-body";
+import ArticleFeedback from "@/components/blog/article-feedback";
+import ArticleViewTracker from "@/components/blog/article-view-tracker";
 import { resolveAssetUrl } from "@/lib/domain";
 import { getAlternateLanguages, getDomainConfig } from "@/lib/domain-server";
 import { renderMarkdown } from "@/lib/markdown";
@@ -81,6 +83,9 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
 
     return (
       <div className="min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+        {/* Records a best-effort, consent-exempt view once per session. */}
+        <ArticleViewTracker slug={post.slug} />
+
         {/* Structured Data for SEO */}
         <BlogPostStructuredData
           post={{
@@ -126,6 +131,8 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
               <Badge variant="accent" className="uppercase tracking-wide">
                 News
               </Badge>
+              <span className="text-border">•</span>
+              <PostViews count={post.viewCount} />
             </div>
           </header>
 
@@ -167,6 +174,9 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
                 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm
               "
               />
+
+              {/* "Was this article helpful?" feedback */}
+              <ArticleFeedback slug={post.slug} />
 
               {/* Footer Divider */}
               <div className="mt-16 flex items-center justify-between border-t border-border pt-8">

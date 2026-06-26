@@ -35,3 +35,11 @@ export const ResolvePlaceholdersValidator = vine.compile(
       .maxLength(50),
   })
 )
+
+export const SubmitFeedbackValidator = vine.compile(
+  vine.object({
+    helpful: vine.boolean(),
+    // UUID visiteur anonyme (clé de déduplication du vote).
+    visitorId: vine.string().minLength(8).maxLength(64),
+  })
+)

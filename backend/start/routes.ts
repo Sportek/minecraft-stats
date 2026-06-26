@@ -158,6 +158,14 @@ router
       .post('posts/placeholders/resolve', '#controllers/posts_controller.resolvePlaceholders')
       .use(throttleLight('posts.placeholders.resolve', 60))
 
+    // Blog - Vues & feedback (public, consent-exempt pour le compteur)
+    router
+      .post('posts/:slug/view', '#controllers/posts_controller.recordView')
+      .use([throttleLight('posts.view', 120), NO_STORE])
+    router
+      .post('posts/:slug/feedback', '#controllers/posts_controller.submitFeedback')
+      .use([throttleLight('posts.feedback', 30), NO_STORE])
+
     // Publicités - Diffusion publique
     router
       .get('advertisements', '#controllers/advertisements_controller.index')
@@ -205,6 +213,9 @@ router
         router
           .post('posts/:id/unpublish', '#controllers/posts_controller.unpublish')
           .use(throttleLight('admin.posts.unpublish', 20))
+        router
+          .get('posts/:id/stats', '#controllers/posts_controller.adminStats')
+          .use([throttleLight('admin.posts.stats', 30), NO_STORE])
 
         // Placeholders preview (writers and admins)
         router
@@ -220,6 +231,9 @@ router
         router
           .get('users', '#controllers/users_controller.adminIndex')
           .use(throttleLight('admin.users.index', 20))
+        router
+          .get('users/:id', '#controllers/users_controller.adminShow')
+          .use([throttleLight('admin.users.show', 30), NO_STORE])
         router
           .patch('users/:id/role', '#controllers/users_controller.updateRole')
           .use(throttleLight('admin.users.updateRole', 10))

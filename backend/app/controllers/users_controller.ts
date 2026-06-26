@@ -1,3 +1,4 @@
+import Server from '#models/server'
 import User from '#models/user'
 import UserPolicy from '#policies/user_policy'
 import { CreateUserValidator, UpdateUserValidator } from '#validators/user'
@@ -153,6 +154,59 @@ export default class UsersController {
     const users = await query.paginate(page, limit)
 
     return response.ok(users)
+  }
+
+  /**
+   * @adminShowUser
+   * @operationId adminShowUser
+   * @tag USERS_ADMIN
+   * @summary Get a user's profile and uploaded servers (admin only)
+   * @description Returns a single user's full profile — including the normally hidden `email`, the registration `provider` (`null` for email/password sign-ups), and `verified` status — alongside every server they have uploaded. Requires an authenticated admin (gated by `UserPolicy.manage`).
+   * @paramPath id - User ID - @type(number) @example(7) @required
+   * @responseBody 200 - {"user": {"id": 7, "username": "gabriel", "email": "gabriel@example.com", "role": "user", "verified": true, "provider": "discord", "avatarUrl": "", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "servers": [{"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "type": "java", "imageUrl": "", "lastPlayerCount": 1200, "peakPlayerCount": 5000, "lastOnlineAt": "2026-05-28T12:00:00.000Z", "createdAt": "2025-01-01T00:00:00.000Z"}], "stats": {"serverCount": 1}}
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
+   * @responseBody 404 - {"error": "User not found"}
+   */
+  async adminShow({ params, response, auth, bouncer }: HttpContext) {
+    const currentUser = auth.user
+    if (!currentUser) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
+    if (await bouncer.with(UserPolicy).denies('manage')) {
+      return response.forbidden({ error: 'Access denied. Admin privileges required.' })
+    }
+
+    const user = await User.find(params.id)
+    if (!user) {
+      return response.notFound({ error: 'User not found' })
+    }
+
+    const servers = await Server.query()
+      .where('user_id', user.id)
+      .preload('languages')
+      .orderBy('created_at', 'desc')
+
+    // `email` and `provider` are intentionally surfaced here even though the model
+    // hides `email` from default serialization — this admin-only view needs them.
+    return response.ok({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+        provider: user.provider,
+        avatarUrl: user.avatarUrl,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+      servers,
+      stats: {
+        serverCount: servers.length,
+      },
+    })
   }
 
   /**
