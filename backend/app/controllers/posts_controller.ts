@@ -5,9 +5,11 @@ import {
   CreatePostValidator,
   PreviewPlaceholderValidator,
   ResolvePlaceholdersValidator,
+  SubmitFeedbackValidator,
   UpdatePostValidator,
 } from '#validators/post'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
 export default class PostsController {
@@ -57,6 +59,65 @@ export default class PostsController {
       .firstOrFail()
 
     return response.ok(post)
+  }
+
+  /**
+   * @recordPostView
+   * @operationId recordPostView
+   * @tag POSTS
+   * @summary Record a view for a published post
+   * @description Increments the raw view counter of a published post. Consent-exempt and best-effort: it stores only an aggregate counter (no visitor or account identifier), so it counts every reader — logged in or not, consent given or not — on the same privacy basis as the anonymous analytics hit. Detailed, consent-aware attribution (who viewed) is captured separately by the analytics page-view pipeline. Always responds `204 No Content`. Publicly accessible.
+   * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
+   * @responseBody 204 - No content
+   */
+  async recordView({ params, response }: HttpContext) {
+    await Post.query()
+      .where('slug', params.slug)
+      .where('published', true)
+      .increment('view_count', 1)
+
+    return response.noContent()
+  }
+
+  /**
+   * @submitPostFeedback
+   * @operationId submitPostFeedback
+   * @tag POSTS
+   * @summary Submit "was this article helpful?" feedback
+   * @description Records whether the reader found the article helpful. Deduplicated by the anonymous `visitorId` (one vote per device per post); re-submitting updates the existing vote. When the request carries a valid bearer token the vote is also attributed to the logged-in account. Aggregate results are visible to admins/writers only. Returns 404 if no published post matches the slug. Publicly accessible.
+   * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
+   * @requestBody {"helpful": true, "visitorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479"}
+   * @responseBody 204 - No content
+   * @responseBody 404 - {"error": "Post not found"}
+   * @responseBody 422 - {"errors": [{"message": "The helpful field must be defined", "field": "helpful", "rule": "required"}]}
+   */
+  async submitFeedback({ params, request, response, auth }: HttpContext) {
+    const post = await Post.query().where('slug', params.slug).where('published', true).first()
+    if (!post) {
+      return response.notFound({ error: 'Post not found' })
+    }
+
+    const { helpful, visitorId } = await request.validateUsing(SubmitFeedbackValidator)
+
+    // L'endpoint est public : on lit l'utilisateur s'il est connecté sans l'imposer,
+    // pour qu'un visiteur anonyme puisse aussi voter.
+    await auth.check()
+
+    const now = DateTime.now().toSQL()
+    await db
+      .table('post_feedbacks')
+      .insert({
+        post_id: post.id,
+        visitor_id: visitorId,
+        user_id: auth.user?.id ?? null,
+        helpful,
+        created_at: now,
+        updated_at: now,
+      })
+      .onConflict(['post_id', 'visitor_id'])
+      .merge({ helpful, user_id: auth.user?.id ?? null, updated_at: now })
+
+    return response.noContent()
   }
 
   /**
@@ -333,6 +394,84 @@ export default class PostsController {
       value: result,
       serverId,
       placeholderName,
+    })
+  }
+
+  /**
+   * @adminPostStats
+   * @operationId adminPostStats
+   * @tag POSTS_ADMIN
+   * @summary Post views & feedback statistics (admin/writer)
+   * @description Returns engagement statistics for a single post: the raw view total, the consent-aware analytics breakdown derived from the page-view pipeline for `/blog/{slug}` (consented views, logged-in views, unique visitors), the helpful/not-helpful feedback tallies, and the most recent logged-in viewers (who viewed). Writers may only access stats for their own posts, admins for any. Requires authentication and `update` ability on the Post policy. Returns 404 if the post does not exist.
+   * @paramPath id - Post id - @type(number) @example(7) @required
+   * @responseBody 200 - {"post": {"id": 7, "title": "Welcome", "slug": "welcome", "viewCount": 1234}, "views": {"total": 1234, "consented": 800, "loggedIn": 120, "uniqueVisitors": 640}, "feedback": {"helpful": 42, "notHelpful": 3}, "recentViewers": [{"id": 1, "username": "gabriel", "avatarUrl": "", "lastViewedAt": "2026-06-26T12:00:00.000Z"}]}
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. You can only view stats for your own posts."}
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
+   */
+  async adminStats({ params, response, auth, bouncer }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: 'Unauthorized' })
+    }
+
+    const post = await Post.findOrFail(params.id)
+
+    if (await bouncer.with(PostPolicy).denies('update', post)) {
+      return response.forbidden({
+        error: 'Access denied. You can only view stats for your own posts.',
+      })
+    }
+
+    // L'analytics enregistre les vues consenties par chemin exact (cf. AnalyticsService) :
+    // on retrouve donc les vues d'un article via son URL publique `/blog/{slug}`.
+    const path = `/blog/${post.slug}`
+
+    const [analyticsRow, feedbackRow, recentViewers] = await Promise.all([
+      db
+        .from('page_views')
+        .where('path', path)
+        .select(db.raw('count(*) as consented_views'))
+        .select(db.raw('count(*) filter (where user_id is not null) as logged_in_views'))
+        .select(db.raw('count(distinct visitor_id) as unique_visitors'))
+        .first(),
+
+      db
+        .from('post_feedbacks')
+        .where('post_id', post.id)
+        .select(db.raw('count(*) filter (where helpful) as helpful'))
+        .select(db.raw('count(*) filter (where not helpful) as not_helpful'))
+        .first(),
+
+      db
+        .from('page_views')
+        .join('users', 'users.id', 'page_views.user_id')
+        .where('page_views.path', path)
+        .select('users.id as id', 'users.username as username', 'users.avatar_url as avatar_url')
+        .select(db.raw('max(page_views.created_at) as last_viewed_at'))
+        .groupBy('users.id', 'users.username', 'users.avatar_url')
+        .orderByRaw('max(page_views.created_at) desc')
+        .limit(50),
+    ])
+
+    return response.ok({
+      post: { id: post.id, title: post.title, slug: post.slug, viewCount: post.viewCount },
+      views: {
+        total: post.viewCount,
+        consented: Number(analyticsRow?.consented_views ?? 0),
+        loggedIn: Number(analyticsRow?.logged_in_views ?? 0),
+        uniqueVisitors: Number(analyticsRow?.unique_visitors ?? 0),
+      },
+      feedback: {
+        helpful: Number(feedbackRow?.helpful ?? 0),
+        notHelpful: Number(feedbackRow?.not_helpful ?? 0),
+      },
+      recentViewers: recentViewers.map((row) => ({
+        id: Number(row.id),
+        username: row.username,
+        avatarUrl: row.avatar_url,
+        lastViewedAt: row.last_viewed_at,
+      })),
     })
   }
 }
