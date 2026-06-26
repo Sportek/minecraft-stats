@@ -234,7 +234,7 @@ const AdminPostsPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 sm:justify-end">
+                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:flex-nowrap sm:justify-end">
                   <Badge variant={post.published ? "success" : "secondary"}>
                     {post.published ? "Published" : "Draft"}
                   </Badge>

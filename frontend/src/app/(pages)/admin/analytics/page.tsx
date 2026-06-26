@@ -250,11 +250,11 @@ const AnalyticsTable = ({
     ) : (
       <ul className="max-h-[320px] divide-y divide-border overflow-y-auto">
         {rows.map((row) => (
-          <li key={row.key} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
+          <li key={row.key} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2.5 text-sm">
             <span className="min-w-0 truncate text-foreground" title={row.label}>
               {row.label}
             </span>
-            <span className="shrink-0 text-muted-foreground">{row.value}</span>
+            <span className="shrink-0 text-right text-muted-foreground">{row.value}</span>
           </li>
         ))}
       </ul>

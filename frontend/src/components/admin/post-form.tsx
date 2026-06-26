@@ -47,8 +47,8 @@ export const PostForm = ({
           aria-label="Article title"
           className="h-auto border-0 bg-transparent px-0 py-0 text-2xl font-extrabold tracking-tight focus-visible:ring-0 focus-visible:ring-offset-0 sm:text-3xl"
         />
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-          <span>/blog/</span>
+        <div className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
+          <span className="shrink-0">/blog/</span>
           <span className="truncate font-mono text-accent">{values.slug || "your-article-slug"}</span>
         </div>
       </div>
