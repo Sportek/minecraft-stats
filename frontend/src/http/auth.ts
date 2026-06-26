@@ -1,6 +1,6 @@
 "use client";
 
-import { getBaseUrl } from "@/app/_cheatcode";
+import { getBaseUrl, localeHeaders } from "@/app/_cheatcode";
 import { AccessToken, User } from "@/types/auth";
 
 export const registerUser = async (credentials: {
@@ -13,6 +13,7 @@ export const registerUser = async (credentials: {
     method: "POST",
     body: JSON.stringify(credentials),
     headers: {
+      ...localeHeaders(),
       "Content-Type": "application/json",
     },
   });
@@ -28,6 +29,7 @@ export const verifyEmail = async (credentials: { token: string }) => {
   const response = await fetch(`${getBaseUrl()}/verify-email`, {
     method: "POST",
     headers: {
+      ...localeHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(credentials),
@@ -49,6 +51,7 @@ export const loginUser = async (credentials: {
   const response = await fetch(`${getBaseUrl()}/login`, {
     method: "POST",
     headers: {
+      ...localeHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(credentials),
@@ -69,6 +72,7 @@ export const getUser = async (token: string) => {
   const response = await fetch(`${getBaseUrl()}/me`, {
     method: "GET",
     headers: {
+      ...localeHeaders(),
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
@@ -87,6 +91,7 @@ export const changeUserPassword = async (credentials: { oldPassword: string; new
   const response = await fetch(`${getBaseUrl()}/change-password`, {
     method: "POST",
     headers: {
+      ...localeHeaders(),
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
@@ -108,6 +113,7 @@ export const uploadUserAvatar = async (file: File, token: string) => {
   const response = await fetch(`${getBaseUrl()}/account/avatar`, {
     method: "POST",
     headers: {
+      ...localeHeaders(),
       Authorization: `Bearer ${token}`,
     },
     body: formData,
@@ -126,6 +132,7 @@ export const logoutUser = async (token: string) => {
   const response = await fetch(`${getBaseUrl()}/logout`, {
     method: "POST",
     headers: {
+      ...localeHeaders(),
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
@@ -143,6 +150,7 @@ export const logoutAllUser = async (token: string) => {
   const response = await fetch(`${getBaseUrl()}/logout-all`, {
     method: "POST",
     headers: {
+      ...localeHeaders(),
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },

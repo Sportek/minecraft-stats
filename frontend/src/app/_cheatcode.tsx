@@ -3,7 +3,21 @@
 
 import { getClientApiUrl } from "@/lib/domain";
 
-export const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then((res) => res.json());
+/**
+ * Accept-Language header carrying the active UI locale. On the client we read it
+ * from <html lang>, which the locale layout sets, so a user who switched to a
+ * locale different from their browser language still gets localized API messages.
+ * Returns no header on the server (and when the DOM isn't ready), letting the
+ * backend fall back to its own negotiation.
+ */
+export const localeHeaders = (): Record<string, string> => {
+  if (globalThis.document === undefined) return {};
+  const lang = document.documentElement.lang;
+  return lang ? { "Accept-Language": lang } : {};
+};
+
+export const fetcher = (input: RequestInfo, init?: RequestInit) =>
+  fetch(input, { ...init, headers: { ...localeHeaders(), ...init?.headers } }).then((res) => res.json());
 
 /**
  * Returns the base URL for API calls

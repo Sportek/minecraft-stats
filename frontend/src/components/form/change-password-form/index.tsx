@@ -7,29 +7,39 @@ import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 interface ChangePasswordFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
-const formSchema = z
-  .object({
-    oldPassword: z.string().min(8).trim(),
-    newPassword: z.string().min(8).trim(),
-    confirmPassword: z.string().min(8).trim(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "New password and confirm password do not match",
-    path: ["confirmPassword"],
-  })
-  .refine((data) => data.newPassword !== data.oldPassword, {
-    message: "New password cannot be the same as the old password",
-    path: ["newPassword"],
-  });
+type FormValues = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const t = useTranslations("Auth");
+  const formSchema = useMemo(
+    () =>
+      z
+        .object({
+          oldPassword: z.string().min(8).trim(),
+          newPassword: z.string().min(8).trim(),
+          confirmPassword: z.string().min(8).trim(),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: t("validation.passwordsDoNotMatch"),
+          path: ["confirmPassword"],
+        })
+        .refine((data) => data.newPassword !== data.oldPassword, {
+          message: t("validation.newPasswordSameAsOld"),
+          path: ["newPassword"],
+        }),
+    [t],
+  );
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       oldPassword: "",
@@ -37,12 +47,10 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
       confirmPassword: "",
     },
   });
-
-  const t = useTranslations("Auth");
   const { changePassword } = useAuth();
   const { toast } = useToast();
 
-  const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
+  const onSubmit = async (credentials: FormValues) => {
     try {
       await changePassword(credentials.oldPassword, credentials.newPassword);
       form.reset();

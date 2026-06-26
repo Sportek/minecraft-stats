@@ -14,6 +14,7 @@ import { FavoriteProvider } from "@/contexts/favorite";
 import { ServersProvider } from "@/contexts/servers";
 import { SWRConfig } from "swr";
 import { fetcher } from "@/app/_cheatcode";
+import { ZodLocaleConfig } from "@/components/zod-locale-config";
 
 export default function ClientLayout({
   children,
@@ -29,6 +30,7 @@ export default function ClientLayout({
         errorRetryCount: 2,
       }}
     >
+      <ZodLocaleConfig />
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <AuthProvider>
           <ConsentProvider>

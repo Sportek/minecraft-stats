@@ -58,7 +58,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
      },
      {
        path: ["port"],
-       message: "Port must be between 1 and 65535",
+       message: t("validation.portRange"),
      }
    )
    .refine(
@@ -67,7 +67,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
      },
      {
        path: ["categories"],
-       message: "Category not found",
+       message: t("validation.categoryNotFound"),
      }
    );
 

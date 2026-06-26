@@ -34,6 +34,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
 
   const categories = data || [];
   const languages = languagesData || [];
+  const t = useTranslations("Auth");
 
   const formSchema = z
     .object({
@@ -51,7 +52,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       },
       {
         path: ["port"],
-        message: "Port must be between 1 and 65535",
+        message: t("validation.portRange"),
       }
     ).refine(
       (data) => {
@@ -59,7 +60,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       },
       {
         path: ["categories"],
-        message: "Category not found",
+        message: t("validation.categoryNotFound"),
       }
     );
 
@@ -77,7 +78,6 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     },
   });
 
-  const t = useTranslations("Auth");
   const { toast } = useToast();
   const { addServer } = useServers();
 
