@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "myServers": "My Servers",
+    "addServer": "Add Server",
+    "apiTokens": "API Tokens",
+    "articles": "Articles",
+    "analytics": "Analytics",
+    "users": "Users",
+    "advertisements": "Advertisements"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "cancel": "Cancel",
+    "somethingWentWrong": "Something went wrong"
+  },
+  "avatar": {
+    "change": "Change profile picture",
+    "tooLargeTitle": "Image too large",
+    "tooLargeDescription": "Maximum size is 5 MB.",
+    "updated": "Profile picture updated",
+    "uploadFailed": "Upload failed"
+  },
+  "dangerZone": {
+    "heading": "Danger zone"
+  },
+  "addServer": {
+    "title": "Add Server",
+    "badge": "New",
+    "subtitle": "Track a new Minecraft server's live player count and uptime.",
+    "detailsTitle": "Server details",
+    "detailsSubtitle": "We'll ping the address every 10 minutes to keep stats fresh."
+  },
+  "apiTokens": {
+    "loadError": "Could not load tokens",
+    "createError": "Could not create token",
+    "revokeError": "Could not revoke token",
+    "revokeConfirm": "Revoke \"{name}\"? Any client using it will stop working.",
+    "revoked": "Token revoked",
+    "title": "API tokens",
+    "subtitle": "Create a token to let an automated client act on your behalf via the API.",
+    "nameLabel": "Name",
+    "namePlaceholder": "SEO blog bot",
+    "expiryLabel": "Expires (days)",
+    "creating": "Creating…",
+    "create": "Create token",
+    "copyWarning": "Copy this token now — it won't be shown again.",
+    "yourTokens": "Your tokens",
+    "empty": "You don't have any API tokens yet.",
+    "meta": "Created {created} · Last used {lastUsed} · Expires {expires}"
+  },
+  "myServers": {
+    "removedTitle": "Server removed",
+    "removedDescription": "{name} is no longer tracked.",
+    "removeErrorTitle": "Could not remove server",
+    "removeErrorDescription": "An error occurred.",
+    "title": "My Servers",
+    "subtitle": "Servers you own and track live stats for.",
+    "badge": "{count} tracked",
+    "addServer": "Add Server",
+    "totalServers": "Total Servers",
+    "onlineNow": "Online Now",
+    "offline": "Offline",
+    "playersTracked": "Players Tracked",
+    "trackedServers": "Tracked servers",
+    "emptyTitle": "No servers yet",
+    "emptyDescription": "Add a server to start tracking its player count.",
+    "addFirst": "Add your first server",
+    "online": "Online",
+    "offlineStatus": "Offline",
+    "peak": "peak {count}",
+    "view": "View server",
+    "viewTitle": "View",
+    "edit": "Edit server",
+    "editTitle": "Edit",
+    "delete": "Delete server",
+    "deleteTitle": "Delete",
+    "dialogTitle": "Stop tracking this server?",
+    "dialogDescription": "<b>{name}</b> will be removed from your dashboard along with its tracking. This action cannot be undone.",
+    "removing": "Removing…",
+    "remove": "Remove server"
+  },
+  "settings": {
+    "roles": {
+      "user": "Member",
+      "writer": "Writer",
+      "admin": "Admin"
+    },
+    "logoutAllConfirm": "Log out of all devices? This revokes every active session, including this one.",
+    "sessionsRevokedTitle": "All sessions revoked",
+    "sessionsRevokedDescription": "You have been logged out of every device.",
+    "memberSince": "{email} · Member since {date}",
+    "yourInformation": "Your information",
+    "readOnly": "Read-only",
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "registeredAt": "Registered at",
+    "managePassword": "Manage password",
+    "managePasswordSubtitle": "Choose a strong password you don't use anywhere else.",
+    "dangerTitle": "Log out of all devices",
+    "dangerDescription": "Sign out of every active session, including this one. Use this if you suspect your account has been compromised.",
+    "loggingOut": "Logging out…",
+    "logoutEverywhere": "Log out everywhere"
+  }
+}

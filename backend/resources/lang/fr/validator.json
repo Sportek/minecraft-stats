@@ -1,0 +1,50 @@
+{
+  "shared": {
+    "messages": {
+      "required": "Le champ {{ field }} est requis",
+      "string": "Le champ {{ field }} doit être une chaîne de caractères",
+      "email": "Le champ {{ field }} doit être une adresse e-mail valide",
+      "number": "Le champ {{ field }} doit être un nombre",
+      "boolean": "Le champ {{ field }} doit être un booléen",
+      "array": "Le champ {{ field }} doit être un tableau",
+      "enum": "La valeur sélectionnée pour {{ field }} est invalide",
+      "minLength": "Le champ {{ field }} doit comporter au moins {{ min }} caractères",
+      "maxLength": "Le champ {{ field }} ne doit pas dépasser {{ max }} caractères",
+      "min": "Le champ {{ field }} doit être au moins {{ min }}",
+      "max": "Le champ {{ field }} ne doit pas dépasser {{ max }}",
+      "positive": "Le champ {{ field }} doit être positif",
+      "uuid": "Le champ {{ field }} doit être un UUID valide",
+      "regex": "Le format du champ {{ field }} est invalide",
+      "array.minLength": "Le champ {{ field }} doit comporter au moins {{ min }} éléments",
+      "array.maxLength": "Le champ {{ field }} ne doit pas comporter plus de {{ max }} éléments",
+      "publicHost": "Le champ {{ field }} ne doit pas pointer vers une adresse IP privée ou réservée"
+    },
+    "fields": {
+      "username": "nom d'utilisateur",
+      "email": "e-mail",
+      "password": "mot de passe",
+      "oldPassword": "ancien mot de passe",
+      "newPassword": "nouveau mot de passe",
+      "token": "jeton",
+      "name": "nom",
+      "address": "adresse",
+      "port": "port",
+      "title": "titre",
+      "slug": "slug",
+      "content": "contenu",
+      "excerpt": "extrait",
+      "coverImage": "image de couverture",
+      "serverId": "serveur",
+      "categoryId": "catégorie",
+      "categoryIds": "catégories",
+      "placeholderName": "nom du marqueur",
+      "placeholders": "marqueurs",
+      "helpful": "utile",
+      "visitorId": "identifiant visiteur",
+      "htmlContent": "contenu HTML",
+      "weight": "poids",
+      "expiresInDays": "expiration (jours)",
+      "id": "identifiant"
+    }
+  }
+}

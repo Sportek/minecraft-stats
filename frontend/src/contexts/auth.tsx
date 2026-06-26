@@ -2,7 +2,7 @@
 import { getBaseUrl } from "@/app/_cheatcode";
 import { changeUserPassword, getUser, loginUser, logoutAllUser, logoutUser, registerUser } from "@/http/auth";
 import { User } from "@/types/auth";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 

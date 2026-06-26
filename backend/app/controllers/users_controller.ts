@@ -16,9 +16,9 @@ export default class UsersController {
    * @responseBody 401 - {"message": "Unauthorized"}
    * @responseBody 403 - {"message": "Unauthorized"}
    */
-  async index({ response, bouncer }: HttpContext) {
+  async index({ response, bouncer, i18n }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.users.unauthorized') })
     }
     const users = await User.all()
     return response.ok(users)
@@ -35,9 +35,9 @@ export default class UsersController {
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "email"}]}
    */
-  async store({ request, response, bouncer }: HttpContext) {
+  async store({ request, response, bouncer, i18n }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('store')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.users.unauthorized') })
     }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
@@ -56,9 +56,9 @@ export default class UsersController {
    * @responseBody 401 - {"message": "Unauthorized"}
    * @responseBody 403 - {"message": "Unauthorized"}
    */
-  async show({ params, response, bouncer }: HttpContext) {
+  async show({ params, response, bouncer, i18n }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.users.unauthorized') })
     }
     const user = await User.find(params.id)
     return response.ok(user)
@@ -77,14 +77,14 @@ export default class UsersController {
    * @responseBody 404 - {"message": "User not found"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "email"}]}
    */
-  async update({ params, request, response, bouncer }: HttpContext) {
+  async update({ params, request, response, bouncer, i18n }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('update')) {
-      return response.forbidden('Unauthorized')
+      return response.forbidden(i18n.t('messages.users.unauthorized'))
     }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await UpdateUserValidator.validate(data)
     const user = await User.find(params.id)
-    if (!user) return response.notFound({ message: 'User not found' })
+    if (!user) return response.notFound({ message: i18n.t('messages.users.notFound') })
     await user.merge(validatedUserData)
     await user.save()
     return response.ok(user)
@@ -101,12 +101,12 @@ export default class UsersController {
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 404 - {"message": "User not found"}
    */
-  async destroy({ params, response, bouncer }: HttpContext) {
+  async destroy({ params, response, bouncer, i18n }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('destroy')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.users.unauthorized') })
     }
     const user = await User.find(params.id)
-    if (!user) return response.notFound({ message: 'User not found' })
+    if (!user) return response.notFound({ message: i18n.t('messages.users.notFound') })
     await user.delete()
     return response.ok(user)
   }
@@ -125,14 +125,14 @@ export default class UsersController {
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    */
-  async adminIndex({ request, response, auth, bouncer }: HttpContext) {
+  async adminIndex({ request, response, auth, bouncer, i18n }: HttpContext) {
     const currentUser = auth.user
     if (!currentUser) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
     }
 
     if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ error: 'Access denied. Admin privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.users.adminRequired') })
     }
 
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
@@ -169,19 +169,19 @@ export default class UsersController {
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    * @responseBody 404 - {"error": "User not found"}
    */
-  async adminShow({ params, response, auth, bouncer }: HttpContext) {
+  async adminShow({ params, response, auth, bouncer, i18n }: HttpContext) {
     const currentUser = auth.user
     if (!currentUser) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
     }
 
     if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ error: 'Access denied. Admin privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.users.adminRequired') })
     }
 
     const user = await User.find(params.id)
     if (!user) {
-      return response.notFound({ error: 'User not found' })
+      return response.notFound({ error: i18n.t('messages.users.notFound') })
     }
 
     const servers = await Server.query()
@@ -291,24 +291,24 @@ export default class UsersController {
    * @responseBody 403 - {"error": "Access denied. Cannot change this user's role."}
    * @responseBody 404 - {"error": "User not found"}
    */
-  async updateRole({ params, request, response, auth, bouncer }: HttpContext) {
+  async updateRole({ params, request, response, auth, bouncer, i18n }: HttpContext) {
     const currentUser = auth.user
     if (!currentUser) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
     }
 
     const targetUser = await User.find(params.id)
     if (!targetUser) {
-      return response.notFound({ error: 'User not found' })
+      return response.notFound({ error: i18n.t('messages.users.notFound') })
     }
 
     if (await bouncer.with(UserPolicy).denies('updateRole', targetUser)) {
-      return response.forbidden({ error: "Access denied. Cannot change this user's role." })
+      return response.forbidden({ error: i18n.t('messages.users.cannotChangeRole') })
     }
 
     const newRole = request.input('role')
     if (!['admin', 'writer', 'user'].includes(newRole)) {
-      return response.badRequest({ error: 'Invalid role. Must be admin, writer, or user.' })
+      return response.badRequest({ error: i18n.t('messages.users.invalidRole') })
     }
 
     targetUser.role = newRole

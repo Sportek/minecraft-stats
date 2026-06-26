@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getDomainConfig } from '@/lib/domain-server';
+import { alternateLanguages, getDomainConfig } from '@/lib/domain-server';
 
 interface Server {
   id: number;
@@ -79,31 +79,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { baseUrl, apiUrl } = await getDomainConfig();
   const [servers, posts] = await Promise.all([getAllServers(apiUrl), getAllPosts(apiUrl)]);
 
-  // Static routes
+  // Static routes (path is locale-free; alternates point at each locale's home domain)
   const routes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'hourly',
       priority: 1,
+      alternates: { languages: alternateLanguages("") },
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.7,
+      alternates: { languages: alternateLanguages("/blog") },
     },
     {
       url: `${baseUrl}/partners`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,
+      alternates: { languages: alternateLanguages("/partners") },
     },
     {
       url: `${baseUrl}/cgu`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.3,
+      alternates: { languages: alternateLanguages("/cgu") },
     },
   ];
 
@@ -113,6 +117,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(post.updatedAt || post.publishedAt || Date.now()),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
+    alternates: { languages: alternateLanguages(`/blog/${post.slug}`) },
   }));
 
   // Dynamic server routes
@@ -127,6 +132,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(server.updatedAt),
       changeFrequency: 'daily' as const,
       priority: 0.8,
+      alternates: { languages: alternateLanguages(`/servers/${server.id}/${slug}`) },
     };
   });
 

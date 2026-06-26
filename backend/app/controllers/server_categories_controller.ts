@@ -33,11 +33,11 @@ export default class ServerCategoriesController {
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 404 - {"message": "Row not found"}
    */
-  async store({ request, response, bouncer }: HttpContext) {
+  async store({ request, response, bouncer, i18n }: HttpContext) {
     const { serverId, categoryId } = await request.validateUsing(attachServerCategoryValidator)
     const server = await Server.findOrFail(serverId)
     if (await bouncer.with(ServerCategoryPolicy).denies('update', server)) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.serverCategories.unauthorized') })
     }
     await server.related('categories').attach([categoryId])
     return response.ok(server.categories)
@@ -56,11 +56,11 @@ export default class ServerCategoriesController {
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 404 - {"message": "Row not found"}
    */
-  async destroy({ request, response, bouncer }: HttpContext) {
+  async destroy({ request, response, bouncer, i18n }: HttpContext) {
     const { serverId, categoryId } = await request.validateUsing(attachServerCategoryValidator)
     const server = await Server.findOrFail(serverId)
     if (await bouncer.with(ServerCategoryPolicy).denies('destroy', server)) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.serverCategories.unauthorized') })
     }
     await server.related('categories').detach([categoryId])
     return response.ok(server.categories)

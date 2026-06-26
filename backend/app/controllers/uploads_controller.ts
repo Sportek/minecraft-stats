@@ -17,14 +17,14 @@ export default class UploadsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 500 - {"error": "Failed to process image", "details": "<sharp error message>"}
    */
-  async uploadImage({ request, response, auth, bouncer }: HttpContext) {
+  async uploadImage({ request, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.uploads.unauthorized') })
     }
 
     if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.uploads.writerRequired') })
     }
     const image = request.file('image', {
       size: '5mb',
@@ -32,7 +32,7 @@ export default class UploadsController {
     })
 
     if (!image) {
-      return response.badRequest({ error: 'No image provided' })
+      return response.badRequest({ error: i18n.t('messages.uploads.noImageProvided') })
     }
 
     if (!image.isValid) {
@@ -40,7 +40,7 @@ export default class UploadsController {
     }
 
     if (!image.tmpPath) {
-      return response.badRequest({ error: 'Invalid upload' })
+      return response.badRequest({ error: i18n.t('messages.uploads.invalidUpload') })
     }
 
     try {
@@ -49,7 +49,7 @@ export default class UploadsController {
       return response.ok({ url })
     } catch (error) {
       return response.internalServerError({
-        error: 'Failed to process image',
+        error: i18n.t('messages.uploads.processFailed'),
         details: error instanceof Error ? error.message : 'Unknown error',
       })
     }

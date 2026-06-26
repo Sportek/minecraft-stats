@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 interface AdPreviewProps {
   htmlContent: string;
   className?: string;
@@ -10,6 +12,7 @@ interface AdPreviewProps {
  * Utilisé pour la prévisualisation dans le panel admin.
  */
 const AdPreview = ({ htmlContent, className }: AdPreviewProps) => {
+  const t = useTranslations("Admin");
   // Same minimal reset as the live AdSlot (no body margin, transparent background,
   // full height so `height:100%` ads fill the frame) — keeps the preview identical
   // to the real rendering, including in dark mode.
@@ -19,7 +22,7 @@ const AdPreview = ({ htmlContent, className }: AdPreviewProps) => {
 
   return (
     <iframe
-      title="Advertisement preview"
+      title={t("adForm.previewTitle")}
       srcDoc={srcDoc}
       sandbox=""
       className={

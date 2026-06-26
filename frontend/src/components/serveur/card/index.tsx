@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import ServerImage from "./server-image";
 import ServerInfo from "./server-info";

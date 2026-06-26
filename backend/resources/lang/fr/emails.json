@@ -1,0 +1,12 @@
+{
+  "verifyEmail": {
+    "subject": "Vérifiez votre adresse e-mail",
+    "title": "Confirmez votre inscription à Minecraft-Stats.fr",
+    "greeting": "Bonjour {username},",
+    "intro": "Il ne reste qu'une étape pour vous inscrire à nos services : vous devez confirmer votre adresse e-mail en cliquant sur le bouton ci-dessous. Si vous n'êtes pas à l'origine de la création de ce compte sur Minecraft-Stats.fr, vous pouvez simplement ignorer cet e-mail.",
+    "cta": "Confirmer mon inscription",
+    "viewInBrowser": "Afficher cet e-mail dans votre navigateur",
+    "footerReason": "Vous recevez cet e-mail car vous vous êtes inscrit sur Minecraft-Stats.fr.",
+    "copyright": "© Minecraft-Stats.fr, Tous droits réservés."
+  }
+}

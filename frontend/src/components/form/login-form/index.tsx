@@ -10,6 +10,7 @@ import { Turnstile, isTurnstileEnabled } from "@/components/form/turnstile";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,6 +31,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
     },
   });
 
+  const t = useTranslations("Auth");
   const { login, loginWithDiscord, loginWithGoogle } = useAuth();
   const { toast } = useToast();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -50,14 +52,14 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
     if (response?.message) {
       resetCaptcha();
       toast({
-        title: "Error while logging in",
+        title: t("loginForm.errorTitle"),
         description: response.message,
         variant: "error",
       });
     } else {
       toast({
-        title: "Login successful",
-        description: "Your account has been logged in successfully",
+        title: t("loginForm.successTitle"),
+        description: t("loginForm.successDescription"),
         variant: "success",
       });
     }
@@ -77,9 +79,9 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("fields.email")}</FormLabel>
                 <FormControl>
-                  <Input type="email" autoComplete="email" placeholder="you@example.com" {...field} />
+                  <Input type="email" autoComplete="email" placeholder={t("fields.emailPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,7 +92,7 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t("fields.password")}</FormLabel>
                 <FormControl>
                   <Input type="password" autoComplete="current-password" placeholder="••••••••" {...field} />
                 </FormControl>
@@ -110,10 +112,10 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
             {isSubmitting ? (
               <>
                 <Spinner size="xs" tone="current" className="mr-2" />
-                Signing in...
+                {t("loginForm.submitting")}
               </>
             ) : (
-              "Sign in"
+              t("loginForm.submit")
             )}
           </Button>
         </form>

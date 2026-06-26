@@ -10,6 +10,7 @@ import { Turnstile, isTurnstileEnabled } from "@/components/form/turnstile";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -32,6 +33,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
     },
   });
 
+  const t = useTranslations("Auth");
   const { register, loginWithDiscord, loginWithGoogle } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -45,15 +47,14 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
       setLoading(true);
       await register(credentials.username, credentials.email, credentials.password, captchaToken);
       toast({
-        title: "Registration successful",
-        description:
-          "Your account has been created — check your inbox to confirm your email.",
+        title: t("signUpForm.successTitle"),
+        description: t("signUpForm.successDescription"),
         variant: "success",
       });
     } catch (error) {
       if (error instanceof Error) {
         toast({
-          title: "Error while registering",
+          title: t("signUpForm.errorTitle"),
           description: error.message,
           variant: "error",
         });
@@ -79,9 +80,9 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("fields.email")}</FormLabel>
                 <FormControl>
-                  <Input type="email" autoComplete="email" placeholder="you@example.com" {...field} />
+                  <Input type="email" autoComplete="email" placeholder={t("fields.emailPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -92,9 +93,9 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>{t("fields.username")}</FormLabel>
                 <FormControl>
-                  <Input autoComplete="username" placeholder="Sportek" {...field} />
+                  <Input autoComplete="username" placeholder={t("fields.usernamePlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -105,12 +106,12 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t("fields.password")}</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
                     autoComplete="new-password"
-                    placeholder="At least 8 characters"
+                    placeholder={t("fields.passwordHint")}
                     {...field}
                   />
                 </FormControl>
@@ -130,19 +131,21 @@ const SignUpForm: FC<SignUpFormProps> = ({ className, ...props }) => {
             {loading ? (
               <>
                 <Spinner size="xs" tone="current" className="mr-2" />
-                Creating account...
+                {t("signUpForm.submitting")}
               </>
             ) : (
-              "Create account"
+              t("signUpForm.submit")
             )}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">
-            By creating an account you agree to our{" "}
-            <a href="/cgu" className="underline hover:text-foreground">
-              terms of service
-            </a>
-            .
+            {t.rich("signUpForm.terms", {
+              link: (chunks) => (
+                <a href="/cgu" className="underline hover:text-foreground">
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
         </form>
       </Form>

@@ -3,30 +3,31 @@
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface NavItem {
   href: string;
-  label: string;
+  key: string;
   icon: string;
 }
 
 const BASE_ITEMS: NavItem[] = [
-  { href: "/account/settings", label: "Profile", icon: "material-symbols:person-outline" },
-  { href: "/account/my-servers", label: "My Servers", icon: "mynaui:servers" },
-  { href: "/account/add-server", label: "Add Server", icon: "material-symbols:add-rounded" },
-  { href: "/account/api-tokens", label: "API Tokens", icon: "material-symbols:key-outline" },
+  { href: "/account/settings", key: "profile", icon: "material-symbols:person-outline" },
+  { href: "/account/my-servers", key: "myServers", icon: "mynaui:servers" },
+  { href: "/account/add-server", key: "addServer", icon: "material-symbols:add-rounded" },
+  { href: "/account/api-tokens", key: "apiTokens", icon: "material-symbols:key-outline" },
 ];
 
 const WRITER_ITEMS: NavItem[] = [
-  { href: "/admin/posts", label: "Articles", icon: "material-symbols:article-outline" },
+  { href: "/admin/posts", key: "articles", icon: "material-symbols:article-outline" },
 ];
 
 const ADMIN_ITEMS: NavItem[] = [
-  { href: "/admin/analytics", label: "Analytics", icon: "material-symbols:bar-chart-4-bars" },
-  { href: "/admin/users", label: "Users", icon: "material-symbols:group-outline" },
-  { href: "/admin/advertisements", label: "Advertisements", icon: "material-symbols:ad-group-outline" },
+  { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
+  { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
+  { href: "/admin/advertisements", key: "advertisements", icon: "material-symbols:ad-group-outline" },
 ];
 
 const isActive = (pathname: string | null, href: string) =>
@@ -39,6 +40,7 @@ const buildItems = (role: string | undefined): NavItem[] => {
 };
 
 const DashboardSidebar = () => {
+  const t = useTranslations("Account");
   const pathname = usePathname();
   const { user } = useAuth();
   const items = buildItems(user?.role);
@@ -63,7 +65,7 @@ const DashboardSidebar = () => {
               )}
             >
               <Icon icon={item.icon} className="h-4 w-4 shrink-0" />
-              {item.label}
+              {t(`nav.${item.key}`)}
             </Link>
           );
         })}
@@ -73,7 +75,7 @@ const DashboardSidebar = () => {
       <aside className="hidden lg:block">
         <nav className="sticky top-20 flex flex-col gap-0.5 rounded-xl border border-border bg-card p-3 shadow-xs">
           <p className="px-2 pb-2 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
-            Dashboard
+            {t("nav.dashboard")}
           </p>
           {items.map((item) => {
             const active = isActive(pathname, item.href);
@@ -90,7 +92,7 @@ const DashboardSidebar = () => {
                 )}
               >
                 <Icon icon={item.icon} className="h-4 w-4 shrink-0" />
-                {item.label}
+                {t(`nav.${item.key}`)}
               </Link>
             );
           })}

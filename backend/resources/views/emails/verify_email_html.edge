@@ -36,16 +36,16 @@
       <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">
         <mj-column width="100%">
           <mj-text color="#212b35" font-weight="bold" font-size="20px">
-            Confirm your registration to Minecraft-Stats.fr
+            {{ title }}
           </mj-text>
           <mj-text color="#637381" font-size="16px">
-            Hi {{username}},
+            {{ greeting }}
           </mj-text>
           <mj-text color="#637381" font-size="16px">
-            There is only one step left to register with our services, you must confirm your email address by pressing the button below. In case you are not the originator of this account creation on Minecraft-Stats.fr, you can simply do nothing.
+            {{ intro }}
           </mj-text>
           <mj-button background-color="#5e6ebf" align="center" color="#ffffff" font-size="17px" font-weight="bold" href={{verify_url}} width="300px">
-            Confirm You Registration
+            {{ cta }}
           </mj-button>
         </mj-column>
     </mj-wrapper>
@@ -53,13 +53,13 @@
       <mj-section>
         <mj-column width="100%" padding="0">
           <mj-text color="#445566" font-size="11px" font-weight="bold" align="center">
-            View this email in your browser
+            {{ viewInBrowser }}
           </mj-text>
           <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-            You are receiving this email advertisement because you registered with Minecraft-Stats.fr.
+            {{ footerReason }}
           </mj-text>
           <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-            &copy; Minecraft-Stats.fr, All Rights Reserved.
+            {{ copyright }}
           </mj-text>
         </mj-column>
       </mj-section>

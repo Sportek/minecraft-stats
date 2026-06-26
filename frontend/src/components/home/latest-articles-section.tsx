@@ -4,10 +4,13 @@ import { getPosts } from "@/http/post";
 import { resolveAssetUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useFormatter, useTranslations } from "next-intl";
 import useSWR from "swr";
 
 const LatestArticlesSection = () => {
+  const format = useFormatter();
+  const t = useTranslations("Home");
   const { data, isLoading } = useSWR(["posts", 1, 3], () => getPosts(1, 3));
   const posts = data?.data ?? [];
 
@@ -32,13 +35,13 @@ const LatestArticlesSection = () => {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Icon icon="material-symbols:article-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">From the blog</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("articles.title")}</h2>
         </div>
         <Link
           href="/blog"
           className="text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
         >
-          See all →
+          {t("articles.seeAll")}
         </Link>
       </div>
 
@@ -67,9 +70,9 @@ const LatestArticlesSection = () => {
             </div>
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                <span className="text-accent">News</span>
+                <span className="text-accent">{t("articles.category")}</span>
                 <span>·</span>
-                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                <span>{format.dateTime(new Date(post.createdAt), { dateStyle: "medium" })}</span>
               </div>
               <h3 className="truncate text-sm font-bold leading-tight text-foreground transition-colors group-hover:text-accent">
                 {post.title}

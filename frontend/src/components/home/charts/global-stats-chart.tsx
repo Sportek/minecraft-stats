@@ -1,6 +1,7 @@
 import { ServerStat } from "@/types/server";
 import type { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions, AgTimeAxisOptions } from "ag-charts-community";
 import { useTheme } from "next-themes";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { Server } from "../selects/server-select";
 import dynamic from 'next/dynamic';
@@ -96,7 +97,9 @@ const createAreaSeries = (
   yKey: string,
   yName: string,
   color: { light: string; dark: string },
-  theme: string | undefined
+  theme: string | undefined,
+  locale: string,
+  playersLabel: string
 ): AgAreaSeriesOptions => ({
   type: 'area',
   xKey,
@@ -121,7 +124,9 @@ const createAreaSeries = (
     renderer: ({ datum }: { datum: Record<string, number | Date> }) => {
       return generateTooltipHtml(
         { time: new Date(datum.time), playerCount: Number(datum[yKey] ?? 0) },
-        { isDarkMode: theme === 'dark' }
+        { isDarkMode: theme === 'dark' },
+        locale,
+        playersLabel
       );
     },
   },
@@ -129,6 +134,8 @@ const createAreaSeries = (
 
 export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading }: GlobalStatsChartProps) => {
   const { resolvedTheme } = useTheme();
+  const locale = useLocale();
+  const t = useTranslations("Home");
 
   const options = useMemo(() => {
     // Vérifier si on a des données valides
@@ -153,7 +160,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       return {
         ...BASE_CHART_OPTIONS,
         data,
-        series: [createAreaSeries('time', 'playerCount', 'All monitored servers', COLORS[0], resolvedTheme)],
+        series: [createAreaSeries('time', 'playerCount', t("allMonitoredServers"), COLORS[0], resolvedTheme, locale, t("players"))],
         theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
         axes: {
           x: { ...BASE_AXES.x, min: minDate, max: maxDate },
@@ -199,9 +206,11 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
           return createAreaSeries(
             'time',
             `playerCount_${server.id}`,
-            server.name || `Server ${server.id}`,
+            server.name || t("serverSelect.serverFallback", { id: server.id }),
             COLORS[colorIndex],
-            resolvedTheme
+            resolvedTheme,
+            locale,
+            t("players")
           );
         });
 
@@ -219,7 +228,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       console.error('Error processing server stats:', error);
       return createEmptyChartOptions(resolvedTheme);
     }
-  }, [globalStats, serverStats, resolvedTheme]);
+  }, [globalStats, serverStats, resolvedTheme, locale, t]);
 
   return (
     <div className="flex flex-col gap-2">

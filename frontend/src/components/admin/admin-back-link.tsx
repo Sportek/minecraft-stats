@@ -1,5 +1,5 @@
 import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 /** "Back to list" link with a chevron, shared across admin detail/form pages. */
 export const AdminBackLink = ({ href, label }: { href: string; label: string }) => (
