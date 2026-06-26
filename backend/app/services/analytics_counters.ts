@@ -1,4 +1,5 @@
 import env from '#start/env'
+import db from '@adonisjs/lucid/services/db'
 import redis from '@adonisjs/redis/services/main'
 import { createHmac } from 'node:crypto'
 import { DateTime } from 'luxon'
@@ -88,9 +89,88 @@ export interface TrafficCounters {
   countries: Array<{ country: string; views: number }>
 }
 
+interface DailySnapshot {
+  httpRequests: number
+  httpErrors: number
+  uniqueVisitors: number
+  countries: Record<string, number>
+}
+
 /**
- * Reads all Redis-backed counters for the dashboard over [from, to]. Unique
- * counts are deduplicated via HLL union (`PFCOUNT` over the day keys).
+ * Persists the given day's Redis counters into `traffic_daily` so they survive a
+ * Redis volume wipe and the ~100-day key TTL. Counters are monotonic within a
+ * day, so we keep the GREATEST of the stored and current values — a transient
+ * Redis outage (which reports 0) can never erase a previously snapshotted day.
+ */
+export async function snapshotTrafficDay(day: DateTime): Promise<void> {
+  const ds = dayKey(day)
+  const pipe = redis.pipeline()
+  pipe.get(`${PREFIX}:req:${ds}`)
+  pipe.get(`${PREFIX}:err:${ds}`)
+  pipe.pfcount(`${PREFIX}:uniq:d:${ds}`)
+  pipe.hgetall(`${PREFIX}:geo:d:${ds}`)
+  const results = (await pipe.exec()) ?? []
+
+  const geo = (results[3]?.[1] ?? {}) as Record<string, string>
+  const countries: Record<string, number> = {}
+  for (const [country, count] of Object.entries(geo)) countries[country] = Number(count)
+  const countriesJson = JSON.stringify(countries)
+
+  const now = DateTime.now().toSQL()!
+  await db
+    .table('traffic_daily')
+    .insert({
+      date: ds,
+      http_requests: Number(results[0]?.[1] ?? 0),
+      http_errors: Number(results[1]?.[1] ?? 0),
+      unique_visitors: Number(results[2]?.[1] ?? 0),
+      countries: countriesJson,
+      created_at: now,
+      updated_at: now,
+    })
+    .onConflict('date')
+    .merge({
+      http_requests: db.raw('GREATEST(traffic_daily.http_requests, EXCLUDED.http_requests)'),
+      http_errors: db.raw('GREATEST(traffic_daily.http_errors, EXCLUDED.http_errors)'),
+      unique_visitors: db.raw('GREATEST(traffic_daily.unique_visitors, EXCLUDED.unique_visitors)'),
+      countries: db.raw(
+        "CASE WHEN EXCLUDED.countries = '{}'::jsonb THEN traffic_daily.countries ELSE EXCLUDED.countries END"
+      ),
+      updated_at: now,
+    })
+}
+
+async function loadSnapshots(days: DateTime[]): Promise<Map<string, DailySnapshot>> {
+  const map = new Map<string, DailySnapshot>()
+  if (days.length === 0) return map
+
+  // Read `date` as text — the pg driver would otherwise parse it into a UTC Date,
+  // which shifts the day key in negative-offset timezones.
+  const rows = await db
+    .from('traffic_daily')
+    .whereIn(
+      'date',
+      days.map((d) => dayKey(d))
+    )
+    .select('http_requests', 'http_errors', 'unique_visitors', 'countries')
+    .select(db.raw("to_char(date, 'YYYY-MM-DD') as date_key"))
+
+  for (const row of rows) {
+    map.set(row.date_key, {
+      httpRequests: Number(row.http_requests),
+      httpErrors: Number(row.http_errors),
+      uniqueVisitors: Number(row.unique_visitors),
+      countries: (row.countries ?? {}) as Record<string, number>,
+    })
+  }
+  return map
+}
+
+/**
+ * Reads all counters for the dashboard over [from, to]. Redis is the live source
+ * (unique counts deduplicated via HLL union over the day keys); for any day Redis
+ * no longer has — volume wiped or key expired past its TTL — we fall back to the
+ * durable `traffic_daily` snapshot so history is never lost.
  */
 export async function getTrafficCounters(from: DateTime, to: DateTime): Promise<TrafficCounters> {
   const days = enumerateDays(from, to)
@@ -105,6 +185,9 @@ export async function getTrafficCounters(from: DateTime, to: DateTime): Promise<
     }
   }
 
+  const now = DateTime.now()
+  const monthDays = enumerateDays(now.startOf('month'), now)
+
   const pipe = redis.pipeline()
   for (const day of days) {
     const ds = dayKey(day)
@@ -113,7 +196,10 @@ export async function getTrafficCounters(from: DateTime, to: DateTime): Promise<
     pipe.pfcount(`${PREFIX}:uniq:d:${ds}`)
     pipe.hgetall(`${PREFIX}:geo:d:${ds}`)
   }
-  const results = (await pipe.exec()) ?? []
+  const [results, snapshots] = await Promise.all([
+    pipe.exec().then((r) => r ?? []),
+    loadSnapshots([...days, ...monthDays]),
+  ])
 
   let httpRequests = 0
   let httpErrors = 0
@@ -122,10 +208,25 @@ export async function getTrafficCounters(from: DateTime, to: DateTime): Promise<
 
   days.forEach((day, index) => {
     const base = index * 4
-    const requests = Number(results[base]?.[1] ?? 0)
-    const errors = Number(results[base + 1]?.[1] ?? 0)
-    const uniqueVisitors = Number(results[base + 2]?.[1] ?? 0)
-    const geo = (results[base + 3]?.[1] ?? {}) as Record<string, string>
+    let requests = Number(results[base]?.[1] ?? 0)
+    let errors = Number(results[base + 1]?.[1] ?? 0)
+    let uniqueVisitors = Number(results[base + 2]?.[1] ?? 0)
+    let geo = (results[base + 3]?.[1] ?? {}) as Record<string, string | number>
+
+    // Redis has nothing for this day → use the persisted snapshot instead.
+    const snap = snapshots.get(day.toFormat('yyyy-LL-dd'))
+    if (
+      snap &&
+      requests === 0 &&
+      errors === 0 &&
+      uniqueVisitors === 0 &&
+      !Object.keys(geo).length
+    ) {
+      requests = snap.httpRequests
+      errors = snap.httpErrors
+      uniqueVisitors = snap.uniqueVisitors
+      geo = snap.countries
+    }
 
     httpRequests += requests
     httpErrors += errors
@@ -136,16 +237,22 @@ export async function getTrafficCounters(from: DateTime, to: DateTime): Promise<
     }
   })
 
-  const now = DateTime.now()
-  const monthDays = enumerateDays(now.startOf('month'), now).map(
-    (d) => `${PREFIX}:uniq:d:${dayKey(d)}`
-  )
   const windowKeys = days.map((d) => `${PREFIX}:uniq:d:${dayKey(d)}`)
+  const monthKeys = monthDays.map((d) => `${PREFIX}:uniq:d:${dayKey(d)}`)
 
-  const [uniqueVisitors, uniqueVisitorsThisMonth] = await Promise.all([
+  const [redisUnique, redisUniqueThisMonth] = await Promise.all([
     redis.pfcount(...windowKeys),
-    monthDays.length ? redis.pfcount(...monthDays) : Promise.resolve(0),
+    monthKeys.length ? redis.pfcount(...monthKeys) : Promise.resolve(0),
   ])
+
+  // HLL union can't be rebuilt from snapshots; when Redis has lost the whole
+  // window we approximate the unique count by summing the snapshotted days.
+  const sumSnapshotUnique = (ds: DateTime[]) =>
+    ds.reduce((sum, d) => sum + (snapshots.get(d.toFormat('yyyy-LL-dd'))?.uniqueVisitors ?? 0), 0)
+
+  const uniqueVisitors = redisUnique > 0 ? redisUnique : sumSnapshotUnique(days)
+  const uniqueVisitorsThisMonth =
+    redisUniqueThisMonth > 0 ? redisUniqueThisMonth : sumSnapshotUnique(monthDays)
 
   const countries = [...countryTotals.entries()]
     .map(([country, views]) => ({ country, views }))

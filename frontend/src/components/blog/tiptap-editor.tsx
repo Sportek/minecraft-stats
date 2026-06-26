@@ -76,7 +76,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
     editorProps: {
       attributes: {
         class: [
-          "prose prose-lg dark:prose-invert max-w-none focus:outline-hidden min-h-[500px] p-6",
+          "prose prose-lg dark:prose-invert max-w-none break-words focus:outline-hidden min-h-[500px] p-4 sm:p-6",
           "prose-headings:font-bold prose-headings:tracking-tight",
           "prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4",
           "prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border prose-h2:pb-2",
@@ -90,7 +90,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           "prose-ol:list-decimal prose-ol:pl-6",
           "prose-li:mb-2",
           "prose-code:bg-secondary prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none",
-          "prose-pre:bg-secondary prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-foreground",
+          "prose-pre:bg-secondary prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:text-sm prose-pre:leading-relaxed prose-pre:text-foreground prose-pre:overflow-x-auto",
           "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm",
         ].join(" "),
       },
@@ -314,7 +314,7 @@ export function TiptapEditor({ content, onChange, placeholder }: TiptapEditorPro
           <Redo className="w-4 h-4" />
         </button>
       </div>
-      <EditorContent editor={editor} className="min-h-[500px] bg-background" />
+      <EditorContent editor={editor} className="min-h-[500px] overflow-x-auto bg-background" />
     </div>
   );
 }

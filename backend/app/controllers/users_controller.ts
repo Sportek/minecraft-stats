@@ -3,6 +3,7 @@ import User from '#models/user'
 import UserPolicy from '#policies/user_policy'
 import { CreateUserValidator, UpdateUserValidator } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 
 export default class UsersController {
   /**
@@ -161,9 +162,9 @@ export default class UsersController {
    * @operationId adminShowUser
    * @tag USERS_ADMIN
    * @summary Get a user's profile and uploaded servers (admin only)
-   * @description Returns a single user's full profile — including the normally hidden `email`, the registration `provider` (`null` for email/password sign-ups), and `verified` status — alongside every server they have uploaded. Requires an authenticated admin (gated by `UserPolicy.manage`).
+   * @description Returns a single user's full profile — including the normally hidden `email`, the registration `provider` (`null` for email/password sign-ups), and `verified` status — alongside every server they have uploaded and any candidate duplicate accounts (other users sharing the same device or hashed IP, from the analytics visitor tables). Requires an authenticated admin (gated by `UserPolicy.manage`).
    * @paramPath id - User ID - @type(number) @example(7) @required
-   * @responseBody 200 - {"user": {"id": 7, "username": "gabriel", "email": "gabriel@example.com", "role": "user", "verified": true, "provider": "discord", "avatarUrl": "", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "servers": [{"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "type": "java", "imageUrl": "", "lastPlayerCount": 1200, "peakPlayerCount": 5000, "lastOnlineAt": "2026-05-28T12:00:00.000Z", "createdAt": "2025-01-01T00:00:00.000Z"}], "stats": {"serverCount": 1}}
+   * @responseBody 200 - {"user": {"id": 7, "username": "gabriel", "email": "gabriel@example.com", "role": "user", "verified": true, "provider": "discord", "avatarUrl": "", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "servers": [{"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "type": "java", "imageUrl": "", "lastPlayerCount": 1200, "peakPlayerCount": 5000, "lastOnlineAt": "2026-05-28T12:00:00.000Z", "createdAt": "2025-01-01T00:00:00.000Z"}], "duplicates": [{"id": 9, "username": "gab2", "email": "gab2@example.com", "role": "user", "createdAt": "2025-02-01T00:00:00.000Z", "signals": {"sameDevice": true, "sameIp": true}}], "stats": {"serverCount": 1, "duplicateCount": 1}}
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    * @responseBody 404 - {"error": "User not found"}
@@ -188,6 +189,8 @@ export default class UsersController {
       .preload('languages')
       .orderBy('created_at', 'desc')
 
+    const duplicates = await this.findDuplicateAccounts(user.id)
+
     // `email` and `provider` are intentionally surfaced here even though the model
     // hides `email` from default serialization — this admin-only view needs them.
     return response.ok({
@@ -203,10 +206,75 @@ export default class UsersController {
         updatedAt: user.updatedAt,
       },
       servers,
+      duplicates,
       stats: {
         serverCount: servers.length,
+        duplicateCount: duplicates.length,
       },
     })
+  }
+
+  /**
+   * Finds other accounts that share a device (same anonymous visitor) or a
+   * network (same hashed IP) with the given user — the strongest signals we have
+   * for spotting multi-accounting, sourced from the analytics visitor tables.
+   */
+  private async findDuplicateAccounts(userId: number) {
+    const ownLinks = await db.from('visitor_accounts').where('user_id', userId).select('visitor_id')
+    const visitorIds = ownLinks.map((row) => row.visitor_id)
+    if (visitorIds.length === 0) return []
+
+    const ipHashRows = await db
+      .from('visitors')
+      .whereIn('id', visitorIds)
+      .whereNotNull('ip_hash')
+      .select('ip_hash')
+    const ipHashes = ipHashRows.map((row) => row.ip_hash)
+
+    let sharedIpVisitorIds: number[] = []
+    if (ipHashes.length > 0) {
+      const ipVisitorRows = await db.from('visitors').whereIn('ip_hash', ipHashes).select('id')
+      sharedIpVisitorIds = ipVisitorRows.map((row) => row.id)
+    }
+
+    // candidate userId → which signals tie them back to the target user.
+    const signals = new Map<number, { sameDevice: boolean; sameIp: boolean }>()
+    const flag = (rows: { user_id: number }[], key: 'sameDevice' | 'sameIp') => {
+      for (const { user_id: candidateId } of rows) {
+        if (candidateId === userId) continue
+        const entry = signals.get(candidateId) ?? { sameDevice: false, sameIp: false }
+        entry[key] = true
+        signals.set(candidateId, entry)
+      }
+    }
+
+    const deviceRows = await db
+      .from('visitor_accounts')
+      .whereIn('visitor_id', visitorIds)
+      .select('user_id')
+    flag(deviceRows, 'sameDevice')
+
+    if (sharedIpVisitorIds.length > 0) {
+      const ipRows = await db
+        .from('visitor_accounts')
+        .whereIn('visitor_id', sharedIpVisitorIds)
+        .select('user_id')
+      flag(ipRows, 'sameIp')
+    }
+
+    if (signals.size === 0) return []
+
+    const candidates = await User.query().whereIn('id', [...signals.keys()])
+    return candidates
+      .map((candidate) => ({
+        id: candidate.id,
+        username: candidate.username,
+        email: candidate.email,
+        role: candidate.role,
+        createdAt: candidate.createdAt,
+        signals: signals.get(candidate.id)!,
+      }))
+      .sort((a, b) => Number(b.signals.sameDevice) - Number(a.signals.sameDevice))
   }
 
   /**
