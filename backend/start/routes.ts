@@ -216,6 +216,9 @@ router
         router
           .get('posts/:id/stats', '#controllers/posts_controller.adminStats')
           .use([throttleLight('admin.posts.stats', 30), NO_STORE])
+        router
+          .get('posts/:id', '#controllers/posts_controller.adminShow')
+          .use(throttleLight('admin.posts.show', 30))
 
         // Placeholders preview (writers and admins)
         router

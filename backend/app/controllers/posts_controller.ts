@@ -1,6 +1,8 @@
 import Post from '#models/post'
+import PostTranslation from '#models/post_translation'
 import PostPolicy from '#policies/post_policy'
 import PlaceholderService from '#services/placeholder_service'
+import { SlugService } from '#services/slug_service'
 import {
   CreatePostValidator,
   PreviewPlaceholderValidator,
@@ -12,20 +14,73 @@ import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
+const SUPPORTED_LOCALES = ['fr', 'en'] as const
+const DEFAULT_LOCALE = 'en'
+
+/** Locale demandée via `?locale=`, validée contre les locales supportées. */
+function resolveLocale(value: unknown): string {
+  return SUPPORTED_LOCALES.includes(value as never) ? (value as string) : DEFAULT_LOCALE
+}
+
+function serializeAuthor(post: Post) {
+  if (!post.author) return undefined
+  return { id: post.author.id, username: post.author.username, avatarUrl: post.author.avatarUrl }
+}
+
+/** Forme publique : champs article + traduction résolue (avec fallback) + slugs. */
+function serializePost(post: Post, locale: string) {
+  const resolved = post.forLocale(locale)
+  return {
+    id: post.id,
+    title: resolved.title,
+    slug: resolved.slug,
+    content: resolved.content,
+    excerpt: resolved.excerpt,
+    coverImage: post.coverImage,
+    published: post.published,
+    viewCount: post.viewCount,
+    publishedAt: post.publishedAt,
+    defaultLocale: post.defaultLocale,
+    localeUsed: resolved.localeUsed,
+    slugs: post.slugsByLocale(),
+    userId: post.userId,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+    author: serializeAuthor(post),
+  }
+}
+
+/** Forme admin : la forme publique (langue principale) + toutes les traductions brutes. */
+function serializeAdminPost(post: Post) {
+  return {
+    ...serializePost(post, post.defaultLocale),
+    availableLocales: post.translations.map((t) => t.locale),
+    translations: post.translations.map((t) => ({
+      locale: t.locale,
+      title: t.title,
+      slug: t.slug,
+      content: t.content,
+      excerpt: t.excerpt,
+    })),
+  }
+}
+
 export default class PostsController {
   /**
    * @listPosts
    * @operationId listPosts
    * @tag POSTS
    * @summary List published posts
-   * @description Returns a paginated list of published posts ordered by `published_at` descending. Each post includes its author (id, username, avatarUrl). Publicly accessible.
+   * @description Returns a paginated list of published posts ordered by `published_at` descending. Each post is resolved to the requested `?locale` (falling back to the post's primary language) and includes its author and per-locale `slugs`. Publicly accessible.
    * @paramQuery page - Page number (default 1) - @type(number) @example(1)
    * @paramQuery limit - Number of items per page (default 10) - @type(number) @example(10)
-   * @responseBody 200 - {"meta": {"total": 42, "perPage": 10, "currentPage": 1, "lastPage": 5}, "data": [{"id": 1, "title": "Welcome", "slug": "welcome", "content": "<p>Hello</p>", "excerpt": "Hello", "coverImage": "/images/blog/cover.webp", "published": true, "publishedAt": "2026-05-28T12:00:00.000Z", "userId": 1, "createdAt": "2026-05-20T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z", "author": {"id": 1, "username": "admin", "avatarUrl": ""}}]}
+   * @paramQuery locale - UI locale to resolve content for: `fr` or `en` (default `en`) - @type(string) @example(fr)
+   * @responseBody 200 - {"meta": {"total": 42, "perPage": 10, "currentPage": 1, "lastPage": 5}, "data": [{"id": 1, "title": "Welcome", "slug": "welcome", "content": "<p>Hello</p>", "excerpt": "Hello", "coverImage": "/images/blog/cover.webp", "published": true, "publishedAt": "2026-05-28T12:00:00.000Z", "defaultLocale": "en", "localeUsed": "en", "slugs": {"en": "welcome", "fr": "bienvenue"}, "userId": 1, "createdAt": "2026-05-20T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z", "author": {"id": 1, "username": "admin", "avatarUrl": ""}}]}
    */
   async index({ request, response }: HttpContext) {
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
     const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 10), 10) || 10))
+    const locale = resolveLocale(request.input('locale'))
 
     const posts = await Post.query()
       .where('published', true)
@@ -33,10 +88,14 @@ export default class PostsController {
       .preload('author', (query) => {
         query.select('id', 'username', 'avatarUrl')
       })
+      .preload('translations')
       .orderBy('published_at', 'desc')
       .paginate(page, limit)
 
-    return response.ok(posts)
+    return response.ok({
+      meta: posts.toJSON().meta,
+      data: posts.all().map((post) => serializePost(post, locale)),
+    })
   }
 
   /**
@@ -44,21 +103,39 @@ export default class PostsController {
    * @operationId showPost
    * @tag POSTS
    * @summary Get a published post by slug
-   * @description Returns a single published post identified by its slug. Content is returned with its raw placeholder tokens (e.g. `%PLAYER_COUNT_REALTIME_125%`) intact — the client resolves them asynchronously via `POST /posts/placeholders/resolve` so the article renders immediately. Returns 404 if no published post matches the slug. Publicly accessible.
-   * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
+   * @description Returns a single published post matched by slug within the requested `?locale`. If no translation matches the slug in that locale, it resolves by slug across locales and falls back to the post's primary language. Content keeps its raw placeholder tokens (resolved client-side). Returns 404 if no published post matches. Publicly accessible.
+   * @paramPath slug - Slug of the post (per-locale) - @type(string) @example(welcome-post) @required
+   * @paramQuery locale - UI locale to resolve content for: `fr` or `en` (default `en`) - @type(string) @example(fr)
    * @responseBody 200 - <Post>
-   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
+   * @responseBody 404 - {"message": "Post not found"}
    */
-  async show({ params, response }: HttpContext) {
-    const post = await Post.query()
-      .where('slug', params.slug)
-      .where('published', true)
-      .preload('author', (val) => {
-        val.select('id', 'username', 'avatarUrl')
-      })
-      .firstOrFail()
+  async show({ params, request, response, i18n }: HttpContext) {
+    const locale = resolveLocale(request.input('locale'))
 
-    return response.ok(post)
+    // 1. Slug exact dans la locale demandée ; 2. sinon n'importe quelle locale
+    // (cas fallback : on visite le slug de la langue principale sous une autre UI).
+    const translation =
+      (await PostTranslation.query().where('locale', locale).where('slug', params.slug).first()) ??
+      (await PostTranslation.query().where('slug', params.slug).first())
+
+    if (!translation) {
+      return response.notFound({ message: i18n.t('messages.posts.notFound') })
+    }
+
+    const post = await Post.query()
+      .where('id', translation.postId)
+      .where('published', true)
+      .preload('author', (query) => {
+        query.select('id', 'username', 'avatarUrl')
+      })
+      .preload('translations')
+      .first()
+
+    if (!post) {
+      return response.notFound({ message: i18n.t('messages.posts.notFound') })
+    }
+
+    return response.ok(serializePost(post, locale))
   }
 
   /**
@@ -66,15 +143,18 @@ export default class PostsController {
    * @operationId recordPostView
    * @tag POSTS
    * @summary Record a view for a published post
-   * @description Increments the raw view counter of a published post. Consent-exempt and best-effort: it stores only an aggregate counter (no visitor or account identifier), so it counts every reader — logged in or not, consent given or not — on the same privacy basis as the anonymous analytics hit. Detailed, consent-aware attribution (who viewed) is captured separately by the analytics page-view pipeline. Always responds `204 No Content`. Publicly accessible.
-   * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
+   * @description Increments the raw view counter of the post owning this slug. The counter is shared across all of a post's translations. Consent-exempt, best-effort, always `204`. Publicly accessible.
+   * @paramPath slug - Slug of the post (per-locale) - @type(string) @example(welcome-post) @required
    * @responseBody 204 - No content
    */
   async recordView({ params, response }: HttpContext) {
-    await Post.query()
-      .where('slug', params.slug)
-      .where('published', true)
-      .increment('view_count', 1)
+    const translation = await PostTranslation.query().where('slug', params.slug).first()
+    if (translation) {
+      await Post.query()
+        .where('id', translation.postId)
+        .where('published', true)
+        .increment('view_count', 1)
+    }
 
     return response.noContent()
   }
@@ -84,23 +164,25 @@ export default class PostsController {
    * @operationId submitPostFeedback
    * @tag POSTS
    * @summary Submit "was this article helpful?" feedback
-   * @description Records whether the reader found the article helpful. Deduplicated by the anonymous `visitorId` (one vote per device per post); re-submitting updates the existing vote. When the request carries a valid bearer token the vote is also attributed to the logged-in account. Aggregate results are visible to admins/writers only. Returns 404 if no published post matches the slug. Publicly accessible.
-   * @paramPath slug - Unique slug of the post - @type(string) @example(welcome-post) @required
+   * @description Records whether the reader found the article helpful, keyed at the post level (shared across translations) and deduplicated by the anonymous `visitorId`. Returns 404 if no published post matches the slug. Publicly accessible.
+   * @paramPath slug - Slug of the post (per-locale) - @type(string) @example(welcome-post) @required
    * @requestBody {"helpful": true, "visitorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479"}
    * @responseBody 204 - No content
    * @responseBody 404 - {"error": "Post not found"}
    * @responseBody 422 - {"errors": [{"message": "The helpful field must be defined", "field": "helpful", "rule": "required"}]}
    */
   async submitFeedback({ params, request, response, auth, i18n }: HttpContext) {
-    const post = await Post.query().where('slug', params.slug).where('published', true).first()
+    const translation = await PostTranslation.query().where('slug', params.slug).first()
+    const post = translation
+      ? await Post.query().where('id', translation.postId).where('published', true).first()
+      : null
     if (!post) {
       return response.notFound({ error: i18n.t('messages.posts.notFound') })
     }
 
     const { helpful, visitorId } = await request.validateUsing(SubmitFeedbackValidator)
 
-    // L'endpoint est public : on lit l'utilisateur s'il est connecté sans l'imposer,
-    // pour qu'un visiteur anonyme puisse aussi voter.
+    // L'endpoint est public : on lit l'utilisateur s'il est connecté sans l'imposer.
     await auth.check()
 
     const now = DateTime.now().toSQL()
@@ -125,7 +207,7 @@ export default class PostsController {
    * @operationId resolvePlaceholders
    * @tag POSTS
    * @summary Resolve content placeholders to their current values
-   * @description Resolves a batch of placeholder tokens (e.g. `%PLAYER_COUNT_REALTIME_125%`) to their live values in a single request. Returns a map of token → value. Unknown servers resolve to a `[Server N not found]` marker. Used by the blog client to fill placeholders after the article has rendered. Publicly accessible.
+   * @description Resolves a batch of placeholder tokens to their live values. Returns a map of token → value. Publicly accessible.
    * @requestBody {"placeholders": ["%PLAYER_COUNT_REALTIME_125%", "%SERVER_VERSION_125%"]}
    * @responseBody 200 - {"%PLAYER_COUNT_REALTIME_125%": "42", "%SERVER_VERSION_125%": "1.21.4"}
    * @responseBody 422 - {"errors": [{"message": "The placeholders field must be defined", "field": "placeholders", "rule": "required"}]}
@@ -141,11 +223,11 @@ export default class PostsController {
    * @operationId adminListPosts
    * @tag POSTS_ADMIN
    * @summary List all posts (admin/writer)
-   * @description Returns a paginated list of posts including drafts. Writers only see their own posts, admins see every post. Each post includes its author (id, username, avatarUrl). Requires authentication and `manage` ability on the Post policy.
+   * @description Returns a paginated list of posts including drafts, shown in each post's primary language with the list of `availableLocales`. Writers only see their own posts. Requires `manage` ability.
    * @paramQuery page - Page number (default 1) - @type(number) @example(1)
    * @paramQuery limit - Number of items per page (default 20) - @type(number) @example(20)
    * @paramQuery status - Filter by status: `all`, `published`, or `draft` (default `all`) - @type(string) @example(all)
-   * @responseBody 200 - {"meta": {"total": 42, "perPage": 20, "currentPage": 1, "lastPage": 3}, "data": [{"id": 1, "title": "Draft", "slug": "draft", "content": "<p>WIP</p>", "excerpt": "", "coverImage": "", "published": false, "publishedAt": "", "userId": 1, "createdAt": "2026-05-20T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z", "author": {"id": 1, "username": "writer", "avatarUrl": ""}}]}
+   * @responseBody 200 - {"meta": {"total": 42, "perPage": 20, "currentPage": 1, "lastPage": 3}, "data": [{"id": 1, "title": "Draft", "slug": "draft", "defaultLocale": "en", "availableLocales": ["en"], "published": false, "author": {"id": 1, "username": "writer", "avatarUrl": ""}}]}
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    */
@@ -161,13 +243,14 @@ export default class PostsController {
 
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
     const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20))
-    const status = request.input('status', 'all') // all, published, draft
+    const status = request.input('status', 'all')
 
-    const query = Post.query().preload('author', (authorQuery) => {
-      authorQuery.select('id', 'username', 'avatarUrl')
-    })
+    const query = Post.query()
+      .preload('author', (authorQuery) => {
+        authorQuery.select('id', 'username', 'avatarUrl')
+      })
+      .preload('translations')
 
-    // Writers can only see their own posts, admins can see all
     if (user.role === 'writer') {
       query.where('user_id', user.id)
     }
@@ -180,7 +263,43 @@ export default class PostsController {
 
     const posts = await query.orderBy('created_at', 'desc').paginate(page, limit)
 
-    return response.ok(posts)
+    return response.ok({
+      meta: posts.toJSON().meta,
+      data: posts.all().map((post) => serializeAdminPost(post)),
+    })
+  }
+
+  /**
+   * @adminShowPost
+   * @operationId adminShowPost
+   * @tag POSTS_ADMIN
+   * @summary Get a single post with all its translations (admin/writer)
+   * @description Returns one post including every translation (title/slug/content/excerpt per locale), the shared cover image and `defaultLocale`. Used by the edit screen. Writers may only access their own posts. Requires `update` ability.
+   * @paramPath id - Post id - @type(number) @example(7) @required
+   * @responseBody 200 - <Post>
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. You can only update your own posts."}
+   * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
+   */
+  async adminShow({ params, response, auth, bouncer, i18n }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
+    }
+
+    const post = await Post.query()
+      .where('id', params.id)
+      .preload('author', (query) => {
+        query.select('id', 'username', 'avatarUrl')
+      })
+      .preload('translations')
+      .firstOrFail()
+
+    if (await bouncer.with(PostPolicy).denies('update', post)) {
+      return response.forbidden({ error: i18n.t('messages.posts.updateOwnOnly') })
+    }
+
+    return response.ok(serializeAdminPost(post))
   }
 
   /**
@@ -188,12 +307,12 @@ export default class PostsController {
    * @operationId createPost
    * @tag POSTS_ADMIN
    * @summary Create a new post
-   * @description Creates a new post owned by the authenticated user. The post is always created as an unpublished draft (`published: false`); use the publish endpoint to make it public. Requires authentication and `manage` ability on the Post policy.
+   * @description Creates an unpublished draft owned by the authenticated user, with one or more translations and a shared cover image. The translation in `defaultLocale` is required. Slugs are generated per locale. Requires `manage` ability.
    * @requestBody <CreatePostValidator>
    * @responseBody 201 - <Post>
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
-   * @responseBody 422 - {"errors": [{"message": "The title field must be defined", "field": "title", "rule": "required"}]}
+   * @responseBody 422 - {"errors": [{"message": "A translation in the primary language is required.", "field": "translations", "rule": "required"}]}
    */
   async store({ request, auth, response, bouncer, i18n }: HttpContext) {
     const user = auth.user
@@ -207,15 +326,50 @@ export default class PostsController {
 
     const data = await request.validateUsing(CreatePostValidator)
 
-    const post = await Post.create({
-      ...data,
-      userId: user.id,
-      published: false,
+    if (!data.translations.some((t) => t.locale === data.defaultLocale)) {
+      return response.unprocessableEntity({
+        errors: [
+          {
+            message: i18n.t('messages.posts.missingDefaultTranslation'),
+            field: 'translations',
+            rule: 'required',
+          },
+        ],
+      })
+    }
+
+    const post = await db.transaction(async (trx) => {
+      const created = await Post.create(
+        {
+          userId: user.id,
+          published: false,
+          coverImage: data.coverImage || null,
+          defaultLocale: data.defaultLocale,
+        },
+        { client: trx }
+      )
+
+      for (const translation of data.translations) {
+        const slug = await SlugService.uniqueSlug(
+          translation.locale,
+          translation.slug || translation.title
+        )
+        await created.related('translations').create({
+          locale: translation.locale,
+          title: translation.title,
+          slug,
+          content: translation.content,
+          excerpt: translation.excerpt || null,
+        })
+      }
+
+      return created
     })
 
     await post.load('author')
+    await post.load('translations')
 
-    return response.created(post)
+    return response.created(serializeAdminPost(post))
   }
 
   /**
@@ -223,14 +377,13 @@ export default class PostsController {
    * @operationId updatePost
    * @tag POSTS_ADMIN
    * @summary Update an existing post
-   * @description Updates fields of an existing post. Writers may only update their own posts, admins may update any. Requires authentication and `update` ability on the Post policy. Returns 404 if the post does not exist.
+   * @description Updates the shared fields (cover image, primary language) and upserts the provided translations. A translation's slug is only regenerated when a `slug` is supplied (URLs stay stable otherwise). New locales can be added. Requires `update` ability.
    * @paramPath id - Post id - @type(number) @example(7) @required
    * @requestBody <UpdatePostValidator>
    * @responseBody 200 - <Post>
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. You can only update your own posts."}
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
-   * @responseBody 422 - {"errors": [{"message": "The title field must have at least 3 characters", "field": "title", "rule": "minLength"}]}
    */
   async update({ params, request, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
@@ -246,12 +399,45 @@ export default class PostsController {
 
     const data = await request.validateUsing(UpdatePostValidator)
 
-    post.merge(data)
-    await post.save()
+    await db.transaction(async (trx) => {
+      post.useTransaction(trx)
+      if (data.defaultLocale !== undefined) post.defaultLocale = data.defaultLocale
+      if (data.coverImage !== undefined) post.coverImage = data.coverImage || null
+      await post.save()
+
+      for (const entry of data.translations ?? []) {
+        const existing = await PostTranslation.query({ client: trx })
+          .where('post_id', post.id)
+          .where('locale', entry.locale)
+          .first()
+
+        if (existing) {
+          if (entry.title !== undefined) existing.title = entry.title
+          if (entry.content !== undefined) existing.content = entry.content
+          if (entry.excerpt !== undefined) existing.excerpt = entry.excerpt || null
+          if (entry.slug !== undefined) {
+            existing.slug = await SlugService.uniqueSlug(entry.locale, entry.slug, existing.id)
+          }
+          existing.useTransaction(trx)
+          await existing.save()
+        } else if (entry.title && entry.content) {
+          // Nouvelle langue : nécessite au minimum titre + contenu.
+          const slug = await SlugService.uniqueSlug(entry.locale, entry.slug || entry.title)
+          await post.related('translations').create({
+            locale: entry.locale,
+            title: entry.title,
+            slug,
+            content: entry.content,
+            excerpt: entry.excerpt || null,
+          })
+        }
+      }
+    })
 
     await post.load('author')
+    await post.load('translations')
 
-    return response.ok(post)
+    return response.ok(serializeAdminPost(post))
   }
 
   /**
@@ -259,7 +445,7 @@ export default class PostsController {
    * @operationId deletePost
    * @tag POSTS_ADMIN
    * @summary Delete a post
-   * @description Permanently deletes a post. Writers may only delete their own posts, admins may delete any. Requires authentication and `destroy` ability on the Post policy. Returns 404 if the post does not exist.
+   * @description Permanently deletes a post and its translations (cascade). Writers may only delete their own posts. Requires `destroy` ability.
    * @paramPath id - Post id - @type(number) @example(7) @required
    * @responseBody 204 - {}
    * @responseBody 401 - {"error": "Unauthorized"}
@@ -288,7 +474,7 @@ export default class PostsController {
    * @operationId publishPost
    * @tag POSTS_ADMIN
    * @summary Publish a post
-   * @description Marks a post as published and sets `publishedAt` to the current timestamp. Writers may only publish their own posts, admins may publish any. Requires authentication and `publish` ability on the Post policy. Returns 404 if the post does not exist.
+   * @description Marks a post as published and sets `publishedAt`. Requires `publish` ability.
    * @paramPath id - Post id - @type(number) @example(7) @required
    * @responseBody 200 - <Post>
    * @responseBody 401 - {"error": "Unauthorized"}
@@ -312,8 +498,9 @@ export default class PostsController {
     await post.save()
 
     await post.load('author')
+    await post.load('translations')
 
-    return response.ok(post)
+    return response.ok(serializeAdminPost(post))
   }
 
   /**
@@ -321,7 +508,7 @@ export default class PostsController {
    * @operationId unpublishPost
    * @tag POSTS_ADMIN
    * @summary Unpublish a post
-   * @description Marks a post as unpublished and clears its `publishedAt` timestamp. Writers may only unpublish their own posts, admins may unpublish any. Requires authentication and `publish` ability on the Post policy. Returns 404 if the post does not exist.
+   * @description Marks a post as unpublished and clears `publishedAt`. Requires `publish` ability.
    * @paramPath id - Post id - @type(number) @example(7) @required
    * @responseBody 200 - <Post>
    * @responseBody 401 - {"error": "Unauthorized"}
@@ -345,8 +532,9 @@ export default class PostsController {
     await post.save()
 
     await post.load('author')
+    await post.load('translations')
 
-    return response.ok(post)
+    return response.ok(serializeAdminPost(post))
   }
 
   /**
@@ -354,8 +542,8 @@ export default class PostsController {
    * @operationId listPlaceholders
    * @tag POSTS
    * @summary List available content placeholders
-   * @description Returns the catalog of placeholder tokens that can be embedded in post content (e.g. `%PLAYER_COUNT_REALTIME_125%`). Each entry includes the placeholder name, a human-readable description, and an example string. Publicly accessible.
-   * @responseBody 200 - [{"name": "PLAYER_COUNT_REALTIME", "description": "Current number of online players", "example": "%PLAYER_COUNT_REALTIME_125%"}, {"name": "PLAYER_COUNT_PEAK_HIGH", "description": "Highest number of players ever recorded", "example": "%PLAYER_COUNT_PEAK_HIGH_125%"}]
+   * @description Returns the catalog of placeholder tokens that can be embedded in post content. Publicly accessible.
+   * @responseBody 200 - [{"name": "PLAYER_COUNT_REALTIME", "description": "Current number of online players", "example": "%PLAYER_COUNT_REALTIME_125%"}]
    */
   async getPlaceholders({ response }: HttpContext) {
     const placeholders = PlaceholderService.getAvailablePlaceholders()
@@ -367,7 +555,7 @@ export default class PostsController {
    * @operationId previewPlaceholder
    * @tag POSTS_ADMIN
    * @summary Preview a placeholder substitution
-   * @description Resolves a single placeholder for a given server and returns both the raw placeholder string and the computed value, so the editor UI can show writers what the token will render to. Requires authentication and `manage` ability on the Post policy.
+   * @description Resolves a single placeholder for a given server. Requires `manage` ability.
    * @requestBody {"placeholderName": "PLAYER_COUNT_REALTIME", "serverId": "125"}
    * @responseBody 200 - {"placeholder": "%PLAYER_COUNT_REALTIME_125%", "value": "42", "serverId": 125, "placeholderName": "PLAYER_COUNT_REALTIME"}
    * @responseBody 401 - {"error": "Unauthorized"}
@@ -402,9 +590,9 @@ export default class PostsController {
    * @operationId adminPostStats
    * @tag POSTS_ADMIN
    * @summary Post views & feedback statistics (admin/writer)
-   * @description Returns engagement statistics for a single post: the raw view total, the consent-aware analytics breakdown derived from the page-view pipeline for `/blog/{slug}` (consented views, logged-in views, unique visitors), the helpful/not-helpful feedback tallies, and the most recent logged-in viewers (who viewed). Writers may only access stats for their own posts, admins for any. Requires authentication and `update` ability on the Post policy. Returns 404 if the post does not exist.
+   * @description Returns engagement statistics for a post, aggregating analytics across every per-locale slug path (`/blog/{slug}`). Requires `update` ability.
    * @paramPath id - Post id - @type(number) @example(7) @required
-   * @responseBody 200 - {"post": {"id": 7, "title": "Welcome", "slug": "welcome", "viewCount": 1234}, "views": {"total": 1234, "consented": 800, "loggedIn": 120, "uniqueVisitors": 640}, "feedback": {"helpful": 42, "notHelpful": 3}, "recentViewers": [{"id": 1, "username": "gabriel", "avatarUrl": "", "lastViewedAt": "2026-06-26T12:00:00.000Z"}]}
+   * @responseBody 200 - {"post": {"id": 7, "title": "Welcome", "slugs": {"en": "welcome"}, "viewCount": 1234}, "views": {"total": 1234, "consented": 800, "loggedIn": 120, "uniqueVisitors": 640}, "feedback": {"helpful": 42, "notHelpful": 3}, "recentViewers": [{"id": 1, "username": "gabriel", "avatarUrl": "", "lastViewedAt": "2026-06-26T12:00:00.000Z"}]}
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. You can only view stats for your own posts."}
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
@@ -415,7 +603,7 @@ export default class PostsController {
       return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
-    const post = await Post.findOrFail(params.id)
+    const post = await Post.query().where('id', params.id).preload('translations').firstOrFail()
 
     if (await bouncer.with(PostPolicy).denies('update', post)) {
       return response.forbidden({
@@ -423,14 +611,15 @@ export default class PostsController {
       })
     }
 
-    // L'analytics enregistre les vues consenties par chemin exact (cf. AnalyticsService) :
-    // on retrouve donc les vues d'un article via son URL publique `/blog/{slug}`.
-    const path = `/blog/${post.slug}`
+    // L'analytics enregistre les vues par chemin exact ; un article a un chemin
+    // par langue (slug par locale), on agrège donc sur tous ses slugs.
+    const paths = post.translations.map((t) => `/blog/${t.slug}`)
+    const resolved = post.forLocale(post.defaultLocale)
 
     const [analyticsRow, feedbackRow, recentViewers] = await Promise.all([
       db
         .from('page_views')
-        .where('path', path)
+        .whereIn('path', paths)
         .select(db.raw('count(*) as consented_views'))
         .select(db.raw('count(*) filter (where user_id is not null) as logged_in_views'))
         .select(db.raw('count(distinct visitor_id) as unique_visitors'))
@@ -446,7 +635,7 @@ export default class PostsController {
       db
         .from('page_views')
         .join('users', 'users.id', 'page_views.user_id')
-        .where('page_views.path', path)
+        .whereIn('page_views.path', paths)
         .select('users.id as id', 'users.username as username', 'users.avatar_url as avatar_url')
         .select(db.raw('max(page_views.created_at) as last_viewed_at'))
         .groupBy('users.id', 'users.username', 'users.avatar_url')
@@ -455,7 +644,12 @@ export default class PostsController {
     ])
 
     return response.ok({
-      post: { id: post.id, title: post.title, slug: post.slug, viewCount: post.viewCount },
+      post: {
+        id: post.id,
+        title: resolved.title,
+        slugs: post.slugsByLocale(),
+        viewCount: post.viewCount,
+      },
       views: {
         total: post.viewCount,
         consented: Number(analyticsRow?.consented_views ?? 0),

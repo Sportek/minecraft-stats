@@ -32,6 +32,7 @@
     "unauthorized": "Non autorisé",
     "writerRequired": "Accès refusé. Privilèges de rédacteur requis.",
     "notFound": "Article introuvable",
+    "missingDefaultTranslation": "Une traduction dans la langue principale est requise.",
     "updateOwnOnly": "Accès refusé. Vous ne pouvez modifier que vos propres articles.",
     "deleteOwnOnly": "Accès refusé. Vous ne pouvez supprimer que vos propres articles.",
     "publishOwnOnly": "Accès refusé. Vous ne pouvez publier que vos propres articles.",

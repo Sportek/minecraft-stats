@@ -32,6 +32,7 @@
     "unauthorized": "Unauthorized",
     "writerRequired": "Access denied. Writer privileges required.",
     "notFound": "Post not found",
+    "missingDefaultTranslation": "A translation in the primary language is required.",
     "updateOwnOnly": "Access denied. You can only update your own posts.",
     "deleteOwnOnly": "Access denied. You can only delete your own posts.",
     "publishOwnOnly": "Access denied. You can only publish your own posts.",
