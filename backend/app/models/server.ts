@@ -8,6 +8,7 @@ import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
 import type { ServerType } from '../constants/server_type.js'
 import { normalizeWebsite } from '#utils/website'
+import { deriveServerWebsite } from '#utils/server_website'
 import db from '@adonisjs/lucid/services/db'
 
 export default class Server extends BaseModel {
@@ -51,6 +52,12 @@ export default class Server extends BaseModel {
 
   @column({ columnName: 'motd_hash' })
   declare motdHash: string | null
+
+  // Domaine racine (eTLD+1) dérivé de l'adresse : `mc.hypixel.net` -> `hypixel.net`.
+  // Indexé, peuplé par `deriveHostDomainColumn` ci-dessous. Sert de signal fort
+  // à la détection de doublon (cf. DuplicateDetectionService).
+  @column({ columnName: 'host_domain' })
+  declare hostDomain: string | null
 
   @column({ columnName: 'user_id' })
   declare userId: number
@@ -110,6 +117,16 @@ export default class Server extends BaseModel {
   static normalizeWebsiteColumn(server: Server) {
     if (server.website) {
       server.website = normalizeWebsite(server.website)
+    }
+  }
+
+  // Keep `host_domain` in sync with the address on every write path (create,
+  // owner edit, scheduler ping). Derived from the address — the same eTLD+1
+  // extraction used for the website. Existing rows self-heal on their next save.
+  @beforeSave()
+  static deriveHostDomainColumn(server: Server) {
+    if (server.$dirty.address !== undefined || server.hostDomain === null) {
+      server.hostDomain = deriveServerWebsite(server.address)
     }
   }
 
