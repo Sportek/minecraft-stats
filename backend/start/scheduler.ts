@@ -134,6 +134,7 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
       server.lastPlayerCount = playerOnline
       server.lastMaxCount = maxPlayer
       server.lastStatsAt = DateTime.fromJSDate(createdAt)
+      server.lastOnlineAt = DateTime.fromJSDate(createdAt)
 
       // Pic all-time : on ne le déplace que vers le haut.
       if (playerOnline > (server.peakPlayerCount ?? 0)) {
