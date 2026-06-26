@@ -1,5 +1,6 @@
 import { getBaseUrl } from '@/app/_cheatcode'
-import { User } from '@/types/auth'
+import { AdminUserProfile, User } from '@/types/auth'
+import { AdminUserServer } from '@/types/server'
 import { getErrorMessage } from './auth'
 
 export interface UsersListResponse {
@@ -9,6 +10,14 @@ export interface UsersListResponse {
     perPage: number
     currentPage: number
     lastPage: number
+  }
+}
+
+export interface AdminUserDetailResponse {
+  user: AdminUserProfile
+  servers: AdminUserServer[]
+  stats: {
+    serverCount: number
   }
 }
 
@@ -45,6 +54,22 @@ export const getAdminUsers = async (
   }
 
   return response.json() as Promise<UsersListResponse>
+}
+
+export const getAdminUserDetail = async (userId: number, token: string) => {
+  const response = await fetch(`${getBaseUrl()}/admin/users/${userId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return response.json() as Promise<AdminUserDetailResponse>
 }
 
 export const updateUserRole = async (

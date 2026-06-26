@@ -221,6 +221,9 @@ router
           .get('users', '#controllers/users_controller.adminIndex')
           .use(throttleLight('admin.users.index', 20))
         router
+          .get('users/:id', '#controllers/users_controller.adminShow')
+          .use([throttleLight('admin.users.show', 30), NO_STORE])
+        router
           .patch('users/:id/role', '#controllers/users_controller.updateRole')
           .use(throttleLight('admin.users.updateRole', 10))
 

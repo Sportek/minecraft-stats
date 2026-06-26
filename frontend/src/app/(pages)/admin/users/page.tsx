@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/auth";
 import { getAdminUsers, updateUserRole } from "@/http/user";
 import { User } from "@/types/auth";
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 20;
@@ -216,10 +217,13 @@ const AdminUsersPage = () => {
                 key={u.id}
                 className="flex flex-col gap-3 p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center"
               >
-                <div className="flex min-w-0 flex-1 items-center gap-3">
+                <Link
+                  href={`/admin/users/${u.id}`}
+                  className="group flex min-w-0 flex-1 items-center gap-3"
+                >
                   <LetterTile name={u.username} className="h-10 w-10 rounded-md text-sm" />
                   <div className="min-w-0">
-                    <p className="truncate font-medium text-foreground">
+                    <p className="truncate font-medium text-foreground transition-colors group-hover:text-accent">
                       {u.username}
                       {u.id === user.id && <span className="ml-2 text-xs text-accent">(you)</span>}
                     </p>
@@ -227,7 +231,7 @@ const AdminUsersPage = () => {
                       Joined {new Date(u.createdAt).toLocaleDateString()}
                     </p>
                   </div>
-                </div>
+                </Link>
 
                 <div className="flex items-center justify-between gap-4 sm:justify-end">
                   <Badge variant={getRoleBadgeVariant(u.role)}>
