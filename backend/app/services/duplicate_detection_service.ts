@@ -2,23 +2,39 @@ import { createHash } from 'node:crypto'
 import dns from 'node:dns'
 import net from 'node:net'
 import Server from '#models/server'
+import { deriveServerWebsite } from '#utils/server_website'
 
 /**
  * Poids de chaque signal dans le score de similarité.
  * À calibrer empiriquement. Logique de conception :
- *  - favicon : signal le plus fort (icône custom quasi unique), mais pas
- *    suffisant seul (deux serveurs peuvent réutiliser une icône téléchargée).
+ *  - domain : domaine racine (eTLD+1) de l'adresse. `mc.hypixel.net` et
+ *    `hypixel.net` le partagent → signal fort. Neutralisé si beaucoup de
+ *    serveurs partagent le domaine (hébergeurs à sous-domaines type minehut.gg).
+ *  - favicon : icône custom quasi unique, mais pas suffisante seule (deux
+ *    serveurs peuvent réutiliser une icône téléchargée / l'icône par défaut d'un
+ *    hébergeur).
  *  - endpoint : `ip:port` réel ; pour un serveur hébergé en direct, identique =
  *    même serveur. Neutralisé si l'endpoint est partagé (proxy anti-DDoS).
  *  - motd : MOTD normalisé (codes couleur + chiffres retirés). Sujet aux
  *    collisions ("welcome to..."), donc volontairement insuffisant seul.
+ *  - players : nombre de joueurs connectés. Deux serveurs au même instant avec
+ *    un compte à ±10 % sont très probablement le même backend. Bruité à bas
+ *    volume (tout le monde a ~10 joueurs), donc plancher + jamais décisif seul.
  *  - version : très commune (tout le monde sur la dernière). Simple bonus —
  *    son poids est choisi pour ne JAMAIS faire basculer une paire à lui seul.
+ *
+ * Calibrage : aucun signal ne franchit le seuil seul. Les combinaisons qui le
+ * franchissent (≥ 75) sont celles où deux signaux indépendants concordent :
+ * domain+favicon=90, domain+endpoint=85, domain+motd=75, favicon+endpoint=85,
+ * favicon+motd=75, domain+players+version=75… Le cas hypixel.net/mc.hypixel.net
+ * (endpoint proxyfié, MOTD rotatif) marque domain+favicon+players ≈ 112.
  */
 const SIGNAL_WEIGHTS = {
-  favicon: 50,
+  domain: 45,
+  favicon: 45,
   endpoint: 40,
   motd: 30,
+  players: 22,
   version: 8,
 } as const
 
@@ -32,10 +48,30 @@ const DUPLICATE_THRESHOLD = 75
  */
 const SHARED_ENDPOINT_LIMIT = 2
 
+/**
+ * À partir de ce nombre de serveurs partageant le même domaine racine, on le
+ * considère comme un hébergeur à sous-domaines (minehut.gg, *.aternos.me…) : il
+ * ne discrimine plus rien et son poids tombe à 0. Volontairement généreux — un
+ * réseau légitime peut lister quelques sous-domaines (mc., play., eu.…).
+ */
+const SHARED_DOMAIN_LIMIT = 5
+
+/**
+ * Plancher en deçà duquel le signal "joueurs" est ignoré : à faible volume, des
+ * dizaines de serveurs sans rapport stationnent à quelques joueurs, la
+ * proximité ne prouve donc rien.
+ */
+const PLAYER_SIMILARITY_FLOOR = 50
+
+/** Écart relatif maximal entre deux comptes de joueurs pour les juger proches. */
+const PLAYER_SIMILARITY_TOLERANCE = 0.1
+
 export interface ServerFingerprint {
+  domain: string | null
   faviconHash: string | null
   resolvedEndpoint: string | null
   motdHash: string | null
+  playerCount: number | null
   version: string | null
 }
 
@@ -50,6 +86,7 @@ export interface PingFingerprintInput {
   favicon?: string | null
   description?: unknown
   version?: { name?: string } | null
+  players?: { online?: number } | null
 }
 
 /**
@@ -144,6 +181,24 @@ export default class DuplicateDetectionService {
     }
   }
 
+  /**
+   * Domaine racine (eTLD+1) de l'adresse — `mc.hypixel.net` -> `hypixel.net`.
+   * Réutilise l'extraction de l'adresse->site web. null pour une IP/localhost.
+   */
+  static hostDomain(address: string): string | null {
+    return deriveServerWebsite(address)
+  }
+
+  /**
+   * Deux comptes de joueurs sont-ils suffisamment proches pour suggérer le même
+   * serveur ? Faux si l'un des deux est inconnu ou sous le plancher de bruit.
+   */
+  static playerCountsClose(a: number | null, b: number | null): boolean {
+    if (a === null || b === null) return false
+    if (a < PLAYER_SIMILARITY_FLOOR || b < PLAYER_SIMILARITY_FLOOR) return false
+    return Math.abs(a - b) / Math.max(a, b) <= PLAYER_SIMILARITY_TOLERANCE
+  }
+
   /** Calcule les empreintes d'un serveur à partir de son adresse + sa réponse de ping. */
   static async fingerprint(
     address: string,
@@ -151,9 +206,11 @@ export default class DuplicateDetectionService {
     ping: PingFingerprintInput
   ): Promise<ServerFingerprint> {
     return {
+      domain: this.hostDomain(address),
       faviconHash: this.hashFavicon(ping.favicon),
       resolvedEndpoint: await this.resolveEndpoint(address, port),
       motdHash: this.hashMotd(ping.description),
+      playerCount: ping.players?.online ?? null,
       version: ping.version?.name ?? null,
     }
   }
@@ -168,28 +225,43 @@ export default class DuplicateDetectionService {
   static async findDuplicate(
     fingerprint: ServerFingerprint & { excludeId?: number }
   ): Promise<DuplicateMatch | null> {
-    const { faviconHash, resolvedEndpoint, motdHash, version, excludeId } = fingerprint
+    const { domain, faviconHash, resolvedEndpoint, motdHash, playerCount, version, excludeId } =
+      fingerprint
 
-    // Sans aucun signal exploitable, rien à comparer.
-    if (!faviconHash && !resolvedEndpoint && !motdHash) return null
+    // Sans aucun signal indexable exploitable, rien à comparer. (`players` et
+    // `version` ne servent qu'à corroborer un candidat déjà sélectionné.)
+    if (!domain && !faviconHash && !resolvedEndpoint && !motdHash) return null
 
-    // Endpoint partagé par plusieurs serveurs => proxy / mutualisé => non fiable.
-    let endpointTrusted = false
-    if (resolvedEndpoint) {
-      const countQuery = Server.query().where('resolved_endpoint', resolvedEndpoint)
-      if (excludeId) countQuery.whereNot('id', excludeId)
-      const rows = await countQuery.count('* as total')
-      endpointTrusted = Number(rows[0].$extras.total) < SHARED_ENDPOINT_LIMIT
+    const countSharing = async (column: string, value: string): Promise<number> => {
+      const query = Server.query().where(column, value)
+      if (excludeId) query.whereNot('id', excludeId)
+      const rows = await query.count('* as total')
+      return Number(rows[0].$extras.total)
     }
 
-    // Aucun signal *discriminant* utilisable (la version seule est trop commune
+    // Endpoint partagé par plusieurs serveurs => proxy / mutualisé => non fiable.
+    const endpointTrusted = resolvedEndpoint
+      ? (await countSharing('resolved_endpoint', resolvedEndpoint)) < SHARED_ENDPOINT_LIMIT
+      : false
+
+    // Domaine partagé par trop de serveurs => hébergeur à sous-domaines => non fiable.
+    const domainTrusted = domain
+      ? (await countSharing('host_domain', domain)) < SHARED_DOMAIN_LIMIT
+      : false
+
+    // Aucun signal *discriminant* utilisable (players/version sont trop communs
     // pour servir de critère de sélection) → inutile de scanner.
-    const hasDiscriminating = !!faviconHash || (!!resolvedEndpoint && endpointTrusted) || !!motdHash
+    const hasDiscriminating =
+      (!!domain && domainTrusted) ||
+      !!faviconHash ||
+      (!!resolvedEndpoint && endpointTrusted) ||
+      !!motdHash
     if (!hasDiscriminating) return null
 
     // Candidats : tout serveur partageant au moins un signal discriminant.
     const candidates = await Server.query()
       .where((builder) => {
+        if (domain && domainTrusted) builder.orWhere('host_domain', domain)
         if (faviconHash) builder.orWhere('favicon_hash', faviconHash)
         if (resolvedEndpoint && endpointTrusted) {
           builder.orWhere('resolved_endpoint', resolvedEndpoint)
@@ -203,6 +275,10 @@ export default class DuplicateDetectionService {
       let score = 0
       const signals: string[] = []
 
+      if (domainTrusted && domain && candidate.hostDomain === domain) {
+        score += SIGNAL_WEIGHTS.domain
+        signals.push('domain')
+      }
       if (faviconHash && candidate.faviconHash === faviconHash) {
         score += SIGNAL_WEIGHTS.favicon
         signals.push('favicon')
@@ -215,8 +291,13 @@ export default class DuplicateDetectionService {
         score += SIGNAL_WEIGHTS.motd
         signals.push('motd')
       }
-      // La version n'est qu'un bonus : seule, elle ne place jamais un candidat
-      // dans la liste ci-dessus, donc elle ne peut pas déclencher un faux positif.
+      // players / version ne sont que des bonus : seuls, ils ne placent jamais un
+      // candidat dans la liste ci-dessus, donc ne peuvent pas déclencher de faux
+      // positif. On compare le compte live au dernier compte connu du candidat.
+      if (this.playerCountsClose(playerCount, candidate.lastPlayerCount)) {
+        score += SIGNAL_WEIGHTS.players
+        signals.push('players')
+      }
       if (version && candidate.version === version) {
         score += SIGNAL_WEIGHTS.version
         signals.push('version')
