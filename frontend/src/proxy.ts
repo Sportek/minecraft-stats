@@ -2,10 +2,10 @@ import createMiddleware from "next-intl/middleware";
 import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
-const intlMiddleware = createMiddleware(routing);
+const intlProxy = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
-  const response = intlMiddleware(request);
+export default function proxy(request: NextRequest) {
+  const response = intlProxy(request);
   // Expose the incoming path to generateMetadata (hreflang/canonical), which has
   // no other access to the request pathname.
   response.headers.set("x-pathname", request.nextUrl.pathname);
