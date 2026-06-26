@@ -118,6 +118,9 @@
     "slugInputPlaceholder": "auto-from-title",
     "summary": "Summary (optional)",
     "summaryPlaceholder": "A short description for the article card...",
+    "primaryLanguage": "Primary language",
+    "primaryLanguageHint": "The language readers fall back to when a translation is missing.",
+    "primaryRequired": "Please fill in the title and content of the primary language.",
     "cancel": "Cancel"
   },
   "posts": {

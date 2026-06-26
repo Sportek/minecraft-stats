@@ -118,6 +118,9 @@
     "slugInputPlaceholder": "auto-depuis-le-titre",
     "summary": "Résumé (optionnel)",
     "summaryPlaceholder": "Une courte description pour la carte de l'article...",
+    "primaryLanguage": "Langue principale",
+    "primaryLanguageHint": "La langue affichée en secours lorsqu'une traduction est absente.",
+    "primaryRequired": "Veuillez renseigner le titre et le contenu de la langue principale.",
     "cancel": "Annuler"
   },
   "posts": {

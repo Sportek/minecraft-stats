@@ -2,10 +2,11 @@
 
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
-import { PostForm, PostFormValues } from "@/components/admin/post-form";
+import { LocaleFields, PostForm, PostFormValues } from "@/components/admin/post-form";
 import { useAuth } from "@/contexts/auth";
-import { getAdminPosts, updatePost } from "@/http/post";
-import { Post } from "@/types/post";
+import { getAdminPost, updatePost } from "@/http/post";
+import { emptyPostFormValues, hasPrimaryContent, postFormValuesFromAdmin, slugify, toUpdateInput } from "@/lib/post-form";
+import { AdminPost, PostLocale } from "@/types/post";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -20,12 +21,8 @@ const EditPostPage = () => {
   const idParam = Array.isArray(params.id) ? params.id[0] : params.id;
   const postId = Number.parseInt(idParam ?? "");
 
-  const [post, setPost] = useState<Post | null>(null);
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [content, setContent] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [coverImage, setCoverImage] = useState("");
+  const [post, setPost] = useState<AdminPost | null>(null);
+  const [values, setValues] = useState<PostFormValues>(() => emptyPostFormValues("en"));
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
@@ -35,16 +32,9 @@ const EditPostPage = () => {
     const fetchPost = async () => {
       try {
         setFetching(true);
-        const response = await getAdminPosts(token, 1, 100);
-        const foundPost = response.data.find((p) => p.id === postId);
-        if (foundPost) {
-          setPost(foundPost);
-          setTitle(foundPost.title);
-          setSlug(foundPost.slug);
-          setContent(foundPost.content);
-          setExcerpt(foundPost.excerpt || "");
-          setCoverImage(foundPost.coverImage || "");
-        }
+        const found = await getAdminPost(postId, token);
+        setPost(found);
+        setValues(postFormValuesFromAdmin(found));
       } catch (error) {
         console.error("Failed to fetch post:", error);
       } finally {
@@ -75,43 +65,45 @@ const EditPostPage = () => {
 
   if (!post) {
     return (
-      <AdminMessageState
-        title={t("posts.notFoundTitle")}
-        description={t("posts.notFoundDescription")}
-      >
+      <AdminMessageState title={t("posts.notFoundTitle")} description={t("posts.notFoundDescription")}>
         <AdminBackLink href="/admin/posts" label={t("posts.backToArticles")} />
       </AdminMessageState>
     );
   }
 
-  const handleField = <K extends keyof PostFormValues>(field: K, value: PostFormValues[K]) => {
-    const setters: Record<keyof PostFormValues, (v: string) => void> = {
-      title: setTitle,
-      slug: setSlug,
-      excerpt: setExcerpt,
-      coverImage: setCoverImage,
-      content: setContent,
-    };
-    setters[field](value);
+  const onLocaleField = <K extends keyof LocaleFields>(locale: PostLocale, field: K, value: LocaleFields[K]) => {
+    setValues((prev) => ({
+      ...prev,
+      translations: { ...prev.translations, [locale]: { ...prev.translations[locale], [field]: value } },
+    }));
+  };
+
+  const onSharedField = (field: "defaultLocale" | "coverImage", value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const onTitleBlur = (locale: PostLocale) => {
+    setValues((prev) => {
+      const fields = prev.translations[locale];
+      if (!fields.title || fields.slug) return prev;
+      return {
+        ...prev,
+        translations: { ...prev.translations, [locale]: { ...fields, slug: slugify(fields.title) } },
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
+    if (!hasPrimaryContent(values)) {
+      alert(t("postForm.primaryRequired"));
+      return;
+    }
 
     try {
       setLoading(true);
-      await updatePost(
-        postId,
-        {
-          title,
-          slug,
-          content,
-          excerpt: excerpt || undefined,
-          coverImage: coverImage || undefined,
-        },
-        token
-      );
+      await updatePost(postId, toUpdateInput(values), token);
       router.push("/admin/posts");
     } catch (error) {
       console.error("Failed to update post:", error);
@@ -131,8 +123,10 @@ const EditPostPage = () => {
       </div>
 
       <PostForm
-        values={{ title, slug, excerpt, coverImage, content }}
-        onField={handleField}
+        values={values}
+        onLocaleField={onLocaleField}
+        onSharedField={onSharedField}
+        onTitleBlur={onTitleBlur}
         onSubmit={handleSubmit}
         submitting={loading}
         submitLabel={loading ? t("posts.updating") : t("posts.updateSubmit")}

@@ -1,7 +1,10 @@
 import { User } from './auth'
 
+export type PostLocale = 'fr' | 'en'
+
 export interface Post {
   id: number
+  /** Resolved for the requested locale (falls back to the post's primary language). */
   title: string
   slug: string
   content: string
@@ -10,10 +13,31 @@ export interface Post {
   published: boolean
   viewCount: number
   publishedAt: Date | null
+  /** Primary language of the post, used as fallback. */
+  defaultLocale: PostLocale
+  /** Language actually rendered after fallback resolution. */
+  localeUsed: PostLocale
+  /** Slug of each existing translation, keyed by locale (for hreflang/canonical). */
+  slugs: Partial<Record<PostLocale, string>>
   userId: number
   author: User
   createdAt: Date
   updatedAt: Date
+}
+
+/** Raw per-locale content, as edited in the admin form. */
+export interface PostTranslationContent {
+  locale: PostLocale
+  title: string
+  slug: string
+  content: string
+  excerpt: string | null
+}
+
+/** Admin view of a post: every translation + the locales it exists in. */
+export interface AdminPost extends Post {
+  availableLocales: PostLocale[]
+  translations: PostTranslationContent[]
 }
 
 /** A logged-in reader of an article, surfaced in the admin post-stats view. */
@@ -29,7 +53,7 @@ export interface PostStats {
   post: {
     id: number
     title: string
-    slug: string
+    slugs: Partial<Record<PostLocale, string>>
     viewCount: number
   }
   views: {
@@ -48,33 +72,44 @@ export interface PostStats {
   recentViewers: PostViewer[]
 }
 
-export interface CreatePostInput {
+export interface PostTranslationInput {
+  locale: PostLocale
   title: string
   slug?: string
   content: string
   excerpt?: string
+}
+
+export interface CreatePostInput {
+  defaultLocale: PostLocale
   coverImage?: string
+  translations: PostTranslationInput[]
 }
 
 export interface UpdatePostInput {
-  title?: string
-  slug?: string
-  content?: string
-  excerpt?: string
+  defaultLocale?: PostLocale
   coverImage?: string
+  translations?: PostTranslationInput[]
+}
+
+interface PaginationMeta {
+  total: number
+  perPage: number
+  currentPage: number
+  lastPage: number
+  firstPage: number
+  firstPageUrl: string
+  lastPageUrl: string
+  nextPageUrl: string | null
+  previousPageUrl: string | null
 }
 
 export interface PostsListResponse {
-  meta: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
-    firstPage: number
-    firstPageUrl: string
-    lastPageUrl: string
-    nextPageUrl: string | null
-    previousPageUrl: string | null
-  }
+  meta: PaginationMeta
   data: Post[]
+}
+
+export interface AdminPostsListResponse {
+  meta: PaginationMeta
+  data: AdminPost[]
 }

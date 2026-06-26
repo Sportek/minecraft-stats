@@ -2,10 +2,12 @@
 
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
-import { PostForm, PostFormValues } from "@/components/admin/post-form";
+import { LocaleFields, PostForm, PostFormValues } from "@/components/admin/post-form";
 import { useAuth } from "@/contexts/auth";
 import { createPost } from "@/http/post";
 import { useRouter } from "@/i18n/navigation";
+import { emptyPostFormValues, hasPrimaryContent, slugify, toCreateInput } from "@/lib/post-form";
+import { PostLocale } from "@/types/post";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -14,11 +16,7 @@ const NewPostPage = () => {
   const t = useTranslations("Admin");
   const token = getToken();
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [content, setContent] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [coverImage, setCoverImage] = useState("");
+  const [values, setValues] = useState<PostFormValues>(() => emptyPostFormValues("en"));
   const [loading, setLoading] = useState(false);
 
   if (!user) {
@@ -35,43 +33,40 @@ const NewPostPage = () => {
     );
   }
 
-  const generateSlug = () => {
-    if (title) {
-      const newSlug = title
-        .toLowerCase()
-        .replaceAll(/[^a-z0-9]+/g, "-")
-        .replaceAll(/(^-|-$)+/g, "");
-      setSlug(newSlug);
-    }
+  const onLocaleField = <K extends keyof LocaleFields>(locale: PostLocale, field: K, value: LocaleFields[K]) => {
+    setValues((prev) => ({
+      ...prev,
+      translations: { ...prev.translations, [locale]: { ...prev.translations[locale], [field]: value } },
+    }));
   };
 
-  const handleField = <K extends keyof PostFormValues>(field: K, value: PostFormValues[K]) => {
-    const setters: Record<keyof PostFormValues, (v: string) => void> = {
-      title: setTitle,
-      slug: setSlug,
-      excerpt: setExcerpt,
-      coverImage: setCoverImage,
-      content: setContent,
-    };
-    setters[field](value);
+  const onSharedField = (field: "defaultLocale" | "coverImage", value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Auto-fill the slug from the title, but never clobber a manually edited one.
+  const onTitleBlur = (locale: PostLocale) => {
+    setValues((prev) => {
+      const fields = prev.translations[locale];
+      if (!fields.title || fields.slug) return prev;
+      return {
+        ...prev,
+        translations: { ...prev.translations, [locale]: { ...fields, slug: slugify(fields.title) } },
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
+    if (!hasPrimaryContent(values)) {
+      alert(t("postForm.primaryRequired"));
+      return;
+    }
 
     try {
       setLoading(true);
-      await createPost(
-        {
-          title,
-          slug: slug || undefined,
-          content,
-          excerpt: excerpt || undefined,
-          coverImage: coverImage || undefined,
-        },
-        token
-      );
+      await createPost(toCreateInput(values), token);
       router.push("/admin/posts");
     } catch (error) {
       console.error("Failed to create post:", error);
@@ -91,9 +86,10 @@ const NewPostPage = () => {
       </div>
 
       <PostForm
-        values={{ title, slug, excerpt, coverImage, content }}
-        onField={handleField}
-        onTitleBlur={generateSlug}
+        values={values}
+        onLocaleField={onLocaleField}
+        onSharedField={onSharedField}
+        onTitleBlur={onTitleBlur}
         onSubmit={handleSubmit}
         submitting={loading}
         submitLabel={loading ? t("posts.publishing") : t("posts.publishSubmit")}

@@ -1,6 +1,7 @@
 import PostCard from "@/components/blog/post-card";
 import { Button } from "@/components/ui/button";
 import { getPosts } from "@/http/post";
+import { PostLocale } from "@/types/post";
 import { buildAlternates, getDomainConfig } from "@/lib/domain-server";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Metadata } from "next";
@@ -45,7 +46,7 @@ export default async function BlogPage({ params, searchParams }: Readonly<Props>
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Blog" });
   const page = parsePage((await searchParams).page);
-  const posts = await getPosts(page, PAGE_SIZE);
+  const posts = await getPosts(page, PAGE_SIZE, locale as PostLocale);
   const articles = posts.data;
   const { currentPage, lastPage } = posts.meta;
 

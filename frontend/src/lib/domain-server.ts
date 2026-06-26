@@ -121,6 +121,43 @@ export function buildAlternates(locale: string, path: string = ""): { canonical:
   };
 }
 
+/**
+ * hreflang map for a resource with a DIFFERENT slug per locale (blog posts).
+ * Only includes locales that actually have a translation, so we never advertise
+ * a phantom URL. `slugs` is the locale→slug map returned by the API.
+ */
+export function sitemapLanguagesForSlugs(
+  slugs: Record<string, string | undefined>,
+  prefix: string = "/blog"
+): Record<string, string> {
+  const languages: Record<string, string> = {};
+  for (const [locale, slug] of Object.entries(slugs)) {
+    if (slug) {
+      languages[locale] = `${LOCALE_HOME[locale] ?? LOCALE_HOME.en}${prefix}/${slug}`;
+    }
+  }
+  return languages;
+}
+
+/**
+ * Per-locale-slug variant of buildAlternates for blog posts. Advertises only the
+ * existing translations; x-default points at the English URL when present; the
+ * canonical is the current locale's URL, or the English/first one for a fallback
+ * render (locale without its own translation).
+ */
+export function buildAlternatesForSlugs(
+  locale: string,
+  slugs: Record<string, string | undefined>,
+  prefix: string = "/blog"
+): { canonical: string; languages: Record<string, string> } {
+  const languages = sitemapLanguagesForSlugs(slugs, prefix);
+  if (languages.en) {
+    languages["x-default"] = languages.en;
+  }
+  const canonical = languages[locale] ?? languages.en ?? Object.values(languages)[0] ?? LOCALE_HOME.en;
+  return { canonical, languages };
+}
+
 // OpenGraph wants the underscore form; our locale tokens are the short fr/en.
 const OG_LOCALE: Record<string, string> = { fr: "fr_FR", en: "en_US" };
 
