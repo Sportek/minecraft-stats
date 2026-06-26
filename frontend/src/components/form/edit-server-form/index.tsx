@@ -14,6 +14,7 @@ import { Category, Language, Server } from "@/types/server";
 import { cleanWebsiteHost } from "@/utils/server-website";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import useSWRImmutable from "swr/immutable";
@@ -35,8 +36,10 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
   const languages = languagesData || [];
 
   const { user, getToken } = useAuth();
-  
+
   const router = useRouter();
+
+  const t = useTranslations("Auth");
 
 
  const formSchema = z
@@ -85,7 +88,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
   const { toast } = useToast();
 
   if (!user) {
-    return <div>You are not authorized to edit this server</div>;
+    return <div>{t("editServer.unauthorized")}</div>;
   }
 
 
@@ -106,16 +109,16 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       );
       form.reset();
       toast({
-        title: "Server edited",
-        description: "Your server has been edited successfully",
+        title: t("editServer.successTitle"),
+        description: t("editServer.successDescription"),
         variant: "success",
       });
       router.replace("/");
       router.refresh();
     } catch (error) {
       toast({
-        title: "Error while editing server",
-        description: error instanceof Error ? error.message : "Error while editing server",
+        title: t("editServer.errorTitle"),
+        description: error instanceof Error ? error.message : t("editServer.errorTitle"),
         variant: "error",
       });
     }
@@ -126,16 +129,16 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
       await deleteServer(server.id, getToken() ?? "");
       form.reset();
       toast({
-        title: "Server deleted",
-        description: "Your server has been deleted successfully",
+        title: t("editServer.deletedTitle"),
+        description: t("editServer.deletedDescription"),
         variant: "success",
       });
       router.replace("/");
       router.refresh();
     } catch (error) {
       toast({
-        title: "Error while deleting server",
-        description: error instanceof Error ? error.message : "Error while deleting server",
+        title: t("editServer.deleteErrorTitle"),
+        description: error instanceof Error ? error.message : t("editServer.deleteErrorTitle"),
         variant: "error",
       });
     }
@@ -144,7 +147,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
   return (
     <div className={cn("flex flex-col", className)}>
       {isLoading ? (
-        <Loader message={"Loading..."} />
+        <Loader message={t("serverForm.loading")} />
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
@@ -153,8 +156,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormDescription>The name of the server</FormDescription>
+                  <FormLabel>{t("serverForm.name")}</FormLabel>
+                  <FormDescription>{t("serverForm.nameDescription")}</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
                   </FormControl>
@@ -167,8 +170,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormDescription>The address of the server</FormDescription>
+                  <FormLabel>{t("serverForm.address")}</FormLabel>
+                  <FormDescription>{t("serverForm.addressDescription")}</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
                   </FormControl>
@@ -181,8 +184,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="website"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Website (optional)</FormLabel>
-                  <FormDescription>Left empty, we infer it from the address</FormDescription>
+                  <FormLabel>{t("serverForm.website")}</FormLabel>
+                  <FormDescription>{t("serverForm.websiteDescription")}</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="example.com" {...field} />
                   </FormControl>
@@ -195,8 +198,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Edition</FormLabel>
-                  <FormDescription>Java or Bedrock edition</FormDescription>
+                  <FormLabel>{t("serverForm.edition")}</FormLabel>
+                  <FormDescription>{t("serverForm.editionDescription")}</FormDescription>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
@@ -217,11 +220,11 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="categories"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categories</FormLabel>
-                  <FormDescription>The category of the server</FormDescription>
+                  <FormLabel>{t("serverForm.categories")}</FormLabel>
+                  <FormDescription>{t("serverForm.categoriesDescription")}</FormDescription>
                   <FormControl>
                     <FancyMultiSelect
-                      title="Select categories..."
+                      title={t("serverForm.selectCategories")}
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
                       defaultSelected={field.value.map((category) => ({ value: category, label: category }))}
@@ -237,11 +240,11 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="languages"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Languages</FormLabel>
-                  <FormDescription>The languages of the server</FormDescription>
+                  <FormLabel>{t("serverForm.languages")}</FormLabel>
+                  <FormDescription>{t("serverForm.languagesDescription")}</FormDescription>
                   <FormControl>
                     <FancyMultiSelect
-                      title="Select languages..."
+                      title={t("serverForm.selectLanguages")}
                       elements={languages.map((language) => ({
                         value: language.code,
                         label: `${language.flag} ${language.name}`
@@ -266,8 +269,8 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               name="port"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Port</FormLabel>
-                  <FormDescription>The port of the server</FormDescription>
+                  <FormLabel>{t("serverForm.port")}</FormLabel>
+                  <FormDescription>{t("serverForm.portDescription")}</FormDescription>
                   <FormControl>
                     <Input type="number" placeholder="" {...field} />
                   </FormControl>
@@ -276,11 +279,11 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
               )}
             />
             <Button variant="accent" className="w-full" type="submit">
-              Save
+              {t("editServer.save")}
             </Button>
             {user.role === "admin" && (
               <Button className="w-full" variant="destructive" type="button" onClick={onDelete}>
-                Delete
+                {t("editServer.delete")}
               </Button>
             )}
           </form>

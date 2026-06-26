@@ -9,38 +9,31 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { KeyRound, User as UserIcon } from "lucide-react";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 
-const ROLE_LABELS: Record<string, string> = {
-  user: "Member",
-  writer: "Writer",
-  admin: "Admin",
-};
-
 const SettingsPage = () => {
+  const t = useTranslations("Account");
   const { user, logoutAll } = useAuth();
   const { toast } = useToast();
   const format = useFormatter();
   const [isLoggingOutAll, setIsLoggingOutAll] = useState(false);
 
   const handleLogoutAll = async () => {
-    const confirmed = window.confirm(
-      "Log out of all devices? This revokes every active session, including this one."
-    );
+    const confirmed = window.confirm(t("settings.logoutAllConfirm"));
     if (!confirmed) return;
     setIsLoggingOutAll(true);
     try {
       await logoutAll();
       toast({
-        title: "All sessions revoked",
-        description: "You have been logged out of every device.",
+        title: t("settings.sessionsRevokedTitle"),
+        description: t("settings.sessionsRevokedDescription"),
         variant: "success",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Something went wrong",
+        title: t("common.error"),
+        description: error instanceof Error ? error.message : t("common.somethingWentWrong"),
         variant: "error",
       });
     } finally {
@@ -49,12 +42,18 @@ const SettingsPage = () => {
   };
 
   if (!user) {
-    return <div className="text-muted-foreground">Loading...</div>;
+    return <div className="text-muted-foreground">{t("common.loading")}</div>;
   }
+
+  const roleLabels: Record<string, string> = {
+    user: t("settings.roles.user"),
+    writer: t("settings.roles.writer"),
+    admin: t("settings.roles.admin"),
+  };
 
   const createdAt = new Date(user.createdAt);
   const memberSince = format.dateTime(createdAt, { month: "long", year: "numeric" });
-  const roleLabel = ROLE_LABELS[user.role] ?? user.role;
+  const roleLabel = roleLabels[user.role] ?? user.role;
 
   return (
     <DashboardLayout>
@@ -62,7 +61,7 @@ const SettingsPage = () => {
         avatar={{ name: user.username, src: user.avatarUrl, editable: true }}
         title={user.username}
         badge={roleLabel}
-        subtitle={`${user.email} · Member since ${memberSince}`}
+        subtitle={t("settings.memberSince", { email: user.email, date: memberSince })}
       />
 
       {/* Your information (read-only) */}
@@ -70,18 +69,18 @@ const SettingsPage = () => {
         <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
           <div className="flex items-center gap-2.5">
             <UserIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
-            <h2 className="text-base font-semibold tracking-tight text-foreground">Your information</h2>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">{t("settings.yourInformation")}</h2>
           </div>
           <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            Read-only
+            {t("settings.readOnly")}
           </span>
         </div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-5 px-6 py-5 sm:grid-cols-2">
-          <InfoField label="Username" value={user.username} />
-          <InfoField label="Email" value={user.email} />
-          <InfoField label="Role" value={roleLabel} />
+          <InfoField label={t("settings.username")} value={user.username} />
+          <InfoField label={t("settings.email")} value={user.email} />
+          <InfoField label={t("settings.role")} value={roleLabel} />
           <InfoField
-            label="Registered at"
+            label={t("settings.registeredAt")}
             value={`${format.dateTime(createdAt, { dateStyle: "medium" })} ${format.dateTime(createdAt, { timeStyle: "short" })}`}
           />
         </div>
@@ -92,9 +91,9 @@ const SettingsPage = () => {
         <div className="flex items-center gap-2.5 border-b border-border px-6 py-4">
           <KeyRound className="h-5 w-5 shrink-0 text-muted-foreground" />
           <div className="min-w-0">
-            <h2 className="text-base font-semibold tracking-tight text-foreground">Manage password</h2>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">{t("settings.managePassword")}</h2>
             <p className="text-sm text-muted-foreground">
-              Choose a strong password you don&apos;t use anywhere else.
+              {t("settings.managePasswordSubtitle")}
             </p>
           </div>
         </div>
@@ -105,8 +104,8 @@ const SettingsPage = () => {
 
       {/* Danger zone */}
       <DangerZoneCard
-        title="Log out of all devices"
-        description="Sign out of every active session, including this one. Use this if you suspect your account has been compromised."
+        title={t("settings.dangerTitle")}
+        description={t("settings.dangerDescription")}
         action={
           <Button
             variant="outline"
@@ -114,7 +113,7 @@ const SettingsPage = () => {
             onClick={handleLogoutAll}
             disabled={isLoggingOutAll}
           >
-            {isLoggingOutAll ? "Logging out…" : "Log out everywhere"}
+            {isLoggingOutAll ? t("settings.loggingOut") : t("settings.logoutEverywhere")}
           </Button>
         }
       />

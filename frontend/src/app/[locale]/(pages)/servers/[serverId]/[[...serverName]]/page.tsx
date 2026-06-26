@@ -23,7 +23,7 @@ import AdSlot from "@/components/ads/ad-slot";
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTheme } from "next-themes";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -91,7 +91,8 @@ const createAreaSeries = (
   yKey: string,
   yName: string,
   theme: string | undefined,
-  locale: string
+  locale: string,
+  playersLabel: string
 ): AgAreaSeriesOptions => ({
   type: "area",
   xKey,
@@ -117,13 +118,15 @@ const createAreaSeries = (
       return generateTooltipHtml(
         { time: new Date(datum.time), playerCount: datum.playerCount },
         { isDarkMode: theme === "dark" },
-        locale
+        locale,
+        playersLabel
       );
     },
   },
 });
 
 const ServerNotFound = () => {
+  const t = useTranslations("Servers");
   return (
     <main className="flex-1 space-y-4 py-4">
       <div className="flex flex-col gap-4">
@@ -133,17 +136,15 @@ const ServerNotFound = () => {
               <div className="w-16 h-16 mx-auto bg-secondary text-muted-foreground rounded-full flex items-center justify-center">
                 <Icon icon="mdi:server-off" className="w-8 h-8" />
               </div>
-              <h2 className="text-xl font-semibold text-foreground">Server Not Found</h2>
-              <p className="text-sm text-muted-foreground">
-                The server you&apos;re looking for doesn&apos;t exist or has been removed.
-              </p>
+              <h2 className="text-xl font-semibold text-foreground">{t("detail.notFound.title")}</h2>
+              <p className="text-sm text-muted-foreground">{t("detail.notFound.description")}</p>
             </div>
             <Link
               href="/"
               className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-foreground bg-accent hover:bg-accent/90 rounded-md transition-colors"
             >
               <Icon icon="mdi:home" className="w-4 h-4" />
-              Back to Home
+              {t("detail.notFound.backHome")}
             </Link>
           </div>
         </div>
@@ -155,6 +156,7 @@ const ServerNotFound = () => {
 const ServerPage = () => {
   const { serverId } = useParams();
   const locale = useLocale();
+  const t = useTranslations("Servers");
   const {
     data: serverData,
     error: serverError,
@@ -194,7 +196,7 @@ const ServerPage = () => {
     return {
       ...BASE_CHART_OPTIONS,
       data,
-      series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme, locale)],
+      series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme, locale, t("chart.players"))],
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
       axes: {
         x: { ...BASE_AXES.x, min: minDate, max: maxDate },
@@ -204,14 +206,14 @@ const ServerPage = () => {
         },
       },
     };
-  }, [stats, resolvedTheme, locale]);
+  }, [stats, resolvedTheme, locale, t]);
 
   if (isServerLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex items-center gap-3 text-muted-foreground">
           <Spinner size="md" />
-          <p className="text-sm">Loading server data...</p>
+          <p className="text-sm">{t("detail.loading")}</p>
         </div>
       </div>
     );
@@ -234,9 +236,9 @@ const ServerPage = () => {
 
   return (
     <main className="flex-1 space-y-6 py-6">
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
+      <nav aria-label={t("detail.breadcrumbAria")} className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/" className="text-accent transition-colors hover:underline">
-          Servers
+          {t("detail.breadcrumb")}
         </Link>
         <span aria-hidden="true">/</span>
         <span className="truncate font-medium text-foreground">{serverData.server.name}</span>
@@ -274,8 +276,8 @@ const ServerPage = () => {
           <div className="flex items-center gap-2">
             <Icon icon="material-symbols:show-chart" className="h-5 w-5 shrink-0 text-muted-foreground" />
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Player Count History</h2>
-              <p className="text-xs text-muted-foreground">Online players over time.</p>
+              <h2 className="text-lg font-semibold text-foreground">{t("detail.history.title")}</h2>
+              <p className="text-xs text-muted-foreground">{t("detail.history.subtitle")}</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">

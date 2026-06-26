@@ -7,6 +7,7 @@ import { uploadUserAvatar } from "@/http/auth";
 import { resolveAssetUrl } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 import { Camera, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
@@ -22,6 +23,7 @@ interface EditableAvatarProps {
  * (top bar included) updates immediately.
  */
 export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
+  const t = useTranslations("Account");
   const { user, getToken, setUser } = useAuth();
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +35,7 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
     if (!file) return;
 
     if (file.size > MAX_AVATAR_BYTES) {
-      toast({ title: "Image too large", description: "Maximum size is 5 MB.", variant: "error" });
+      toast({ title: t("avatar.tooLargeTitle"), description: t("avatar.tooLargeDescription"), variant: "error" });
       return;
     }
 
@@ -41,11 +43,11 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
     try {
       const updatedUser = await uploadUserAvatar(file, getToken() ?? "");
       setUser(updatedUser);
-      toast({ title: "Profile picture updated", variant: "success" });
+      toast({ title: t("avatar.updated"), variant: "success" });
     } catch (error) {
       toast({
-        title: "Upload failed",
-        description: error instanceof Error ? error.message : "Something went wrong",
+        title: t("avatar.uploadFailed"),
+        description: error instanceof Error ? error.message : t("common.somethingWentWrong"),
         variant: "error",
       });
     } finally {
@@ -64,7 +66,7 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={isUploading}
-        aria-label="Change profile picture"
+        aria-label={t("avatar.change")}
         className={cn(
           "absolute inset-0 flex items-center justify-center bg-black/45 text-white transition-opacity",
           isUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"

@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { ServerGrowthStat, ServerStat } from "@/types/server";
@@ -27,6 +27,7 @@ const StatusReading = ({ online, label }: { online: boolean; label: string }) =>
 
 const ServerStatus = ({ stats, growthStat }: ServerStatusProps) => {
   const format = useFormatter();
+  const t = useTranslations("Servers");
   const lastStat = stats.length > 0 ? getLastStat(stats) : null;
   const playerCount = lastStat?.playerCount;
 
@@ -52,10 +53,7 @@ const ServerStatus = ({ stats, growthStat }: ServerStatusProps) => {
                   <Icon icon="material-symbols:info-outline" className="text-muted-foreground w-3 h-3" />
                 </span>
               </TooltipTrigger>
-              <TooltipContent className="max-w-60">
-                This shows how the average player count this week compares to the average for the past 30 days.
-                Positive values indicate growth.
-              </TooltipContent>
+              <TooltipContent className="max-w-60">{t("card.status.growthTooltip")}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <span className={cn("text-xs font-medium", monthlyGrowth >= 0 ? "text-success" : "text-destructive")}>

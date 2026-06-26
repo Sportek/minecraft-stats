@@ -1,6 +1,6 @@
 import { Category, Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import StatCard from "../stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -13,6 +13,7 @@ interface ImprovedCardProps {
 
 const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
   const format = useFormatter();
+  const t = useTranslations("Servers");
   const calculateMedian = (numbers: number[]) => {
     const sorted = [...numbers].sort((a, b) => a - b);
     const middle = Math.floor(sorted.length / 2);
@@ -55,43 +56,40 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
     <section className="space-y-3">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Icon icon="material-symbols:info-outline" className="h-4 w-4" />
-        <span>
-          Based on the selected interval — currently <span className="text-foreground font-medium">{stats.length}</span>{" "}
-          data points.
-        </span>
+        <span>{t("stats.intervalNote", { count: stats.length })}</span>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
-          title="Peak Players (All-Time)"
+          title={t("stats.peakPlayers")}
           value={format.number(allTimePeak)}
           icon={<Icon icon="mdi:crown" className="h-5 w-5" />}
         />
         <StatCard
-          title="Lowest Players"
+          title={t("stats.lowestPlayers")}
           value={format.number(
             stats.reduce((acc, curr) => Math.min(acc, curr.playerCount), Number.MAX_SAFE_INTEGER)
           )}
           icon={<Icon icon="mdi:trending-down" className="h-5 w-5" />}
         />
         <StatCard
-          title="Average Players"
+          title={t("stats.averagePlayers")}
           value={format.number(
             Math.round(stats.reduce((acc, curr) => acc + curr.playerCount, 0) / stats.length)
           )}
           icon={<Icon icon="mdi:account-multiple" className="h-5 w-5" />}
         />
         <StatCard
-          title="Median Players"
+          title={t("stats.medianPlayers")}
           value={format.number(Math.round(calculateMedian(stats.map((stat) => stat.playerCount))))}
           icon={<Icon icon="mdi:chart-bar" className="h-5 w-5" />}
         />
         <StatCard
-          title="Data Since"
+          title={t("stats.dataSince")}
           value={format.dateTime(new Date(server.createdAt), { dateStyle: "medium" })}
           icon={<Icon icon="mdi:calendar" className="h-5 w-5" />}
         />
         <StatCard
-          title="Tracked By"
+          title={t("stats.trackedBy")}
           value={server.user?.username?.toUpperCase() ?? "—"}
           icon={<Icon icon="mdi:account" className="h-5 w-5" />}
         />

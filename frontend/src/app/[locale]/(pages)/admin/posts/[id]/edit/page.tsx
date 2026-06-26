@@ -8,10 +8,12 @@ import { getAdminPosts, updatePost } from "@/http/post";
 import { Post } from "@/types/post";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const EditPostPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const token = getToken();
   const router = useRouter();
   const params = useParams();
@@ -54,30 +56,30 @@ const EditPostPage = () => {
   }, [token, postId]);
 
   if (!user) {
-    return <AdminLoadingState label="Loading..." />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin" && user.role !== "writer") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access Denied"
-        description="You must be a writer or administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.writerOrAdmin")}
       />
     );
   }
 
   if (fetching) {
-    return <AdminLoadingState label="Loading article..." />;
+    return <AdminLoadingState label={t("posts.loadingOne")} />;
   }
 
   if (!post) {
     return (
       <AdminMessageState
-        title="Article Not Found"
-        description="The article you are looking for does not exist."
+        title={t("posts.notFoundTitle")}
+        description={t("posts.notFoundDescription")}
       >
-        <AdminBackLink href="/admin/posts" label="Back to Articles" />
+        <AdminBackLink href="/admin/posts" label={t("posts.backToArticles")} />
       </AdminMessageState>
     );
   }
@@ -113,7 +115,7 @@ const EditPostPage = () => {
       router.push("/admin/posts");
     } catch (error) {
       console.error("Failed to update post:", error);
-      alert("Failed to update article");
+      alert(t("posts.updateError"));
     } finally {
       setLoading(false);
     }
@@ -121,10 +123,10 @@ const EditPostPage = () => {
 
   return (
     <div className="mx-auto max-w-4xl animate-in fade-in slide-in-from-bottom-2 py-8 duration-300">
-      <AdminBackLink href="/admin/posts" label="Back to List" />
+      <AdminBackLink href="/admin/posts" label={t("posts.backToList")} />
 
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Edit article</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("posts.editEyebrow")}</p>
         <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">{post.title}</h1>
       </div>
 
@@ -133,7 +135,7 @@ const EditPostPage = () => {
         onField={handleField}
         onSubmit={handleSubmit}
         submitting={loading}
-        submitLabel={loading ? "Updating..." : "Update Article"}
+        submitLabel={loading ? t("posts.updating") : t("posts.updateSubmit")}
       />
     </div>
   );

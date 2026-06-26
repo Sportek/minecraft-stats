@@ -7,7 +7,12 @@ interface TooltipOptions {
   isDarkMode: boolean;
 }
 
-export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions, locale: string) => {
+export const generateTooltipHtml = (
+  data: TooltipData,
+  options: TooltipOptions,
+  locale: string,
+  playersLabel = "players"
+) => {
   const { isDarkMode } = options;
   const bgColor = isDarkMode ? '#18181b' : '#ffffff';
   const borderColor = isDarkMode ? '#27272a' : '#e4e4e7';
@@ -87,7 +92,7 @@ export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions, 
           <span style="
             color: ${textColor};
             font-weight: 500;
-          ">players</span>
+          ">${playersLabel}</span>
         </div>
       </div>
     </div>

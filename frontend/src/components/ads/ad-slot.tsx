@@ -2,6 +2,7 @@
 
 import { buildAdClickUrl, getActiveAds, recordAdImpression } from "@/http/advertisement";
 import { AdPlacement, PublicAd } from "@/types/advertisement";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 /** Délai minimal entre deux impressions comptées pour une même pub (5 min). */
@@ -84,6 +85,7 @@ function buildSrcDoc(
  * (rotation pondérée) dans une iframe sandboxée, et compte les impressions.
  */
 const AdSlot = ({ placement, serverId, serverCategoryIds, className }: AdSlotProps) => {
+  const t = useTranslations("Admin");
   const [ads, setAds] = useState<PublicAd[] | null>(null);
 
   useEffect(() => {
@@ -122,10 +124,10 @@ const AdSlot = ({ placement, serverId, serverCategoryIds, className }: AdSlotPro
   return (
     <div className={`w-full ${className ?? ""}`}>
       <p className="mb-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground/70">
-        Advertisement
+        {t("adSlot.label")}
       </p>
       <iframe
-        title={`Advertisement — ${selectedAd.name}`}
+        title={t("adSlot.title", { name: selectedAd.name })}
         srcDoc={srcDoc}
         sandbox="allow-popups allow-popups-to-escape-sandbox"
         loading="lazy"

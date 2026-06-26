@@ -12,7 +12,7 @@ import { AnalyticsDashboard } from "@/types/analytics";
 import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
 import dynamic from "next/dynamic";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
 
@@ -21,10 +21,10 @@ const WorldMap = dynamic(() => import("@/components/analytics/world-map"), { ssr
 
 type RangeKey = "7d" | "30d" | "90d";
 
-const RANGES: Record<RangeKey, { label: string; ms: number }> = {
-  "7d": { label: "7 days", ms: 7 * 86400000 },
-  "30d": { label: "30 days", ms: 30 * 86400000 },
-  "90d": { label: "90 days", ms: 90 * 86400000 },
+const RANGES: Record<RangeKey, { ms: number }> = {
+  "7d": { ms: 7 * 86400000 },
+  "30d": { ms: 30 * 86400000 },
+  "90d": { ms: 90 * 86400000 },
 };
 
 // Requests and unique visitors differ by orders of magnitude, so each gets its
@@ -51,6 +51,7 @@ function buildLineChart(
 
 const AnalyticsDashboardPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const formatter = useFormatter();
   const formatNumber = (value: number) => formatter.number(value);
   const token = getToken();
@@ -90,24 +91,24 @@ const AnalyticsDashboardPage = () => {
 
   const isDark = resolvedTheme === "dark";
   const requestsOptions = useMemo(
-    () => buildLineChart(chartData, "requests", "HTTP requests", "#2563EB", isDark),
-    [chartData, isDark]
+    () => buildLineChart(chartData, "requests", t("analytics.requestsChart"), "#2563EB", isDark),
+    [chartData, isDark, t]
   );
   const visitorsOptions = useMemo(
-    () => buildLineChart(chartData, "uniqueVisitors", "Unique visitors", "#16A34A", isDark),
-    [chartData, isDark]
+    () => buildLineChart(chartData, "uniqueVisitors", t("analytics.visitorsChart"), "#16A34A", isDark),
+    [chartData, isDark, t]
   );
 
   if (!user) {
-    return <AdminLoadingState label="Loading…" />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access denied"
-        description="You must be an administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.adminOnly")}
       />
     );
   }
@@ -122,18 +123,18 @@ const AnalyticsDashboardPage = () => {
   };
 
   const statCards = [
-    { label: "Unique visitors (this month)", value: formatNumber(totals.uniqueVisitorsThisMonth) },
-    { label: "Unique visitors (period)", value: formatNumber(totals.uniqueVisitors) },
-    { label: "HTTP requests", value: formatNumber(totals.httpRequests) },
-    { label: "Page views (consented)", value: formatNumber(totals.pageViews) },
+    { label: t("analytics.cards.uniqueThisMonth"), value: formatNumber(totals.uniqueVisitorsThisMonth) },
+    { label: t("analytics.cards.uniquePeriod"), value: formatNumber(totals.uniqueVisitors) },
+    { label: t("analytics.cards.httpRequests"), value: formatNumber(totals.httpRequests) },
+    { label: t("analytics.cards.pageViews"), value: formatNumber(totals.pageViews) },
   ];
 
   return (
     <DashboardLayout>
       <DashboardHero
-        title="Analytics"
-        subtitle="Site usage, traffic and audience over the selected period."
-        badge={`${formatNumber(totals.uniqueVisitorsThisMonth)} visitors this month`}
+        title={t("analytics.title")}
+        subtitle={t("analytics.subtitle")}
+        badge={t("analytics.visitorsBadge", { count: formatNumber(totals.uniqueVisitorsThisMonth) })}
       />
 
       <AdminFilterTabs
@@ -141,7 +142,7 @@ const AnalyticsDashboardPage = () => {
         onChange={setRange}
         tabs={(Object.keys(RANGES) as RangeKey[]).map((key) => ({
           value: key,
-          label: RANGES[key].label,
+          label: t(`analytics.ranges.${key}`),
         }))}
       />
 
@@ -152,19 +153,31 @@ const AnalyticsDashboardPage = () => {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <ChartCard title="HTTP requests" loading={loading} empty={chartData.length === 0}>
+        <ChartCard
+          title={t("analytics.requestsChart")}
+          loading={loading}
+          empty={chartData.length === 0}
+          loadingLabel={t("analytics.chartLoading")}
+          emptyLabel={t("analytics.chartEmpty")}
+        >
           <AgCharts options={requestsOptions} />
         </ChartCard>
-        <ChartCard title="Unique visitors" loading={loading} empty={chartData.length === 0}>
+        <ChartCard
+          title={t("analytics.visitorsChart")}
+          loading={loading}
+          empty={chartData.length === 0}
+          loadingLabel={t("analytics.chartLoading")}
+          emptyLabel={t("analytics.chartEmpty")}
+        >
           <AgCharts options={visitorsOptions} />
         </ChartCard>
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs">
-        <h2 className="mb-3 text-sm font-semibold text-foreground">Visitors by country</h2>
+        <h2 className="mb-3 text-sm font-semibold text-foreground">{t("analytics.visitorsByCountry")}</h2>
         {(data?.countries ?? []).length === 0 ? (
           <div className="flex h-[320px] items-center justify-center text-muted-foreground">
-            No country data yet.
+            {t("analytics.noCountryData")}
           </div>
         ) : (
           <WorldMap countries={data?.countries ?? []} />
@@ -173,22 +186,27 @@ const AnalyticsDashboardPage = () => {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <AnalyticsTable
-          title="Most viewed pages"
-          subtitle="Numeric ids grouped (e.g. /servers/:id)"
-          emptyLabel="No page views."
+          title={t("analytics.topPages")}
+          subtitle={t("analytics.topPagesSubtitle")}
+          emptyLabel={t("analytics.noPageViews")}
+          topLabel={t("analytics.top")}
           rows={(data?.topPages ?? []).map((p) => ({
             key: p.path,
             label: p.path,
-            value: `${formatNumber(p.views)} views · ${formatNumber(p.uniqueVisitors)} unique`,
+            value: t("analytics.pageRowValue", {
+              views: formatNumber(p.views),
+              unique: formatNumber(p.uniqueVisitors),
+            }),
           }))}
         />
         <AnalyticsTable
-          title="Referrers"
-          emptyLabel="No referrers."
+          title={t("analytics.referrers")}
+          emptyLabel={t("analytics.noReferrers")}
+          topLabel={t("analytics.top")}
           rows={(data?.topReferrers ?? []).map((r) => ({
             key: r.referrer,
             label: r.referrer,
-            value: `${formatNumber(r.views)} views`,
+            value: t("analytics.referrerRowValue", { views: formatNumber(r.views) }),
           }))}
         />
       </div>
@@ -200,22 +218,26 @@ const ChartCard = ({
   title,
   loading,
   empty,
+  loadingLabel,
+  emptyLabel,
   children,
 }: {
   title: string;
   loading: boolean;
   empty: boolean;
+  loadingLabel: string;
+  emptyLabel: string;
   children: React.ReactNode;
 }) => (
   <div className="rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs">
     <h2 className="mb-3 text-sm font-semibold text-foreground">{title}</h2>
     {loading ? (
       <div className="flex h-[280px] items-center justify-center text-muted-foreground">
-        Loading statistics…
+        {loadingLabel}
       </div>
     ) : empty ? (
       <div className="flex h-[280px] items-center justify-center text-muted-foreground">
-        No data for this period.
+        {emptyLabel}
       </div>
     ) : (
       <div className="h-[280px]">{children}</div>
@@ -234,16 +256,22 @@ const AnalyticsTable = ({
   subtitle,
   rows,
   emptyLabel,
+  topLabel,
 }: {
   title: string;
   subtitle?: string;
   rows: AnalyticsTableRow[];
   emptyLabel: string;
+  topLabel: string;
 }) => (
   <div className="rounded-lg border border-border bg-card text-card-foreground shadow-xs">
     <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
       <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-      {rows.length > 0 && <span className="text-xs text-muted-foreground">Top {rows.length}</span>}
+      {rows.length > 0 && (
+        <span className="text-xs text-muted-foreground">
+          {topLabel} {rows.length}
+        </span>
+      )}
     </div>
     {subtitle && <p className="px-4 pt-2 text-xs text-muted-foreground">{subtitle}</p>}
     {rows.length === 0 ? (

@@ -13,6 +13,7 @@ import { getClientApiUrl } from "@/lib/domain";
 import { useFavorite } from "@/contexts/favorite";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
   "1 Day": 1000 * 60 * 60 * 24,
@@ -34,6 +35,7 @@ const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
 type ServerSeries = { server: Server; stats: ServerStat[] };
 
 const GlobalInsightSection = () => {
+  const t = useTranslations("Home");
   const { favorites } = useFavorite();
   const [globalStats, setGlobalStats] = useState<ServerStat[]>([]);
   // Cache par serverId. Évite de re-fetch les serveurs déjà connus quand
@@ -203,11 +205,9 @@ const GlobalInsightSection = () => {
       <div className="flex flex-col gap-1.5 border-b border-border px-5 py-4 sm:px-6 sm:py-5">
         <div className="flex items-center gap-2.5">
           <Icon icon="material-symbols:analytics-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">Global Insight</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("globalInsight.title")}</h2>
         </div>
-        <p className="text-sm text-muted-foreground sm:pl-9">
-          Compare aggregated player counts across servers, categories, and languages.
-        </p>
+        <p className="text-sm text-muted-foreground sm:pl-9">{t("globalInsight.description")}</p>
       </div>
 
       <div className="flex flex-col gap-4 p-4 sm:p-6">
@@ -229,8 +229,10 @@ const GlobalInsightSection = () => {
               <>
                 <Star className="h-3.5 w-3.5 fill-current text-accent" />
                 <span>
-                  Following your <span className="font-medium text-foreground">{favorites.length}</span> favorite
-                  {favorites.length > 1 ? "s" : ""}.
+                  {t.rich("globalInsight.followingFavorites", {
+                    count: favorites.length,
+                    strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+                  })}
                 </span>
                 <Button
                   variant="ghost"
@@ -239,12 +241,12 @@ const GlobalInsightSection = () => {
                   onClick={showAggregated}
                   disabled={isLoading}
                 >
-                  Show all servers
+                  {t("globalInsight.showAllServers")}
                 </Button>
               </>
             ) : (
               <>
-                <span>Custom selection.</span>
+                <span>{t("globalInsight.customSelection")}</span>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -253,7 +255,7 @@ const GlobalInsightSection = () => {
                   disabled={isLoading}
                 >
                   <Star className="mr-1 h-3.5 w-3.5 fill-current" />
-                  Reset to favorites
+                  {t("globalInsight.resetToFavorites")}
                 </Button>
               </>
             )}

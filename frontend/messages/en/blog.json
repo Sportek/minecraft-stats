@@ -1,0 +1,30 @@
+{
+  "title": "Blog",
+  "description": "Latest news, server spotlights, and development updates.",
+  "news": "News",
+  "recentStories": "Recent Stories",
+  "empty": "No articles found.",
+  "readArticle": "Read article",
+  "readMoreArticles": "Read more articles",
+  "backToBlog": "Back to Blog",
+  "viewsCount": "{count, plural, one {# view} other {# views}}",
+  "pagination": {
+    "label": "Blog pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {currentPage} of {lastPage}"
+  },
+  "feedback": {
+    "prompt": "Was this article helpful?",
+    "thanks": "Thanks for your feedback!",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Something went wrong. Please try again."
+  },
+  "notFound": {
+    "title": "Article Not Found",
+    "description": "The article you are looking for does not exist or has been deleted.",
+    "metaTitle": "Article not found",
+    "metaDescription": "The requested article does not exist"
+  }
+}

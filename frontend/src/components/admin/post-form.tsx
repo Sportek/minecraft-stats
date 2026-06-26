@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export interface PostFormValues {
   title: string;
@@ -32,8 +33,11 @@ export const PostForm = ({
   onSubmit,
   submitLabel,
   submitting,
-}: PostFormProps) => (
-  <form onSubmit={onSubmit} className="flex flex-col gap-5">
+}: PostFormProps) => {
+  const t = useTranslations("Admin");
+
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col gap-5">
     {/* Editor card: title, slug preview, Tiptap toolbar + body */}
     <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
       <div className="space-y-2 border-b border-border p-5">
@@ -42,14 +46,16 @@ export const PostForm = ({
           value={values.title}
           onChange={(e) => onField("title", e.target.value)}
           onBlur={onTitleBlur}
-          placeholder="Article title"
+          placeholder={t("postForm.titlePlaceholder")}
           required
-          aria-label="Article title"
+          aria-label={t("postForm.titlePlaceholder")}
           className="h-auto border-0 bg-transparent px-0 py-0 text-2xl font-extrabold tracking-tight focus-visible:ring-0 focus-visible:ring-offset-0 sm:text-3xl"
         />
         <div className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
           <span className="shrink-0">/blog/</span>
-          <span className="truncate font-mono text-accent">{values.slug || "your-article-slug"}</span>
+          <span className="truncate font-mono text-accent">
+            {values.slug || t("postForm.slugPlaceholder")}
+          </span>
         </div>
       </div>
 
@@ -59,16 +65,16 @@ export const PostForm = ({
     {/* Settings card: article details */}
     <div className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
       <div className="border-b border-border px-5 py-4">
-        <h2 className="text-base font-bold text-foreground">Article details</h2>
+        <h2 className="text-base font-bold text-foreground">{t("postForm.details")}</h2>
       </div>
       <div className="grid grid-cols-1 gap-5 p-5">
         <div className="space-y-2">
-          <Label>Slug</Label>
+          <Label>{t("postForm.slug")}</Label>
           <Input
             type="text"
             value={values.slug}
             onChange={(e) => onField("slug", e.target.value)}
-            placeholder="auto-from-title"
+            placeholder={t("postForm.slugInputPlaceholder")}
             className="font-mono text-sm"
           />
         </div>
@@ -79,13 +85,13 @@ export const PostForm = ({
         />
 
         <div className="space-y-2">
-          <Label>Summary (optional)</Label>
+          <Label>{t("postForm.summary")}</Label>
           <textarea
             value={values.excerpt}
             onChange={(e) => onField("excerpt", e.target.value)}
             rows={3}
             className="flex w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            placeholder="A short description for the article card..."
+            placeholder={t("postForm.summaryPlaceholder")}
           />
         </div>
       </div>
@@ -96,8 +102,9 @@ export const PostForm = ({
         {submitLabel}
       </Button>
       <Button asChild variant="secondary">
-        <Link href="/admin/posts">Cancel</Link>
+        <Link href="/admin/posts">{t("postForm.cancel")}</Link>
       </Button>
     </div>
   </form>
-);
+  );
+};

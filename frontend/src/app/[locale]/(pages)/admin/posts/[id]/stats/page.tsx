@@ -9,7 +9,7 @@ import { getAdminPostStats } from "@/http/post";
 import { PostStats } from "@/types/post";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const StatCard = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
@@ -22,6 +22,7 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 
 const AdminPostStatsPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const formatter = useFormatter();
   const formatNumber = (value: number) => formatter.number(value);
   const formatDate = (value: string) =>
@@ -43,25 +44,25 @@ const AdminPostStatsPage = () => {
         setError(null);
         setStats(await getAdminPostStats(postId, token));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load statistics.");
+        setError(err instanceof Error ? err.message : t("posts.stats.loadError"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
-  }, [token, postId]);
+  }, [token, postId, t]);
 
   if (!user) {
-    return <AdminLoadingState label="Loading…" />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin" && user.role !== "writer") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access denied"
-        description="You must be a writer or administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.writerOrAdmin")}
       />
     );
   }
@@ -73,19 +74,20 @@ const AdminPostStatsPage = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-5xl animate-in fade-in px-4 py-8 duration-300">
-        <AdminBackLink href="/admin/posts" label="Back to articles" />
+        <AdminBackLink href="/admin/posts" label={t("posts.backToArticles")} />
 
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Statistics{stats ? ` — ${stats.post.title}` : ""}
+            {t("posts.stats.title")}
+            {stats ? ` — ${stats.post.title}` : ""}
           </h1>
-          <p className="text-muted-foreground">Views, reach and reader feedback for this article.</p>
+          <p className="text-muted-foreground">{t("posts.stats.subtitle")}</p>
         </div>
 
         {error ? (
           <AdminMessageState
             tone="destructive"
-            title="Could not load statistics"
+            title={t("posts.stats.couldNotLoad")}
             description={error}
           />
         ) : loading ? (
@@ -97,47 +99,47 @@ const AdminPostStatsPage = () => {
         ) : !stats ? (
           <AdminMessageState
             tone="destructive"
-            title="Not found"
-            description="This article does not exist."
+            title={t("posts.stats.notFoundTitle")}
+            description={t("posts.stats.notFoundDescription")}
           />
         ) : (
           <>
             {/* Views */}
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Views
+              {t("posts.stats.viewsSection")}
             </h2>
             <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
-                label="Total views"
+                label={t("posts.stats.totalViews")}
                 value={formatNumber(stats.views.total)}
-                hint="Everyone, consent or not"
+                hint={t("posts.stats.totalViewsHint")}
               />
               <StatCard
-                label="Consented views"
+                label={t("posts.stats.consentedViews")}
                 value={formatNumber(stats.views.consented)}
-                hint="Tracked via analytics"
+                hint={t("posts.stats.consentedViewsHint")}
               />
               <StatCard
-                label="Logged-in views"
+                label={t("posts.stats.loggedInViews")}
                 value={formatNumber(stats.views.loggedIn)}
-                hint="Attributed to an account"
+                hint={t("posts.stats.loggedInViewsHint")}
               />
               <StatCard
-                label="Unique visitors"
+                label={t("posts.stats.uniqueVisitors")}
                 value={formatNumber(stats.views.uniqueVisitors)}
-                hint="Distinct consented devices"
+                hint={t("posts.stats.uniqueVisitorsHint")}
               />
             </div>
 
             {/* Feedback */}
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Feedback
+              {t("posts.stats.feedbackSection")}
             </h2>
             <div className="mb-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-lg border border-border bg-card p-5 text-card-foreground shadow-xs">
                 <p className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
                   <ThumbsUp className="h-3.5 w-3.5 text-success" />
-                  Helpful
+                  {t("posts.stats.helpful")}
                 </p>
                 <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
                   {formatNumber(stats.feedback.helpful)}
@@ -146,28 +148,27 @@ const AdminPostStatsPage = () => {
               <div className="rounded-lg border border-border bg-card p-5 text-card-foreground shadow-xs">
                 <p className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
                   <ThumbsDown className="h-3.5 w-3.5 text-destructive" />
-                  Not helpful
+                  {t("posts.stats.notHelpful")}
                 </p>
                 <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
                   {formatNumber(stats.feedback.notHelpful)}
                 </p>
               </div>
               <StatCard
-                label="Helpful rate"
+                label={t("posts.stats.helpfulRate")}
                 value={helpfulRate === null ? "—" : `${helpfulRate} %`}
-                hint={`${formatNumber(feedbackTotal)} ${feedbackTotal === 1 ? "vote" : "votes"}`}
+                hint={t("posts.stats.votes", { count: feedbackTotal })}
               />
             </div>
 
             {/* Recent logged-in viewers */}
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Recent logged-in viewers
+              {t("posts.stats.recentViewers")}
             </h2>
             <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
               {stats.recentViewers.length === 0 ? (
                 <div className="px-6 py-12 text-center text-sm text-muted-foreground">
-                  No logged-in readers yet. Anonymous and non-consenting views still count toward
-                  the totals above.
+                  {t("posts.stats.noViewers")}
                 </div>
               ) : (
                 <ul className="divide-y divide-border">

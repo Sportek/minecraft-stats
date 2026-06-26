@@ -14,6 +14,7 @@ import { Category, Language } from "@/types/server";
 import { cleanWebsiteHost } from "@/utils/server-website";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import useSWRImmutable from "swr/immutable";
@@ -76,6 +77,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     },
   });
 
+  const t = useTranslations("Auth");
   const { toast } = useToast();
   const { addServer } = useServers();
 
@@ -96,34 +98,30 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       });
       form.reset();
       toast({
-        title: "Server added",
-        description: "Your server has been added successfully, it will be available in a few minutes",
+        title: t("addServer.successTitle"),
+        description: t("addServer.successDescription"),
         variant: "success",
       });
     } catch (error) {
       if (error instanceof DuplicateServerError) {
         const safeServerId = encodeURIComponent(String(error.existingServer.id));
         toast({
-          title: "Server already listed",
-          description: (
-            <span>
-              This server is already on Minecraft Stats as{" "}
-              <Link
-                className="font-semibold underline"
-                href={`/servers/${safeServerId}`}
-              >
-                {error.existingServer.name}
+          title: t("addServer.duplicateTitle"),
+          description: t.rich("addServer.duplicateDescription", {
+            name: error.existingServer.name,
+            link: (chunks) => (
+              <Link className="font-semibold underline" href={`/servers/${safeServerId}`}>
+                {chunks}
               </Link>
-              .
-            </span>
-          ),
+            ),
+          }),
           variant: "error",
         });
         return;
       }
       toast({
-        title: "Error while adding server",
-        description: error instanceof Error ? error.message : "An error occurred while adding the server.",
+        title: t("addServer.errorTitle"),
+        description: error instanceof Error ? error.message : t("addServer.errorDescription"),
         variant: "error",
       });
     }
@@ -132,7 +130,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
   return (
     <div className={cn("flex flex-col", className)}>
       {isLoading ? (
-        <Loader message={"Loading..."} />
+        <Loader message={t("serverForm.loading")} />
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
@@ -141,8 +139,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormDescription>The name of the server</FormDescription>
+                  <FormLabel>{t("serverForm.name")}</FormLabel>
+                  <FormDescription>{t("serverForm.nameDescription")}</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
                   </FormControl>
@@ -155,8 +153,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormDescription>The address of the server</FormDescription>
+                  <FormLabel>{t("serverForm.address")}</FormLabel>
+                  <FormDescription>{t("serverForm.addressDescription")}</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="" {...field} />
                   </FormControl>
@@ -169,8 +167,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="website"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Website (optional)</FormLabel>
-                  <FormDescription>Left empty, we infer it from the address</FormDescription>
+                  <FormLabel>{t("serverForm.website")}</FormLabel>
+                  <FormDescription>{t("serverForm.websiteDescription")}</FormDescription>
                   <FormControl>
                     <Input type="text" placeholder="example.com" {...field} />
                   </FormControl>
@@ -183,8 +181,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Edition</FormLabel>
-                  <FormDescription>Java or Bedrock edition</FormDescription>
+                  <FormLabel>{t("serverForm.edition")}</FormLabel>
+                  <FormDescription>{t("serverForm.editionDescription")}</FormDescription>
                   <FormControl>
                     <Select
                       value={field.value}
@@ -212,11 +210,11 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="categories"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categories</FormLabel>
-                  <FormDescription>The category of the server</FormDescription>
+                  <FormLabel>{t("serverForm.categories")}</FormLabel>
+                  <FormDescription>{t("serverForm.categoriesDescription")}</FormDescription>
                   <FormControl>
                     <FancyMultiSelect
-                      title="Select categories..."
+                      title={t("serverForm.selectCategories")}
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
                       className="border border-input bg-background"
@@ -231,11 +229,11 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="languages"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Languages</FormLabel>
-                  <FormDescription>The languages of the server</FormDescription>
+                  <FormLabel>{t("serverForm.languages")}</FormLabel>
+                  <FormDescription>{t("serverForm.languagesDescription")}</FormDescription>
                   <FormControl>
                     <FancyMultiSelect
-                      title="Select languages..."
+                      title={t("serverForm.selectLanguages")}
                       elements={languages.map((language) => ({
                         value: language.code,
                         label: `${language.flag} ${language.name}`
@@ -253,8 +251,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               name="port"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Port</FormLabel>
-                  <FormDescription>The port of the server</FormDescription>
+                  <FormLabel>{t("serverForm.port")}</FormLabel>
+                  <FormDescription>{t("serverForm.portDescription")}</FormDescription>
                   <FormControl>
                     <Input type="number" placeholder="" {...field} />
                   </FormControl>
@@ -263,7 +261,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
               )}
             />
             <Button variant="accent" className="w-full" type="submit">
-              Submit
+              {t("addServer.submit")}
             </Button>
           </form>
         </Form>

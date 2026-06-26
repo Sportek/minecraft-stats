@@ -1,0 +1,82 @@
+{
+  "card": {
+    "edit": "Edit server",
+    "favorite": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites",
+      "limitTitle": "Favorite limit reached",
+      "limitDescription": "You can pin up to {max} servers. Remove one before adding another."
+    },
+    "address": {
+      "copy": "Copy server address",
+      "copied": "Address copied",
+      "clickToCopy": "Click to copy",
+      "copiedShort": "Copied!"
+    },
+    "website": {
+      "visit": "Visit {host}"
+    },
+    "status": {
+      "growthTooltip": "This shows how the average player count this week compares to the average for the past 30 days. Positive values indicate growth."
+    }
+  },
+  "chart": {
+    "players": "players"
+  },
+  "stats": {
+    "intervalNote": "Based on the selected interval — currently {count, plural, one {# data point} other {# data points}}.",
+    "peakPlayers": "Peak Players (All-Time)",
+    "lowestPlayers": "Lowest Players",
+    "averagePlayers": "Average Players",
+    "medianPlayers": "Median Players",
+    "dataSince": "Data Since",
+    "trackedBy": "Tracked By"
+  },
+  "detail": {
+    "playersOnline": "Players online",
+    "breadcrumbAria": "Breadcrumb",
+    "breadcrumb": "Servers",
+    "loading": "Loading server data...",
+    "history": {
+      "title": "Player Count History",
+      "subtitle": "Online players over time."
+    },
+    "notFound": {
+      "title": "Server Not Found",
+      "description": "The server you're looking for doesn't exist or has been removed.",
+      "backHome": "Back to Home"
+    }
+  },
+  "faq": {
+    "heading": "Frequently Asked Questions",
+    "join": {
+      "question": "How do I join the {name} Minecraft server?",
+      "answer": "To join {name}, launch Minecraft and use the server address: {address}. Click \"Multiplayer\" in the main menu, then \"Add Server\", paste the address, and click \"Done\" to save. Then select the server and click \"Join Server\" to connect."
+    },
+    "playersOnline": {
+      "question": "How many players are online on {name}?",
+      "answer": "Currently, {count, plural, one {# player is} other {# players are}} online on {name} out of a maximum capacity of {maxPlayers} players. You can view real-time player statistics and historical data on this page."
+    },
+    "version": {
+      "question": "What version of Minecraft does {name} support?",
+      "answerKnown": "{name} is running Minecraft version {version}. Make sure your Minecraft client is compatible with this version to join the server.",
+      "answerUnknown": "{name} supports multiple Minecraft versions. Check the server information above for the current version details."
+    },
+    "online": {
+      "question": "Is {name} online and accessible?",
+      "answer": "Yes, {name} is currently monitored every 10 minutes. The latest statistics show the server is {active, select, true {online with active players} other {online}}. Historical uptime and player count data is available on this page."
+    },
+    "statistics": {
+      "question": "Can I see player statistics for {name}?",
+      "answer": "Yes, this page provides comprehensive statistics for {name} including current player count, maximum players, historical player trends, daily and weekly growth statistics, and server uptime monitoring. Stats are updated every 10 minutes."
+    }
+  },
+  "edit": {
+    "loading": "Loading server...",
+    "heroTitle": "Edit Server",
+    "heroBadge": "Edit",
+    "heroSubtitle": "Update your server's details and tracking settings.",
+    "detailsTitle": "Server details",
+    "detailsSubtitle": "Update your server's details, categories, and languages."
+  }
+}

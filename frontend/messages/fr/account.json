@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "myServers": "Mes serveurs",
+    "addServer": "Ajouter un serveur",
+    "apiTokens": "Jetons d'API",
+    "articles": "Articles",
+    "analytics": "Statistiques de fréquentation",
+    "users": "Utilisateurs",
+    "advertisements": "Publicités"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "error": "Erreur",
+    "cancel": "Annuler",
+    "somethingWentWrong": "Une erreur est survenue"
+  },
+  "avatar": {
+    "change": "Changer la photo de profil",
+    "tooLargeTitle": "Image trop volumineuse",
+    "tooLargeDescription": "La taille maximale est de 5 Mo.",
+    "updated": "Photo de profil mise à jour",
+    "uploadFailed": "Échec de l'envoi"
+  },
+  "dangerZone": {
+    "heading": "Zone de danger"
+  },
+  "addServer": {
+    "title": "Ajouter un serveur",
+    "badge": "Nouveau",
+    "subtitle": "Suivez le nombre de joueurs en direct et la disponibilité d'un nouveau serveur Minecraft.",
+    "detailsTitle": "Détails du serveur",
+    "detailsSubtitle": "Nous interrogerons l'adresse toutes les 10 minutes pour garder les statistiques à jour."
+  },
+  "apiTokens": {
+    "loadError": "Impossible de charger les jetons",
+    "createError": "Impossible de créer le jeton",
+    "revokeError": "Impossible de révoquer le jeton",
+    "revokeConfirm": "Révoquer « {name} » ? Tout client qui l'utilise cessera de fonctionner.",
+    "revoked": "Jeton révoqué",
+    "title": "Jetons d'API",
+    "subtitle": "Créez un jeton pour permettre à un client automatisé d'agir en votre nom via l'API.",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Bot de blog SEO",
+    "expiryLabel": "Expire (jours)",
+    "creating": "Création…",
+    "create": "Créer le jeton",
+    "copyWarning": "Copiez ce jeton maintenant — il ne sera plus affiché.",
+    "yourTokens": "Vos jetons",
+    "empty": "Vous n'avez pas encore de jetons d'API.",
+    "meta": "Créé {created} · Dernière utilisation {lastUsed} · Expire {expires}"
+  },
+  "myServers": {
+    "removedTitle": "Serveur supprimé",
+    "removedDescription": "{name} n'est plus suivi.",
+    "removeErrorTitle": "Impossible de supprimer le serveur",
+    "removeErrorDescription": "Une erreur est survenue.",
+    "title": "Mes serveurs",
+    "subtitle": "Les serveurs que vous possédez et dont vous suivez les statistiques en direct.",
+    "badge": "{count} suivis",
+    "addServer": "Ajouter un serveur",
+    "totalServers": "Total des serveurs",
+    "onlineNow": "En ligne maintenant",
+    "offline": "Hors ligne",
+    "playersTracked": "Joueurs suivis",
+    "trackedServers": "Serveurs suivis",
+    "emptyTitle": "Aucun serveur pour l'instant",
+    "emptyDescription": "Ajoutez un serveur pour commencer à suivre son nombre de joueurs.",
+    "addFirst": "Ajouter votre premier serveur",
+    "online": "En ligne",
+    "offlineStatus": "Hors ligne",
+    "peak": "pic {count}",
+    "view": "Voir le serveur",
+    "viewTitle": "Voir",
+    "edit": "Modifier le serveur",
+    "editTitle": "Modifier",
+    "delete": "Supprimer le serveur",
+    "deleteTitle": "Supprimer",
+    "dialogTitle": "Arrêter de suivre ce serveur ?",
+    "dialogDescription": "<b>{name}</b> sera retiré de votre tableau de bord ainsi que son suivi. Cette action est irréversible.",
+    "removing": "Suppression…",
+    "remove": "Supprimer le serveur"
+  },
+  "settings": {
+    "roles": {
+      "user": "Membre",
+      "writer": "Rédacteur",
+      "admin": "Admin"
+    },
+    "logoutAllConfirm": "Se déconnecter de tous les appareils ? Cela révoque toutes les sessions actives, y compris celle-ci.",
+    "sessionsRevokedTitle": "Toutes les sessions ont été révoquées",
+    "sessionsRevokedDescription": "Vous avez été déconnecté de tous les appareils.",
+    "memberSince": "{email} · Membre depuis {date}",
+    "yourInformation": "Vos informations",
+    "readOnly": "Lecture seule",
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
+    "role": "Rôle",
+    "registeredAt": "Inscrit le",
+    "managePassword": "Gérer le mot de passe",
+    "managePasswordSubtitle": "Choisissez un mot de passe fort que vous n'utilisez nulle part ailleurs.",
+    "dangerTitle": "Se déconnecter de tous les appareils",
+    "dangerDescription": "Déconnectez-vous de toutes les sessions actives, y compris celle-ci. Utilisez cette option si vous pensez que votre compte a été compromis.",
+    "loggingOut": "Déconnexion…",
+    "logoutEverywhere": "Se déconnecter partout"
+  }
+}

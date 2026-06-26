@@ -21,7 +21,7 @@ import { getAdminUsers, updateUserRole } from "@/http/user";
 import { User } from "@/types/auth";
 import { Search } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 20;
@@ -39,6 +39,7 @@ const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
 
 const AdminUsersPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const format = useFormatter();
   const token = getToken();
   const [users, setUsers] = useState<User[]>([]);
@@ -112,15 +113,15 @@ const AdminUsersPage = () => {
   };
 
   if (!user) {
-    return <AdminLoadingState label="Loading..." />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access Denied"
-        description="You must be an administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.adminOnly")}
       />
     );
   }
@@ -132,14 +133,17 @@ const AdminUsersPage = () => {
     if (!targetUser) return;
 
     if (targetUser.id === user.id) {
-      alert("You cannot change your own role.");
+      alert(t("users.ownRoleError"));
       return;
     }
 
     const confirmMessage =
       newRole === "admin"
-        ? `Are you sure you want to make ${targetUser.username} an admin? They will have full access to the platform.`
-        : `Are you sure you want to change ${targetUser.username}'s role to ${newRole}?`;
+        ? t("users.confirmAdmin", { username: targetUser.username })
+        : t("users.confirmRole", {
+            username: targetUser.username,
+            role: t(`users.roles.${newRole}`),
+          });
 
     if (!confirm(confirmMessage)) return;
 
@@ -151,7 +155,7 @@ const AdminUsersPage = () => {
       setRefresh((r) => r + 1);
     } catch (error) {
       console.error("Failed to update user role:", error);
-      alert("Failed to update user role");
+      alert(t("users.updateRoleError"));
     } finally {
       setUpdatingUserId(null);
     }
@@ -160,17 +164,17 @@ const AdminUsersPage = () => {
   return (
     <DashboardLayout>
       <DashboardHero
-        title="Users"
-        subtitle="Manage roles and access across the platform."
-        badge={`${total} total`}
+        title={t("users.title")}
+        subtitle={t("users.subtitle")}
+        badge={t("users.totalBadge", { count: total })}
       />
 
       {/* Stat tiles */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <DashboardStatTile label="Total Users" value={String(total)} />
-        <DashboardStatTile label="Admins" value={String(counts.admin)} dot="success" />
-        <DashboardStatTile label="Writers" value={String(counts.writer)} dot="success" />
-        <DashboardStatTile label="Members" value={String(counts.user)} />
+        <DashboardStatTile label={t("users.tiles.total")} value={String(total)} />
+        <DashboardStatTile label={t("users.tiles.admins")} value={String(counts.admin)} dot="success" />
+        <DashboardStatTile label={t("users.tiles.writers")} value={String(counts.writer)} dot="success" />
+        <DashboardStatTile label={t("users.tiles.members")} value={String(counts.user)} />
       </div>
 
       {/* Users card */}
@@ -181,10 +185,10 @@ const AdminUsersPage = () => {
             value={roleFilter}
             onChange={updateRoleFilter}
             tabs={[
-              { value: "all", label: "All" },
-              { value: "admin", label: "Admins" },
-              { value: "writer", label: "Writers" },
-              { value: "user", label: "Users" },
+              { value: "all", label: t("users.tabs.all") },
+              { value: "admin", label: t("users.tabs.admins") },
+              { value: "writer", label: t("users.tabs.writers") },
+              { value: "user", label: t("users.tabs.users") },
             ]}
           />
           <div className="relative sm:w-64">
@@ -193,7 +197,7 @@ const AdminUsersPage = () => {
               type="search"
               value={search}
               onChange={(e) => updateSearch(e.target.value)}
-              placeholder="Search by username..."
+              placeholder={t("users.searchPlaceholder")}
               className="pl-9"
             />
           </div>
@@ -201,16 +205,14 @@ const AdminUsersPage = () => {
 
         {/* Rows */}
         {loading ? (
-          <div className="px-6 py-12 text-center text-muted-foreground">Loading users...</div>
+          <div className="px-6 py-12 text-center text-muted-foreground">{t("users.loadingList")}</div>
         ) : users.length === 0 ? (
           <div className="px-6 py-14 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
               <Search className="h-5 w-5" />
             </div>
-            <p className="text-sm font-semibold text-foreground">No users found</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Nothing matches this filter or search. Try another tab.
-            </p>
+            <p className="text-sm font-semibold text-foreground">{t("users.emptyTitle")}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("users.emptyDescription")}</p>
           </div>
         ) : (
           <ul className="divide-y divide-border">
@@ -227,20 +229,20 @@ const AdminUsersPage = () => {
                   <div className="min-w-0">
                     <p className="truncate font-medium text-foreground transition-colors group-hover:text-accent">
                       {u.username}
-                      {u.id === user.id && <span className="ml-2 text-xs text-accent">(you)</span>}
+                      {u.id === user.id && <span className="ml-2 text-xs text-accent">{t("users.you")}</span>}
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      Joined {format.dateTime(new Date(u.createdAt), { dateStyle: "medium" })}
+                      {t("users.joined", {
+                        date: format.dateTime(new Date(u.createdAt), { dateStyle: "medium" }),
+                      })}
                     </p>
                   </div>
                 </Link>
 
                 <div className="flex items-center justify-between gap-4 sm:justify-end">
-                  <Badge variant={getRoleBadgeVariant(u.role)}>
-                    {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
-                  </Badge>
+                  <Badge variant={getRoleBadgeVariant(u.role)}>{t(`users.roles.${u.role}`)}</Badge>
                   {u.id === user.id ? (
-                    <span className="text-xs text-muted-foreground">Cannot change own role</span>
+                    <span className="text-xs text-muted-foreground">{t("users.cannotChangeOwn")}</span>
                   ) : (
                     <Select
                       value={u.role}
@@ -253,9 +255,9 @@ const AdminUsersPage = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="writer">Writer</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="user">{t("users.roles.user")}</SelectItem>
+                        <SelectItem value="writer">{t("users.roles.writer")}</SelectItem>
+                        <SelectItem value="admin">{t("users.roles.admin")}</SelectItem>
                       </SelectContent>
                     </Select>
                   )}

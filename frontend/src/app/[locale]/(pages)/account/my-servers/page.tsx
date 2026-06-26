@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
@@ -30,6 +30,7 @@ const isOnline = (lastOnlineAt: Date | null) =>
   lastOnlineAt ? Date.now() - new Date(lastOnlineAt).getTime() < ONLINE_WINDOW_MS : false;
 
 const MyServersPage = () => {
+  const t = useTranslations("Account");
   const { user, getToken } = useAuth();
   const formatter = useFormatter();
   const formatNumber = (value: number) => formatter.number(value);
@@ -51,13 +52,13 @@ const MyServersPage = () => {
     setIsDeleting(true);
     try {
       await deleteServer(pendingDelete.server.id, token ?? "");
-      toast({ title: "Server removed", description: `${pendingDelete.server.name} is no longer tracked.`, variant: "success" });
+      toast({ title: t("myServers.removedTitle"), description: t("myServers.removedDescription", { name: pendingDelete.server.name }), variant: "success" });
       await mutate();
       setPendingDelete(null);
     } catch (error) {
       toast({
-        title: "Could not remove server",
-        description: error instanceof Error ? error.message : "An error occurred.",
+        title: t("myServers.removeErrorTitle"),
+        description: error instanceof Error ? error.message : t("myServers.removeErrorDescription"),
         variant: "error",
       });
     } finally {
@@ -72,29 +73,29 @@ const MyServersPage = () => {
   return (
     <DashboardLayout>
       <DashboardHero
-        title="My Servers"
-        subtitle="Servers you own and track live stats for."
-        badge={`${list.length} tracked`}
+        title={t("myServers.title")}
+        subtitle={t("myServers.subtitle")}
+        badge={t("myServers.badge", { count: list.length })}
         action={
           <Link href="/account/add-server">
             <Button variant="accent" size="sm">
               <Icon icon="material-symbols:add-rounded" className="mr-1 h-4 w-4" />
-              Add Server
+              {t("myServers.addServer")}
             </Button>
           </Link>
         }
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <DashboardStatTile label="Total Servers" value={formatNumber(list.length)} />
-        <DashboardStatTile label="Online Now" value={formatNumber(onlineCount)} dot="success" />
-        <DashboardStatTile label="Offline" value={formatNumber(list.length - onlineCount)} dot="muted" />
-        <DashboardStatTile label="Players Tracked" value={formatNumber(playersTracked)} />
+        <DashboardStatTile label={t("myServers.totalServers")} value={formatNumber(list.length)} />
+        <DashboardStatTile label={t("myServers.onlineNow")} value={formatNumber(onlineCount)} dot="success" />
+        <DashboardStatTile label={t("myServers.offline")} value={formatNumber(list.length - onlineCount)} dot="muted" />
+        <DashboardStatTile label={t("myServers.playersTracked")} value={formatNumber(playersTracked)} />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
         <div className="border-b border-border px-5 py-4">
-          <h2 className="text-base font-semibold text-foreground">Tracked servers</h2>
+          <h2 className="text-base font-semibold text-foreground">{t("myServers.trackedServers")}</h2>
         </div>
 
         {isLoading ? (
@@ -115,13 +116,13 @@ const MyServersPage = () => {
               <Icon icon="mynaui:servers" className="h-6 w-6" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-foreground">No servers yet</p>
-              <p className="text-xs text-muted-foreground">Add a server to start tracking its player count.</p>
+              <p className="text-sm font-semibold text-foreground">{t("myServers.emptyTitle")}</p>
+              <p className="text-xs text-muted-foreground">{t("myServers.emptyDescription")}</p>
             </div>
             <Link href="/account/add-server">
               <Button variant="accent" size="sm">
                 <Icon icon="material-symbols:add-rounded" className="mr-1 h-4 w-4" />
-                Add your first server
+                {t("myServers.addFirst")}
               </Button>
             </Link>
           </div>
@@ -144,27 +145,27 @@ const MyServersPage = () => {
                   </div>
                   <Badge variant={online ? "success" : "secondary"} className="gap-1.5">
                     <span className={online ? "h-1.5 w-1.5 rounded-full bg-current" : "h-1.5 w-1.5 rounded-full bg-muted-foreground"} />
-                    {online ? "Online" : "Offline"}
+                    {online ? t("myServers.online") : t("myServers.offlineStatus")}
                   </Badge>
                   <div className="w-20 text-right">
                     <div className="text-sm font-bold tabular-nums text-foreground">
                       {formatNumber(server.lastPlayerCount ?? 0)}
                     </div>
-                    <div className="text-[11px] text-muted-foreground">peak {formatNumber(server.peakPlayerCount ?? 0)}</div>
+                    <div className="text-[11px] text-muted-foreground">{t("myServers.peak", { count: formatNumber(server.peakPlayerCount ?? 0) })}</div>
                   </div>
                   <div className="flex items-center gap-1">
                     <Link
                       href={`/servers/${server.id}/${server.name}`}
-                      aria-label="View server"
-                      title="View"
+                      aria-label={t("myServers.view")}
+                      title={t("myServers.viewTitle")}
                       className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                     >
                       <Icon icon="material-symbols:visibility-outline" className="h-4 w-4" />
                     </Link>
                     <Link
                       href={`/servers/${server.id}/edit`}
-                      aria-label="Edit server"
-                      title="Edit"
+                      aria-label={t("myServers.edit")}
+                      title={t("myServers.editTitle")}
                       className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                     >
                       <Icon icon="material-symbols:edit-outline" className="h-4 w-4" />
@@ -173,8 +174,8 @@ const MyServersPage = () => {
                       <button
                         type="button"
                         onClick={() => setPendingDelete(item)}
-                        aria-label="Delete server"
-                        title="Delete"
+                        aria-label={t("myServers.delete")}
+                        title={t("myServers.deleteTitle")}
                         className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                       >
                         <Icon icon="material-symbols:delete-outline" className="h-4 w-4" />
@@ -191,22 +192,22 @@ const MyServersPage = () => {
       <Dialog open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Stop tracking this server?</DialogTitle>
+            <DialogTitle>{t("myServers.dialogTitle")}</DialogTitle>
             <DialogDescription>
-              {pendingDelete ? (
-                <>
-                  <span className="font-medium text-foreground">{pendingDelete.server.name}</span> will be removed
-                  from your dashboard along with its tracking. This action cannot be undone.
-                </>
-              ) : null}
+              {pendingDelete
+                ? t.rich("myServers.dialogDescription", {
+                    name: pendingDelete.server.name,
+                    b: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+                  })
+                : null}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)} disabled={isDeleting}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={confirmDelete} disabled={isDeleting}>
-              {isDeleting ? "Removing…" : "Remove server"}
+              {isDeleting ? t("myServers.removing") : t("myServers.remove")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -24,16 +24,17 @@ import { PostViews } from "@/components/blog/post-meta";
 import { BarChart3, Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 /** Rough read-time estimate (~200 words / minute) from raw markdown content. */
-const estimateReadTime = (content: string) => {
+const estimateReadMinutes = (content: string) => {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / 200))} min read`;
+  return Math.max(1, Math.round(words / 200));
 };
 
 const AdminPostsPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const locale = useLocale();
   const token = getToken();
   const [posts, setPosts] = useState<Post[]>([]);
@@ -91,15 +92,15 @@ const AdminPostsPage = () => {
   }, [posts, query]);
 
   if (!user) {
-    return <AdminLoadingState label="Loading..." />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin" && user.role !== "writer") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access Denied"
-        description="You must be a writer or administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.writerOrAdmin")}
       />
     );
   }
@@ -115,7 +116,7 @@ const AdminPostsPage = () => {
       setPendingDelete(null);
     } catch (error) {
       console.error("Failed to delete post:", error);
-      alert("Failed to delete article");
+      alert(t("posts.deleteError"));
     } finally {
       setIsDeleting(false);
     }
@@ -130,7 +131,7 @@ const AdminPostsPage = () => {
       setAllPosts(allPosts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to publish post:", error);
-      alert("Failed to publish article");
+      alert(t("posts.publishError"));
     }
   };
 
@@ -143,20 +144,20 @@ const AdminPostsPage = () => {
       setAllPosts(allPosts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to unpublish post:", error);
-      alert("Failed to unpublish article");
+      alert(t("posts.unpublishError"));
     }
   };
 
   return (
     <DashboardLayout>
       <DashboardHero
-        title="Articles"
-        subtitle="Create, edit and manage your blog posts."
+        title={t("posts.title")}
+        subtitle={t("posts.subtitle")}
         action={
           <Button asChild variant="accent">
             <Link href="/admin/posts/new">
               <Plus className="h-5 w-5" />
-              <span>New Article</span>
+              <span>{t("posts.new")}</span>
             </Link>
           </Button>
         }
@@ -164,9 +165,9 @@ const AdminPostsPage = () => {
 
       {/* Stat tiles */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <DashboardStatTile label="Total Articles" value={String(allPosts.length)} />
-        <DashboardStatTile label="Published" value={String(publishedCount)} dot="success" />
-        <DashboardStatTile label="Drafts" value={String(draftCount)} dot="muted" />
+        <DashboardStatTile label={t("posts.tiles.total")} value={String(allPosts.length)} />
+        <DashboardStatTile label={t("posts.tiles.published")} value={String(publishedCount)} dot="success" />
+        <DashboardStatTile label={t("posts.tiles.drafts")} value={String(draftCount)} dot="muted" />
       </div>
 
       {/* Articles card */}
@@ -177,9 +178,9 @@ const AdminPostsPage = () => {
             value={filter}
             onChange={setFilter}
             tabs={[
-              { value: "all", label: `All (${allPosts.length})` },
-              { value: "published", label: `Published (${publishedCount})` },
-              { value: "draft", label: `Drafts (${draftCount})` },
+              { value: "all", label: t("posts.tabs.all", { count: allPosts.length }) },
+              { value: "published", label: t("posts.tabs.published", { count: publishedCount }) },
+              { value: "draft", label: t("posts.tabs.drafts", { count: draftCount }) },
             ]}
           />
           <div className="relative sm:w-64">
@@ -188,7 +189,7 @@ const AdminPostsPage = () => {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search articles..."
+              placeholder={t("posts.searchPlaceholder")}
               className="pl-9"
             />
           </div>
@@ -196,16 +197,14 @@ const AdminPostsPage = () => {
 
         {/* Rows */}
         {loading ? (
-          <div className="px-6 py-12 text-center text-muted-foreground">Loading articles...</div>
+          <div className="px-6 py-12 text-center text-muted-foreground">{t("posts.loadingList")}</div>
         ) : visiblePosts.length === 0 ? (
           <div className="px-6 py-14 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
               <Search className="h-5 w-5" />
             </div>
-            <p className="text-sm font-semibold text-foreground">No articles found</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Nothing matches this filter or search. Try another tab.
-            </p>
+            <p className="text-sm font-semibold text-foreground">{t("posts.emptyTitle")}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("posts.emptyDescription")}</p>
           </div>
         ) : (
           <ul className="divide-y divide-border">
@@ -227,7 +226,9 @@ const AdminPostsPage = () => {
                       <span aria-hidden className="opacity-50">
                         ·
                       </span>
-                      <span className="shrink-0">{estimateReadTime(post.content)}</span>
+                      <span className="shrink-0">
+                        {t("posts.readTime", { count: estimateReadMinutes(post.content) })}
+                      </span>
                       <span aria-hidden className="opacity-50">
                         ·
                       </span>
@@ -238,7 +239,7 @@ const AdminPostsPage = () => {
 
                 <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:flex-nowrap sm:justify-end">
                   <Badge variant={post.published ? "success" : "secondary"}>
-                    {post.published ? "Published" : "Draft"}
+                    {post.published ? t("posts.statusPublished") : t("posts.statusDraft")}
                   </Badge>
                   <span className="text-sm text-muted-foreground">
                     {new Date(post.createdAt).toISOString().split("T")[0]}
@@ -249,7 +250,7 @@ const AdminPostsPage = () => {
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-accent"
                       onClick={() => (post.published ? handleUnpublish(post.id) : handlePublish(post.id))}
-                      title="View"
+                      title={t("posts.rowActions.view")}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -258,7 +259,7 @@ const AdminPostsPage = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-accent"
-                      title="Statistics"
+                      title={t("posts.rowActions.statistics")}
                     >
                       <Link href={`/admin/posts/${post.id}/stats`}>
                         <BarChart3 className="h-4 w-4" />
@@ -269,7 +270,7 @@ const AdminPostsPage = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-accent"
-                      title="Edit"
+                      title={t("posts.rowActions.edit")}
                     >
                       <Link href={`/admin/posts/${post.id}/edit`}>
                         <Pencil className="h-4 w-4" />
@@ -280,7 +281,7 @@ const AdminPostsPage = () => {
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       onClick={() => setPendingDelete(post)}
-                      title="Delete"
+                      title={t("posts.rowActions.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -295,22 +296,22 @@ const AdminPostsPage = () => {
       <Dialog open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete this article?</DialogTitle>
+            <DialogTitle>{t("posts.deleteTitle")}</DialogTitle>
             <DialogDescription>
-              {pendingDelete ? (
-                <>
-                  <span className="font-medium text-foreground">{pendingDelete.title}</span> will be
-                  permanently deleted. This action cannot be undone.
-                </>
-              ) : null}
+              {pendingDelete
+                ? t.rich("posts.deleteDescription", {
+                    name: pendingDelete.title,
+                    strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+                  })
+                : null}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)} disabled={isDeleting}>
-              Cancel
+              {t("actions.cancel")}
             </Button>
             <Button variant="destructive" onClick={confirmDelete} disabled={isDeleting}>
-              {isDeleting ? "Deleting…" : "Delete article"}
+              {isDeleting ? t("posts.deleting") : t("posts.deleteConfirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

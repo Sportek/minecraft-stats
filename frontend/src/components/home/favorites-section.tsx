@@ -9,6 +9,7 @@ import { fetcher } from "@/app/_cheatcode";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClientApiUrl } from "@/lib/domain";
 import { MAX_FAVORITES, useFavorite } from "@/contexts/favorite";
+import { useTranslations } from "next-intl";
 
 interface PaginatedResponse {
   data: ServerData[];
@@ -27,6 +28,7 @@ interface PaginatedResponse {
 const FavoritesSection = () => {
   const apiUrl = getClientApiUrl();
   const { favorites, hydrated } = useFavorite();
+  const t = useTranslations("Home");
 
   // Clé SWR basée sur l'ensemble trié des IDs : tant que l'ensemble des favoris
   // ne change pas, la clé reste stable (pas de refetch superflu).
@@ -55,7 +57,7 @@ const FavoritesSection = () => {
     <section id="favorites-section" className="w-full scroll-mt-8 space-y-4">
       <div className="flex items-center gap-2">
         <Icon icon="material-symbols:star-rounded" className="h-5 w-5 shrink-0 text-muted-foreground" />
-        <h2 className="text-lg font-semibold tracking-tight text-foreground">Your favorites</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("favorites.title")}</h2>
         <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-muted-foreground">
           {favorites.length}/{MAX_FAVORITES}
         </span>

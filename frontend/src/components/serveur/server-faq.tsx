@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useTranslations } from "next-intl";
 import { Server } from "@/types/server";
 
 interface ServerFAQProps {
@@ -13,34 +14,31 @@ interface ServerFAQProps {
  * Uses native <details>/<summary> styled with design tokens.
  */
 const ServerFAQ = ({ server, currentPlayers = 0, maxPlayers = 0 }: ServerFAQProps) => {
+  const t = useTranslations("Servers");
+  const joinAddress = `${server.address}${server.port == 25565 ? "" : `:${server.port}`}`;
+
   const faqItems = [
     {
-      question: `How do I join the ${server.name} Minecraft server?`,
-      answer: `To join ${server.name}, launch Minecraft and use the server address: ${server.address}${
-        server.port == 25565 ? "" : `:${server.port}`
-      }. Click "Multiplayer" in the main menu, then "Add Server", paste the address, and click "Done" to save. Then select the server and click "Join Server" to connect.`,
+      question: t("faq.join.question", { name: server.name }),
+      answer: t("faq.join.answer", { name: server.name, address: joinAddress }),
     },
     {
-      question: `How many players are online on ${server.name}?`,
-      answer: `Currently, ${currentPlayers} ${currentPlayers === 1 ? "player is" : "players are"} online on ${
-        server.name
-      } out of a maximum capacity of ${maxPlayers} players. You can view real-time player statistics and historical data on this page.`,
+      question: t("faq.playersOnline.question", { name: server.name }),
+      answer: t("faq.playersOnline.answer", { name: server.name, count: currentPlayers, maxPlayers }),
     },
     {
-      question: `What version of Minecraft does ${server.name} support?`,
+      question: t("faq.version.question", { name: server.name }),
       answer: server.version
-        ? `${server.name} is running Minecraft version ${server.version}. Make sure your Minecraft client is compatible with this version to join the server.`
-        : `${server.name} supports multiple Minecraft versions. Check the server information above for the current version details.`,
+        ? t("faq.version.answerKnown", { name: server.name, version: server.version })
+        : t("faq.version.answerUnknown", { name: server.name }),
     },
     {
-      question: `Is ${server.name} online and accessible?`,
-      answer: `Yes, ${server.name} is currently monitored every 10 minutes. The latest statistics show the server is ${
-        currentPlayers > 0 ? "online with active players" : "online"
-      }. Historical uptime and player count data is available on this page.`,
+      question: t("faq.online.question", { name: server.name }),
+      answer: t("faq.online.answer", { name: server.name, active: String(currentPlayers > 0) }),
     },
     {
-      question: `Can I see player statistics for ${server.name}?`,
-      answer: `Yes, this page provides comprehensive statistics for ${server.name} including current player count, maximum players, historical player trends, daily and weekly growth statistics, and server uptime monitoring. Stats are updated every 10 minutes.`,
+      question: t("faq.statistics.question", { name: server.name }),
+      answer: t("faq.statistics.answer", { name: server.name }),
     },
   ];
 
@@ -48,7 +46,7 @@ const ServerFAQ = ({ server, currentPlayers = 0, maxPlayers = 0 }: ServerFAQProp
     <section className="rounded-xl border border-border bg-card text-card-foreground shadow-xs">
       <div className="flex items-center gap-2 border-b border-border px-6 py-5">
         <Icon icon="material-symbols:help-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
-        <h2 className="text-lg font-semibold text-foreground">Frequently Asked Questions</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("faq.heading")}</h2>
       </div>
 
       <div className="divide-y divide-border">

@@ -5,6 +5,7 @@ import { submitPostFeedback } from "@/http/post";
 import { cn } from "@/lib/utils";
 import { getVisitorId } from "@/lib/visitor-id";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 type Vote = "yes" | "no";
@@ -18,6 +19,7 @@ const buttonClass =
  * Aggregate results are admin-only (surfaced on the post stats page).
  */
 export default function ArticleFeedback({ slug }: { slug: string }) {
+  const t = useTranslations("Blog");
   const { getToken } = useAuth();
   const [vote, setVote] = useState<Vote | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -62,11 +64,11 @@ export default function ArticleFeedback({ slug }: { slug: string }) {
     <div className="mt-16 rounded-xl border border-border bg-card p-6 text-center text-card-foreground">
       {vote ? (
         <p className="text-sm font-medium text-foreground">
-          Thanks for your feedback! {vote === "yes" ? "🎉" : "🙏"}
+          {t("feedback.thanks")} {vote === "yes" ? "🎉" : "🙏"}
         </p>
       ) : (
         <>
-          <p className="mb-4 text-sm font-semibold text-foreground">Was this article helpful?</p>
+          <p className="mb-4 text-sm font-semibold text-foreground">{t("feedback.prompt")}</p>
           <div className="flex items-center justify-center gap-3">
             <button
               type="button"
@@ -75,7 +77,7 @@ export default function ArticleFeedback({ slug }: { slug: string }) {
               className={cn(buttonClass, "hover:text-success")}
             >
               <ThumbsUp className="h-4 w-4" />
-              Yes
+              {t("feedback.yes")}
             </button>
             <button
               type="button"
@@ -84,11 +86,11 @@ export default function ArticleFeedback({ slug }: { slug: string }) {
               className={cn(buttonClass, "hover:text-destructive")}
             >
               <ThumbsDown className="h-4 w-4" />
-              No
+              {t("feedback.no")}
             </button>
           </div>
           {error && (
-            <p className="mt-3 text-xs text-destructive">Something went wrong. Please try again.</p>
+            <p className="mt-3 text-xs text-destructive">{t("feedback.error")}</p>
           )}
         </>
       )}

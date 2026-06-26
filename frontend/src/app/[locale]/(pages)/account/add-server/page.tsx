@@ -4,17 +4,20 @@ import AddServerForm from "@/components/form/add-server-form";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useTranslations } from "next-intl";
 import { FC } from "react";
 
 interface AddServerPageProps {}
 
 const AddServerPage: FC<AddServerPageProps> = () => {
+  const t = useTranslations("Account");
+
   return (
     <DashboardLayout>
       <DashboardHero
-        title="Add Server"
-        badge="New"
-        subtitle="Track a new Minecraft server's live player count and uptime."
+        title={t("addServer.title")}
+        badge={t("addServer.badge")}
+        subtitle={t("addServer.subtitle")}
       />
 
       {/* Server details */}
@@ -22,9 +25,9 @@ const AddServerPage: FC<AddServerPageProps> = () => {
         <div className="flex items-center gap-2.5 border-b border-border px-6 py-4">
           <Icon icon="material-symbols:add-circle-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
           <div className="min-w-0">
-            <h2 className="text-base font-semibold tracking-tight text-foreground">Server details</h2>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">{t("addServer.detailsTitle")}</h2>
             <p className="text-sm text-muted-foreground">
-              We&apos;ll ping the address every 10 minutes to keep stats fresh.
+              {t("addServer.detailsSubtitle")}
             </p>
           </div>
         </div>

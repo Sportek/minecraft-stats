@@ -1,0 +1,240 @@
+{
+  "about": {
+    "eyebrow": "Company",
+    "title": "About",
+    "aboutUs": {
+      "title": "About Us",
+      "p1": "Our platform was created with a simple goal:",
+      "p2": "to provide <strong>a transparent, public, and free comparison of Minecraft servers</strong>, based on objective and accessible data.",
+      "p3": "Unlike traditional server lists whose primary purpose is promotion, our main focus is <strong>comparison and visibility</strong>.",
+      "p4": "We aim to help players understand how servers perform, how active they are, and how they evolve over time, using clear metrics such as player activity and trends."
+    },
+    "playersFirst": {
+      "title": "A Tool for Players First",
+      "p1": "Minecraft has thousands of servers, but reliable and neutral information is often hard to find.",
+      "p2": "Our platform allows players to:",
+      "item1": "Compare servers using public and consistent criteria",
+      "item2": "Track player activity and trends over time",
+      "item3": "Get a clearer view of the Minecraft server ecosystem",
+      "p3": "Discovery is naturally part of the experience, but it is <strong>not our primary objective</strong>.",
+      "p4": "Our priority is to give players a <strong>fair and unbiased overview</strong>, not to push specific servers to the top."
+    },
+    "transparency": {
+      "title": "Transparency & Fair Ranking",
+      "p1": "All rankings and statistics are generated using the same methodology for every server.",
+      "p2": "No server can artificially improve its position in the rankings through payment or promotion.",
+      "p3": "In the future, we may offer <strong>optional promotional visibility</strong> for server owners (such as dedicated display areas), but:",
+      "item1": "promotional content will always be <strong>clearly identified</strong>, and",
+      "item2": "it will <strong>never influence rankings or statistics</strong>."
+    },
+    "evolving": {
+      "title": "An Evolving Project",
+      "p1": "This platform is continuously evolving.",
+      "p2": "We improve data accuracy, performance, and user experience based on feedback from the community and ongoing technical development.",
+      "p3": "Our objective is long-term:",
+      "p4": "to remain a <strong>useful, trustworthy, and independent reference</strong> for Minecraft players worldwide.",
+      "p5": "If you have questions, suggestions, or feedback, feel free to contact us."
+    }
+  },
+  "cgu": {
+    "eyebrow": "Legal",
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: June 2, 2024",
+    "legalInfo": {
+      "title": "1. Legal Information",
+      "body": "This website is published by Gabriel Landry. For any question or complaint, you can contact us by email at: <mail>legal@minecraft-stats.com</mail>."
+    },
+    "purpose": {
+      "title": "2. Purpose",
+      "body": "These Terms of Service define the conditions of access to and use of the statistics services offered free of charge on the <link>Minecraft-Stats</link> website. Any registration or use of the website implies full and unreserved acceptance of these Terms."
+    },
+    "registration": {
+      "title": "3. Registration and User Account",
+      "intro": "To use our statistics collection and sharing service, users must:",
+      "item1": "Create an account by providing a username, an email address, and a password.",
+      "item2": "Alternatively, you may authenticate via Google or Discord, which may involve the collection of additional data such as your profile picture.",
+      "outro": "No minimum age requirement applies to registration."
+    },
+    "dataProcessing": {
+      "title": "4. Collection and Processing of Personal Data",
+      "typesTitle": "Types of Data Collected",
+      "typesBody": "We collect and process only the data provided during registration: username, email address, and password. If you register via Google or Discord, additional information such as your profile picture may be collected.",
+      "useTitle": "Use of Data",
+      "useIntro": "The data is used to:",
+      "useItem1": "Manage user accounts.",
+      "useItem2": "Provide access to the website's services and features.",
+      "useItem3": "Ensure the security and proper functioning of the website.",
+      "cookiesTitle": "Cookies and Local Storage",
+      "cookiesBody": "We use local storage to manage authentication. For more information, please refer to our <link>Privacy Policy</link>.",
+      "storageTitle": "Data Storage and Security",
+      "storageBody": "The collected data is stored on a Pulseheberg VPS located in France.",
+      "rightsTitle": "User Rights",
+      "rightsIntro": "In accordance with the GDPR, you have the following rights over your personal data:",
+      "rightsItem1": "Right of access",
+      "rightsItem2": "Right to rectification",
+      "rightsItem3": "Right to erasure",
+      "rightsItem4": "Right to restriction of processing",
+      "rightsItem5": "Right to object",
+      "rightsItem6": "Right to data portability",
+      "rightsOutro": "To exercise these rights, please contact us at: <mail>legal@minecraft-stats.com</mail>.",
+      "dpoTitle": "No DPO",
+      "dpoBody": "No Data Protection Officer (DPO) has been appointed."
+    },
+    "intellectualProperty": {
+      "title": "5. Intellectual Property",
+      "body": "Server images are the property of their respective Minecraft servers. All other content is the property of Gabriel Landry. The terms \"Minecraft\" and other associated trademarks belong to Mojang (Microsoft)."
+    },
+    "obligations": {
+      "title": "6. User Obligations and Responsibilities",
+      "p1": "Users agree not to needlessly create a large number of servers. Any abuse may result in a ban from the platform.",
+      "p2": "Users may add Minecraft servers so that statistics can be collected. By adding a server, the user warrants that they have the right to do so. We are not responsible if a user adds a server without holding that right. To remove a server, please contact us at: <mail>legal@minecraft-stats.com</mail> with the subject \"Server removal request\"."
+    },
+    "liability": {
+      "title": "7. Limitation of Liability",
+      "body": "The website and its services are provided \"as is\" without any guarantee of continuous or uninterrupted operation. Gabriel Landry cannot be held liable for any malfunction or service interruption, nor for any potential data loss."
+    },
+    "jurisdiction": {
+      "title": "8. Jurisdiction and Governing Law",
+      "body": "These Terms are governed by the laws of Quebec. In the event of a dispute, and after an attempt at amicable resolution, the courts of Montreal (Quebec) shall have sole jurisdiction."
+    },
+    "amendments": {
+      "title": "9. Amendments to the Terms",
+      "body": "Gabriel Landry reserves the right to modify these Terms at any time. Users will be informed of any change through a notification on the website. Continued use of the website after notification of the changes constitutes acceptance of the new Terms."
+    },
+    "contact": {
+      "title": "10. Contact",
+      "body": "For any question or complaint regarding these Terms, please contact us at: <mail>legal@minecraft-stats.com</mail>."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "body": "For details on how we collect, use, and protect your personal data, including third-party services such as analytics and advertising, please read our dedicated <link>Privacy Policy</link>."
+    }
+  },
+  "privacy": {
+    "eyebrow": "Legal",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: June 24, 2026",
+    "overview": {
+      "title": "Overview",
+      "body": "Minecraft Stats is a free, open-source platform for tracking Minecraft server statistics. We try to collect as little personal data as possible and to be transparent about what we do collect. This policy explains what data we process, why, and the rights you have over it. It complements our <link>Terms of Service</link>."
+    },
+    "dataCollect": {
+      "title": "Data We Collect",
+      "accountTitle": "Account Data",
+      "accountBody": "When you create an account, we store the username, email address, and password you provide. Passwords are hashed and never stored in plain text. If you sign in via Google or Discord, we may also receive basic profile information such as your display name and profile picture from that provider.",
+      "contentTitle": "Content You Submit",
+      "contentBody": "If you add a Minecraft server, we store the server details you provide (such as its address and name) so we can ping it and display its statistics. This data is public by nature.",
+      "usageTitle": "Usage and Analytics Data",
+      "usageBody": "Like most websites, we automatically receive certain technical information (such as your IP address, browser type, and the pages you visit) and use analytics to understand how the site is used. This is done both through our own first-party analytics and through third-party tools. Our first-party analytics only run after you give your consent, and we never store your IP address in clear text. See the dedicated sections below for details."
+    },
+    "howWeUse": {
+      "title": "How We Use Your Data",
+      "item1": "To create and manage your account and authenticate you.",
+      "item2": "To provide the platform's features, including server statistics.",
+      "item3": "To measure audience and improve the website's performance and content.",
+      "item4": "To display advertising that helps keep the service free.",
+      "item5": "To ensure the security and proper functioning of the website."
+    },
+    "cookies": {
+      "title": "Cookies and Local Storage",
+      "body": "We use browser local storage to keep you signed in, to remember your analytics consent choice, and — once you have consented — to store the anonymous visitor identifier used by our first-party analytics. Our third-party providers (analytics and advertising) may also set cookies or similar identifiers on your device. You can control or delete cookies and local storage through your browser settings, and you can manage advertising preferences as described below. Disabling some of these may affect how parts of the site work."
+    },
+    "firstParty": {
+      "title": "First-Party Analytics",
+      "intro": "In addition to the third-party tools below, we run our own analytics, with the data stored on our own servers rather than shared with an external provider. This helps us measure how much traffic the site receives and how our pages are used, so we can improve them. It works at two levels, described below.",
+      "anonymousTitle": "Anonymous measurement (no consent required)",
+      "anonymousBody": "To count overall traffic and how many distinct visitors we receive — including those who decline the detailed analytics below — we keep a purely anonymous, aggregate tally. It sets no identifier on your device and stores no personal data: your IP address and browser type are folded into a statistical estimator (a HyperLogLog) that can produce counts but cannot single out, re-identify, or list any individual. Because this processing is anonymous, it runs without consent, in line with audience-measurement guidance.",
+      "detailedTitle": "Detailed analytics (with your consent)",
+      "detailedBody": "The richer measurement described next only runs after you opt in through the consent banner.",
+      "whatTitle": "What we collect",
+      "whatItem1": "An anonymous visitor identifier we generate and store in your browser's local storage.",
+      "whatItem2": "The pages you visit, the page that referred you, and your browser type (user agent).",
+      "whatItem3": "An approximate country, derived from your connection.",
+      "whatItem4": "A hashed, non-reversible form of your IP address. We never store your IP address in clear text; the hash only lets us group visits from the same connection without keeping the address itself.",
+      "consentTitle": "Consent",
+      "consentBody": "You opt in to the detailed analytics above through the consent banner shown on your first visit. If you decline, we do not record those detailed events — only the anonymous aggregate count described earlier continues. You can change your mind at any time by clearing your browser's local storage for this site, which also resets your anonymous visitor identifier.",
+      "linkTitle": "Link with your account",
+      "linkBody": "If you are signed in, we may associate your anonymous visits with your account so we can understand usage by logged-in members. A single device or connection can be linked to more than one account, and a single account to several devices. You can request deletion of this data at any time (see Your Rights below).",
+      "retentionTitle": "Retention",
+      "retentionBody": "Individual page-view records are automatically deleted after 90 days. Only aggregated, anonymized statistics (such as daily page counts) are kept beyond that period."
+    },
+    "thirdParty": {
+      "title": "Third-Party Services",
+      "umamiTitle": "Umami",
+      "umamiBody": "We use Umami, a privacy-focused analytics service, to measure aggregate audience and traffic. Umami does not use cookies and does not collect data that identifies you individually; it reports anonymized, aggregated metrics. Analytics data is processed by Umami on our behalf.",
+      "umamiMore": "For more information, see <link>Umami's Privacy Policy</link>.",
+      "gtmTitle": "Google Tag Manager",
+      "gtmBody": "We use Google Tag Manager to load and manage the measurement scripts described in this policy. Google Tag Manager itself does not collect personal data, but it loads other tags that may. It is provided by Google, which processes data in accordance with its policies.",
+      "gtmMore": "For more information, see <link>Google's Privacy Policy</link>.",
+      "clarityTitle": "Microsoft Clarity",
+      "clarityBody": "We use Microsoft Clarity to understand how visitors interact with the site through aggregated metrics and, in some cases, session recordings (such as mouse movements, clicks, and scrolling). Clarity may set cookies and process data such as your IP address; recordings are masked to avoid capturing sensitive input. Microsoft uses this data in accordance with its policies.",
+      "clarityMore": "For more information, see the <link>Microsoft Privacy Statement</link>.",
+      "adsenseTitle": "Google AdSense",
+      "adsenseBody": "We use Google AdSense to display advertising, which helps keep Minecraft Stats free. Google and its partners may use cookies and similar identifiers to serve ads and, where applicable, to personalize them based on your activity. We do not control the specific ads shown.",
+      "adsenseMore": "You can review and control how Google personalizes ads, and opt out of personalized advertising, through your <link1>Google Ads Settings</link1>. More information is available in <link2>Google's advertising policies</link2>.",
+      "authTitle": "Authentication Providers",
+      "authBody": "If you sign in with Google or Discord, those providers process your data under their own privacy policies. We only receive the basic profile information needed to create and identify your account."
+    },
+    "storage": {
+      "title": "Data Storage and Security",
+      "body": "Account and server data is stored on a Pulseheberg VPS located in France. We apply reasonable technical measures to protect your data against unauthorized access. No method of transmission or storage is completely secure, but we take security seriously."
+    },
+    "retention": {
+      "title": "Data Retention",
+      "body": "We keep your personal data for as long as your account is active and the services are provided. If you delete your account or ask us to remove your data, we will delete it unless we are required to retain it for legal reasons. First-party analytics page-view records are deleted after 90 days, as described above. Aggregate, anonymized statistics may be kept indefinitely."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "intro": "In accordance with the GDPR, you have the following rights over your personal data:",
+      "item1": "Right of access",
+      "item2": "Right to rectification",
+      "item3": "Right to erasure",
+      "item4": "Right to restriction of processing",
+      "item5": "Right to object",
+      "item6": "Right to data portability",
+      "outro": "To exercise any of these rights, contact us at: <mail>legal@minecraft-stats.com</mail>. No Data Protection Officer (DPO) has been appointed."
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "For any question about this Privacy Policy or how your data is handled, reach us at: <mail>legal@minecraft-stats.com</mail> or through our <link>contact page</link>."
+    }
+  },
+  "partners": {
+    "eyebrow": "Partners",
+    "title": "Our Partners",
+    "subtitle": "Discover trusted services that can help improve your Minecraft server experience.",
+    "visit": "Visit Partner",
+    "items": {
+      "topMinecraftClick": "The best Minecraft server list to promote your server and get more players.",
+      "serveurMinecraftVote": "A platform dedicated to Minecraft server voting, helping you increase your server's visibility.",
+      "minecraftInventoryBuilder": "Create and customize Minecraft inventories with an intuitive interface."
+    }
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Get in Touch",
+    "subtitle": "Questions, feedback, or a server removal request? Reach us through any of the channels below — Discord is usually the quickest.",
+    "channels": {
+      "discord": {
+        "name": "Discord",
+        "description": "Join our community for the fastest response, support, and feature discussions.",
+        "cta": "Open Discord"
+      },
+      "github": {
+        "name": "GitHub",
+        "description": "Report a bug, request a feature, or contribute to the open-source project.",
+        "cta": "Open GitHub"
+      },
+      "email": {
+        "name": "Email",
+        "description": "For private inquiries, GDPR requests, or server removal requests.",
+        "cta": "Send an email"
+      }
+    }
+  },
+  "consent": {
+    "description": "We measure site usage (pages visited, traffic) to improve it. These statistics use your IP address (stored in an anonymized form) and your browser. <link>Learn more</link>.",
+    "decline": "Decline",
+    "accept": "Accept"
+  }
+}

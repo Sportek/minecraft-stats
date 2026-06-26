@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import StatCard from "../serveur/stat-card";
 import { fetcher } from "@/app/_cheatcode";
 import useSWR from "swr";
@@ -17,6 +17,7 @@ interface WebsiteStats {
 const StatsSection = () => {
   const apiUrl = getClientApiUrl();
   const formatter = useFormatter();
+  const t = useTranslations("Home");
 
   // Toutes les agrégations (serveurs surveillés, joueurs en ligne, lignes de
   // données) sont calculées côté backend : un seul endpoint léger plutôt que de
@@ -48,7 +49,7 @@ const StatsSection = () => {
   if (websiteStatsError) {
     return (
       <div className="w-full text-center text-sm text-destructive">
-        {websiteStatsError?.message ?? "Error loading stats"}
+        {websiteStatsError?.message ?? t("stats.error")}
       </div>
     );
   }
@@ -62,17 +63,17 @@ const StatsSection = () => {
   return (
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
       <StatCard
-        title="Monitored Servers"
+        title={t("stats.monitoredServers")}
         value={format(websiteStats.totalServers)}
         icon={<Icon icon="mynaui:servers-solid" className="h-5 w-5" />}
       />
       <StatCard
-        title="Players Online Now"
+        title={t("stats.playersOnlineNow")}
         value={format(websiteStats.playersOnline)}
         icon={<Icon icon="mdi:account-multiple" className="h-5 w-5" />}
       />
       <StatCard
-        title="Total Data Rows"
+        title={t("stats.totalDataRows")}
         value={format(websiteStats.totalRecords)}
         icon={<Icon icon="material-symbols:database-sharp" className="h-5 w-5" />}
       />

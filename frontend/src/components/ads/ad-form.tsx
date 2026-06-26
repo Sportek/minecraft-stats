@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Advertisement, AdvertisementInput } from "@/types/advertisement";
 import { Category } from "@/types/server";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import useSWRImmutable from "swr/immutable";
 
@@ -30,6 +31,7 @@ interface AdFormProps {
 }
 
 const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => {
+  const t = useTranslations("Admin");
   const { data: categories } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
 
   const [name, setName] = useState(initial?.name ?? "");
@@ -56,15 +58,15 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
     setError(null);
 
     if (name.trim().length < 2) {
-      setError("The name must contain at least 2 characters.");
+      setError(t("adForm.errorName"));
       return;
     }
     if (htmlContent.trim().length === 0) {
-      setError("The HTML/CSS code cannot be empty.");
+      setError(t("adForm.errorHtml"));
       return;
     }
     if (!showOnHome && !showOnServer) {
-      setError("Select at least one display placement.");
+      setError(t("adForm.errorPlacement"));
       return;
     }
 
@@ -92,20 +94,20 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Nom */}
       <div className="space-y-2">
         <Label>
-          Advertisement name <span className="text-destructive">*</span>
+          {t("adForm.name")} <span className="text-destructive">*</span>
         </Label>
         <Input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Hypixel partner banner"
+          placeholder={t("adForm.namePlaceholder")}
         />
       </div>
 
       {/* Code HTML/CSS */}
       <div className="space-y-2">
         <Label>
-          HTML / CSS code <span className="text-destructive">*</span>
+          {t("adForm.html")} <span className="text-destructive">*</span>
         </Label>
         <textarea
           value={htmlContent}
@@ -116,25 +118,26 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
           className="flex w-full resize-y rounded-md border border-input bg-background px-3 py-2 font-mono text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
         <p className="text-xs text-muted-foreground">
-          CSS can be included inside a <code>&lt;style&gt;</code> tag. The rendering is isolated:
-          it cannot break the site&apos;s layout. <code>&lt;a href&gt;</code> links are tracked
-          automatically.
+          {t.rich("adForm.htmlHelp", {
+            styleTag: () => <code>&lt;style&gt;</code>,
+            linkTag: () => <code>&lt;a href&gt;</code>,
+          })}
         </p>
       </div>
 
       {/* Prévisualisation pleine largeur */}
       <div className="space-y-2">
-        <Label>Preview</Label>
+        <Label>{t("adForm.preview")}</Label>
         <AdPreview htmlContent={htmlContent} />
         <p className="text-xs text-muted-foreground">
-          Preview at the real width of the ad placement on the site.
+          {t("adForm.previewHelp")}
         </p>
       </div>
 
       {/* Emplacements */}
       <div className="space-y-2">
         <Label>
-          Placements <span className="text-destructive">*</span>
+          {t("adForm.placements")} <span className="text-destructive">*</span>
         </Label>
         <div className="flex flex-wrap gap-4">
           <Label className="flex items-center gap-2 text-sm font-normal text-foreground">
@@ -142,14 +145,14 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
               checked={showOnHome}
               onCheckedChange={(checked) => setShowOnHome(checked === true)}
             />
-            Home page
+            {t("adForm.homePage")}
           </Label>
           <Label className="flex items-center gap-2 text-sm font-normal text-foreground">
             <Checkbox
               checked={showOnServer}
               onCheckedChange={(checked) => setShowOnServer(checked === true)}
             />
-            Server pages
+            {t("adForm.serverPages")}
           </Label>
         </div>
       </div>
@@ -157,9 +160,9 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Ciblage par catégorie */}
       {showOnServer && (
         <div className="space-y-2">
-          <Label>Category targeting (server pages)</Label>
+          <Label>{t("adForm.categoryTargeting")}</Label>
           <p className="text-xs text-muted-foreground">
-            No category selected = the advertisement is shown on all server pages.
+            {t("adForm.categoryTargetingHelp")}
           </p>
           <div className="flex flex-wrap gap-2">
             {(categories ?? []).map((category) => {
@@ -186,7 +189,7 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Poids + planification */}
       <div className="grid gap-6 sm:grid-cols-3">
         <div className="space-y-2">
-          <Label>Weight (rotation)</Label>
+          <Label>{t("adForm.weight")}</Label>
           <Input
             type="number"
             min={1}
@@ -194,10 +197,10 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
             value={weight}
             onChange={(e) => setWeight(Math.max(1, Number(e.target.value) || 1))}
           />
-          <p className="text-xs text-muted-foreground">Higher = shown more often.</p>
+          <p className="text-xs text-muted-foreground">{t("adForm.weightHelp")}</p>
         </div>
         <div className="space-y-2">
-          <Label>Start (optional)</Label>
+          <Label>{t("adForm.start")}</Label>
           <Input
             type="datetime-local"
             value={startsAt}
@@ -205,7 +208,7 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
           />
         </div>
         <div className="space-y-2">
-          <Label>End (optional)</Label>
+          <Label>{t("adForm.end")}</Label>
           <Input
             type="datetime-local"
             value={endsAt}
@@ -217,13 +220,13 @@ const AdForm = ({ initial, submitting, submitLabel, onSubmit }: AdFormProps) => 
       {/* Activation */}
       <Label className="flex items-center gap-3 text-sm font-medium text-foreground">
         <Checkbox checked={enabled} onCheckedChange={(checked) => setEnabled(checked === true)} />
-        Enable the advertisement (visible on the site)
+        {t("adForm.enable")}
       </Label>
 
       {/* Actions */}
       <div className="flex items-center gap-4 border-t border-border pt-4">
         <Button type="submit" variant="accent" disabled={submitting}>
-          {submitting ? "Saving…" : submitLabel}
+          {submitting ? t("adForm.saving") : submitLabel}
         </Button>
       </div>
     </form>

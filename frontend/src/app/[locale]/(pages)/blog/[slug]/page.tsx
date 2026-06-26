@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { getPostBySlug } from "@/http/post";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
@@ -29,6 +30,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const { baseUrl } = await getDomainConfig();
+  const t = await getTranslations({ locale, namespace: "Blog" });
 
   try {
     const post = await loadPost(slug);
@@ -68,8 +70,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch {
     return {
-      title: "Article not found",
-      description: "The requested article does not exist",
+      title: t("notFound.metaTitle"),
+      description: t("notFound.metaDescription"),
       robots: { index: false, follow: true },
     };
   }
@@ -77,6 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Readonly<Props>) {
   const { locale, slug } = await params;
+  const t = await getTranslations({ locale, namespace: "Blog" });
 
   try {
     const post = await loadPost(slug);
@@ -111,7 +114,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
             className="group -ml-2 inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           >
             <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>Back to Blog</span>
+            <span>{t("backToBlog")}</span>
           </Link>
         </div>
 
@@ -119,7 +122,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
           {/* Header */}
           <header className="mb-8 text-center">
             <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
-              News · {formatPostDate(post.publishedAt ?? post.createdAt, locale)}
+              {t("news")} · {formatPostDate(post.publishedAt ?? post.createdAt, locale)}
             </div>
             <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight text-balance text-foreground sm:text-4xl md:text-5xl">
               {post.title}
@@ -130,7 +133,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
               <PostAuthor username={post.author.username} avatarUrl={post.author.avatarUrl} />
               <span className="text-border">•</span>
               <Badge variant="accent" className="uppercase tracking-wide">
-                News
+                {t("news")}
               </Badge>
               <span className="text-border">•</span>
               <PostViews count={post.viewCount} locale={locale} />
@@ -186,7 +189,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
                   href="/blog"
                   className="text-sm font-bold text-accent transition-colors hover:text-accent/80"
                 >
-                  Read more articles &rarr;
+                  {t("readMoreArticles")} &rarr;
                 </Link>
               </div>
             </div>

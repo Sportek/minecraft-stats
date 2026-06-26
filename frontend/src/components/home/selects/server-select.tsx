@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getClientApiUrl } from "@/lib/domain";
+import { useTranslations } from "next-intl";
 
 export interface Server {
   id: number;
@@ -37,6 +38,7 @@ interface ServerSelectProps {
 }
 
 export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSelectProps) => {
+  const t = useTranslations("Home");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const apiUrl = getClientApiUrl();
@@ -48,7 +50,9 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
     ? data
         .map((obtainData) => ({
           id: obtainData.server?.id,
-          name: obtainData.server?.name ?? `Server ${obtainData.server?.id ?? "Unknown"}`,
+          name:
+            obtainData.server?.name ??
+            t("serverSelect.serverFallback", { id: obtainData.server?.id ?? t("serverSelect.unknown") }),
         }))
         .filter((server): server is Server => server.id != null)
     : [];
@@ -94,20 +98,20 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          aria-label="Select servers to compare"
+          aria-label={t("serverSelect.ariaLabel")}
           className="w-full justify-between"
           disabled={disabled}
         >
           {selectedServers.length === 0
-            ? "All monitored servers"
-            : `${selectedServers.length} server${selectedServers.length > 1 ? "s" : ""} selected`}
+            ? t("allMonitoredServers")
+            : t("serverSelect.selected", { count: selectedServers.length })}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search for a server..." value={search} onValueChange={setSearch} />
-          <CommandEmpty>No server found.</CommandEmpty>
+          <CommandInput placeholder={t("serverSelect.placeholder")} value={search} onValueChange={setSearch} />
+          <CommandEmpty>{t("serverSelect.empty")}</CommandEmpty>
           <CommandGroup>
             <CommandItem
               onSelect={() => {
@@ -117,7 +121,7 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
               className="cursor-pointer"
             >
               <Check className={cn("mr-2 h-4 w-4", selectedServers.length === 0 ? "opacity-100" : "opacity-0")} />
-              All monitored servers
+              {t("allMonitoredServers")}
             </CommandItem>
             {displayedServers.map((server) => (
               <CommandItem

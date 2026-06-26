@@ -4,12 +4,14 @@ import Loader from "@/components/loader";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { AccessToken, User } from "@/types/auth";
+import { useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 
 const CallbackPage = () => {
+  const t = useTranslations("Auth");
   const provider = useParams().provider;
   const code = useSearchParams().get("code");
 
@@ -30,15 +32,15 @@ const CallbackPage = () => {
       router.push("/login");
       setIsLoggedIn(false);
       toast({
-        title: "Failed to connect with " + provider,
-        description: "Please try again",
+        title: t("callback.errorTitle", { provider: String(provider) }),
+        description: t("callback.errorDescription"),
       });
     }
-  }, [data, router, setUser, saveToken, setIsLoggedIn, toast, provider, isLoading]);
+  }, [data, router, setUser, saveToken, setIsLoggedIn, toast, provider, isLoading, t]);
 
   return (
     <div>
-      {isLoading && <Loader message={"Connecting with " + provider} />}
+      {isLoading && <Loader message={t("callback.connecting", { provider: String(provider) })} />}
     </div>
   );
 };

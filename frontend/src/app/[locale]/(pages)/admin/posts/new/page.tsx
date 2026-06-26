@@ -6,10 +6,12 @@ import { PostForm, PostFormValues } from "@/components/admin/post-form";
 import { useAuth } from "@/contexts/auth";
 import { createPost } from "@/http/post";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 const NewPostPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const token = getToken();
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -20,15 +22,15 @@ const NewPostPage = () => {
   const [loading, setLoading] = useState(false);
 
   if (!user) {
-    return <AdminLoadingState label="Loading..." />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin" && user.role !== "writer") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access Denied"
-        description="You must be a writer or administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.writerOrAdmin")}
       />
     );
   }
@@ -73,7 +75,7 @@ const NewPostPage = () => {
       router.push("/admin/posts");
     } catch (error) {
       console.error("Failed to create post:", error);
-      alert("Failed to create article");
+      alert(t("posts.createError"));
     } finally {
       setLoading(false);
     }
@@ -81,11 +83,11 @@ const NewPostPage = () => {
 
   return (
     <div className="mx-auto max-w-4xl animate-in fade-in slide-in-from-bottom-2 py-8 duration-300">
-      <AdminBackLink href="/admin/posts" label="Back to List" />
+      <AdminBackLink href="/admin/posts" label={t("posts.backToList")} />
 
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">New article</p>
-        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">Create Article</h1>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("posts.newEyebrow")}</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">{t("posts.newPageTitle")}</h1>
       </div>
 
       <PostForm
@@ -94,7 +96,7 @@ const NewPostPage = () => {
         onTitleBlur={generateSlug}
         onSubmit={handleSubmit}
         submitting={loading}
-        submitLabel={loading ? "Publishing..." : "Publish Article"}
+        submitLabel={loading ? t("posts.publishing") : t("posts.publishSubmit")}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/auth";
 import { uploadImage } from "@/http/post";
 import { resolveAssetUrl } from "@/lib/domain";
 import { ImageIcon, Upload, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
 const MAX_COVER_BYTES = 5 * 1024 * 1024;
@@ -18,6 +19,7 @@ interface CoverImageFieldProps {
 
 /** Cover image control for the blog post form: uploads directly instead of pasting a URL. */
 export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
+  const t = useTranslations("Admin");
   const { getToken } = useAuth();
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +31,11 @@ export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
     if (!file) return;
 
     if (file.size > MAX_COVER_BYTES) {
-      toast({ title: "Image too large", description: "Maximum size is 5 MB.", variant: "error" });
+      toast({
+        title: t("coverImage.tooLargeTitle"),
+        description: t("coverImage.tooLargeDescription"),
+        variant: "error",
+      });
       return;
     }
 
@@ -39,8 +45,8 @@ export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
       onChange(url);
     } catch (error) {
       toast({
-        title: "Upload failed",
-        description: error instanceof Error ? error.message : "Something went wrong",
+        title: t("coverImage.uploadFailedTitle"),
+        description: error instanceof Error ? error.message : t("coverImage.uploadFailedDescription"),
         variant: "error",
       });
     } finally {
@@ -50,7 +56,7 @@ export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
 
   return (
     <div className="space-y-2">
-      <Label>Cover image (optional)</Label>
+      <Label>{t("coverImage.label")}</Label>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -62,7 +68,7 @@ export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
         ) : (
           <div className="flex h-24 w-full flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-secondary/40 text-muted-foreground sm:w-40">
             <ImageIcon className="h-5 w-5" />
-            <span className="text-xs">No cover yet</span>
+            <span className="text-xs">{t("coverImage.noCover")}</span>
           </div>
         )}
         <div className="flex flex-1 flex-col justify-center gap-2">
@@ -81,18 +87,20 @@ export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
               disabled={isUploading}
             >
               <Upload className="mr-2 h-4 w-4" />
-              {isUploading ? "Uploading…" : value ? "Replace image" : "Upload image"}
+              {isUploading
+                ? t("coverImage.uploading")
+                : value
+                  ? t("coverImage.replace")
+                  : t("coverImage.upload")}
             </Button>
             {value && (
               <Button type="button" variant="ghost" onClick={() => onChange("")} disabled={isUploading}>
                 <X className="mr-2 h-4 w-4" />
-                Remove
+                {t("coverImage.remove")}
               </Button>
             )}
           </div>
-          <span className="text-xs text-muted-foreground">
-            PNG, JPG, WebP or GIF, up to 5 MB. Used as the hero image on the blog card and article page.
-          </span>
+          <span className="text-xs text-muted-foreground">{t("coverImage.help")}</span>
         </div>
       </div>
     </div>

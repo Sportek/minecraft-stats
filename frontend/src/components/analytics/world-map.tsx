@@ -2,7 +2,7 @@
 
 import { ALPHA2_TO_NUMERIC } from "@/lib/country-alpha2-to-numeric";
 import { AnalyticsCountry } from "@/types/analytics";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useMemo, useState } from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
@@ -27,6 +27,7 @@ function lerpHex(from: string, to: string, t: number): string {
 const WorldMap = ({ countries }: { countries: AnalyticsCountry[] }) => {
   const { resolvedTheme } = useTheme();
   const format = useFormatter();
+  const t = useTranslations("Admin");
   const isDark = resolvedTheme === "dark";
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
@@ -100,17 +101,19 @@ const WorldMap = ({ countries }: { countries: AnalyticsCountry[] }) => {
           style={{ left: tooltip.x, top: tooltip.y - 8 }}
         >
           <span className="font-medium">{tooltip.name}</span>
-          {tooltip.views > 0 ? ` — ${format.number(tooltip.views)} views` : " — no data"}
+          {tooltip.views > 0
+            ? ` — ${format.number(tooltip.views)} ${t("analytics.worldMap.views")}`
+            : ` — ${t("analytics.worldMap.noData")}`}
         </div>
       )}
 
       <div className="mt-2 flex items-center justify-end gap-2 text-xs text-muted-foreground">
-        <span>Fewer</span>
+        <span>{t("analytics.worldMap.fewer")}</span>
         <span
           className="h-2 w-24 rounded-full"
           style={{ background: `linear-gradient(to right, ${lowColor}, ${highColor})` }}
         />
-        <span>More</span>
+        <span>{t("analytics.worldMap.more")}</span>
       </div>
     </div>
   );

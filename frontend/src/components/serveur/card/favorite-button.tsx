@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { MAX_FAVORITES, useFavorite } from "@/contexts/favorite";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,7 @@ interface FavoriteButtonProps {
 }
 
 const FavoriteButton = ({ serverId, serverName }: FavoriteButtonProps) => {
+  const t = useTranslations("Servers");
   const { isFavorite, toggleFavorite } = useFavorite();
   const { toast } = useToast();
   const active = isFavorite(serverId);
@@ -19,8 +21,8 @@ const FavoriteButton = ({ serverId, serverName }: FavoriteButtonProps) => {
     const applied = toggleFavorite(serverId);
     if (!applied) {
       toast({
-        title: "Favorite limit reached",
-        description: `You can pin up to ${MAX_FAVORITES} servers. Remove one before adding another.`,
+        title: t("card.favorite.limitTitle"),
+        description: t("card.favorite.limitDescription", { max: MAX_FAVORITES }),
         variant: "error",
       });
     }
@@ -30,9 +32,9 @@ const FavoriteButton = ({ serverId, serverName }: FavoriteButtonProps) => {
     <button
       type="button"
       onClick={handleClick}
-      aria-label={active ? "Remove from favorites" : "Add to favorites"}
+      aria-label={active ? t("card.favorite.remove") : t("card.favorite.add")}
       aria-pressed={active}
-      title={active ? "Remove from favorites" : "Add to favorites"}
+      title={active ? t("card.favorite.remove") : t("card.favorite.add")}
       id={`favorite-button-${serverName}-${serverId}`}
       className={cn(
         "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors",

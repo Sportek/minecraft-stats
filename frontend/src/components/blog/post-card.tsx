@@ -3,6 +3,7 @@ import { resolveAssetUrl } from "@/lib/domain";
 import { Post } from "@/types/post";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface PostCardProps {
   post: Post;
@@ -11,6 +12,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post, featured = false, locale }: PostCardProps) => {
+  const t = useTranslations("Blog");
   const date = post.publishedAt ?? post.createdAt;
 
   if (featured) {
@@ -49,7 +51,7 @@ const PostCard = ({ post, featured = false, locale }: PostCardProps) => {
           <div className="mt-auto flex items-center justify-between pt-2">
             <PostAuthor username={post.author.username} avatarUrl={post.author.avatarUrl} />
             <span className="text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
-              Read article &rarr;
+              {t("readArticle")} &rarr;
             </span>
           </div>
         </div>

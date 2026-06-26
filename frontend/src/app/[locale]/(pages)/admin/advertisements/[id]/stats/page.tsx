@@ -10,20 +10,21 @@ import { AdStatsResponse, Advertisement } from "@/types/advertisement";
 import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
 import { useParams } from "next/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
 
 type RangeKey = "7d" | "30d" | "90d";
 
-const RANGES: Record<RangeKey, { label: string; ms: number; interval: "hour" | "day" }> = {
-  "7d": { label: "7 days", ms: 7 * 86400000, interval: "hour" },
-  "30d": { label: "30 days", ms: 30 * 86400000, interval: "day" },
-  "90d": { label: "90 days", ms: 90 * 86400000, interval: "day" },
+const RANGES: Record<RangeKey, { ms: number; interval: "hour" | "day" }> = {
+  "7d": { ms: 7 * 86400000, interval: "hour" },
+  "30d": { ms: 30 * 86400000, interval: "day" },
+  "90d": { ms: 90 * 86400000, interval: "day" },
 };
 
 const AdvertisementStatsPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const format = useFormatter();
   const token = getToken();
   const params = useParams();
@@ -89,7 +90,7 @@ const AdvertisementStatsPage = () => {
           type: "line" as const,
           xKey: "time",
           yKey: "impressions",
-          yName: "Impressions",
+          yName: t("ads.stats.impressions"),
           stroke: "#2563EB",
           marker: { enabled: false },
         },
@@ -97,7 +98,7 @@ const AdvertisementStatsPage = () => {
           type: "line" as const,
           xKey: "time",
           yKey: "clicks",
-          yName: "Clicks",
+          yName: t("ads.stats.clicks"),
           stroke: "#16A34A",
           marker: { enabled: false },
         },
@@ -107,18 +108,18 @@ const AdvertisementStatsPage = () => {
         y: { type: "number" as const, position: "left" as const },
       },
     };
-  }, [chartData, resolvedTheme]);
+  }, [chartData, resolvedTheme, t]);
 
   if (!user) {
-    return <AdminLoadingState label="Loading…" />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access denied"
-        description="You must be an administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.adminOnly")}
       />
     );
   }
@@ -130,15 +131,14 @@ const AdvertisementStatsPage = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto max-w-5xl animate-in fade-in px-4 py-8 duration-300">
-        <AdminBackLink href="/admin/advertisements" label="Back to the list" />
+        <AdminBackLink href="/admin/advertisements" label={t("ads.backToList")} />
 
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Statistics{ad ? ` — ${ad.name}` : ""}
+            {t("ads.stats.title")}
+            {ad ? ` — ${ad.name}` : ""}
           </h1>
-          <p className="text-muted-foreground">
-            Impressions and clicks over time.
-          </p>
+          <p className="text-muted-foreground">{t("ads.stats.subtitle")}</p>
         </div>
 
         {/* Sélecteur de période */}
@@ -148,16 +148,16 @@ const AdvertisementStatsPage = () => {
           onChange={setRange}
           tabs={(Object.keys(RANGES) as RangeKey[]).map((key) => ({
             value: key,
-            label: RANGES[key].label,
+            label: t(`ads.ranges.${key}`),
           }))}
         />
 
         {/* Cartes de totaux */}
         <div className="mb-6 grid gap-4 sm:grid-cols-3">
           {[
-            { label: "Impressions", value: format.number(totals.impressions) },
-            { label: "Clicks", value: format.number(totals.clicks) },
-            { label: "Click-through rate (CTR)", value: `${ctr} %` },
+            { label: t("ads.stats.impressions"), value: format.number(totals.impressions) },
+            { label: t("ads.stats.clicks"), value: format.number(totals.clicks) },
+            { label: t("ads.stats.ctr"), value: `${ctr} %` },
           ].map((card) => (
             <div
               key={card.label}
@@ -175,11 +175,11 @@ const AdvertisementStatsPage = () => {
         <div className="rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs">
           {loading ? (
             <div className="flex h-[320px] items-center justify-center text-muted-foreground">
-              Loading statistics…
+              {t("ads.stats.loading")}
             </div>
           ) : chartData.length === 0 ? (
             <div className="flex h-[320px] items-center justify-center text-muted-foreground">
-              No data for this period.
+              {t("ads.stats.empty")}
             </div>
           ) : (
             <div className="h-[320px]">

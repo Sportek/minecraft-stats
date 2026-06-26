@@ -9,10 +9,11 @@ import { useAuth } from "@/contexts/auth";
 import { createApiToken, getApiTokens, revokeApiToken } from "@/http/api-token";
 import { ApiToken, CreatedApiToken } from "@/types/api-token";
 import { Check, Copy, KeyRound, Trash2 } from "lucide-react";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 const ApiTokensPage = () => {
+  const t = useTranslations("Account");
   const { user, getToken } = useAuth();
   const { toast } = useToast();
   const formatter = useFormatter();
@@ -33,12 +34,12 @@ const ApiTokensPage = () => {
       setTokens(await getApiTokens(token));
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Could not load tokens",
+        title: t("common.error"),
+        description: error instanceof Error ? error.message : t("apiTokens.loadError"),
         variant: "error",
       });
     }
-  }, [getToken, toast]);
+  }, [getToken, toast, t]);
 
   useEffect(() => {
     loadTokens();
@@ -58,8 +59,8 @@ const ApiTokensPage = () => {
       await loadTokens();
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Could not create token",
+        title: t("common.error"),
+        description: error instanceof Error ? error.message : t("apiTokens.createError"),
         variant: "error",
       });
     } finally {
@@ -77,22 +78,22 @@ const ApiTokensPage = () => {
   const handleRevoke = async (id: ApiToken["id"], tokenName: string) => {
     const token = getToken();
     if (!token) return;
-    if (!window.confirm(`Revoke "${tokenName}"? Any client using it will stop working.`)) return;
+    if (!window.confirm(t("apiTokens.revokeConfirm", { name: tokenName }))) return;
     try {
       await revokeApiToken(id, token);
-      toast({ title: "Token revoked", variant: "success" });
+      toast({ title: t("apiTokens.revoked"), variant: "success" });
       await loadTokens();
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Could not revoke token",
+        title: t("common.error"),
+        description: error instanceof Error ? error.message : t("apiTokens.revokeError"),
         variant: "error",
       });
     }
   };
 
   if (!user) {
-    return <div className="text-muted-foreground">Loading...</div>;
+    return <div className="text-muted-foreground">{t("common.loading")}</div>;
   }
 
   return (
@@ -101,9 +102,9 @@ const ApiTokensPage = () => {
         <div className="flex items-center gap-2.5 border-b border-border px-6 py-4">
           <KeyRound className="h-5 w-5 shrink-0 text-muted-foreground" />
           <div className="min-w-0">
-            <h2 className="text-base font-semibold tracking-tight text-foreground">API tokens</h2>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">{t("apiTokens.title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Create a token to let an automated client act on your behalf via the API.
+              {t("apiTokens.subtitle")}
             </p>
           </div>
         </div>
@@ -111,17 +112,17 @@ const ApiTokensPage = () => {
         <div className="flex flex-col gap-4 px-6 py-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_140px_auto] sm:items-end">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="token-name">Name</Label>
+              <Label htmlFor="token-name">{t("apiTokens.nameLabel")}</Label>
               <Input
                 id="token-name"
-                placeholder="SEO blog bot"
+                placeholder={t("apiTokens.namePlaceholder")}
                 value={name}
                 maxLength={100}
                 onChange={(event) => setName(event.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="token-expiry">Expires (days)</Label>
+              <Label htmlFor="token-expiry">{t("apiTokens.expiryLabel")}</Label>
               <Input
                 id="token-expiry"
                 type="number"
@@ -132,14 +133,14 @@ const ApiTokensPage = () => {
               />
             </div>
             <Button onClick={handleCreate} disabled={isCreating || !name.trim()}>
-              {isCreating ? "Creating…" : "Create token"}
+              {isCreating ? t("apiTokens.creating") : t("apiTokens.create")}
             </Button>
           </div>
 
           {createdToken && (
             <div className="rounded-lg border border-accent/30 bg-accent/10 p-4">
               <p className="text-sm font-medium text-foreground">
-                Copy this token now — it won&apos;t be shown again.
+                {t("apiTokens.copyWarning")}
               </p>
               <div className="mt-2 flex items-center gap-2">
                 <code className="min-w-0 flex-1 truncate rounded-md bg-background px-3 py-2 font-mono text-sm">
@@ -156,10 +157,10 @@ const ApiTokensPage = () => {
 
       <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         <div className="border-b border-border px-6 py-4">
-          <h2 className="text-base font-semibold tracking-tight text-foreground">Your tokens</h2>
+          <h2 className="text-base font-semibold tracking-tight text-foreground">{t("apiTokens.yourTokens")}</h2>
         </div>
         {tokens.length === 0 ? (
-          <p className="px-6 py-5 text-sm text-muted-foreground">You don&apos;t have any API tokens yet.</p>
+          <p className="px-6 py-5 text-sm text-muted-foreground">{t("apiTokens.empty")}</p>
         ) : (
           <ul className="divide-y divide-border">
             {tokens.map((token) => (
@@ -167,8 +168,11 @@ const ApiTokensPage = () => {
                 <div className="min-w-0">
                   <p className="truncate font-medium text-foreground">{token.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    Created {formatDate(token.createdAt)} · Last used {formatDate(token.lastUsedAt)} ·
-                    Expires {formatDate(token.expiresAt)}
+                    {t("apiTokens.meta", {
+                      created: formatDate(token.createdAt),
+                      lastUsed: formatDate(token.lastUsedAt),
+                      expires: formatDate(token.expiresAt),
+                    })}
                   </p>
                 </div>
                 <Button

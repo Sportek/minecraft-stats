@@ -14,7 +14,7 @@ import { RegistrationProvider } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const ONLINE_WINDOW_MS = 1000 * 60 * 30;
@@ -34,14 +34,14 @@ const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
 };
 
 /** Human-readable registration method derived from the OAuth provider (null = email & password). */
-const getRegistration = (provider: RegistrationProvider) => {
+const getRegistration = (provider: RegistrationProvider, emailPasswordLabel: string) => {
   switch (provider) {
     case "discord":
       return { label: "Discord", icon: "ic:baseline-discord" };
     case "google":
       return { label: "Google", icon: "logos:google-icon" };
     default:
-      return { label: "Email & password", icon: "material-symbols:mail-outline" };
+      return { label: emailPasswordLabel, icon: "material-symbols:mail-outline" };
   }
 };
 
@@ -54,6 +54,7 @@ const InfoRow = ({ label, children }: { label: string; children: React.ReactNode
 
 const AdminUserDetailPage = () => {
   const { user, getToken } = useAuth();
+  const t = useTranslations("Admin");
   const formatter = useFormatter();
   const formatNumber = (value: number) => formatter.number(value);
   const formatDate = (value: string | Date) =>
@@ -75,25 +76,25 @@ const AdminUserDetailPage = () => {
         setError(null);
         setDetail(await getAdminUserDetail(userId, token));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load this user.");
+        setError(err instanceof Error ? err.message : t("users.detail.loadError"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchDetail();
-  }, [token, userId]);
+  }, [token, userId, t]);
 
   if (!user) {
-    return <AdminLoadingState label="Loading..." />;
+    return <AdminLoadingState label={t("states.loading")} />;
   }
 
   if (user.role !== "admin") {
     return (
       <AdminMessageState
         tone="destructive"
-        title="Access Denied"
-        description="You must be an administrator to access this page."
+        title={t("states.accessDenied")}
+        description={t("states.adminOnly")}
       />
     );
   }
@@ -101,25 +102,27 @@ const AdminUserDetailPage = () => {
   const profile = detail?.user;
   const servers = detail?.servers ?? [];
   const duplicates = detail?.duplicates ?? [];
-  const registration = profile ? getRegistration(profile.provider) : null;
+  const registration = profile
+    ? getRegistration(profile.provider, t("users.detail.emailPassword"))
+    : null;
   const onlineCount = servers.filter((s) => isOnline(s.lastOnlineAt)).length;
   const playersTracked = servers.reduce((total, s) => total + (s.lastPlayerCount ?? 0), 0);
 
   return (
     <DashboardLayout>
       <div>
-        <AdminBackLink href="/admin/users" label="Back to users" />
+        <AdminBackLink href="/admin/users" label={t("users.backToUsers")} />
       </div>
 
       <DashboardHero
-        title={profile ? profile.username : "User"}
-        subtitle={profile ? "Account details and uploaded servers." : "Loading account…"}
-        badge={profile ? `${profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}` : undefined}
+        title={profile ? profile.username : t("users.detail.fallbackTitle")}
+        subtitle={profile ? t("users.detail.subtitle") : t("users.detail.loadingSubtitle")}
+        badge={profile ? t(`users.roles.${profile.role}`) : undefined}
         avatar={profile ? { name: profile.username, src: profile.avatarUrl } : undefined}
       />
 
       {error ? (
-        <AdminMessageState tone="destructive" title="Could not load user" description={error} />
+        <AdminMessageState tone="destructive" title={t("users.detail.couldNotLoad")} description={error} />
       ) : loading ? (
         <div className="space-y-4">
           <Skeleton className="h-40 w-full rounded-xl" />
@@ -128,52 +131,52 @@ const AdminUserDetailPage = () => {
       ) : !profile ? (
         <AdminMessageState
           tone="destructive"
-          title="User not found"
-          description="This user does not exist."
+          title={t("users.detail.notFoundTitle")}
+          description={t("users.detail.notFoundDescription")}
         />
       ) : (
         <>
           {/* Stat tiles */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <DashboardStatTile label="Servers" value={formatNumber(detail?.stats.serverCount ?? 0)} />
-            <DashboardStatTile label="Online Now" value={formatNumber(onlineCount)} dot="success" />
-            <DashboardStatTile label="Offline" value={formatNumber(servers.length - onlineCount)} dot="muted" />
-            <DashboardStatTile label="Players Tracked" value={formatNumber(playersTracked)} />
+            <DashboardStatTile label={t("users.detail.tiles.servers")} value={formatNumber(detail?.stats.serverCount ?? 0)} />
+            <DashboardStatTile label={t("users.detail.tiles.onlineNow")} value={formatNumber(onlineCount)} dot="success" />
+            <DashboardStatTile label={t("users.detail.tiles.offline")} value={formatNumber(servers.length - onlineCount)} dot="muted" />
+            <DashboardStatTile label={t("users.detail.tiles.playersTracked")} value={formatNumber(playersTracked)} />
           </div>
 
           {/* Account info */}
           <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
             <div className="border-b border-border px-5 py-4">
-              <h2 className="text-base font-semibold text-foreground">Account information</h2>
+              <h2 className="text-base font-semibold text-foreground">{t("users.detail.accountInfo")}</h2>
             </div>
             <div className="divide-y divide-border">
-              <InfoRow label="User ID">
+              <InfoRow label={t("users.detail.userId")}>
                 <span className="font-mono">{profile.id}</span>
               </InfoRow>
-              <InfoRow label="Username">{profile.username}</InfoRow>
-              <InfoRow label="Email">
+              <InfoRow label={t("users.detail.username")}>{profile.username}</InfoRow>
+              <InfoRow label={t("users.detail.email")}>
                 <a href={`mailto:${profile.email}`} className="text-accent hover:underline">
                   {profile.email}
                 </a>
               </InfoRow>
-              <InfoRow label="Role">
+              <InfoRow label={t("users.detail.role")}>
                 <Badge variant={getRoleBadgeVariant(profile.role)}>
-                  {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
+                  {t(`users.roles.${profile.role}`)}
                 </Badge>
               </InfoRow>
-              <InfoRow label="Registration">
+              <InfoRow label={t("users.detail.registration")}>
                 <span className="inline-flex items-center gap-2">
                   {registration && <Icon icon={registration.icon} className="h-4 w-4" />}
                   {registration?.label}
                 </span>
               </InfoRow>
-              <InfoRow label="Email verified">
+              <InfoRow label={t("users.detail.emailVerified")}>
                 <Badge variant={profile.verified ? "success" : "secondary"}>
-                  {profile.verified ? "Verified" : "Not verified"}
+                  {profile.verified ? t("users.detail.verified") : t("users.detail.notVerified")}
                 </Badge>
               </InfoRow>
-              <InfoRow label="Joined">{formatDate(profile.createdAt)}</InfoRow>
-              <InfoRow label="Last updated">{formatDate(profile.updatedAt)}</InfoRow>
+              <InfoRow label={t("users.detail.joined")}>{formatDate(profile.createdAt)}</InfoRow>
+              <InfoRow label={t("users.detail.lastUpdated")}>{formatDate(profile.updatedAt)}</InfoRow>
             </div>
           </div>
 
@@ -181,14 +184,12 @@ const AdminUserDetailPage = () => {
           <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
             <div className="border-b border-border px-5 py-4">
               <h2 className="text-base font-semibold text-foreground">
-                Possible duplicate accounts
+                {t("users.detail.duplicatesTitle")}
                 <span className="ml-2 text-sm font-normal text-muted-foreground">
                   ({duplicates.length})
                 </span>
               </h2>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Other accounts seen on the same device or network (hashed IP) as this user.
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("users.detail.duplicatesHelp")}</p>
             </div>
 
             {duplicates.length === 0 ? (
@@ -197,10 +198,8 @@ const AdminUserDetailPage = () => {
                   <Icon icon="material-symbols:fingerprint" className="h-6 w-6" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-foreground">No duplicate signals</p>
-                  <p className="text-xs text-muted-foreground">
-                    No other account shares this user&apos;s device or network yet.
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">{t("users.detail.noDuplicatesTitle")}</p>
+                  <p className="text-xs text-muted-foreground">{t("users.detail.noDuplicatesDescription")}</p>
                 </div>
               </div>
             ) : (
@@ -223,13 +222,13 @@ const AdminUserDetailPage = () => {
                       {dup.signals.sameDevice && (
                         <Badge variant="destructive" className="gap-1.5">
                           <Icon icon="material-symbols:devices" className="h-3.5 w-3.5" />
-                          Same device
+                          {t("users.detail.sameDevice")}
                         </Badge>
                       )}
                       {dup.signals.sameIp && (
                         <Badge variant="secondary" className="gap-1.5">
                           <Icon icon="material-symbols:lan-outline" className="h-3.5 w-3.5" />
-                          Same IP
+                          {t("users.detail.sameIp")}
                         </Badge>
                       )}
                     </div>
@@ -246,7 +245,7 @@ const AdminUserDetailPage = () => {
           <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
             <div className="border-b border-border px-5 py-4">
               <h2 className="text-base font-semibold text-foreground">
-                Uploaded servers
+                {t("users.detail.uploadedServers")}
                 <span className="ml-2 text-sm font-normal text-muted-foreground">
                   ({servers.length})
                 </span>
@@ -259,10 +258,8 @@ const AdminUserDetailPage = () => {
                   <Icon icon="mynaui:servers" className="h-6 w-6" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-foreground">No servers uploaded</p>
-                  <p className="text-xs text-muted-foreground">
-                    This user has not added any servers yet.
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">{t("users.detail.noServersTitle")}</p>
+                  <p className="text-xs text-muted-foreground">{t("users.detail.noServersDescription")}</p>
                 </div>
               </div>
             ) : (
@@ -295,14 +292,14 @@ const AdminUserDetailPage = () => {
                               : "h-1.5 w-1.5 rounded-full bg-muted-foreground"
                           }
                         />
-                        {online ? "Online" : "Offline"}
+                        {online ? t("users.detail.online") : t("users.detail.offlineStatus")}
                       </Badge>
                       <div className="w-20 text-right">
                         <div className="text-sm font-bold tabular-nums text-foreground">
                           {formatNumber(server.lastPlayerCount ?? 0)}
                         </div>
                         <div className="text-[11px] text-muted-foreground">
-                          peak {formatNumber(server.peakPlayerCount ?? 0)}
+                          {t("users.detail.peak", { count: formatNumber(server.peakPlayerCount ?? 0) })}
                         </div>
                       </div>
                       <div className="hidden w-24 text-right text-xs text-muted-foreground sm:block">
@@ -310,8 +307,8 @@ const AdminUserDetailPage = () => {
                       </div>
                       <Link
                         href={`/servers/${server.id}/${server.name}`}
-                        aria-label="View server"
-                        title="View"
+                        aria-label={t("users.detail.viewServer")}
+                        title={t("users.detail.view")}
                         className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                       >
                         <Icon icon="material-symbols:visibility-outline" className="h-4 w-4" />
