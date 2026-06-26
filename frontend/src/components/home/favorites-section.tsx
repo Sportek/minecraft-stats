@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { useMemo } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import ServerCard from "@/components/serveur/card";
-import { ServerData } from "@/app/(pages)/(index)/page";
+import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
 import { fetcher } from "@/app/_cheatcode";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClientApiUrl } from "@/lib/domain";

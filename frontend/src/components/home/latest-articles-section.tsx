@@ -4,7 +4,7 @@ import { getPosts } from "@/http/post";
 import { resolveAssetUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import useSWR from "swr";
 
 const LatestArticlesSection = () => {

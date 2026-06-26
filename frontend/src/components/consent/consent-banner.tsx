@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useConsent } from "@/contexts/consent";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 const ConsentBanner = () => {
   const { consent, grant, deny } = useConsent();

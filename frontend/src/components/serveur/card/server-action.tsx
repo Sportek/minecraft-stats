@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
 import { Server } from "@/types/server";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 interface ServerActionsProps {
   server: Server;

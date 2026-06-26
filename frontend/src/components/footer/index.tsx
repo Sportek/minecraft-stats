@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import RestrictedWidthLayout from "../restricted-width-layout";
 import BrandLogo from "../brand-logo";
 import { getClientBackendUrl } from "@/lib/domain";

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Category, Language } from "@/types/server";
 import { cleanWebsiteHost } from "@/utils/server-website";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import useSWRImmutable from "swr/immutable";

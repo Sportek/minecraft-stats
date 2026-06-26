@@ -2,7 +2,7 @@ import { PostAuthor, PostEyebrow, PostViews } from "@/components/blog/post-meta"
 import { resolveAssetUrl } from "@/lib/domain";
 import { Post } from "@/types/post";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface PostCardProps {
   post: Post;

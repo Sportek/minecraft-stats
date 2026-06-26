@@ -1,3 +1,7 @@
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
 // Allow Next's image optimizer to fetch from the S3/CloudFront assets host when
 // one is configured (server favicons point there in production).
 const assetsUrl = process.env.NEXT_PUBLIC_ASSETS_URL;
@@ -31,6 +35,12 @@ const cspReportOnly = [
 const nextConfig = {
   // Enable standalone output for optimized Docker builds
   output: "standalone",
+
+  // src/i18n/request.ts reads the split message catalog from disk at runtime, so
+  // the standalone trace must bundle the messages directory.
+  outputFileTracingIncludes: {
+    "/**": ["./messages/**"],
+  },
 
   images: {
     // En dev, le backend local sert les images depuis http://localhost:9000, qui
@@ -93,4 +103,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
