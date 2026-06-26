@@ -98,6 +98,7 @@ const AdminUserDetailPage = () => {
 
   const profile = detail?.user;
   const servers = detail?.servers ?? [];
+  const duplicates = detail?.duplicates ?? [];
   const registration = profile ? getRegistration(profile.provider) : null;
   const onlineCount = servers.filter((s) => isOnline(s.lastOnlineAt)).length;
   const playersTracked = servers.reduce((total, s) => total + (s.lastPlayerCount ?? 0), 0);
@@ -172,6 +173,71 @@ const AdminUserDetailPage = () => {
               <InfoRow label="Joined">{formatDate(profile.createdAt)}</InfoRow>
               <InfoRow label="Last updated">{formatDate(profile.updatedAt)}</InfoRow>
             </div>
+          </div>
+
+          {/* Possible duplicate accounts */}
+          <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+            <div className="border-b border-border px-5 py-4">
+              <h2 className="text-base font-semibold text-foreground">
+                Possible duplicate accounts
+                <span className="ml-2 text-sm font-normal text-muted-foreground">
+                  ({duplicates.length})
+                </span>
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Other accounts seen on the same device or network (hashed IP) as this user.
+              </p>
+            </div>
+
+            {duplicates.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+                  <Icon icon="material-symbols:fingerprint" className="h-6 w-6" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">No duplicate signals</p>
+                  <p className="text-xs text-muted-foreground">
+                    No other account shares this user&apos;s device or network yet.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {duplicates.map((dup) => (
+                  <div
+                    key={dup.id}
+                    className="flex flex-wrap items-center gap-x-4 gap-y-2 p-4 transition-colors hover:bg-secondary/40"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/admin/users/${dup.id}`}
+                        className="block truncate text-sm font-semibold text-foreground transition-colors hover:text-accent"
+                      >
+                        {dup.username}
+                      </Link>
+                      <div className="truncate text-xs text-muted-foreground">{dup.email}</div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {dup.signals.sameDevice && (
+                        <Badge variant="destructive" className="gap-1.5">
+                          <Icon icon="material-symbols:devices" className="h-3.5 w-3.5" />
+                          Same device
+                        </Badge>
+                      )}
+                      {dup.signals.sameIp && (
+                        <Badge variant="secondary" className="gap-1.5">
+                          <Icon icon="material-symbols:lan-outline" className="h-3.5 w-3.5" />
+                          Same IP
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="hidden w-24 text-right text-xs text-muted-foreground sm:block">
+                      {formatDate(dup.createdAt)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Uploaded servers */}

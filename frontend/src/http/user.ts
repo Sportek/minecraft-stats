@@ -13,11 +13,25 @@ export interface UsersListResponse {
   }
 }
 
+export interface DuplicateAccount {
+  id: number
+  username: string
+  email: string
+  role: 'admin' | 'writer' | 'user'
+  createdAt: string
+  signals: {
+    sameDevice: boolean
+    sameIp: boolean
+  }
+}
+
 export interface AdminUserDetailResponse {
   user: AdminUserProfile
   servers: AdminUserServer[]
+  duplicates: DuplicateAccount[]
   stats: {
     serverCount: number
+    duplicateCount: number
   }
 }
 
