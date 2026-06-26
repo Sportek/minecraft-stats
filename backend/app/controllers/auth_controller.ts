@@ -36,7 +36,8 @@ export default class AuthController {
     }
     const data = await request.validateUsing(LoginUserValidator)
     const user = await User.verifyCredentials(data.email, data.password)
-    if (!user.verified) return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
+    if (!user.verified)
+      return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
     if (user.provider)
       return response.badRequest({ message: i18n.t('messages.auth.usingThirdPartyProvider') })
     return {
@@ -100,7 +101,8 @@ export default class AuthController {
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
     const user = await User.findBy('email', validatedUserData.email)
-    if (user) return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyRegistered') })
+    if (user)
+      return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyRegistered') })
     const newUser = await User.create(validatedUserData)
     const jwtToken = jwt.sign(
       { email: newUser.email, verificationToken: newUser.verificationToken },
@@ -147,7 +149,8 @@ export default class AuthController {
     const validatedUserData = await ChangePasswordValidator.validate(data)
     const user = auth.user
     if (!user) return response.notFound({ message: i18n.t('messages.auth.userNotFound') })
-    if (!user.verified) return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
+    if (!user.verified)
+      return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
     if (!(await User.verifyCredentials(user.email, validatedUserData.oldPassword)))
       return response.badRequest({ message: i18n.t('messages.auth.invalidOldPassword') })
     user.password = validatedUserData.newPassword
@@ -230,7 +233,10 @@ export default class AuthController {
     // Only revoke session tokens; named API tokens are managed separately.
     const sessions = tokens.filter((token) => token.name === null)
     await Promise.all(sessions.map((token) => User.accessTokens.delete(user, token.identifier)))
-    return response.ok({ message: i18n.t('messages.auth.allSessionsRevoked'), revoked: sessions.length })
+    return response.ok({
+      message: i18n.t('messages.auth.allSessionsRevoked'),
+      revoked: sessions.length,
+    })
   }
 
   /**
