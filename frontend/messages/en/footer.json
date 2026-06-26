@@ -1,0 +1,25 @@
+{
+  "tagline": "The free, open-source Minecraft server directory with real-time player statistics and historical data.",
+  "sections": {
+    "product": "Product",
+    "resources": "Resources",
+    "company": "Company"
+  },
+  "links": {
+    "allServers": "All servers",
+    "addServer": "Add a server",
+    "blog": "Blog",
+    "partners": "Partners",
+    "apiDocs": "API documentation",
+    "github": "GitHub",
+    "community": "Community",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of service"
+  },
+  "copyright": "© {year} Minecraft Stats. Not affiliated with Mojang.",
+  "craftedWith": "Crafted with",
+  "craftedBy": "by",
+  "domainDonatedBy": "Domain name donated by"
+}
