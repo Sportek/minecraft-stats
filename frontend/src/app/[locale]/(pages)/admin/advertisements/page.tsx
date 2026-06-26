@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LetterTile } from "@/components/ui/letter-tile";
 import { useAuth } from "@/contexts/auth";
+import { useFormatter } from "next-intl";
 import {
   deleteAdvertisement,
   getAdminAdvertisements,
@@ -22,6 +23,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const AdminAdvertisementsPage = () => {
   const { user, getToken } = useAuth();
+  const format = useFormatter();
   const token = getToken();
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -128,7 +130,7 @@ const AdminAdvertisementsPage = () => {
         <DashboardStatTile label="Total" value={String(ads.length)} />
         <DashboardStatTile label="Active" value={String(activeCount)} dot="success" />
         <DashboardStatTile label="Inactive" value={String(disabledCount)} dot="muted" />
-        <DashboardStatTile label="Views" value={totalImpressions.toLocaleString("fr-FR")} />
+        <DashboardStatTile label="Views" value={format.number(totalImpressions)} />
       </div>
 
       {/* Advertisements card */}
@@ -188,8 +190,8 @@ const AdminAdvertisementsPage = () => {
                         ·
                       </span>
                       <span className="shrink-0">
-                        {(ad.impressionsCount ?? 0).toLocaleString("fr-FR")} views /{" "}
-                        {(ad.clicksCount ?? 0).toLocaleString("fr-FR")} clicks
+                        {format.number(ad.impressionsCount ?? 0)} views /{" "}
+                        {format.number(ad.clicksCount ?? 0)} clicks
                       </span>
                     </div>
                   </div>

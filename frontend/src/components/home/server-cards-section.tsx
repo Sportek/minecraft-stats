@@ -17,6 +17,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClientApiUrl } from "@/lib/domain";
+import { useFormatter } from "next-intl";
 
 const PAGE_SIZE_OPTIONS = [12, 24, 36, 48] as const;
 const DEFAULT_PAGE_SIZE = 24;
@@ -40,6 +41,7 @@ const ServerCardsSection = () => {
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const debouncedSearch = useDebounce(search, 300);
   const apiUrl = getClientApiUrl();
+  const format = useFormatter();
 
   const { data: categories } = useSWRImmutable<Category[]>(`${apiUrl}/categories`, fetcher);
   const { data: languages } = useSWRImmutable<Language[]>(`${apiUrl}/languages`, fetcher);
@@ -115,7 +117,7 @@ const ServerCardsSection = () => {
           </div>
           {totalServers > 0 && (
             <span className="text-xs font-medium text-muted-foreground">
-              {new Intl.NumberFormat("en-US").format(totalServers)} tracked
+              {format.number(totalServers)} tracked
             </span>
           )}
         </div>
@@ -183,7 +185,7 @@ const ServerCardsSection = () => {
         <div className="flex flex-col gap-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>
             Showing <span className="font-medium text-foreground">{rangeStart}–{rangeEnd}</span> of{" "}
-            <span className="font-medium text-foreground">{new Intl.NumberFormat("en-US").format(totalServers)}</span>
+            <span className="font-medium text-foreground">{format.number(totalServers)}</span>
             <span className="mx-1.5">·</span>
             Page <span className="font-medium text-foreground">{currentPage}</span> of{" "}
             <span className="font-medium text-foreground">{totalPages}</span>

@@ -1,5 +1,6 @@
 import { Category, Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useFormatter } from "next-intl";
 import StatCard from "../stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,6 +12,7 @@ interface ImprovedCardProps {
 }
 
 const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
+  const format = useFormatter();
   const calculateMedian = (numbers: number[]) => {
     const sorted = [...numbers].sort((a, b) => a - b);
     const middle = Math.floor(sorted.length / 2);
@@ -61,31 +63,31 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Peak Players (All-Time)"
-          value={new Intl.NumberFormat("en-US").format(allTimePeak)}
+          value={format.number(allTimePeak)}
           icon={<Icon icon="mdi:crown" className="h-5 w-5" />}
         />
         <StatCard
           title="Lowest Players"
-          value={new Intl.NumberFormat("en-US").format(
+          value={format.number(
             stats.reduce((acc, curr) => Math.min(acc, curr.playerCount), Number.MAX_SAFE_INTEGER)
           )}
           icon={<Icon icon="mdi:trending-down" className="h-5 w-5" />}
         />
         <StatCard
           title="Average Players"
-          value={new Intl.NumberFormat("en-US").format(
+          value={format.number(
             Math.round(stats.reduce((acc, curr) => acc + curr.playerCount, 0) / stats.length)
           )}
           icon={<Icon icon="mdi:account-multiple" className="h-5 w-5" />}
         />
         <StatCard
           title="Median Players"
-          value={new Intl.NumberFormat("en-US").format(Math.round(calculateMedian(stats.map((stat) => stat.playerCount))))}
+          value={format.number(Math.round(calculateMedian(stats.map((stat) => stat.playerCount))))}
           icon={<Icon icon="mdi:chart-bar" className="h-5 w-5" />}
         />
         <StatCard
           title="Data Since"
-          value={new Date(server.createdAt).toLocaleDateString()}
+          value={format.dateTime(new Date(server.createdAt), { dateStyle: "medium" })}
           icon={<Icon icon="mdi:calendar" className="h-5 w-5" />}
         />
         <StatCard

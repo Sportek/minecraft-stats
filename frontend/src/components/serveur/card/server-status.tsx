@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useFormatter } from "next-intl";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { ServerGrowthStat, ServerStat } from "@/types/server";
@@ -25,6 +26,7 @@ const StatusReading = ({ online, label }: { online: boolean; label: string }) =>
 );
 
 const ServerStatus = ({ stats, growthStat }: ServerStatusProps) => {
+  const format = useFormatter();
   const lastStat = stats.length > 0 ? getLastStat(stats) : null;
   const playerCount = lastStat?.playerCount;
 
@@ -40,7 +42,7 @@ const ServerStatus = ({ stats, growthStat }: ServerStatusProps) => {
 
   return (
     <div className="flex flex-col items-end gap-0.5">
-      <StatusReading online label={new Intl.NumberFormat("en-US").format(playerCount)} />
+      <StatusReading online label={format.number(playerCount)} />
       {monthlyGrowth != null && (
         <div className="flex flex-row items-center gap-1">
           <TooltipProvider delayDuration={0}>

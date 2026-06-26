@@ -10,6 +10,7 @@ import { AdStatsResponse, Advertisement } from "@/types/advertisement";
 import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
 import { useParams } from "next/navigation";
+import { useFormatter } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
 
@@ -23,6 +24,7 @@ const RANGES: Record<RangeKey, { label: string; ms: number; interval: "hour" | "
 
 const AdvertisementStatsPage = () => {
   const { user, getToken } = useAuth();
+  const format = useFormatter();
   const token = getToken();
   const params = useParams();
   const adId = Number(params.id);
@@ -153,8 +155,8 @@ const AdvertisementStatsPage = () => {
         {/* Cartes de totaux */}
         <div className="mb-6 grid gap-4 sm:grid-cols-3">
           {[
-            { label: "Impressions", value: totals.impressions.toLocaleString("fr-FR") },
-            { label: "Clicks", value: totals.clicks.toLocaleString("fr-FR") },
+            { label: "Impressions", value: format.number(totals.impressions) },
+            { label: "Clicks", value: format.number(totals.clicks) },
             { label: "Click-through rate (CTR)", value: `${ctr} %` },
           ].map((card) => (
             <div

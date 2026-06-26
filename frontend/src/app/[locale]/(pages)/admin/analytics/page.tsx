@@ -12,6 +12,7 @@ import { AnalyticsDashboard } from "@/types/analytics";
 import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
 import dynamic from "next/dynamic";
+import { useFormatter } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
 
@@ -25,8 +26,6 @@ const RANGES: Record<RangeKey, { label: string; ms: number }> = {
   "30d": { label: "30 days", ms: 30 * 86400000 },
   "90d": { label: "90 days", ms: 90 * 86400000 },
 };
-
-const formatNumber = (value: number) => value.toLocaleString("en-US");
 
 // Requests and unique visitors differ by orders of magnitude, so each gets its
 // own single-axis chart rather than a shared (and unreadable) scale.
@@ -52,6 +51,8 @@ function buildLineChart(
 
 const AnalyticsDashboardPage = () => {
   const { user, getToken } = useAuth();
+  const formatter = useFormatter();
+  const formatNumber = (value: number) => formatter.number(value);
   const token = getToken();
   const { resolvedTheme } = useTheme();
 

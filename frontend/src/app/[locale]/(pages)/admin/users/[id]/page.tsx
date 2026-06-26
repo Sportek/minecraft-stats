@@ -14,12 +14,10 @@ import { RegistrationProvider } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
+import { useFormatter } from "next-intl";
 import { useEffect, useState } from "react";
 
 const ONLINE_WINDOW_MS = 1000 * 60 * 30;
-const formatNumber = (value: number) => new Intl.NumberFormat("en-US").format(value);
-const formatDate = (value: string | Date) =>
-  new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
 const isOnline = (lastOnlineAt: string | Date | null) =>
   lastOnlineAt ? Date.now() - new Date(lastOnlineAt).getTime() < ONLINE_WINDOW_MS : false;
@@ -56,6 +54,10 @@ const InfoRow = ({ label, children }: { label: string; children: React.ReactNode
 
 const AdminUserDetailPage = () => {
   const { user, getToken } = useAuth();
+  const formatter = useFormatter();
+  const formatNumber = (value: number) => formatter.number(value);
+  const formatDate = (value: string | Date) =>
+    formatter.dateTime(new Date(value), { year: "numeric", month: "short", day: "numeric" });
   const token = getToken();
   const params = useParams();
   const userId = Number(params.id);

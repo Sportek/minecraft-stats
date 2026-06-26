@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useFormatter } from "next-intl";
 import StatCard from "../serveur/stat-card";
 import { fetcher } from "@/app/_cheatcode";
 import useSWR from "swr";
@@ -15,6 +16,7 @@ interface WebsiteStats {
 
 const StatsSection = () => {
   const apiUrl = getClientApiUrl();
+  const formatter = useFormatter();
 
   // Toutes les agrégations (serveurs surveillés, joueurs en ligne, lignes de
   // données) sont calculées côté backend : un seul endpoint léger plutôt que de
@@ -55,7 +57,7 @@ const StatsSection = () => {
     return null;
   }
 
-  const format = (value: number) => new Intl.NumberFormat("en-US").format(value);
+  const format = (value: number) => formatter.number(value);
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">

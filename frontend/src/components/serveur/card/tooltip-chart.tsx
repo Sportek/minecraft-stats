@@ -7,7 +7,7 @@ interface TooltipOptions {
   isDarkMode: boolean;
 }
 
-export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions) => {
+export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions, locale: string) => {
   const { isDarkMode } = options;
   const bgColor = isDarkMode ? '#18181b' : '#ffffff';
   const borderColor = isDarkMode ? '#27272a' : '#e4e4e7';
@@ -17,16 +17,16 @@ export const generateTooltipHtml = (data: TooltipData, options: TooltipOptions) 
   const shadowColor = isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)';
 
   // Formatage de la date
-  const formattedTime = data.time.toLocaleString("en-US", {
+  const formattedTime = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
     year: "numeric",
-  });
+  }).format(data.time);
 
   // Formatage du nombre de joueurs avec séparateur de milliers
-  const formattedPlayerCount = data.playerCount.toLocaleString('en-US');
+  const formattedPlayerCount = new Intl.NumberFormat(locale).format(data.playerCount);
 
   return `
     <div style="

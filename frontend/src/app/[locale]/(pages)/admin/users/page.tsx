@@ -21,6 +21,7 @@ import { getAdminUsers, updateUserRole } from "@/http/user";
 import { User } from "@/types/auth";
 import { Search } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useFormatter } from "next-intl";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 20;
@@ -38,6 +39,7 @@ const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
 
 const AdminUsersPage = () => {
   const { user, getToken } = useAuth();
+  const format = useFormatter();
   const token = getToken();
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
@@ -228,7 +230,7 @@ const AdminUsersPage = () => {
                       {u.id === user.id && <span className="ml-2 text-xs text-accent">(you)</span>}
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      Joined {new Date(u.createdAt).toLocaleDateString()}
+                      Joined {format.dateTime(new Date(u.createdAt), { dateStyle: "medium" })}
                     </p>
                   </div>
                 </Link>

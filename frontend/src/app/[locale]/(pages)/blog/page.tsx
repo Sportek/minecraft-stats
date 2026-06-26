@@ -39,7 +39,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   };
 }
 
-export default async function BlogPage({ searchParams }: Readonly<Props>) {
+export default async function BlogPage({ params, searchParams }: Readonly<Props>) {
+  const { locale } = await params;
   const page = parsePage((await searchParams).page);
   const posts = await getPosts(page, PAGE_SIZE);
   const articles = posts.data;
@@ -68,7 +69,7 @@ export default async function BlogPage({ searchParams }: Readonly<Props>) {
         ) : (
           <>
             {/* Featured article */}
-            {featuredArticle && <PostCard post={featuredArticle} featured />}
+            {featuredArticle && <PostCard post={featuredArticle} featured locale={locale} />}
 
             {/* Recent stories grid */}
             {remainingArticles.length > 0 && (
@@ -78,7 +79,7 @@ export default async function BlogPage({ searchParams }: Readonly<Props>) {
                 )}
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {remainingArticles.map((post) => (
-                    <PostCard key={post.id} post={post} />
+                    <PostCard key={post.id} post={post} locale={locale} />
                   ))}
                 </div>
               </section>

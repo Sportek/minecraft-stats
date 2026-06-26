@@ -9,14 +9,15 @@ import { useAuth } from "@/contexts/auth";
 import { createApiToken, getApiTokens, revokeApiToken } from "@/http/api-token";
 import { ApiToken, CreatedApiToken } from "@/types/api-token";
 import { Check, Copy, KeyRound, Trash2 } from "lucide-react";
+import { useFormatter } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
-
-const formatDate = (value: string | null) =>
-  value ? new Date(value).toLocaleDateString() : "—";
 
 const ApiTokensPage = () => {
   const { user, getToken } = useAuth();
   const { toast } = useToast();
+  const formatter = useFormatter();
+  const formatDate = (value: string | null) =>
+    value ? formatter.dateTime(new Date(value), { dateStyle: "medium" }) : "—";
 
   const [tokens, setTokens] = useState<ApiToken[]>([]);
   const [name, setName] = useState("");

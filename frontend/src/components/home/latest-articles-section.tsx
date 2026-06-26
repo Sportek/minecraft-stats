@@ -5,9 +5,11 @@ import { resolveAssetUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useFormatter } from "next-intl";
 import useSWR from "swr";
 
 const LatestArticlesSection = () => {
+  const format = useFormatter();
   const { data, isLoading } = useSWR(["posts", 1, 3], () => getPosts(1, 3));
   const posts = data?.data ?? [];
 
@@ -69,7 +71,7 @@ const LatestArticlesSection = () => {
               <div className="mb-1 flex items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                 <span className="text-accent">News</span>
                 <span>·</span>
-                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                <span>{format.dateTime(new Date(post.createdAt), { dateStyle: "medium" })}</span>
               </div>
               <h3 className="truncate text-sm font-bold leading-tight text-foreground transition-colors group-hover:text-accent">
                 {post.title}

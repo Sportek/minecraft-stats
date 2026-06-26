@@ -9,11 +9,8 @@ import { getAdminPostStats } from "@/http/post";
 import { PostStats } from "@/types/post";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useFormatter } from "next-intl";
 import { useEffect, useState } from "react";
-
-const formatNumber = (value: number) => new Intl.NumberFormat("en-US").format(value);
-const formatDate = (value: string) =>
-  new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
 const StatCard = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
   <div className="rounded-lg border border-border bg-card p-5 text-card-foreground shadow-xs">
@@ -25,6 +22,10 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 
 const AdminPostStatsPage = () => {
   const { user, getToken } = useAuth();
+  const formatter = useFormatter();
+  const formatNumber = (value: number) => formatter.number(value);
+  const formatDate = (value: string) =>
+    formatter.dateTime(new Date(value), { year: "numeric", month: "short", day: "numeric" });
   const token = getToken();
   const params = useParams();
   const postId = Number(params.id);

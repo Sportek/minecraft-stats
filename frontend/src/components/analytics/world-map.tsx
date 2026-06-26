@@ -2,6 +2,7 @@
 
 import { ALPHA2_TO_NUMERIC } from "@/lib/country-alpha2-to-numeric";
 import { AnalyticsCountry } from "@/types/analytics";
+import { useFormatter } from "next-intl";
 import { useTheme } from "next-themes";
 import { useMemo, useState } from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
@@ -25,6 +26,7 @@ function lerpHex(from: string, to: string, t: number): string {
 
 const WorldMap = ({ countries }: { countries: AnalyticsCountry[] }) => {
   const { resolvedTheme } = useTheme();
+  const format = useFormatter();
   const isDark = resolvedTheme === "dark";
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
@@ -98,7 +100,7 @@ const WorldMap = ({ countries }: { countries: AnalyticsCountry[] }) => {
           style={{ left: tooltip.x, top: tooltip.y - 8 }}
         >
           <span className="font-medium">{tooltip.name}</span>
-          {tooltip.views > 0 ? ` — ${tooltip.views.toLocaleString("en-US")} views` : " — no data"}
+          {tooltip.views > 0 ? ` — ${format.number(tooltip.views)} views` : " — no data"}
         </div>
       )}
 

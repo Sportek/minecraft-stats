@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { KeyRound, User as UserIcon } from "lucide-react";
+import { useFormatter } from "next-intl";
 import { useState } from "react";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -20,6 +21,7 @@ const ROLE_LABELS: Record<string, string> = {
 const SettingsPage = () => {
   const { user, logoutAll } = useAuth();
   const { toast } = useToast();
+  const format = useFormatter();
   const [isLoggingOutAll, setIsLoggingOutAll] = useState(false);
 
   const handleLogoutAll = async () => {
@@ -51,7 +53,7 @@ const SettingsPage = () => {
   }
 
   const createdAt = new Date(user.createdAt);
-  const memberSince = createdAt.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const memberSince = format.dateTime(createdAt, { month: "long", year: "numeric" });
   const roleLabel = ROLE_LABELS[user.role] ?? user.role;
 
   return (
@@ -80,7 +82,7 @@ const SettingsPage = () => {
           <InfoField label="Role" value={roleLabel} />
           <InfoField
             label="Registered at"
-            value={`${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`}
+            value={`${format.dateTime(createdAt, { dateStyle: "medium" })} ${format.dateTime(createdAt, { timeStyle: "short" })}`}
           />
         </div>
       </section>

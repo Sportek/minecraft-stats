@@ -119,7 +119,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
           {/* Header */}
           <header className="mb-8 text-center">
             <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
-              News · {formatPostDate(post.publishedAt ?? post.createdAt)}
+              News · {formatPostDate(post.publishedAt ?? post.createdAt, locale)}
             </div>
             <h1 className="mb-6 text-3xl font-black leading-tight tracking-tight text-balance text-foreground sm:text-4xl md:text-5xl">
               {post.title}
@@ -133,7 +133,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
                 News
               </Badge>
               <span className="text-border">•</span>
-              <PostViews count={post.viewCount} />
+              <PostViews count={post.viewCount} locale={locale} />
             </div>
           </header>
 

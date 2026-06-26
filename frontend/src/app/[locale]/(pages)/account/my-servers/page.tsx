@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+import { useFormatter } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
@@ -24,13 +25,14 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 const ONLINE_WINDOW_MS = 1000 * 60 * 30;
-const formatNumber = (value: number) => new Intl.NumberFormat("en-US").format(value);
 
 const isOnline = (lastOnlineAt: Date | null) =>
   lastOnlineAt ? Date.now() - new Date(lastOnlineAt).getTime() < ONLINE_WINDOW_MS : false;
 
 const MyServersPage = () => {
   const { user, getToken } = useAuth();
+  const formatter = useFormatter();
+  const formatNumber = (value: number) => formatter.number(value);
   const token = getToken();
   const isAdmin = user?.role === "admin";
   const { toast } = useToast();

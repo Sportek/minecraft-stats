@@ -24,6 +24,7 @@ import { PostViews } from "@/components/blog/post-meta";
 import { BarChart3, Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { useLocale } from "next-intl";
 
 /** Rough read-time estimate (~200 words / minute) from raw markdown content. */
 const estimateReadTime = (content: string) => {
@@ -33,6 +34,7 @@ const estimateReadTime = (content: string) => {
 
 const AdminPostsPage = () => {
   const { user, getToken } = useAuth();
+  const locale = useLocale();
   const token = getToken();
   const [posts, setPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
@@ -229,7 +231,7 @@ const AdminPostsPage = () => {
                       <span aria-hidden className="opacity-50">
                         ·
                       </span>
-                      <PostViews count={post.viewCount} className="shrink-0" />
+                      <PostViews count={post.viewCount} locale={locale} className="shrink-0" />
                     </div>
                   </div>
                 </div>

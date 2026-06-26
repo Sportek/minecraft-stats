@@ -7,9 +7,10 @@ import { Link } from "@/i18n/navigation";
 interface PostCardProps {
   post: Post;
   featured?: boolean;
+  locale: string;
 }
 
-const PostCard = ({ post, featured = false }: PostCardProps) => {
+const PostCard = ({ post, featured = false, locale }: PostCardProps) => {
   const date = post.publishedAt ?? post.createdAt;
 
   if (featured) {
@@ -36,8 +37,8 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
 
         <div className="flex flex-col gap-4 p-6 md:p-8">
           <div className="flex items-center justify-between gap-2">
-            <PostEyebrow date={date} />
-            <PostViews count={post.viewCount} />
+            <PostEyebrow date={date} locale={locale} />
+            <PostViews count={post.viewCount} locale={locale} />
           </div>
           <h2 className="text-2xl font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-accent md:text-3xl">
             {post.title}
@@ -79,8 +80,8 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-center justify-between gap-2">
-          <PostEyebrow date={date} />
-          <PostViews count={post.viewCount} />
+          <PostEyebrow date={date} locale={locale} />
+          <PostViews count={post.viewCount} locale={locale} />
         </div>
         <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-accent">
           {post.title}

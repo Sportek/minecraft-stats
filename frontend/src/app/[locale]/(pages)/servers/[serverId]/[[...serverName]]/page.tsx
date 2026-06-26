@@ -90,7 +90,8 @@ const createAreaSeries = (
   xKey: string,
   yKey: string,
   yName: string,
-  theme: string | undefined
+  theme: string | undefined,
+  locale: string
 ): AgAreaSeriesOptions => ({
   type: "area",
   xKey,
@@ -115,7 +116,8 @@ const createAreaSeries = (
     renderer: ({ datum }: { datum: { time: string | number | Date; playerCount: number } }) => {
       return generateTooltipHtml(
         { time: new Date(datum.time), playerCount: datum.playerCount },
-        { isDarkMode: theme === "dark" }
+        { isDarkMode: theme === "dark" },
+        locale
       );
     },
   },
@@ -192,14 +194,17 @@ const ServerPage = () => {
     return {
       ...BASE_CHART_OPTIONS,
       data,
-      series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme)],
+      series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme, locale)],
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
       axes: {
         x: { ...BASE_AXES.x, min: minDate, max: maxDate },
-        y: BASE_AXES.y,
+        y: {
+          ...BASE_AXES.y,
+          label: { formatter: ({ value }: { value: number }) => new Intl.NumberFormat(locale).format(value) },
+        },
       },
     };
-  }, [stats, resolvedTheme]);
+  }, [stats, resolvedTheme, locale]);
 
   if (isServerLoading) {
     return (

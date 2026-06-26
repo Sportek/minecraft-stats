@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useFormatter } from "next-intl";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
 import ServerImage from "./card/server-image";
@@ -19,6 +20,7 @@ const formatGrowth = (growth: number) => `${growth >= 0 ? "+" : ""}${Math.round(
  * (image, info, categories) and adds a right-aligned "Players online" block.
  */
 const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDetailHeaderProps) => {
+  const format = useFormatter();
   const lastStat = stats.length > 0 ? getLastStat(stats) : null;
   const playerCount = lastStat?.playerCount ?? server.lastPlayerCount;
   const monthlyGrowth = growthStat?.monthlyGrowth;
@@ -63,7 +65,7 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-success ring-2 ring-success/20" />
             <span className="text-3xl font-extrabold tabular-nums text-foreground">
-              {playerCount != null ? new Intl.NumberFormat("en-US").format(playerCount) : "N/A"}
+              {playerCount != null ? format.number(playerCount) : "N/A"}
             </span>
           </div>
           {monthlyGrowth != null && (
