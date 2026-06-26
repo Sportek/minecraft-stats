@@ -91,10 +91,10 @@ export default class PostsController {
    * @responseBody 404 - {"error": "Post not found"}
    * @responseBody 422 - {"errors": [{"message": "The helpful field must be defined", "field": "helpful", "rule": "required"}]}
    */
-  async submitFeedback({ params, request, response, auth }: HttpContext) {
+  async submitFeedback({ params, request, response, auth, i18n }: HttpContext) {
     const post = await Post.query().where('slug', params.slug).where('published', true).first()
     if (!post) {
-      return response.notFound({ error: 'Post not found' })
+      return response.notFound({ error: i18n.t('messages.posts.notFound') })
     }
 
     const { helpful, visitorId } = await request.validateUsing(SubmitFeedbackValidator)
@@ -149,14 +149,14 @@ export default class PostsController {
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    */
-  async adminIndex({ request, response, auth, bouncer }: HttpContext) {
+  async adminIndex({ request, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.posts.writerRequired') })
     }
 
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
@@ -195,14 +195,14 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 422 - {"errors": [{"message": "The title field must be defined", "field": "title", "rule": "required"}]}
    */
-  async store({ request, auth, response, bouncer }: HttpContext) {
+  async store({ request, auth, response, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.posts.writerRequired') })
     }
 
     const data = await request.validateUsing(CreatePostValidator)
@@ -232,16 +232,16 @@ export default class PostsController {
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    * @responseBody 422 - {"errors": [{"message": "The title field must have at least 3 characters", "field": "title", "rule": "minLength"}]}
    */
-  async update({ params, request, response, auth, bouncer }: HttpContext) {
+  async update({ params, request, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     const post = await Post.findOrFail(params.id)
 
     if (await bouncer.with(PostPolicy).denies('update', post)) {
-      return response.forbidden({ error: 'Access denied. You can only update your own posts.' })
+      return response.forbidden({ error: i18n.t('messages.posts.updateOwnOnly') })
     }
 
     const data = await request.validateUsing(UpdatePostValidator)
@@ -266,16 +266,16 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. You can only delete your own posts."}
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
-  async destroy({ params, response, auth, bouncer }: HttpContext) {
+  async destroy({ params, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     const post = await Post.findOrFail(params.id)
 
     if (await bouncer.with(PostPolicy).denies('destroy', post)) {
-      return response.forbidden({ error: 'Access denied. You can only delete your own posts.' })
+      return response.forbidden({ error: i18n.t('messages.posts.deleteOwnOnly') })
     }
 
     await post.delete()
@@ -295,16 +295,16 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. You can only publish your own posts."}
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
-  async publish({ params, response, auth, bouncer }: HttpContext) {
+  async publish({ params, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     const post = await Post.findOrFail(params.id)
 
     if (await bouncer.with(PostPolicy).denies('publish', post)) {
-      return response.forbidden({ error: 'Access denied. You can only publish your own posts.' })
+      return response.forbidden({ error: i18n.t('messages.posts.publishOwnOnly') })
     }
 
     post.published = true
@@ -328,16 +328,16 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. You can only unpublish your own posts."}
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
-  async unpublish({ params, response, auth, bouncer }: HttpContext) {
+  async unpublish({ params, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     const post = await Post.findOrFail(params.id)
 
     if (await bouncer.with(PostPolicy).denies('publish', post)) {
-      return response.forbidden({ error: 'Access denied. You can only unpublish your own posts.' })
+      return response.forbidden({ error: i18n.t('messages.posts.unpublishOwnOnly') })
     }
 
     post.published = false
@@ -374,14 +374,14 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 422 - {"errors": [{"message": "The serverId field must be defined", "field": "serverId", "rule": "required"}]}
    */
-  async previewPlaceholder({ request, response, auth, bouncer }: HttpContext) {
+  async previewPlaceholder({ request, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: 'Access denied. Writer privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.posts.writerRequired') })
     }
 
     const { placeholderName, serverId } = await request.validateUsing(PreviewPlaceholderValidator)
@@ -409,17 +409,17 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. You can only view stats for your own posts."}
    * @responseBody 404 - {"message": "Row not found", "code": "E_ROW_NOT_FOUND"}
    */
-  async adminStats({ params, response, auth, bouncer }: HttpContext) {
+  async adminStats({ params, response, auth, bouncer, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ error: 'Unauthorized' })
+      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
     }
 
     const post = await Post.findOrFail(params.id)
 
     if (await bouncer.with(PostPolicy).denies('update', post)) {
       return response.forbidden({
-        error: 'Access denied. You can only view stats for your own posts.',
+        error: i18n.t('messages.posts.viewStatsOwnOnly'),
       })
     }
 

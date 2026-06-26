@@ -53,10 +53,10 @@ export default class ServersController {
    * @responseBody 200 - [{"server": "<Server>", "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}]
    * @responseBody 401 - {"message": "Unauthorized"}
    */
-  async mine({ auth, response }: HttpContext) {
+  async mine({ auth, response, i18n }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ message: 'Unauthorized' })
+      return response.unauthorized({ message: i18n.t('messages.servers.unauthorized') })
     }
 
     const servers = await Server.query()
@@ -86,7 +86,7 @@ export default class ServersController {
    * @responseBody 409 - {"message": "This server appears to already be listed on Minecraft Stats.", "existingServer": {"id": 1, "name": "Hypixel"}, "score": 95, "matchedSignals": ["faviconHash", "motdHash"]}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "address"}]}
    */
-  async store({ request, auth, response }: HttpContext) {
+  async store({ request, auth, response, i18n }: HttpContext) {
     const data = request.only([
       'name',
       'address',
@@ -99,7 +99,7 @@ export default class ServersController {
     ])
     const user = auth.user
     if (!user) {
-      return response.unauthorized({ message: 'Unauthorized' })
+      return response.unauthorized({ message: i18n.t('messages.servers.unauthorized') })
     }
 
     const validatedData = await CreateServerValidator.validate(data)
@@ -119,7 +119,7 @@ export default class ServersController {
       pingData = null
     }
     if (!pingData) {
-      return response.badRequest({ message: 'Server is not reachable' })
+      return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
     }
 
     // Détection de doublon : un même serveur listé sous plusieurs adresses
@@ -132,7 +132,7 @@ export default class ServersController {
     const duplicate = await DuplicateDetectionService.findDuplicate(fingerprint)
     if (duplicate) {
       return response.conflict({
-        message: 'This server appears to already be listed on Minecraft Stats.',
+        message: i18n.t('messages.servers.duplicate'),
         existingServer: { id: duplicate.server.id, name: duplicate.server.name },
         score: duplicate.score,
         matchedSignals: duplicate.signals,
@@ -188,7 +188,7 @@ export default class ServersController {
    * @responseBody 200 - {"server": "<Server>", "stats": ["<ServerStat>"], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}
    * @responseBody 404 - {"message": "Server not found"}
    */
-  async show({ params, response }: HttpContext) {
+  async show({ params, response, i18n }: HttpContext) {
     let server = await Server.query()
       .where('id', params.id)
       .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
@@ -196,7 +196,7 @@ export default class ServersController {
       .preload('categories')
       .preload('languages')
       .first()
-    if (!server) return response.notFound({ message: 'Server not found' })
+    if (!server) return response.notFound({ message: i18n.t('messages.servers.notFound') })
     const stats = await this.getActualStats(server)
     return { server, stats, categories: server.categories, growthStat: server.growthStat }
   }
@@ -215,7 +215,7 @@ export default class ServersController {
    * @responseBody 404 - {"message": "Row not found"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "port"}]}
    */
-  async update({ params, request, response, bouncer }: HttpContext) {
+  async update({ params, request, response, bouncer, i18n }: HttpContext) {
     const data = request.only([
       'name',
       'address',
@@ -229,7 +229,7 @@ export default class ServersController {
     const validatedData = await UpdateServerValidator.validate(data)
     const server = await Server.findByOrFail('id', params.id)
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.servers.unauthorized') })
     }
 
     const { categories, languages, ...dataToUpdate } = validatedData
@@ -246,7 +246,7 @@ export default class ServersController {
       validatedData.port ?? server.port
     )
     if (!successPing) {
-      return response.badRequest({ message: 'Server is not reachable' })
+      return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
     }
 
     if (categories) {
@@ -279,13 +279,13 @@ export default class ServersController {
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 404 - {"message": "Server not found"}
    */
-  async destroy({ params, response, bouncer }: HttpContext) {
+  async destroy({ params, response, bouncer, i18n }: HttpContext) {
     const server = await Server.find(params.id)
     if (!server) {
-      return response.notFound({ message: 'Server not found' })
+      return response.notFound({ message: i18n.t('messages.servers.notFound') })
     }
     if (await bouncer.with(ServerPolicy).denies('destroy', server)) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.servers.unauthorized') })
     }
     await server.delete()
     return response.noContent()

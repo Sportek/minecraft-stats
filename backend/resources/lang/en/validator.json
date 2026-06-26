@@ -1,0 +1,23 @@
+{
+  "shared": {
+    "messages": {
+      "required": "The {{ field }} field must be defined",
+      "string": "The {{ field }} field must be a string",
+      "email": "The {{ field }} field must be a valid email address",
+      "number": "The {{ field }} field must be a number",
+      "boolean": "The value must be a boolean",
+      "array": "The {{ field }} field must be an array",
+      "enum": "The selected {{ field }} is invalid",
+      "minLength": "The {{ field }} field must have at least {{ min }} characters",
+      "maxLength": "The {{ field }} field must not be greater than {{ max }} characters",
+      "min": "The {{ field }} field must be at least {{ min }}",
+      "max": "The {{ field }} field must not be greater than {{ max }}",
+      "positive": "The {{ field }} field must be positive",
+      "uuid": "The {{ field }} field must be a valid UUID",
+      "regex": "The {{ field }} field format is invalid",
+      "array.minLength": "The {{ field }} field must have at least {{ min }} items",
+      "array.maxLength": "The {{ field }} field must not have more than {{ max }} items",
+      "publicHost": "The {{ field }} field must not point to a private or reserved IP address"
+    }
+  }
+}
