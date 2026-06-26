@@ -1,9 +1,14 @@
 import { Metadata } from "next";
-import { getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates } from "@/lib/domain-server";
 import { Link } from "@/i18n/navigation";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const { baseUrl } = await getDomainConfig();
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> => {
+  const { locale } = await params;
+  const { canonical, languages } = buildAlternates(locale, "/privacy");
 
   return {
     title: "Privacy Policy",
@@ -16,10 +21,11 @@ export const generateMetadata = async (): Promise<Metadata> => {
       description:
         "How Minecraft Stats collects and processes data, the cookies and third-party services it uses, and your privacy rights.",
       type: "website",
-      url: `${baseUrl}/privacy`,
+      url: canonical,
     },
     alternates: {
-      canonical: `${baseUrl}/privacy`,
+      canonical,
+      languages,
     },
     robots: {
       index: true,

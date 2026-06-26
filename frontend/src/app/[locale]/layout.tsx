@@ -1,6 +1,6 @@
 import UmamiScript from "@/components/umami-script";
 import { routing } from "@/i18n/routing";
-import { getAlternateLanguages, getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates, getDomainConfig, getLocaleFreePathname, getOpenGraphLocales } from "@/lib/domain-server";
 import { cn } from "@/lib/utils";
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata } from "next";
@@ -18,9 +18,6 @@ const inter = Inter({
   weight: ["400", "500", "700"],
 });
 
-// OpenGraph expects the underscore form; our locale tokens are the short `fr`/`en`.
-const OG_LOCALE: Record<string, string> = { fr: "fr_FR", en: "en_US" };
-
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -32,7 +29,9 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { locale } = await params;
   const { baseUrl, googleSearchId } = await getDomainConfig();
-  const alternateLanguages = getAlternateLanguages();
+  const path = await getLocaleFreePathname();
+  const { canonical, languages } = buildAlternates(locale, path);
+  const og = getOpenGraphLocales(locale);
 
   return {
     metadataBase: new URL(baseUrl),
@@ -79,7 +78,8 @@ export const generateMetadata = async ({
           type: "image/webp",
         },
       ],
-      locale: OG_LOCALE[locale],
+      locale: og.locale,
+      alternateLocale: og.alternateLocale,
     },
     twitter: {
       card: "summary_large_image",
@@ -101,8 +101,8 @@ export const generateMetadata = async ({
       },
     },
     alternates: {
-      canonical: baseUrl,
-      languages: alternateLanguages,
+      canonical,
+      languages,
       types: {
         "application/rss+xml": `${baseUrl}/feed.xml`,
       },

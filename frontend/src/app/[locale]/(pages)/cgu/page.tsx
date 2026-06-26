@@ -1,9 +1,14 @@
 import { Metadata } from "next";
-import { getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates } from "@/lib/domain-server";
 import { Link } from "@/i18n/navigation";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const { baseUrl } = await getDomainConfig();
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> => {
+  const { locale } = await params;
+  const { canonical, languages } = buildAlternates(locale, "/cgu");
 
   return {
     title: "Terms of Service",
@@ -15,10 +20,11 @@ export const generateMetadata = async (): Promise<Metadata> => {
       description:
         "Detailed Terms of Service for the Minecraft Stats platform. Learn about user responsibilities and the conditions for using the service.",
       type: "website",
-      url: `${baseUrl}/cgu`,
+      url: canonical,
     },
     alternates: {
-      canonical: `${baseUrl}/cgu`,
+      canonical,
+      languages,
     },
     robots: {
       index: true,

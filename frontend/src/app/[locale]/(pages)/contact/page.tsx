@@ -1,11 +1,16 @@
 import { Card } from "@/components/ui/card";
-import { getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates } from "@/lib/domain-server";
 import { Icon } from "@iconify/react";
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const { baseUrl } = await getDomainConfig();
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> => {
+  const { locale } = await params;
+  const { canonical, languages } = buildAlternates(locale, "/contact");
 
   return {
     title: "Contact",
@@ -17,10 +22,11 @@ export const generateMetadata = async (): Promise<Metadata> => {
       description:
         "Reach the Minecraft Stats team through Discord, GitHub, or email for questions, feedback, and support.",
       type: "website",
-      url: `${baseUrl}/contact`,
+      url: canonical,
     },
     alternates: {
-      canonical: `${baseUrl}/contact`,
+      canonical,
+      languages,
     },
     robots: {
       index: true,

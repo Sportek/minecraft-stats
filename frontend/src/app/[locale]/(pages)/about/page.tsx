@@ -1,8 +1,13 @@
 import { Metadata } from "next";
-import { getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates } from "@/lib/domain-server";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const { baseUrl } = await getDomainConfig();
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> => {
+  const { locale } = await params;
+  const { canonical, languages } = buildAlternates(locale, "/about");
 
   return {
     title: "About Us",
@@ -14,10 +19,11 @@ export const generateMetadata = async (): Promise<Metadata> => {
       description:
         "Our platform provides transparent, public, and free comparison of Minecraft servers based on objective and accessible data.",
       type: "website",
-      url: `${baseUrl}/about`,
+      url: canonical,
     },
     alternates: {
-      canonical: `${baseUrl}/about`,
+      canonical,
+      languages,
     },
     robots: {
       index: true,

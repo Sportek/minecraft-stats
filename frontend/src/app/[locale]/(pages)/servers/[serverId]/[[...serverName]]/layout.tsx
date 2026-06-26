@@ -1,17 +1,17 @@
 import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
-import { getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
 
 // ISR — la metadata (OG, title, description) est rebuild toutes les 10 minutes
 // au lieu d'être re-fetched à chaque requête (P.4.3 ; remplace force-dynamic).
 export const revalidate = 600;
 
 export const generateMetadata = async (props: {
-  params: Promise<{ serverId: string; serverName: string[] }>;
+  params: Promise<{ locale: string; serverId: string; serverName: string[] }>;
 }): Promise<Metadata> => {
   const params = await props.params;
-  const { baseUrl, backendUrl } = await getDomainConfig();
+  const { backendUrl } = await getDomainConfig();
   const assetsBase = process.env.NEXT_PUBLIC_ASSETS_URL || backendUrl;
   try {
     const server = await getServer(Number(params.serverId));
@@ -29,6 +29,12 @@ export const generateMetadata = async (props: {
 
     const title = `${server.server.name} - Minecraft Server Stats & Analytics`;
     const description = `Track ${server.server.name}, a ${categories} Minecraft server with ${playerCount} players online. Real-time statistics, player count graphs, and growth trends. Languages: ${languages}.`;
+
+    const { canonical, languages: alternateLanguages } = buildAlternates(
+      params.locale,
+      `/servers/${server.server.id}/${slug}`,
+    );
+    const og = getOpenGraphLocales(params.locale);
 
     return {
       title,
@@ -48,7 +54,7 @@ export const generateMetadata = async (props: {
         title,
         description,
         type: "website",
-        url: `${baseUrl}/servers/${server.server.id}/${slug}`,
+        url: canonical,
         images: [
           {
             url: imageUrl,
@@ -58,7 +64,8 @@ export const generateMetadata = async (props: {
           },
         ],
         siteName: "Minecraft Stats",
-        locale: "en_US",
+        locale: og.locale,
+        alternateLocale: og.alternateLocale,
       },
       twitter: {
         card: "summary_large_image",
@@ -68,7 +75,8 @@ export const generateMetadata = async (props: {
         creator: "@MinecraftStats",
       },
       alternates: {
-        canonical: `${baseUrl}/servers/${server.server.id}/${slug}`,
+        canonical,
+        languages: alternateLanguages,
       },
       robots: {
         index: true,

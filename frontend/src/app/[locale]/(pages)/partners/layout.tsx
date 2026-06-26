@@ -1,8 +1,14 @@
 import { Metadata } from "next";
-import { getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates, getOpenGraphLocales } from "@/lib/domain-server";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const { baseUrl } = await getDomainConfig();
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> => {
+  const { locale } = await params;
+  const { canonical, languages } = buildAlternates(locale, "/partners");
+  const og = getOpenGraphLocales(locale);
 
   return {
     title: "Partners - Minecraft Server Stats",
@@ -22,7 +28,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
         "Discover our trusted partners offering premium tools and services for Minecraft servers. From server management to voting platforms, our partners provide essential resources.",
       type: "website",
       siteName: "Minecraft Stats",
-      url: `${baseUrl}/partners`,
+      url: canonical,
       images: [
         {
           url: "/images/minecraft-stats/og-image.webp",
@@ -31,7 +37,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
           alt: "Minecraft Stats Partners",
         },
       ],
-      locale: "en_US",
+      locale: og.locale,
+      alternateLocale: og.alternateLocale,
     },
     twitter: {
       card: "summary_large_image",
@@ -40,7 +47,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
       images: ["/images/minecraft-stats/og-image.webp"],
     },
     alternates: {
-      canonical: `${baseUrl}/partners`,
+      canonical,
+      languages,
     },
     robots: {
       index: true,

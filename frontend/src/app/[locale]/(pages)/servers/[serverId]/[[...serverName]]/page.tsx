@@ -23,6 +23,7 @@ import AdSlot from "@/components/ads/ad-slot";
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTheme } from "next-themes";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -151,6 +152,7 @@ const ServerNotFound = () => {
 
 const ServerPage = () => {
   const { serverId } = useParams();
+  const locale = useLocale();
   const {
     data: serverData,
     error: serverError,
@@ -240,11 +242,13 @@ const ServerPage = () => {
         categories={serverData.categories}
         playerCount={serverData.lastPlayerCount ?? 0}
         maxPlayers={serverData.lastMaxCount ?? undefined}
+        locale={locale}
       />
       <ServerFAQStructuredData
         server={serverData.server}
         currentPlayers={serverData.lastPlayerCount ?? 0}
         maxPlayers={serverData.lastMaxCount ?? 0}
+        locale={locale}
       />
 
       <ServerDetailHeader

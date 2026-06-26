@@ -1,7 +1,7 @@
 import PostCard from "@/components/blog/post-card";
 import { Button } from "@/components/ui/button";
 import { getPosts } from "@/http/post";
-import { getAlternateLanguages, getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates, getDomainConfig } from "@/lib/domain-server";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
@@ -12,6 +12,7 @@ const PAGE_SIZE = 12;
 export const revalidate = 3600;
 
 type Props = {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ page?: string }>;
 };
 
@@ -20,7 +21,8 @@ function parsePage(value?: string): number {
   return Number.isFinite(page) && page > 0 ? page : 1;
 }
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const { locale } = await params;
   const { baseUrl } = await getDomainConfig();
   const page = parsePage((await searchParams).page);
   const path = page > 1 ? `/blog?page=${page}` : "/blog";
@@ -29,8 +31,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     title: "Blog",
     description: "Latest news, server spotlights, and development updates.",
     alternates: {
-      canonical: `${baseUrl}${path}`,
-      languages: getAlternateLanguages(path),
+      ...buildAlternates(locale, path),
       types: {
         "application/rss+xml": `${baseUrl}/feed.xml`,
       },

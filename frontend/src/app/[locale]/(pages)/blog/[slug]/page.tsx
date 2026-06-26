@@ -12,7 +12,7 @@ import ArticleBody from "@/components/blog/article-body";
 import ArticleFeedback from "@/components/blog/article-feedback";
 import ArticleViewTracker from "@/components/blog/article-view-tracker";
 import { resolveAssetUrl } from "@/lib/domain";
-import { getAlternateLanguages, getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates, getDomainConfig } from "@/lib/domain-server";
 import { renderMarkdown } from "@/lib/markdown";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
@@ -23,17 +23,17 @@ export const revalidate = 600;
 const loadPost = cache(getPostBySlug);
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const { baseUrl } = await getDomainConfig();
 
   try {
     const post = await loadPost(slug);
 
-    const canonical = `${baseUrl}/blog/${post.slug}`;
+    const { canonical, languages } = buildAlternates(locale, `/blog/${post.slug}`);
     // Fall back to the site OG image so cover-less posts still get a social card.
     const image = post.coverImage
       ? resolveAssetUrl(post.coverImage)
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.excerpt || post.title,
       alternates: {
         canonical,
-        languages: getAlternateLanguages(`/blog/${post.slug}`),
+        languages,
         types: {
           "application/rss+xml": `${baseUrl}/feed.xml`,
         },
@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Readonly<Props>) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
 
   try {
     const post = await loadPost(slug);
@@ -88,6 +88,7 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
 
         {/* Structured Data for SEO */}
         <BlogPostStructuredData
+          locale={locale}
           post={{
             id: post.id,
             title: post.title,
