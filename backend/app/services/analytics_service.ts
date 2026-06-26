@@ -104,8 +104,9 @@ export default class AnalyticsService {
   /**
    * Agrège les statistiques d'usage du site pour le dashboard admin. Le trafic,
    * les visiteurs uniques anonymes (opt-out inclus) et la répartition par pays
-   * viennent de Redis ; le top des pages et référents (qui nécessite le chemin
-   * exact, donc le consentement) vient de `page_views`.
+   * viennent de Redis, avec repli sur le snapshot durable `traffic_daily` ; le top
+   * des pages et référents (qui nécessite le chemin exact, donc le consentement)
+   * vient de `page_views`.
    */
   static async getDashboard(params: DashboardParams) {
     const { fromDate, toDate } = params

@@ -1,4 +1,5 @@
 import Server from '#models/server'
+import { snapshotTrafficDay } from '#services/analytics_counters'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import ImageStorageService from '#services/image_storage_service'
 import StatsService from '#services/stat_service'
@@ -357,8 +358,21 @@ scheduler
 // ============================================================================
 // Analytics first-party
 // ============================================================================
-// Le volume de trafic et les visiteurs uniques anonymes vivent dans Redis
-// (compteurs + HyperLogLog), pas en base — voir `#services/analytics_counters`.
+// Le trafic et les visiteurs uniques anonymes sont comptés en temps réel dans
+// Redis (compteurs + HyperLogLog) — voir `#services/analytics_counters`.
+
+// Snapshot durable des compteurs Redis vers `traffic_daily`, chaque heure, pour
+// hier + aujourd'hui. Idempotent (GREATEST sur conflit) : protège l'historique
+// d'une recréation du volume Redis ou de l'expiration des clés (TTL ~100 j).
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const today = DateTime.now()
+    await snapshotTrafficDay(today.minus({ days: 1 }))
+    await snapshotTrafficDay(today)
+    logger.info(`SCHEDULER: traffic_daily snapshot completed in ${Date.now() - start}ms`)
+  })
+  .hourly()
 
 // Agrégation des pages vues vers `page_view_daily`. Recalcule hier + aujourd'hui
 // à chaque heure (idempotent) pour rattraper les vues arrivées en retard.
