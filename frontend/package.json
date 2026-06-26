@@ -43,7 +43,7 @@
     "next": "^16.2.6",
     "next-intl": "^4.13.0",
     "next-themes": "^0.4.6",
-    "react": "19.2.3",
+    "react": "19.2.7",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.51.5",
     "react-simple-maps": "^3",
@@ -58,7 +58,7 @@
     "@tailwindcss/postcss": "^4.3.1",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@types/react-simple-maps": "^3.0.6",
     "critters": "^0.0.25",
@@ -70,13 +70,13 @@
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "overrides": {
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "markdown-it": "^14.2.0"
   },
   "resolutions": {
     "markdown-it": "^14.2.0",
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "eslint-plugin-react-hooks": "7.0.1"
   }
