@@ -6,3 +6,4 @@
 - [Créer une publicité](advertising-ad-creation-steps.md) — étapes + conventions HTML/CSS pour ajouter une pub dans le panel admin
 - [Serveur MCP](mcp-server.md) — service mcp/ auto-généré depuis OpenAPI ; live sur mcp-staging.minecraft-stats.fr ; gotchas YAML + healthcheck IPv6
 - [Pas de trailer Co-Authored-By](no-coauthor-trailer.md) — ne jamais ajouter d'attribution IA aux commits/PRs
+- [Architecture i18n](i18n-architecture.md) — FR/EN via next-intl (routing hybride domaine+préfixe, catalogue messages/<locale>/<feature>.json) + @adonisjs/i18n ; contenu BDD mono-langue
