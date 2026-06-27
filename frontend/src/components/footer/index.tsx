@@ -68,11 +68,6 @@ const Footer = () => {
                   {t("links.blog")}
                 </Link>
               </li>
-              <li>
-                <Link href="/partners" className={linkClass}>
-                  {t("links.partners")}
-                </Link>
-              </li>
             </ul>
           </nav>
 

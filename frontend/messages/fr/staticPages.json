@@ -199,17 +199,6 @@
       "body": "Pour toute question concernant cette politique de confidentialité ou la manière dont vos données sont traitées, contactez-nous à l'adresse : <mail>legal@minecraft-stats.com</mail> ou via notre <link>page de contact</link>."
     }
   },
-  "partners": {
-    "eyebrow": "Partenaires",
-    "title": "Nos partenaires",
-    "subtitle": "Découvrez des services de confiance qui peuvent vous aider à améliorer l'expérience de votre serveur Minecraft.",
-    "visit": "Visiter le partenaire",
-    "items": {
-      "topMinecraftClick": "La meilleure liste de serveurs Minecraft pour promouvoir votre serveur et attirer plus de joueurs.",
-      "serveurMinecraftVote": "Une plateforme dédiée au vote pour les serveurs Minecraft, qui vous aide à accroître la visibilité de votre serveur.",
-      "minecraftInventoryBuilder": "Créez et personnalisez des inventaires Minecraft grâce à une interface intuitive."
-    }
-  },
   "contact": {
     "eyebrow": "Contact",
     "title": "Contactez-nous",

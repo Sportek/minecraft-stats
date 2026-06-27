@@ -199,17 +199,6 @@
       "body": "For any question about this Privacy Policy or how your data is handled, reach us at: <mail>legal@minecraft-stats.com</mail> or through our <link>contact page</link>."
     }
   },
-  "partners": {
-    "eyebrow": "Partners",
-    "title": "Our Partners",
-    "subtitle": "Discover trusted services that can help improve your Minecraft server experience.",
-    "visit": "Visit Partner",
-    "items": {
-      "topMinecraftClick": "The best Minecraft server list to promote your server and get more players.",
-      "serveurMinecraftVote": "A platform dedicated to Minecraft server voting, helping you increase your server's visibility.",
-      "minecraftInventoryBuilder": "Create and customize Minecraft inventories with an intuitive interface."
-    }
-  },
   "contact": {
     "eyebrow": "Contact",
     "title": "Get in Touch",

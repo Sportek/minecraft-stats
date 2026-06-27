@@ -103,13 +103,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: { languages: alternateLanguages("/blog") },
     },
     {
-      url: `${baseUrl}/partners`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-      alternates: { languages: alternateLanguages("/partners") },
-    },
-    {
       url: `${baseUrl}/cgu`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
