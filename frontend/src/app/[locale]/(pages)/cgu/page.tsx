@@ -11,16 +11,15 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { locale } = await params;
   const { canonical, languages } = buildAlternates(locale, "/cgu");
+  const t = await getTranslations({ locale, namespace: "StaticPages" });
 
   return {
-    title: "Terms of Service",
-    description:
-      "Read our Terms of Service to understand the conditions for using the Minecraft Stats platform, user responsibilities, and your rights under the GDPR.",
-    keywords: "terms of service, terms of use, GDPR, data protection, minecraft stats legal",
+    title: t("cgu.meta.title"),
+    description: t("cgu.meta.description"),
+    keywords: t("cgu.meta.keywords"),
     openGraph: {
-      title: "Terms of Service - Minecraft Stats",
-      description:
-        "Detailed Terms of Service for the Minecraft Stats platform. Learn about user responsibilities and the conditions for using the service.",
+      title: t("cgu.meta.ogTitle"),
+      description: t("cgu.meta.ogDescription"),
       type: "website",
       url: canonical,
     },

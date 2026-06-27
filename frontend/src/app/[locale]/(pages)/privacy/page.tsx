@@ -11,17 +11,15 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { locale } = await params;
   const { canonical, languages } = buildAlternates(locale, "/privacy");
+  const t = await getTranslations({ locale, namespace: "StaticPages" });
 
   return {
-    title: "Privacy Policy",
-    description:
-      "Learn what data Minecraft Stats collects, our consent-based first-party analytics, how we use cookies, the third-party services we rely on (Google Analytics, Google AdSense), your GDPR rights, and how to contact us.",
-    keywords:
-      "privacy policy, GDPR, data protection, cookies, first-party analytics, consent, google analytics, google adsense, minecraft stats",
+    title: t("privacy.meta.title"),
+    description: t("privacy.meta.description"),
+    keywords: t("privacy.meta.keywords"),
     openGraph: {
-      title: "Privacy Policy - Minecraft Stats",
-      description:
-        "How Minecraft Stats collects and processes data, the cookies and third-party services it uses, and your privacy rights.",
+      title: t("privacy.meta.ogTitle"),
+      description: t("privacy.meta.ogDescription"),
       type: "website",
       url: canonical,
     },

@@ -1,5 +1,12 @@
 {
   "about": {
+    "meta": {
+      "title": "À propos",
+      "description": "Découvrez notre mission : offrir une comparaison transparente, publique et gratuite des serveurs Minecraft, fondée sur des données objectives. Découvrez comment nous aidons les joueurs à trouver et comparer les serveurs.",
+      "keywords": "à propos, minecraft stats, comparaison de serveurs, transparence, liste de serveurs minecraft, classement équitable",
+      "ogTitle": "À propos - Minecraft Stats",
+      "ogDescription": "Notre plateforme offre une comparaison transparente, publique et gratuite des serveurs Minecraft, fondée sur des données objectives et accessibles."
+    },
     "eyebrow": "Entreprise",
     "title": "À propos",
     "aboutUs": {
@@ -37,6 +44,13 @@
     }
   },
   "cgu": {
+    "meta": {
+      "title": "Conditions d'utilisation",
+      "description": "Consultez nos conditions d'utilisation pour comprendre les conditions d'accès à la plateforme Minecraft Stats, les responsabilités des utilisateurs et vos droits au titre du RGPD.",
+      "keywords": "conditions d'utilisation, conditions générales, RGPD, protection des données, mentions légales minecraft stats",
+      "ogTitle": "Conditions d'utilisation - Minecraft Stats",
+      "ogDescription": "Conditions d'utilisation détaillées de la plateforme Minecraft Stats. Découvrez les responsabilités des utilisateurs et les conditions d'utilisation du service."
+    },
     "eyebrow": "Mentions légales",
     "title": "Conditions d'utilisation",
     "lastUpdated": "Dernière mise à jour : 2 juin 2024",
@@ -111,6 +125,13 @@
     }
   },
   "privacy": {
+    "meta": {
+      "title": "Politique de confidentialité",
+      "description": "Découvrez quelles données Minecraft Stats collecte, notre analyse interne basée sur le consentement, notre utilisation des cookies, les services tiers utilisés (Google Analytics, Google AdSense), vos droits au titre du RGPD et comment nous contacter.",
+      "keywords": "politique de confidentialité, RGPD, protection des données, cookies, analyse interne, consentement, google analytics, google adsense, minecraft stats",
+      "ogTitle": "Politique de confidentialité - Minecraft Stats",
+      "ogDescription": "Comment Minecraft Stats collecte et traite les données, les cookies et services tiers utilisés, et vos droits en matière de confidentialité."
+    },
     "eyebrow": "Mentions légales",
     "title": "Politique de confidentialité",
     "lastUpdated": "Dernière mise à jour : 24 juin 2026",
@@ -200,6 +221,13 @@
     }
   },
   "contact": {
+    "meta": {
+      "title": "Contact",
+      "description": "Contactez l'équipe de Minecraft Stats. Joignez-nous via Discord, GitHub ou e-mail pour vos questions, commentaires, demandes de suppression de serveur et le support.",
+      "keywords": "contact, support, minecraft stats, discord, github, commentaires",
+      "ogTitle": "Contact - Minecraft Stats",
+      "ogDescription": "Joignez l'équipe de Minecraft Stats via Discord, GitHub ou e-mail pour vos questions, commentaires et le support."
+    },
     "eyebrow": "Contact",
     "title": "Contactez-nous",
     "subtitle": "Une question, un commentaire ou une demande de suppression de serveur ? Contactez-nous via l'un des canaux ci-dessous — Discord est généralement le plus rapide.",

@@ -10,16 +10,15 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { locale } = await params;
   const { canonical, languages } = buildAlternates(locale, "/about");
+  const t = await getTranslations({ locale, namespace: "StaticPages" });
 
   return {
-    title: "About Us",
-    description:
-      "Learn about our mission to provide transparent, public, and free comparison of Minecraft servers based on objective data. Discover how we help players find and compare servers.",
-    keywords: "about, minecraft stats, server comparison, transparency, minecraft server list, fair ranking",
+    title: t("about.meta.title"),
+    description: t("about.meta.description"),
+    keywords: t("about.meta.keywords"),
     openGraph: {
-      title: "About Us - Minecraft Stats",
-      description:
-        "Our platform provides transparent, public, and free comparison of Minecraft servers based on objective and accessible data.",
+      title: t("about.meta.ogTitle"),
+      description: t("about.meta.ogDescription"),
       type: "website",
       url: canonical,
     },

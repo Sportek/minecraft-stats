@@ -1,4 +1,10 @@
 {
+  "meta": {
+    "title": "{name} - Minecraft Server Stats & Analytics",
+    "description": "Track {name}, a {categories} Minecraft server with {playerCount} players online. Real-time statistics, player count graphs, and growth trends. Languages: {languages}.",
+    "notFoundTitle": "Server Not Found - Minecraft Server Stats",
+    "notFoundDescription": "The requested Minecraft server could not be found. Browse other Minecraft servers and their statistics."
+  },
   "card": {
     "edit": "Edit server",
     "favorite": {

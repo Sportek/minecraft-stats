@@ -1,4 +1,10 @@
 {
+  "meta": {
+    "title": "{name} - Statistiques et analyses du serveur Minecraft",
+    "description": "Suivez {name}, un serveur Minecraft {categories} avec {playerCount} joueurs en ligne. Statistiques en temps réel, graphiques du nombre de joueurs et tendances de croissance. Langues : {languages}.",
+    "notFoundTitle": "Serveur introuvable - Statistiques de serveurs Minecraft",
+    "notFoundDescription": "Le serveur Minecraft demandé est introuvable. Parcourez d'autres serveurs Minecraft et leurs statistiques."
+  },
   "card": {
     "edit": "Modifier le serveur",
     "favorite": {
