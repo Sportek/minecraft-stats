@@ -127,11 +127,12 @@ export function buildAlternates(locale: string, path: string = ""): { canonical:
  * a phantom URL. `slugs` is the locale→slug map returned by the API.
  */
 export function sitemapLanguagesForSlugs(
-  slugs: Record<string, string | undefined>,
+  slugs: Record<string, string | undefined> | undefined | null,
   prefix: string = "/blog"
 ): Record<string, string> {
   const languages: Record<string, string> = {};
-  for (const [locale, slug] of Object.entries(slugs)) {
+  // `slugs` can be absent (an API without translations yet, or a malformed post).
+  for (const [locale, slug] of Object.entries(slugs ?? {})) {
     if (slug) {
       languages[locale] = `${LOCALE_HOME[locale] ?? LOCALE_HOME.en}${prefix}/${slug}`;
     }
