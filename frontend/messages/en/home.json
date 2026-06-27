@@ -1,4 +1,13 @@
 {
+  "meta": {
+    "title": "Minecraft Stats - Track & Analyze Your Server's Performance",
+    "description": "Free Minecraft server statistics and analytics platform. Track player counts, monitor growth trends, and analyze server performance in real-time. Perfect for server owners and administrators looking to understand their community.",
+    "keywords": "minecraft server stats, minecraft server tracking, player count tracker, server performance, minecraft analytics, server monitoring, minecraft statistics, server analytics dashboard, real-time server stats, minecraft server growth",
+    "ogTitle": "Minecraft Stats - Track & Analyze Your Server's Performance",
+    "ogDescription": "Free Minecraft server analytics platform. Monitor player counts, track growth trends, and analyze server performance in real-time. Join thousands of server owners.",
+    "twitterTitle": "Minecraft Stats - Track & Analyze Your Server's Performance",
+    "twitterDescription": "Free Minecraft server analytics. Monitor player counts, track growth trends, and analyze performance in real-time."
+  },
   "hero": {
     "badge": "Live monitoring · every 10 minutes",
     "title": "Track Minecraft server popularity <accent>in real time.</accent>",

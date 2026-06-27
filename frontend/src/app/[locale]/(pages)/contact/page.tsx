@@ -12,16 +12,15 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { locale } = await params;
   const { canonical, languages } = buildAlternates(locale, "/contact");
+  const t = await getTranslations({ locale, namespace: "StaticPages" });
 
   return {
-    title: "Contact",
-    description:
-      "Get in touch with the Minecraft Stats team. Reach us through Discord, GitHub, or email for questions, feedback, server removal requests, and support.",
-    keywords: "contact, support, minecraft stats, discord, github, feedback",
+    title: t("contact.meta.title"),
+    description: t("contact.meta.description"),
+    keywords: t("contact.meta.keywords"),
     openGraph: {
-      title: "Contact - Minecraft Stats",
-      description:
-        "Reach the Minecraft Stats team through Discord, GitHub, or email for questions, feedback, and support.",
+      title: t("contact.meta.ogTitle"),
+      description: t("contact.meta.ogDescription"),
       type: "website",
       url: canonical,
     },

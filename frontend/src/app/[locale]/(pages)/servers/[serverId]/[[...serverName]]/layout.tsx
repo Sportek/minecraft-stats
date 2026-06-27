@@ -1,6 +1,7 @@
 import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { buildAlternates, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
 
 // ISR — la metadata (OG, title, description) est rebuild toutes les 10 minutes
@@ -13,6 +14,7 @@ export const generateMetadata = async (props: {
   const params = await props.params;
   const { backendUrl } = await getDomainConfig();
   const assetsBase = process.env.NEXT_PUBLIC_ASSETS_URL || backendUrl;
+  const t = await getTranslations({ locale: params.locale, namespace: "Servers" });
   try {
     const server = await getServer(Number(params.serverId));
     const lastStat = getLastStat(server.stats);
@@ -27,8 +29,13 @@ export const generateMetadata = async (props: {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
-    const title = `${server.server.name} - Minecraft Server Stats & Analytics`;
-    const description = `Track ${server.server.name}, a ${categories} Minecraft server with ${playerCount} players online. Real-time statistics, player count graphs, and growth trends. Languages: ${languages}.`;
+    const title = t("meta.title", { name: server.server.name });
+    const description = t("meta.description", {
+      name: server.server.name,
+      categories,
+      playerCount,
+      languages,
+    });
 
     const { canonical, languages: alternateLanguages } = buildAlternates(
       params.locale,
@@ -93,13 +100,11 @@ export const generateMetadata = async (props: {
   } catch (error) {
     console.error("Erreur", error);
     return {
-      title: "Server Not Found - Minecraft Server Stats",
-      description:
-        "The requested Minecraft server could not be found. Browse other Minecraft servers and their statistics.",
+      title: t("meta.notFoundTitle"),
+      description: t("meta.notFoundDescription"),
       openGraph: {
-        title: "Server Not Found - Minecraft Server Stats",
-        description:
-          "The requested Minecraft server could not be found. Browse other Minecraft servers and their statistics.",
+        title: t("meta.notFoundTitle"),
+        description: t("meta.notFoundDescription"),
         type: "website",
         siteName: "Minecraft Stats",
       },

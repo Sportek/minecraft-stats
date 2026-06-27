@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { Inter } from "next/font/google";
 import { notFound } from "next/navigation";
 import ClientLayout from "./client-layout";
@@ -32,27 +32,16 @@ export const generateMetadata = async ({
   const path = await getLocaleFreePathname();
   const { canonical, languages } = buildAlternates(locale, path);
   const og = getOpenGraphLocales(locale);
+  const t = await getTranslations({ locale, namespace: "Home" });
 
   return {
     metadataBase: new URL(baseUrl),
     title: {
       template: "%s | Minecraft Stats",
-      default: "Minecraft Stats - Track & Analyze Your Server's Performance",
+      default: t("meta.title"),
     },
-    description:
-      "Free Minecraft server statistics and analytics platform. Track player counts, monitor growth trends, and analyze server performance in real-time. Perfect for server owners and administrators looking to understand their community.",
-    keywords: [
-      "minecraft server stats",
-      "minecraft server tracking",
-      "player count tracker",
-      "server performance",
-      "minecraft analytics",
-      "server monitoring",
-      "minecraft statistics",
-      "server analytics dashboard",
-      "real-time server stats",
-      "minecraft server growth",
-    ].join(", "),
+    description: t("meta.description"),
+    keywords: t("meta.keywords"),
     authors: [{ name: "Sportek | Gabriel Landry" }],
     creator: "Sportek | Gabriel Landry",
     publisher: "Minecraft Stats",
@@ -66,9 +55,8 @@ export const generateMetadata = async ({
     openGraph: {
       type: "website",
       siteName: "Minecraft Stats",
-      title: "Minecraft Stats - Track & Analyze Your Server's Performance",
-      description:
-        "Free Minecraft server analytics platform. Monitor player counts, track growth trends, and analyze server performance in real-time. Join thousands of server owners.",
+      title: t("meta.ogTitle"),
+      description: t("meta.ogDescription"),
       images: [
         {
           url: "/images/minecraft-stats/og-image.webp",
@@ -83,9 +71,8 @@ export const generateMetadata = async ({
     },
     twitter: {
       card: "summary_large_image",
-      title: "Minecraft Stats - Track & Analyze Your Server's Performance",
-      description:
-        "Free Minecraft server analytics. Monitor player counts, track growth trends, and analyze performance in real-time.",
+      title: t("meta.twitterTitle"),
+      description: t("meta.twitterDescription"),
       images: ["/images/minecraft-stats/og-image.webp"],
       creator: "@MinecraftStats",
     },

@@ -1,4 +1,13 @@
 {
+  "meta": {
+    "title": "Minecraft Stats - Suivez et analysez les performances de votre serveur",
+    "description": "Plateforme gratuite de statistiques et d'analyse de serveurs Minecraft. Suivez le nombre de joueurs, surveillez les tendances de croissance et analysez les performances de votre serveur en temps réel. Idéale pour les propriétaires et administrateurs de serveurs souhaitant mieux connaître leur communauté.",
+    "keywords": "statistiques serveur minecraft, suivi serveur minecraft, compteur de joueurs, performances serveur, analyse minecraft, surveillance serveur, statistiques minecraft, tableau de bord analytique, statistiques en temps réel, croissance serveur minecraft",
+    "ogTitle": "Minecraft Stats - Suivez et analysez les performances de votre serveur",
+    "ogDescription": "Plateforme gratuite d'analyse de serveurs Minecraft. Surveillez le nombre de joueurs, suivez les tendances de croissance et analysez les performances en temps réel. Rejoignez des milliers de propriétaires de serveurs.",
+    "twitterTitle": "Minecraft Stats - Suivez et analysez les performances de votre serveur",
+    "twitterDescription": "Analyse gratuite de serveurs Minecraft. Surveillez le nombre de joueurs, suivez la croissance et analysez les performances en temps réel."
+  },
   "hero": {
     "badge": "Surveillance en direct · toutes les 10 minutes",
     "title": "Suivez la popularité des serveurs Minecraft <accent>en temps réel.</accent>",
