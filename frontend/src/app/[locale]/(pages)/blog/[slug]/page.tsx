@@ -13,15 +13,17 @@ import ArticleBody from "@/components/blog/article-body";
 import ArticleFeedback from "@/components/blog/article-feedback";
 import ArticleViewTracker from "@/components/blog/article-view-tracker";
 import { resolveAssetUrl } from "@/lib/domain";
-import { buildAlternates, getDomainConfig } from "@/lib/domain-server";
+import { buildAlternatesForSlugs, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
 import { renderMarkdown } from "@/lib/markdown";
+import { PostLocale } from "@/types/post";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
 export const revalidate = 600;
 
 // generateMetadata et le composant de page demandent le même article : on
-// mémoïse l'appel sur la durée de la requête pour ne taper le backend qu'une fois.
-const loadPost = cache(getPostBySlug);
+// mémoïse l'appel sur la durée de la requête. La locale fait partie de la clé de
+// cache, sinon le contenu fallback d'une locale fuiterait sur une autre.
+const loadPost = cache((slug: string, locale: PostLocale) => getPostBySlug(slug, locale));
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -33,9 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "Blog" });
 
   try {
-    const post = await loadPost(slug);
+    const post = await loadPost(slug, locale as PostLocale);
 
-    const { canonical, languages } = buildAlternates(locale, `/blog/${post.slug}`);
+    const { canonical, languages } = buildAlternatesForSlugs(locale, post.slugs);
     // Fall back to the site OG image so cover-less posts still get a social card.
     const image = post.coverImage
       ? resolveAssetUrl(post.coverImage)
@@ -56,6 +58,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: post.excerpt || post.title,
         type: "article",
         url: canonical,
+        // Reflects the language actually rendered (fallback-aware).
+        locale: getOpenGraphLocales(post.localeUsed).locale,
         publishedTime: post.publishedAt?.toString(),
         modifiedTime: post.updatedAt?.toString(),
         authors: [post.author.username],
@@ -82,16 +86,16 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
   const t = await getTranslations({ locale, namespace: "Blog" });
 
   try {
-    const post = await loadPost(slug);
+    const post = await loadPost(slug, locale as PostLocale);
 
     return (
       <div className="min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
         {/* Records a best-effort, consent-exempt view once per session. */}
         <ArticleViewTracker slug={post.slug} />
 
-        {/* Structured Data for SEO */}
+        {/* Structured Data for SEO — inLanguage reflects the rendered language. */}
         <BlogPostStructuredData
-          locale={locale}
+          locale={post.localeUsed}
           post={{
             id: post.id,
             title: post.title,

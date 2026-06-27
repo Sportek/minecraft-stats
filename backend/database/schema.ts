@@ -202,25 +202,48 @@ export class PageViewSchema extends BaseModel {
   declare visitorId: number
 }
 
-export class PostSchema extends BaseModel {
+export class PostFeedbackSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'helpful',
+    'id',
+    'postId',
+    'updatedAt',
+    'userId',
+    'visitorId',
+  ] as const
+  $columns = PostFeedbackSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare helpful: boolean
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare postId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number | null
+  @column()
+  declare visitorId: string
+}
+
+export class PostTranslationSchema extends BaseModel {
   static $columns = [
     'content',
-    'coverImage',
     'createdAt',
     'excerpt',
     'id',
-    'published',
-    'publishedAt',
+    'locale',
+    'postId',
     'slug',
     'title',
     'updatedAt',
-    'userId',
   ] as const
-  $columns = PostSchema.$columns
+  $columns = PostTranslationSchema.$columns
   @column()
   declare content: string
-  @column()
-  declare coverImage: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
   @column()
@@ -228,17 +251,48 @@ export class PostSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare published: boolean | null
-  @column.dateTime()
-  declare publishedAt: DateTime | null
+  declare locale: string
+  @column()
+  declare postId: number
   @column()
   declare slug: string
   @column()
   declare title: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class PostSchema extends BaseModel {
+  static $columns = [
+    'coverImage',
+    'createdAt',
+    'defaultLocale',
+    'id',
+    'published',
+    'publishedAt',
+    'updatedAt',
+    'userId',
+    'viewCount',
+  ] as const
+  $columns = PostSchema.$columns
+  @column()
+  declare coverImage: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare defaultLocale: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare published: boolean | null
+  @column.dateTime()
+  declare publishedAt: DateTime | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
   @column()
   declare userId: number
+  @column()
+  declare viewCount: number
 }
 
 export class RateLimitSchema extends BaseModel {
@@ -351,6 +405,7 @@ export class ServerSchema extends BaseModel {
     'categoryId',
     'createdAt',
     'faviconHash',
+    'hostDomain',
     'id',
     'imageUrl',
     'lastMaxCount',
@@ -380,6 +435,8 @@ export class ServerSchema extends BaseModel {
   declare createdAt: DateTime | null
   @column()
   declare faviconHash: string | null
+  @column()
+  declare hostDomain: string | null
   @column({ isPrimary: true })
   declare id: number
   @column()
@@ -418,6 +475,36 @@ export class ServerSchema extends BaseModel {
   declare version: string | null
   @column()
   declare website: string | null
+}
+
+export class TrafficDailySchema extends BaseModel {
+  static $columns = [
+    'countries',
+    'createdAt',
+    'date',
+    'httpErrors',
+    'httpRequests',
+    'id',
+    'uniqueVisitors',
+    'updatedAt',
+  ] as const
+  $columns = TrafficDailySchema.$columns
+  @column()
+  declare countries: any
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.date()
+  declare date: DateTime
+  @column()
+  declare httpErrors: bigint | number
+  @column()
+  declare httpRequests: bigint | number
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare uniqueVisitors: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 }
 
 export class UserSchema extends BaseModel {

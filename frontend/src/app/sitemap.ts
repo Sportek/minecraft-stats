@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { alternateLanguages, getDomainConfig } from '@/lib/domain-server';
+import { alternateLanguages, getDomainConfig, sitemapLanguagesForSlugs } from '@/lib/domain-server';
 
 interface Server {
   id: number;
@@ -13,6 +13,7 @@ interface ServerListItem {
 
 interface Post {
   slug: string;
+  slugs: Record<string, string>;
   publishedAt: string | null;
   updatedAt: string;
 }
@@ -45,15 +46,16 @@ async function getAllServers(apiUrl: string): Promise<Server[]> {
   }
 }
 
-async function getAllPosts(apiUrl: string): Promise<Post[]> {
+async function getAllPosts(apiUrl: string, locale: string): Promise<Post[]> {
   try {
     const posts: Post[] = [];
     let page = 1;
     let lastPage = 1;
 
-    // `/posts` only returns published posts; paginate through every page.
+    // `/posts` only returns published posts; paginate through every page. The
+    // locale resolves each post's primary slug for this domain's URLs.
     do {
-      const response = await fetch(`${apiUrl}/posts?page=${page}&limit=100`, {
+      const response = await fetch(`${apiUrl}/posts?page=${page}&limit=100&locale=${locale}`, {
         next: { revalidate: 3600 },
       });
 
@@ -77,7 +79,12 @@ async function getAllPosts(apiUrl: string): Promise<Post[]> {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { baseUrl, apiUrl } = await getDomainConfig();
-  const [servers, posts] = await Promise.all([getAllServers(apiUrl), getAllPosts(apiUrl)]);
+  // Per-domain sitemap: .fr lists French URLs, .com English ones.
+  const domainLocale = baseUrl.includes('minecraft-stats.fr') ? 'fr' : 'en';
+  const [servers, posts] = await Promise.all([
+    getAllServers(apiUrl),
+    getAllPosts(apiUrl, domainLocale),
+  ]);
 
   // Static routes (path is locale-free; alternates point at each locale's home domain)
   const routes: MetadataRoute.Sitemap = [
@@ -117,7 +124,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(post.updatedAt || post.publishedAt || Date.now()),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
-    alternates: { languages: alternateLanguages(`/blog/${post.slug}`) },
+    // Per-locale slugs: advertise only the translations that exist.
+    alternates: { languages: sitemapLanguagesForSlugs(post.slugs) },
   }));
 
   // Dynamic server routes
