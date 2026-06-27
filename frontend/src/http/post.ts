@@ -1,11 +1,20 @@
 import { getBaseUrl } from '@/app/_cheatcode'
-import { CreatePostInput, Post, PostStats, PostsListResponse, UpdatePostInput } from '@/types/post'
+import {
+  AdminPost,
+  AdminPostsListResponse,
+  CreatePostInput,
+  Post,
+  PostLocale,
+  PostStats,
+  PostsListResponse,
+  UpdatePostInput,
+} from '@/types/post'
 import { getErrorMessage } from './auth'
 
 // Public endpoints
 
-export const getPosts = async (page: number = 1, limit: number = 10) => {
-  const response = await fetch(`${getBaseUrl()}/posts?page=${page}&limit=${limit}`, {
+export const getPosts = async (page: number = 1, limit: number = 10, locale: PostLocale = 'en') => {
+  const response = await fetch(`${getBaseUrl()}/posts?page=${page}&limit=${limit}&locale=${locale}`, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -37,8 +46,8 @@ export const resolvePlaceholders = async (placeholders: string[]) => {
   return response.json() as Promise<Record<string, string>>
 }
 
-export const getPostBySlug = async (slug: string) => {
-  const response = await fetch(`${getBaseUrl()}/posts/${slug}`, {
+export const getPostBySlug = async (slug: string, locale: PostLocale = 'en') => {
+  const response = await fetch(`${getBaseUrl()}/posts/${slug}?locale=${locale}`, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -119,7 +128,24 @@ export const getAdminPosts = async (
     throw new Error(errorMessage)
   }
 
-  return response.json() as Promise<PostsListResponse>
+  return response.json() as Promise<AdminPostsListResponse>
+}
+
+/** Single post with all its translations, for the edit screen. */
+export const getAdminPost = async (postId: number, token: string) => {
+  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response)
+    throw new Error(errorMessage)
+  }
+
+  return response.json() as Promise<AdminPost>
 }
 
 export const getAdminPostStats = async (postId: number, token: string) => {
@@ -153,7 +179,7 @@ export const createPost = async (data: CreatePostInput, token: string) => {
     throw new Error(errorMessage)
   }
 
-  return response.json() as Promise<Post>
+  return response.json() as Promise<AdminPost>
 }
 
 export const updatePost = async (postId: number, data: UpdatePostInput, token: string) => {
@@ -171,7 +197,7 @@ export const updatePost = async (postId: number, data: UpdatePostInput, token: s
     throw new Error(errorMessage)
   }
 
-  return response.json() as Promise<Post>
+  return response.json() as Promise<AdminPost>
 }
 
 export const deletePost = async (postId: number, token: string) => {

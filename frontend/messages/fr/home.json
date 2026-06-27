@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "title": "Minecraft Stats - Suivez et analysez les performances de votre serveur",
+    "description": "Plateforme gratuite de statistiques et d'analyse de serveurs Minecraft. Suivez le nombre de joueurs, surveillez les tendances de croissance et analysez les performances de votre serveur en temps réel. Idéale pour les propriétaires et administrateurs de serveurs souhaitant mieux connaître leur communauté.",
+    "keywords": "statistiques serveur minecraft, suivi serveur minecraft, compteur de joueurs, performances serveur, analyse minecraft, surveillance serveur, statistiques minecraft, tableau de bord analytique, statistiques en temps réel, croissance serveur minecraft",
+    "ogTitle": "Minecraft Stats - Suivez et analysez les performances de votre serveur",
+    "ogDescription": "Plateforme gratuite d'analyse de serveurs Minecraft. Surveillez le nombre de joueurs, suivez les tendances de croissance et analysez les performances en temps réel. Rejoignez des milliers de propriétaires de serveurs.",
+    "twitterTitle": "Minecraft Stats - Suivez et analysez les performances de votre serveur",
+    "twitterDescription": "Analyse gratuite de serveurs Minecraft. Surveillez le nombre de joueurs, suivez la croissance et analysez les performances en temps réel."
+  },
+  "hero": {
+    "badge": "Surveillance en direct · toutes les 10 minutes",
+    "title": "Suivez la popularité des serveurs Minecraft <accent>en temps réel.</accent>",
+    "subtitle": "Nombre de joueurs réel, tendances de croissance et comparaisons côte à côte — le tout appuyé par des années de données historiques.",
+    "addServer": "Ajoutez votre serveur",
+    "exploreServers": "Explorer les serveurs"
+  },
+  "stats": {
+    "monitoredServers": "Serveurs surveillés",
+    "playersOnlineNow": "Joueurs en ligne",
+    "totalDataRows": "Lignes de données au total",
+    "error": "Erreur lors du chargement des statistiques"
+  },
+  "globalInsight": {
+    "title": "Aperçu global",
+    "description": "Comparez le nombre de joueurs agrégé entre serveurs, catégories et langues.",
+    "followingFavorites": "Vous suivez <strong>{count}</strong> {count, plural, one {favori} other {favoris}}.",
+    "showAllServers": "Afficher tous les serveurs",
+    "customSelection": "Sélection personnalisée.",
+    "resetToFavorites": "Réinitialiser aux favoris"
+  },
+  "allMonitoredServers": "Tous les serveurs surveillés",
+  "players": "joueurs",
+  "categorySelect": {
+    "ariaLabel": "Filtrer par catégorie",
+    "all": "Toutes les catégories"
+  },
+  "languageSelect": {
+    "ariaLabel": "Filtrer par langue",
+    "all": "Toutes les langues"
+  },
+  "timeRangeSelect": {
+    "ariaLabel": "Plage de temps",
+    "options": {
+      "1day": "24 h",
+      "1week": "7 jours",
+      "1month": "30 jours",
+      "6months": "6 mois",
+      "1year": "1 an"
+    }
+  },
+  "aggregationSelect": {
+    "ariaLabel": "Intervalle d'agrégation des données",
+    "options": {
+      "30min": "30 minutes",
+      "1hour": "1 heure",
+      "6hours": "6 heures",
+      "1day": "1 jour"
+    }
+  },
+  "serverSelect": {
+    "ariaLabel": "Sélectionner les serveurs à comparer",
+    "placeholder": "Rechercher un serveur...",
+    "empty": "Aucun serveur trouvé.",
+    "selected": "{count, plural, one {# serveur sélectionné} other {# serveurs sélectionnés}}",
+    "serverFallback": "Serveur {id}",
+    "unknown": "Inconnu"
+  },
+  "articles": {
+    "title": "Du blog",
+    "seeAll": "Voir tout →",
+    "category": "Actualités"
+  },
+  "favorites": {
+    "title": "Vos favoris"
+  },
+  "browse": {
+    "title": "Parcourir les serveurs",
+    "tracked": "{count, number} suivis",
+    "searchPlaceholder": "Rechercher par nom ou IP...",
+    "categories": "Catégories",
+    "searchCategories": "Rechercher des catégories...",
+    "noCategories": "Aucune catégorie trouvée.",
+    "languages": "Langues",
+    "searchLanguages": "Rechercher des langues...",
+    "noLanguages": "Aucune langue trouvée.",
+    "editionAriaLabel": "Édition",
+    "allEditions": "Toutes les éditions",
+    "clearFilters": "Effacer les filtres",
+    "showing": "Affichage de <strong>{start}–{end}</strong> sur <strong>{total, number}</strong>",
+    "page": "Page <strong>{current}</strong> sur <strong>{total}</strong>",
+    "perPage": "Par page",
+    "perPageAriaLabel": "Serveurs par page",
+    "noServersFound": "Aucun serveur trouvé",
+    "noServersHint": "Essayez d'effacer les filtres ou de rechercher un autre terme."
+  }
+}

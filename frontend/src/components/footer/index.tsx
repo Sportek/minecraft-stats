@@ -1,7 +1,8 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import RestrictedWidthLayout from "../restricted-width-layout";
 import BrandLogo from "../brand-logo";
 import { getClientBackendUrl } from "@/lib/domain";
@@ -12,6 +13,7 @@ const socialIconClass =
   "inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors";
 
 const Footer = () => {
+  const t = useTranslations("Footer");
   const isMinecraftStatsDomain =
     typeof window !== "undefined" && window.location.hostname.endsWith("minecraft-stats.com");
   const backendUrl = getClientBackendUrl();
@@ -24,10 +26,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <BrandLogo />
-            <p className="max-w-sm text-sm text-muted-foreground">
-              The free, open-source Minecraft server directory with real-time player statistics and historical
-              data.
-            </p>
+            <p className="max-w-sm text-sm text-muted-foreground">{t("tagline")}</p>
             <div className="flex items-center gap-1">
               <Link
                 href="https://github.com/Sportek/minecraft-stats"
@@ -51,39 +50,34 @@ const Footer = () => {
           </div>
 
           {/* Product */}
-          <nav aria-label="Product" className="space-y-4">
-            <h3 className={sectionTitleClass}>Product</h3>
+          <nav aria-label={t("sections.product")} className="space-y-4">
+            <h3 className={sectionTitleClass}>{t("sections.product")}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/" className={linkClass}>
-                  All servers
+                  {t("links.allServers")}
                 </Link>
               </li>
               <li>
                 <Link href="/account/add-server" className={linkClass}>
-                  Add a server
+                  {t("links.addServer")}
                 </Link>
               </li>
               <li>
                 <Link href="/blog" className={linkClass}>
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/partners" className={linkClass}>
-                  Partners
+                  {t("links.blog")}
                 </Link>
               </li>
             </ul>
           </nav>
 
           {/* Resources */}
-          <nav aria-label="Resources" className="space-y-4">
-            <h3 className={sectionTitleClass}>Resources</h3>
+          <nav aria-label={t("sections.resources")} className="space-y-4">
+            <h3 className={sectionTitleClass}>{t("sections.resources")}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href={`${backendUrl}/docs`} className={linkClass}>
-                  API documentation
+                  {t("links.apiDocs")}
                 </Link>
               </li>
               <li>
@@ -93,7 +87,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className={linkClass}
                 >
-                  GitHub
+                  {t("links.github")}
                 </Link>
               </li>
               <li>
@@ -103,34 +97,34 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className={linkClass}
                 >
-                  Community
+                  {t("links.community")}
                 </Link>
               </li>
             </ul>
           </nav>
 
           {/* Company */}
-          <nav aria-label="Company" className="space-y-4">
-            <h3 className={sectionTitleClass}>Company</h3>
+          <nav aria-label={t("sections.company")} className="space-y-4">
+            <h3 className={sectionTitleClass}>{t("sections.company")}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/about" className={linkClass}>
-                  About
+                  {t("links.about")}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className={linkClass}>
-                  Contact
+                  {t("links.contact")}
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className={linkClass}>
-                  Privacy Policy
+                  {t("links.privacy")}
                 </Link>
               </li>
               <li>
                 <Link href="/cgu" className={linkClass}>
-                  Terms of service
+                  {t("links.terms")}
                 </Link>
               </li>
             </ul>
@@ -139,11 +133,11 @@ const Footer = () => {
 
         {/* Bottom strip */}
         <div className="mt-12 flex flex-col-reverse items-center gap-4 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row sm:justify-between">
-          <p>© {currentYear} Minecraft Stats. Not affiliated with Mojang.</p>
+          <p>{t("copyright", { year: currentYear })}</p>
           <p className="flex items-center gap-1.5">
-            <span>Crafted with</span>
+            <span>{t("craftedWith")}</span>
             <Icon icon="ic:round-favorite" className="h-3.5 w-3.5 text-destructive" />
-            <span>by</span>
+            <span>{t("craftedBy")}</span>
             <Link
               href="https://sportek.dev"
               target="_blank"
@@ -157,7 +151,7 @@ const Footer = () => {
 
         {isMinecraftStatsDomain && (
           <p className="mt-3 text-center text-[11px] text-muted-foreground">
-            Domain name donated by{" "}
+            {t("domainDonatedBy")}{" "}
             <Link
               href="https://pol.tf"
               target="_blank"

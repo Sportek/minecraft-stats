@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import ServerCard from "@/components/serveur/card";
-import { ServerData } from "@/app/(pages)/(index)/page";
+import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
 import { fetcher } from "@/app/_cheatcode";
 import { X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -17,6 +17,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClientApiUrl } from "@/lib/domain";
+import { useFormatter, useTranslations } from "next-intl";
 
 const PAGE_SIZE_OPTIONS = [12, 24, 36, 48] as const;
 const DEFAULT_PAGE_SIZE = 24;
@@ -40,6 +41,8 @@ const ServerCardsSection = () => {
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const debouncedSearch = useDebounce(search, 300);
   const apiUrl = getClientApiUrl();
+  const format = useFormatter();
+  const t = useTranslations("Home");
 
   const { data: categories } = useSWRImmutable<Category[]>(`${apiUrl}/categories`, fetcher);
   const { data: languages } = useSWRImmutable<Language[]>(`${apiUrl}/languages`, fetcher);
@@ -111,11 +114,11 @@ const ServerCardsSection = () => {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Icon icon="material-symbols:search" className="h-5 w-5 shrink-0 text-muted-foreground" />
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">Browse Servers</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("browse.title")}</h2>
           </div>
           {totalServers > 0 && (
             <span className="text-xs font-medium text-muted-foreground">
-              {new Intl.NumberFormat("en-US").format(totalServers)} tracked
+              {t("browse.tracked", { count: totalServers })}
             </span>
           )}
         </div>
@@ -124,7 +127,7 @@ const ServerCardsSection = () => {
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-2 sm:flex-row sm:items-center">
           <FancyMultiSelect
             searchOnly
-            placeholder="Search by name or IP..."
+            placeholder={t("browse.searchPlaceholder")}
             onSearch={updateSearch}
             searchValue={search}
             className="sm:flex-1"
@@ -136,9 +139,9 @@ const ServerCardsSection = () => {
               options={categories?.map((cat) => ({ id: cat.id, name: cat.name })) ?? []}
               selectedIds={selectedCategories}
               onChange={updateCategories}
-              placeholder="Categories"
-              searchPlaceholder="Search categories..."
-              emptyMessage="No categories found."
+              placeholder={t("browse.categories")}
+              searchPlaceholder={t("browse.searchCategories")}
+              emptyMessage={t("browse.noCategories")}
               className="flex-1 sm:flex-none"
             />
             <FancyMultiSelect
@@ -146,17 +149,17 @@ const ServerCardsSection = () => {
               options={languages?.map((lang) => ({ id: lang.id, name: lang.name, flag: lang.flag })) ?? []}
               selectedIds={selectedLanguages}
               onChange={updateLanguages}
-              placeholder="Languages"
-              searchPlaceholder="Search languages..."
-              emptyMessage="No languages found."
+              placeholder={t("browse.languages")}
+              searchPlaceholder={t("browse.searchLanguages")}
+              emptyMessage={t("browse.noLanguages")}
               className="flex-1 sm:flex-none"
             />
             <Select value={selectedType} onValueChange={(v) => updateType(v as "all" | "java" | "bedrock")}>
-              <SelectTrigger aria-label="Edition" className="h-9 flex-1 sm:w-auto sm:flex-none">
+              <SelectTrigger aria-label={t("browse.editionAriaLabel")} className="h-9 flex-1 sm:w-auto sm:flex-none">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All editions</SelectItem>
+                <SelectItem value="all">{t("browse.allEditions")}</SelectItem>
                 <SelectItem value="java">Java</SelectItem>
                 <SelectItem value="bedrock">Bedrock</SelectItem>
               </SelectContent>
@@ -165,8 +168,8 @@ const ServerCardsSection = () => {
               variant="ghost"
               size="icon"
               onClick={clearFilters}
-              aria-label="Clear filters"
-              title="Clear filters"
+              aria-label={t("browse.clearFilters")}
+              title={t("browse.clearFilters")}
               className={cn(
                 "shrink-0 text-muted-foreground hover:text-foreground transition-opacity",
                 hasActiveFilters ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -182,16 +185,23 @@ const ServerCardsSection = () => {
       {totalServers > 0 && (
         <div className="flex flex-col gap-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>
-            Showing <span className="font-medium text-foreground">{rangeStart}–{rangeEnd}</span> of{" "}
-            <span className="font-medium text-foreground">{new Intl.NumberFormat("en-US").format(totalServers)}</span>
+            {t.rich("browse.showing", {
+              start: rangeStart,
+              end: rangeEnd,
+              total: totalServers,
+              strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+            })}
             <span className="mx-1.5">·</span>
-            Page <span className="font-medium text-foreground">{currentPage}</span> of{" "}
-            <span className="font-medium text-foreground">{totalPages}</span>
+            {t.rich("browse.page", {
+              current: currentPage,
+              total: totalPages,
+              strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+            })}
           </span>
           <div className="flex items-center gap-2">
-            <span>Per page</span>
+            <span>{t("browse.perPage")}</span>
             <Select value={String(pageSize)} onValueChange={(v) => updatePageSize(Number(v))}>
-              <SelectTrigger aria-label="Servers per page" className="h-8 w-auto min-w-18 bg-secondary text-xs">
+              <SelectTrigger aria-label={t("browse.perPageAriaLabel")} className="h-8 w-auto min-w-18 bg-secondary text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -219,12 +229,12 @@ const ServerCardsSection = () => {
             <Icon icon="material-symbols:search-off" className="h-5 w-5" />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-foreground">No servers found</p>
-            <p className="text-xs text-muted-foreground">Try clearing filters or searching a different term.</p>
+            <p className="text-sm font-semibold text-foreground">{t("browse.noServersFound")}</p>
+            <p className="text-xs text-muted-foreground">{t("browse.noServersHint")}</p>
           </div>
           {hasActiveFilters && (
             <Button variant="outline" size="sm" onClick={clearFilters}>
-              Clear filters
+              {t("browse.clearFilters")}
             </Button>
           )}
         </div>

@@ -1,0 +1,69 @@
+{
+  "shared": {
+    "appName": "Minecraft Stats"
+  },
+  "auth": {
+    "captchaFailed": "Échec de la vérification du captcha",
+    "emailNotVerified": "E-mail non vérifié",
+    "usingThirdPartyProvider": "Vous utilisez un fournisseur tiers",
+    "userNotFound": "Utilisateur introuvable",
+    "emailAlreadyVerified": "E-mail déjà vérifié",
+    "invalidVerificationToken": "Jeton de vérification invalide",
+    "verificationTokenExpired": "Jeton de vérification expiré",
+    "emailAlreadyRegistered": "E-mail déjà enregistré",
+    "invalidOldPassword": "Ancien mot de passe incorrect",
+    "noImageProvided": "Aucune image fournie",
+    "invalidUpload": "Téléversement invalide",
+    "loggedOut": "Déconnecté",
+    "allSessionsRevoked": "Toutes les sessions ont été révoquées",
+    "unsupportedProvider": "Fournisseur non pris en charge",
+    "oauthCancelled": "Vous avez annulé le processus de connexion",
+    "oauthStateMismatch": "Nous ne parvenons pas à vérifier la requête. Veuillez réessayer",
+    "oauthError": "Une erreur est survenue lors de la connexion. Veuillez réessayer",
+    "cannotLoginWithProvider": "Connexion impossible avec ce fournisseur tiers"
+  },
+  "servers": {
+    "unauthorized": "Non autorisé",
+    "notReachable": "Le serveur est injoignable",
+    "duplicate": "Ce serveur semble déjà être référencé sur Minecraft Stats.",
+    "notFound": "Serveur introuvable"
+  },
+  "posts": {
+    "unauthorized": "Non autorisé",
+    "writerRequired": "Accès refusé. Privilèges de rédacteur requis.",
+    "notFound": "Article introuvable",
+    "missingDefaultTranslation": "Une traduction dans la langue principale est requise.",
+    "updateOwnOnly": "Accès refusé. Vous ne pouvez modifier que vos propres articles.",
+    "deleteOwnOnly": "Accès refusé. Vous ne pouvez supprimer que vos propres articles.",
+    "publishOwnOnly": "Accès refusé. Vous ne pouvez publier que vos propres articles.",
+    "unpublishOwnOnly": "Accès refusé. Vous ne pouvez dépublier que vos propres articles.",
+    "viewStatsOwnOnly": "Accès refusé. Vous ne pouvez consulter les statistiques que de vos propres articles."
+  },
+  "users": {
+    "unauthorized": "Non autorisé",
+    "notFound": "Utilisateur introuvable",
+    "adminRequired": "Accès refusé. Privilèges d'administrateur requis.",
+    "cannotChangeRole": "Accès refusé. Impossible de modifier le rôle de cet utilisateur.",
+    "invalidRole": "Rôle invalide. Doit être admin, writer ou user."
+  },
+  "advertisements": {
+    "invalidPlacement": "Emplacement invalide ou manquant",
+    "adminRequired": "Accès refusé. Privilèges d'administrateur requis."
+  },
+  "uploads": {
+    "unauthorized": "Non autorisé",
+    "writerRequired": "Accès refusé. Privilèges de rédacteur requis.",
+    "noImageProvided": "Aucune image fournie",
+    "invalidUpload": "Téléversement invalide",
+    "processFailed": "Échec du traitement de l'image"
+  },
+  "categories": {
+    "unauthorized": "Non autorisé"
+  },
+  "apiTokens": {
+    "notFound": "Jeton introuvable"
+  },
+  "serverCategories": {
+    "unauthorized": "Non autorisé"
+  }
+}

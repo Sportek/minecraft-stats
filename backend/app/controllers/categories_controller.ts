@@ -37,10 +37,10 @@ export default class CategoriesController {
    * @responseBody 403 - {"message": "Unauthorized"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
-  async store({ request, response, bouncer }: HttpContext) {
+  async store({ request, response, bouncer, i18n }: HttpContext) {
     const data = await CreateCategoryValidator.validate(request.body())
     if (await bouncer.with(CategoryPolicy).denies('create')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.categories.unauthorized') })
     }
     const category = await Category.create(data)
     await CacheService.invalidate(CATEGORIES_CACHE_KEY)
@@ -60,11 +60,11 @@ export default class CategoriesController {
    * @responseBody 404 - {"message": "Row not found"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "id"}]}
    */
-  async destroy({ request, response, bouncer }: HttpContext) {
+  async destroy({ request, response, bouncer, i18n }: HttpContext) {
     const { id } = await CategoryIdValidator.validate(request.body())
     const category = await Category.findOrFail(id)
     if (await bouncer.with(CategoryPolicy).denies('destroy')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.categories.unauthorized') })
     }
     await category.delete()
     await CacheService.invalidate(CATEGORIES_CACHE_KEY)
@@ -84,10 +84,10 @@ export default class CategoriesController {
    * @responseBody 404 - {"message": "Row not found"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
-  async update({ request, response, bouncer }: HttpContext) {
+  async update({ request, response, bouncer, i18n }: HttpContext) {
     const { id, ...validatedData } = await UpdateCategoryValidator.validate(request.body())
     if (await bouncer.with(CategoryPolicy).denies('update')) {
-      return response.forbidden({ message: 'Unauthorized' })
+      return response.forbidden({ message: i18n.t('messages.categories.unauthorized') })
     }
     const category = await Category.findOrFail(id)
     await category.merge(validatedData).save()

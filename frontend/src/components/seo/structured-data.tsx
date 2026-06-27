@@ -15,12 +15,20 @@ function toJsonLd(data: unknown): string {
     .replace(/&/g, "\\u0026");
 }
 
+// Short UI locale (next-intl) → BCP47 tag for schema.org `inLanguage`.
+const BCP47: Record<string, string> = { fr: "fr-FR", en: "en-US" };
+
+function bcp47(locale?: string): string {
+  return BCP47[locale ?? ""] ?? "en-US";
+}
+
 interface ServerStructuredDataProps {
   server: Server;
   categories: Category[];
   playerCount: number;
   maxPlayers?: number;
   lastStatsAt?: Date;
+  locale?: string;
 }
 
 export function ServerStructuredData({
@@ -29,6 +37,7 @@ export function ServerStructuredData({
   playerCount,
   maxPlayers = 0,
   lastStatsAt,
+  locale,
 }: Readonly<ServerStructuredDataProps>) {
   const { baseUrl } = getClientDomainConfig();
   const imageUrl = resolveAssetUrl(`${server.imageUrl}.webp`);
@@ -44,6 +53,7 @@ export function ServerStructuredData({
     name: `${server.name} - Minecraft Server Stats`,
     description: `Statistics and analytics for ${server.name} Minecraft server. Currently ${playerCount} players online.`,
     url: `${baseUrl}/servers/${server.id}/${slug}`,
+    inLanguage: bcp47(locale),
     image: imageUrl,
     datePublished: server.createdAt,
     dateModified: lastStatsAt ?? server.createdAt,
@@ -98,9 +108,10 @@ export function ServerStructuredData({
 interface WebsiteStructuredDataProps {
   totalServers?: number;
   totalPlayers?: number;
+  locale?: string;
 }
 
-export function WebsiteStructuredData({ totalServers, totalPlayers }: WebsiteStructuredDataProps = {}) {
+export function WebsiteStructuredData({ totalServers, totalPlayers, locale }: WebsiteStructuredDataProps = {}) {
   const { baseUrl } = getClientDomainConfig();
 
   const structuredData = {
@@ -110,6 +121,7 @@ export function WebsiteStructuredData({ totalServers, totalPlayers }: WebsiteStr
     description:
       "Track and analyze Minecraft server statistics. Monitor player counts, growth trends, and server performance in real-time.",
     url: baseUrl,
+    inLanguage: bcp47(locale),
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -201,12 +213,13 @@ interface BlogPost {
 
 interface BlogPostStructuredDataProps {
   post: BlogPost;
+  locale?: string;
 }
 
-export function BlogPostStructuredData({ post }: Readonly<BlogPostStructuredDataProps>) {
+export function BlogPostStructuredData({ post, locale }: Readonly<BlogPostStructuredDataProps>) {
   const { baseUrl } = getClientDomainConfig();
   const postUrl = `${baseUrl}/blog/${post.slug}`;
-  const inLanguage = baseUrl.includes("minecraft-stats.fr") ? "fr-FR" : "en-US";
+  const inLanguage = bcp47(locale);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -263,12 +276,14 @@ interface ServerFAQStructuredDataProps {
   server: Server;
   currentPlayers?: number;
   maxPlayers?: number;
+  locale?: string;
 }
 
 export function ServerFAQStructuredData({
   server,
   currentPlayers = 0,
   maxPlayers = 0,
+  locale,
 }: Readonly<ServerFAQStructuredDataProps>) {
   const faqItems = [
     {
@@ -304,6 +319,7 @@ export function ServerFAQStructuredData({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    inLanguage: bcp47(locale),
     mainEntity: faqItems.map((faq) => ({
       "@type": "Question",
       name: faq.question,

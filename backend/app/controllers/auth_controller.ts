@@ -30,15 +30,16 @@ export default class AuthController {
    * @responseBody 400 - {"errors": [{"message": "Invalid user credentials"}]}
    * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
    */
-  async login({ request, response }: HttpContext) {
+  async login({ request, response, i18n }: HttpContext) {
     if (!(await TurnstileService.verify(request.input('turnstileToken'), request.ip()))) {
-      return response.badRequest({ message: 'Captcha verification failed' })
+      return response.badRequest({ message: i18n.t('messages.auth.captchaFailed') })
     }
     const data = await request.validateUsing(LoginUserValidator)
     const user = await User.verifyCredentials(data.email, data.password)
-    if (!user.verified) return response.badRequest({ message: 'Email not verified' })
+    if (!user.verified)
+      return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
     if (user.provider)
-      return response.badRequest({ message: 'You are using a third-party provider' })
+      return response.badRequest({ message: i18n.t('messages.auth.usingThirdPartyProvider') })
     return {
       user,
       accessToken: await User.accessTokens.create(user),
@@ -59,7 +60,7 @@ export default class AuthController {
    * @responseBody 400 - {"message": "Verification token expired"}
    * @responseBody 422 - {"errors": [{"message": "The token field must be defined", "rule": "required", "field": "token"}]}
    */
-  async verifyEmail({ request, response }: HttpContext) {
+  async verifyEmail({ request, response, i18n }: HttpContext) {
     const data = request.only(['token'])
     const validatedUserData = await VerifyEmailValidator.validate(data)
     const jwtToken = jwt.verify(validatedUserData.token, env.get('APP_KEY')) as {
@@ -67,12 +68,13 @@ export default class AuthController {
       verificationToken: string
     }
     const user = await User.findBy('email', jwtToken.email)
-    if (!user) return response.notFound({ message: 'User not found' })
-    if (user.verified) return response.badRequest({ message: 'Email already verified' })
+    if (!user) return response.notFound({ message: i18n.t('messages.auth.userNotFound') })
+    if (user.verified)
+      return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyVerified') })
     if (user.verificationToken !== jwtToken.verificationToken)
-      return response.badRequest({ message: 'Invalid verification token' })
+      return response.badRequest({ message: i18n.t('messages.auth.invalidVerificationToken') })
     if (user.verificationTokenExpires && user.verificationTokenExpires < DateTime.now())
-      return response.badRequest({ message: 'Verification token expired' })
+      return response.badRequest({ message: i18n.t('messages.auth.verificationTokenExpired') })
     user.verificationToken = null
     user.verified = true
     user.verificationTokenExpires = null
@@ -92,20 +94,21 @@ export default class AuthController {
    * @responseBody 400 - {"message": "Email already registered"}
    * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
    */
-  async register({ request, response }: HttpContext) {
+  async register({ request, response, i18n }: HttpContext) {
     if (!(await TurnstileService.verify(request.input('turnstileToken'), request.ip()))) {
-      return response.badRequest({ message: 'Captcha verification failed' })
+      return response.badRequest({ message: i18n.t('messages.auth.captchaFailed') })
     }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
     const user = await User.findBy('email', validatedUserData.email)
-    if (user) return response.badRequest({ message: 'Email already registered' })
+    if (user)
+      return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyRegistered') })
     const newUser = await User.create(validatedUserData)
     const jwtToken = jwt.sign(
       { email: newUser.email, verificationToken: newUser.verificationToken },
       env.get('APP_KEY')
     )
-    await mail.sendLater(new VerifyENotification(newUser, jwtToken))
+    await mail.sendLater(new VerifyENotification(newUser, jwtToken, i18n.locale))
     return response.ok(newUser)
   }
 
@@ -141,14 +144,15 @@ export default class AuthController {
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    * @responseBody 422 - {"errors": [{"message": "The newPassword field must have at least 8 characters", "rule": "minLength", "field": "newPassword"}]}
    */
-  async changePassword({ request, response, auth }: HttpContext) {
+  async changePassword({ request, response, auth, i18n }: HttpContext) {
     const data = request.only(['oldPassword', 'newPassword'])
     const validatedUserData = await ChangePasswordValidator.validate(data)
     const user = auth.user
-    if (!user) return response.notFound({ message: 'User not found' })
-    if (!user.verified) return response.badRequest({ message: 'Email not verified' })
+    if (!user) return response.notFound({ message: i18n.t('messages.auth.userNotFound') })
+    if (!user.verified)
+      return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
     if (!(await User.verifyCredentials(user.email, validatedUserData.oldPassword)))
-      return response.badRequest({ message: 'Invalid old password' })
+      return response.badRequest({ message: i18n.t('messages.auth.invalidOldPassword') })
     user.password = validatedUserData.newPassword
     await user.save()
 
@@ -175,16 +179,16 @@ export default class AuthController {
    * @responseBody 400 - {"error": "No image provided"}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    */
-  async updateAvatar({ request, response, auth }: HttpContext) {
+  async updateAvatar({ request, response, auth, i18n }: HttpContext) {
     const user = auth.getUserOrFail()
     const image = request.file('avatar', {
       size: '5mb',
       extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
     })
 
-    if (!image) return response.badRequest({ error: 'No image provided' })
+    if (!image) return response.badRequest({ error: i18n.t('messages.auth.noImageProvided') })
     if (!image.isValid) return response.badRequest({ error: image.errors })
-    if (!image.tmpPath) return response.badRequest({ error: 'Invalid upload' })
+    if (!image.tmpPath) return response.badRequest({ error: i18n.t('messages.auth.invalidUpload') })
 
     const buffer = await fs.readFile(image.tmpPath)
     const previousAvatar = user.avatarUrl
@@ -208,10 +212,10 @@ export default class AuthController {
    * @responseBody 200 - {"message": "Logged out"}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    */
-  async logout({ auth, response }: HttpContext) {
+  async logout({ auth, response, i18n }: HttpContext) {
     const user = auth.getUserOrFail()
     await User.accessTokens.delete(user, user.currentAccessToken.identifier)
-    return response.ok({ message: 'Logged out' })
+    return response.ok({ message: i18n.t('messages.auth.loggedOut') })
   }
 
   /**
@@ -223,13 +227,16 @@ export default class AuthController {
    * @responseBody 200 - {"message": "All sessions revoked", "revoked": 3}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    */
-  async logoutAll({ auth, response }: HttpContext) {
+  async logoutAll({ auth, response, i18n }: HttpContext) {
     const user = auth.getUserOrFail()
     const tokens = await User.accessTokens.all(user)
     // Only revoke session tokens; named API tokens are managed separately.
     const sessions = tokens.filter((token) => token.name === null)
     await Promise.all(sessions.map((token) => User.accessTokens.delete(user, token.identifier)))
-    return response.ok({ message: 'All sessions revoked', revoked: sessions.length })
+    return response.ok({
+      message: i18n.t('messages.auth.allSessionsRevoked'),
+      revoked: sessions.length,
+    })
   }
 
   /**
@@ -242,10 +249,10 @@ export default class AuthController {
    * @responseBody 302 - Redirect to the provider's authorization URL
    * @responseBody 400 - {"errors": [{"message": "Unknown OAuth provider"}]}
    */
-  async providerLogin({ ally, request, response }: HttpContext) {
+  async providerLogin({ ally, request, response, i18n }: HttpContext) {
     const provider = request.param('provider')
     if (provider !== 'discord' && provider !== 'google') {
-      return response.badRequest({ error: 'Unsupported provider' })
+      return response.badRequest({ error: i18n.t('messages.auth.unsupportedProvider') })
     }
     const driverInstance = ally.use(provider)
     return await driverInstance.redirect()
@@ -263,21 +270,21 @@ export default class AuthController {
    * @responseBody 400 - {"message": "An error occurred while logging in. Please try again"}
    * @responseBody 400 - {"message": "Cannot login with this third-party provider"}
    */
-  async discordCallback({ ally, response }: HttpContext) {
+  async discordCallback({ ally, response, i18n }: HttpContext) {
     const discordInstance = ally.use('discord')
     const discordUser = await discordInstance.user()
 
     if (discordInstance.accessDenied())
-      return response.badRequest({ message: 'You have cancelled the login process' })
+      return response.badRequest({ message: i18n.t('messages.auth.oauthCancelled') })
 
     if (discordInstance.stateMisMatch())
       return response.badRequest({
-        message: 'We are unable to verify the request. Please try again',
+        message: i18n.t('messages.auth.oauthStateMismatch'),
       })
 
     if (discordInstance.hasError())
       return response.badRequest({
-        message: 'An error occurred while logging in. Please try again',
+        message: i18n.t('messages.auth.oauthError'),
       })
 
     const user = await User.firstOrCreate(
@@ -292,7 +299,7 @@ export default class AuthController {
     )
 
     if (user.provider !== 'discord')
-      return response.badRequest({ message: 'Cannot login with this third-party provider' })
+      return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })
 
     await this.rehostProviderAvatar(user)
 
@@ -329,21 +336,21 @@ export default class AuthController {
    * @responseBody 400 - {"message": "An error occurred while logging in. Please try again"}
    * @responseBody 400 - {"message": "Cannot login with this third-party provider"}
    */
-  async googleCallback({ ally, response }: HttpContext) {
+  async googleCallback({ ally, response, i18n }: HttpContext) {
     const driverInstance = ally.use('google')
     const googleUser = await driverInstance.user()
 
     if (driverInstance.accessDenied())
-      return response.badRequest({ message: 'You have cancelled the login process' })
+      return response.badRequest({ message: i18n.t('messages.auth.oauthCancelled') })
 
     if (driverInstance.stateMisMatch())
       return response.badRequest({
-        message: 'We are unable to verify the request. Please try again',
+        message: i18n.t('messages.auth.oauthStateMismatch'),
       })
 
     if (driverInstance.hasError())
       return response.badRequest({
-        message: 'An error occurred while logging in. Please try again',
+        message: i18n.t('messages.auth.oauthError'),
       })
 
     const user = await User.firstOrCreate(
@@ -358,7 +365,7 @@ export default class AuthController {
     )
 
     if (user.provider !== 'google')
-      return response.badRequest({ message: 'Cannot login with this third-party provider' })
+      return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })
 
     await this.rehostProviderAvatar(user)
 

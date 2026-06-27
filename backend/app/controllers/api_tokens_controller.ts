@@ -65,13 +65,13 @@ export default class ApiTokensController {
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    * @responseBody 404 - {"message": "Token not found"}
    */
-  async destroy({ auth, params, response }: HttpContext) {
+  async destroy({ auth, params, response, i18n }: HttpContext) {
     const user = auth.getUserOrFail()
     const tokens = await User.accessTokens.all(user)
     const target = tokens.find(
       (token) => String(token.identifier) === String(params.id) && token.name !== null
     )
-    if (!target) return response.notFound({ message: 'Token not found' })
+    if (!target) return response.notFound({ message: i18n.t('messages.apiTokens.notFound') })
     await User.accessTokens.delete(user, target.identifier)
     return response.noContent()
   }

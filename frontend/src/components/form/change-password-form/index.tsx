@@ -6,29 +6,40 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
+import { useTranslations } from "next-intl";
+import { FC, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 interface ChangePasswordFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
-const formSchema = z
-  .object({
-    oldPassword: z.string().min(8).trim(),
-    newPassword: z.string().min(8).trim(),
-    confirmPassword: z.string().min(8).trim(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "New password and confirm password do not match",
-    path: ["confirmPassword"],
-  })
-  .refine((data) => data.newPassword !== data.oldPassword, {
-    message: "New password cannot be the same as the old password",
-    path: ["newPassword"],
-  });
+type FormValues = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const t = useTranslations("Auth");
+  const formSchema = useMemo(
+    () =>
+      z
+        .object({
+          oldPassword: z.string().min(8).trim(),
+          newPassword: z.string().min(8).trim(),
+          confirmPassword: z.string().min(8).trim(),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: t("validation.passwordsDoNotMatch"),
+          path: ["confirmPassword"],
+        })
+        .refine((data) => data.newPassword !== data.oldPassword, {
+          message: t("validation.newPasswordSameAsOld"),
+          path: ["newPassword"],
+        }),
+    [t],
+  );
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       oldPassword: "",
@@ -36,23 +47,22 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
       confirmPassword: "",
     },
   });
-
   const { changePassword } = useAuth();
   const { toast } = useToast();
 
-  const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
+  const onSubmit = async (credentials: FormValues) => {
     try {
       await changePassword(credentials.oldPassword, credentials.newPassword);
       form.reset();
       toast({
-        title: "Password changed",
-        description: "Your password has been changed successfully",
+        title: t("changePassword.successTitle"),
+        description: t("changePassword.successDescription"),
         variant: "success",
       });
     } catch (error) {
       toast({
-        title: "Error while changing password",
-        description: error instanceof Error ? error.message : "Error while changing password",
+        title: t("changePassword.errorTitle"),
+        description: error instanceof Error ? error.message : t("changePassword.errorTitle"),
         variant: "error",
       });
     }
@@ -62,15 +72,13 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
     <div className={cn("flex flex-col", className)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4 rounded-md" {...props} method="POST">
-          <p className="text-sm text-muted-foreground">
-            Use at least 8 characters. You&apos;ll stay signed in on this device.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("changePassword.hint")}</p>
           <FormField
             control={form.control}
             name="oldPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Old Password</FormLabel>
+                <FormLabel>{t("changePassword.oldPassword")}</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="" {...field} />
                 </FormControl>
@@ -84,7 +92,7 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>{t("changePassword.newPassword")}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="" {...field} />
                   </FormControl>
@@ -97,7 +105,7 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>{t("changePassword.confirmPassword")}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="" {...field} />
                   </FormControl>
@@ -107,7 +115,7 @@ const ChangePasswordForm: FC<ChangePasswordFormProps> = ({ className, ...props }
             />
           </div>
           <Button variant="accent" className="w-full" type="submit">
-            Update password
+            {t("changePassword.submit")}
           </Button>
         </form>
       </Form>

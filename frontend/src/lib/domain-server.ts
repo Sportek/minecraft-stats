@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { routing } from "@/i18n/routing";
 import {
   DEFAULT_DOMAIN,
   DOMAIN_CONFIG,
@@ -71,26 +72,99 @@ export async function getBackendUrl(): Promise<string> {
 }
 
 /**
- * Gets all alternate language URLs for hreflang tags
- * Returns a map of locale to URL
+ * Production home domain per locale. hreflang/canonical always point at these
+ * (not staging/localhost) so search engines index the real URLs. Each locale is
+ * unprefixed on its own home domain, so the path passed in must be locale-free.
  */
-export function getAlternateLanguages(pathname: string = ""): Record<string, string> {
+const LOCALE_HOME: Record<string, string> = {
+  fr: "https://minecraft-stats.fr",
+  en: "https://minecraft-stats.com",
+};
+
+/**
+ * Builds the hreflang map + the per-locale canonical for a given locale-free path
+ * (e.g. "" for the homepage, "/servers/12/foo" for a server page). The canonical
+ * is the current locale's home domain; every locale also gets an alternate, and
+ * x-default points at the English (.com) URL.
+ */
+/**
+ * Reads the current request path (without its locale prefix) from the `x-pathname`
+ * header that the proxy middleware injects, so generateMetadata can build the
+ * hreflang/canonical URLs. Returns "" for the homepage.
+ */
+export async function getLocaleFreePathname(): Promise<string> {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") ?? "";
+  const segments = pathname.split("/");
+  if (segments[1] && (routing.locales as readonly string[]).includes(segments[1])) {
+    segments.splice(1, 1);
+  }
+  const stripped = segments.join("/");
+  return stripped === "/" ? "" : stripped;
+}
+
+/** hreflang map (locale → absolute URL) for a locale-free path. */
+export function alternateLanguages(path: string = ""): Record<string, string> {
   return {
-    "fr-FR": `https://minecraft-stats.fr${pathname}`,
-    "en-US": `https://minecraft-stats.com${pathname}`,
-    "x-default": `https://minecraft-stats.com${pathname}`, // Default for unmatched locales
+    fr: `${LOCALE_HOME.fr}${path}`,
+    en: `${LOCALE_HOME.en}${path}`,
+  };
+}
+
+export function buildAlternates(locale: string, path: string = ""): { canonical: string; languages: Record<string, string> } {
+  return {
+    canonical: `${LOCALE_HOME[locale] ?? LOCALE_HOME.en}${path}`,
+    languages: {
+      ...alternateLanguages(path),
+      "x-default": `${LOCALE_HOME.en}${path}`,
+    },
   };
 }
 
 /**
- * Detects the current locale based on the domain
+ * hreflang map for a resource with a DIFFERENT slug per locale (blog posts).
+ * Only includes locales that actually have a translation, so we never advertise
+ * a phantom URL. `slugs` is the locale→slug map returned by the API.
  */
-export async function getCurrentLocale(): Promise<string> {
-  const { baseUrl } = await getDomainConfig();
-
-  if (baseUrl.includes("minecraft-stats.fr")) {
-    return "fr-FR";
+export function sitemapLanguagesForSlugs(
+  slugs: Record<string, string | undefined> | undefined | null,
+  prefix: string = "/blog"
+): Record<string, string> {
+  const languages: Record<string, string> = {};
+  // `slugs` can be absent (an API without translations yet, or a malformed post).
+  for (const [locale, slug] of Object.entries(slugs ?? {})) {
+    if (slug) {
+      languages[locale] = `${LOCALE_HOME[locale] ?? LOCALE_HOME.en}${prefix}/${slug}`;
+    }
   }
+  return languages;
+}
 
-  return "en-US"; // Default to English
+/**
+ * Per-locale-slug variant of buildAlternates for blog posts. Advertises only the
+ * existing translations; x-default points at the English URL when present; the
+ * canonical is the current locale's URL, or the English/first one for a fallback
+ * render (locale without its own translation).
+ */
+export function buildAlternatesForSlugs(
+  locale: string,
+  slugs: Record<string, string | undefined>,
+  prefix: string = "/blog"
+): { canonical: string; languages: Record<string, string> } {
+  const languages = sitemapLanguagesForSlugs(slugs, prefix);
+  if (languages.en) {
+    languages["x-default"] = languages.en;
+  }
+  const canonical = languages[locale] ?? languages.en ?? Object.values(languages)[0] ?? LOCALE_HOME.en;
+  return { canonical, languages };
+}
+
+// OpenGraph wants the underscore form; our locale tokens are the short fr/en.
+const OG_LOCALE: Record<string, string> = { fr: "fr_FR", en: "en_US" };
+
+export function getOpenGraphLocales(locale: string): { locale: string; alternateLocale: string } {
+  return {
+    locale: OG_LOCALE[locale] ?? OG_LOCALE.en,
+    alternateLocale: locale === "fr" ? OG_LOCALE.en : OG_LOCALE.fr,
+  };
 }

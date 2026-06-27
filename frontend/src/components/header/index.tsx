@@ -4,9 +4,11 @@ import { cn } from "@/lib/utils";
 import { getClientBackendUrl, resolveAssetUrl } from "@/lib/domain";
 import { Icon } from "@iconify/react";
 import { X } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import BrandLogo from "../brand-logo";
-import { usePathname, useRouter } from "next/navigation";
+import { LanguageSwitcher } from "../language-switcher";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import RestrictedWidthLayout from "../restricted-width-layout";
 import { ModeToggle } from "../dark-mode/toggle";
@@ -23,9 +25,9 @@ import {
 } from "../ui/dropdown-menu";
 
 const NAV_LINKS = [
-  { href: "/", label: "Servers", icon: "material-symbols:list", matchPrefixes: ["/servers"] },
-  { href: "/blog", label: "Blog", icon: "material-symbols:article-outline", matchPrefixes: ["/blog"] },
-];
+  { href: "/", key: "servers", icon: "material-symbols:list", matchPrefixes: ["/servers"] },
+  { href: "/blog", key: "blog", icon: "material-symbols:article-outline", matchPrefixes: ["/blog"] },
+] as const;
 
 const useIsActive = () => {
   const pathname = usePathname();
@@ -84,6 +86,7 @@ const MobileMenuLink = ({
 };
 
 const Header = () => {
+  const t = useTranslations("Header");
   const { user, logout } = useAuth();
   const router = useRouter();
   const isActive = useIsActive();
@@ -116,11 +119,11 @@ const Header = () => {
   const displayUserMenu = () => (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="User menu"
+        aria-label={t("a11y.userMenu")}
         className="rounded-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <Avatar className="h-9 w-9">
-          <AvatarImage src={resolveAssetUrl(user?.avatarUrl)} alt={user?.username ?? "User Avatar"} />
+          <AvatarImage src={resolveAssetUrl(user?.avatarUrl)} alt={user?.username ?? t("a11y.userAvatar")} />
           <AvatarFallback
             className="text-white text-sm"
             style={{ background: letterTileGradient(user?.username ?? "") }}
@@ -139,12 +142,12 @@ const Header = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account/my-servers")}>
           <Icon icon="material-symbols:dashboard-outline" className="mr-2 h-4 w-4" />
-          Dashboard
+          {t("actions.dashboard")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:text-destructive">
           <Icon icon="material-symbols:logout" className="mr-2 h-4 w-4" />
-          Sign out
+          {t("actions.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -157,9 +160,9 @@ const Header = () => {
           {/* Left: brand + nav */}
           <div className="flex items-center gap-8">
             <BrandLogo />
-            <nav aria-label="Main" className="hidden md:flex items-center gap-6">
+            <nav aria-label={t("a11y.mainNav")} className="hidden md:flex items-center gap-6">
               {NAV_LINKS.map((link) => {
-                const active = isActive(link.href, link.matchPrefixes);
+                const active = isActive(link.href, [...link.matchPrefixes]);
                 return (
                   <Link
                     key={link.href}
@@ -170,7 +173,7 @@ const Header = () => {
                     )}
                     aria-current={active ? "page" : undefined}
                   >
-                    {link.label}
+                    {t(`nav.${link.key}`)}
                   </Link>
                 );
               })}
@@ -180,7 +183,7 @@ const Header = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                API
+                {t("nav.api")}
                 <Icon icon="material-symbols:open-in-new" className="h-3.5 w-3.5 opacity-60" />
               </a>
             </nav>
@@ -188,12 +191,13 @@ const Header = () => {
 
           {/* Right: actions (desktop) */}
           <div className="hidden md:flex items-center gap-2">
+            <LanguageSwitcher />
             <ModeToggle />
             <div className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
             <Link href="/account/add-server">
               <Button variant="accent" size="sm">
                 <Icon icon="material-symbols:add" className="mr-1 h-4 w-4" />
-                Add server
+                {t("actions.addServer")}
               </Button>
             </Link>
             {user?.username ? (
@@ -201,7 +205,7 @@ const Header = () => {
             ) : (
               <Link href="/login">
                 <Button variant="outline" size="sm">
-                  Sign in
+                  {t("actions.signIn")}
                 </Button>
               </Link>
             )}
@@ -210,7 +214,7 @@ const Header = () => {
           {/* Mobile hamburger */}
           <button
             type="button"
-            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-label={isMobileMenuOpen ? t("a11y.closeMenu") : t("a11y.openMenu")}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-drawer"
             className="md:hidden flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-secondary transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -246,7 +250,7 @@ const Header = () => {
           id="mobile-drawer"
           role="dialog"
           aria-modal="true"
-          aria-label="Navigation menu"
+          aria-label={t("a11y.navigationMenu")}
           className={cn(
             "absolute inset-y-0 right-0 flex w-[85%] max-w-sm flex-col bg-background shadow-2xl transition-transform duration-300 ease-out",
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
@@ -258,7 +262,7 @@ const Header = () => {
             <button
               type="button"
               onClick={closeMobileMenu}
-              aria-label="Close navigation menu"
+              aria-label={t("a11y.closeMenu")}
               className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <X className="h-5 w-5" />
@@ -271,28 +275,28 @@ const Header = () => {
             <Link href="/account/add-server" className="block" onClick={closeMobileMenu}>
               <Button variant="accent" size="lg" className="w-full">
                 <Icon icon="material-symbols:add" className="mr-2 h-5 w-5" />
-                Add your server
+                {t("actions.addYourServer")}
               </Button>
             </Link>
 
             {/* Navigation */}
             <section className="mt-6 space-y-2">
-              <SectionLabel>Navigation</SectionLabel>
+              <SectionLabel>{t("mobile.navigation")}</SectionLabel>
               <div className="space-y-1">
                 {NAV_LINKS.map((link) => (
                   <MobileMenuLink
                     key={link.href}
                     href={link.href}
                     icon={link.icon}
-                    label={link.label}
-                    active={isActive(link.href, link.matchPrefixes)}
+                    label={t(`nav.${link.key}`)}
+                    active={isActive(link.href, [...link.matchPrefixes])}
                     onClick={closeMobileMenu}
                   />
                 ))}
                 <MobileMenuLink
                   href={`${backendUrl}/docs`}
                   icon="material-symbols:api"
-                  label="API documentation"
+                  label={t("mobile.apiDocs")}
                   external
                   onClick={closeMobileMenu}
                 />
@@ -301,7 +305,7 @@ const Header = () => {
 
             {/* Account */}
             <section className="mt-6 space-y-2">
-              <SectionLabel>Account</SectionLabel>
+              <SectionLabel>{t("mobile.account")}</SectionLabel>
 
               {user?.username ? (
                 <div className="space-y-1">
@@ -318,7 +322,7 @@ const Header = () => {
                     </Avatar>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-foreground">{user.username}</p>
-                      <p className="truncate text-xs text-muted-foreground">{user.role ?? "Connected"}</p>
+                      <p className="truncate text-xs text-muted-foreground">{user.role ?? t("mobile.connected")}</p>
                     </div>
                   </div>
 
@@ -328,7 +332,7 @@ const Header = () => {
                   <MobileMenuLink
                     href="/account/my-servers"
                     icon="material-symbols:dashboard-outline"
-                    label="Dashboard"
+                    label={t("actions.dashboard")}
                     active={isActive("/account", ["/account", "/admin"])}
                     onClick={closeMobileMenu}
                   />
@@ -341,19 +345,19 @@ const Header = () => {
                     className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                   >
                     <Icon icon="material-symbols:logout" className="h-5 w-5" />
-                    Sign out
+                    {t("actions.signOut")}
                   </button>
                 </div>
               ) : (
                 <div className="space-y-2">
                   <Link href="/login" className="block" onClick={closeMobileMenu}>
                     <Button variant="outline" size="sm" className="w-full">
-                      Sign in
+                      {t("actions.signIn")}
                     </Button>
                   </Link>
                   <Link href="/sign-up" className="block" onClick={closeMobileMenu}>
                     <Button variant="ghost" size="sm" className="w-full">
-                      Create an account
+                      {t("actions.createAccount")}
                     </Button>
                   </Link>
                 </div>
@@ -361,10 +365,13 @@ const Header = () => {
             </section>
           </div>
 
-          {/* Drawer footer — theme toggle */}
+          {/* Drawer footer — language + theme toggles */}
           <div className="flex shrink-0 items-center justify-between border-t border-border px-4 py-3">
-            <span className="text-xs font-medium text-muted-foreground">Theme</span>
-            <ModeToggle />
+            <span className="text-xs font-medium text-muted-foreground">{t("mobile.theme")}</span>
+            <div className="flex items-center gap-1">
+              <LanguageSwitcher />
+              <ModeToggle />
+            </div>
           </div>
         </aside>
       </div>

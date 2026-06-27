@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getDomainConfig } from '@/lib/domain-server';
+import { buildAlternates, buildAlternatesForSlugs, getDomainConfig } from '@/lib/domain-server';
 
 interface Server {
   id: number;
@@ -13,6 +13,7 @@ interface ServerListItem {
 
 interface Post {
   slug: string;
+  slugs: Record<string, string>;
   publishedAt: string | null;
   updatedAt: string;
 }
@@ -45,15 +46,16 @@ async function getAllServers(apiUrl: string): Promise<Server[]> {
   }
 }
 
-async function getAllPosts(apiUrl: string): Promise<Post[]> {
+async function getAllPosts(apiUrl: string, locale: string): Promise<Post[]> {
   try {
     const posts: Post[] = [];
     let page = 1;
     let lastPage = 1;
 
-    // `/posts` only returns published posts; paginate through every page.
+    // `/posts` only returns published posts; paginate through every page. The
+    // locale resolves each post's primary slug for this domain's URLs.
     do {
-      const response = await fetch(`${apiUrl}/posts?page=${page}&limit=100`, {
+      const response = await fetch(`${apiUrl}/posts?page=${page}&limit=100&locale=${locale}`, {
         next: { revalidate: 3600 },
       });
 
@@ -77,33 +79,57 @@ async function getAllPosts(apiUrl: string): Promise<Post[]> {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { baseUrl, apiUrl } = await getDomainConfig();
-  const [servers, posts] = await Promise.all([getAllServers(apiUrl), getAllPosts(apiUrl)]);
+  // Per-domain sitemap: .fr lists French URLs, .com English ones.
+  const domainLocale = baseUrl.includes('minecraft-stats.fr') ? 'fr' : 'en';
+  const [servers, posts] = await Promise.all([
+    getAllServers(apiUrl),
+    getAllPosts(apiUrl, domainLocale),
+  ]);
 
-  // Static routes
+  // Static routes (path is locale-free; alternates point at each locale's home
+  // domain and include x-default, matching the per-page metadata).
   const routes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'hourly',
       priority: 1,
+      alternates: { languages: buildAlternates(domainLocale, "").languages },
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.7,
+      alternates: { languages: buildAlternates(domainLocale, "/blog").languages },
     },
     {
-      url: `${baseUrl}/partners`,
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,
+      alternates: { languages: buildAlternates(domainLocale, "/about").languages },
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+      alternates: { languages: buildAlternates(domainLocale, "/contact").languages },
     },
     {
       url: `${baseUrl}/cgu`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.3,
+      alternates: { languages: buildAlternates(domainLocale, "/cgu").languages },
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+      alternates: { languages: buildAlternates(domainLocale, "/privacy").languages },
     },
   ];
 
@@ -113,6 +139,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(post.updatedAt || post.publishedAt || Date.now()),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
+    // Per-locale slugs: advertise only the translations that exist (with x-default).
+    alternates: { languages: buildAlternatesForSlugs(domainLocale, post.slugs).languages },
   }));
 
   // Dynamic server routes
@@ -127,6 +155,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(server.updatedAt),
       changeFrequency: 'daily' as const,
       priority: 0.8,
+      alternates: { languages: buildAlternates(domainLocale, `/servers/${server.id}/${slug}`).languages },
     };
   });
 

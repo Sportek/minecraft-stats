@@ -1,0 +1,30 @@
+{
+  "title": "Blog",
+  "description": "Dernières actualités, serveurs à l'honneur et nouveautés du développement.",
+  "news": "Actualités",
+  "recentStories": "Articles récents",
+  "empty": "Aucun article trouvé.",
+  "readArticle": "Lire l'article",
+  "readMoreArticles": "Lire plus d'articles",
+  "backToBlog": "Retour au blog",
+  "viewsCount": "{count, plural, one {# vue} other {# vues}}",
+  "pagination": {
+    "label": "Pagination du blog",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {currentPage} sur {lastPage}"
+  },
+  "feedback": {
+    "prompt": "Cet article vous a-t-il été utile ?",
+    "thanks": "Merci pour votre retour !",
+    "yes": "Oui",
+    "no": "Non",
+    "error": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "notFound": {
+    "title": "Article introuvable",
+    "description": "L'article que vous recherchez n'existe pas ou a été supprimé.",
+    "metaTitle": "Article introuvable",
+    "metaDescription": "L'article demandé n'existe pas"
+  }
+}

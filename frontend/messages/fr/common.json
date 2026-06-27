@@ -1,0 +1,12 @@
+{
+  "language": "Langue",
+  "languageName": {
+    "fr": "Français",
+    "en": "Anglais"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
+  }
+}

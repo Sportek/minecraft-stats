@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "servers": "Servers",
+    "blog": "Blog",
+    "api": "API"
+  },
+  "actions": {
+    "addServer": "Add server",
+    "addYourServer": "Add your server",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "createAccount": "Create an account",
+    "dashboard": "Dashboard"
+  },
+  "a11y": {
+    "userMenu": "User menu",
+    "userAvatar": "User avatar",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "navigationMenu": "Navigation menu",
+    "mainNav": "Main"
+  },
+  "mobile": {
+    "navigation": "Navigation",
+    "account": "Account",
+    "apiDocs": "API documentation",
+    "theme": "Theme",
+    "connected": "Connected"
+  }
+}

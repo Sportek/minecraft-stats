@@ -25,9 +25,9 @@ function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
-async function getRecentPosts(apiUrl: string): Promise<FeedPost[]> {
+async function getRecentPosts(apiUrl: string, locale: string): Promise<FeedPost[]> {
   try {
-    const response = await fetch(`${apiUrl}/posts?page=1&limit=50`, {
+    const response = await fetch(`${apiUrl}/posts?page=1&limit=50&locale=${locale}`, {
       next: { revalidate: 3600 },
     });
 
@@ -43,7 +43,9 @@ async function getRecentPosts(apiUrl: string): Promise<FeedPost[]> {
 
 export async function GET() {
   const { baseUrl, apiUrl } = await getDomainConfig();
-  const posts = await getRecentPosts(apiUrl);
+  // .fr serves the French feed, .com the English one.
+  const domainLocale = baseUrl.includes("minecraft-stats.fr") ? "fr" : "en";
+  const posts = await getRecentPosts(apiUrl, domainLocale);
 
   const items = posts
     .map((post) => {
@@ -65,7 +67,7 @@ export async function GET() {
     <title>Minecraft Stats Blog</title>
     <link>${baseUrl}/blog</link>
     <description>Latest news, server spotlights, and development updates.</description>
-    <language>en</language>
+    <language>${domainLocale}</language>
     <atom:link href="${baseUrl}/feed.xml" rel="self" type="application/rss+xml" />
 ${items}
   </channel>

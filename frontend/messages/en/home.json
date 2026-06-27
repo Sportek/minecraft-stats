@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "title": "Minecraft Stats - Track & Analyze Your Server's Performance",
+    "description": "Free Minecraft server statistics and analytics platform. Track player counts, monitor growth trends, and analyze server performance in real-time. Perfect for server owners and administrators looking to understand their community.",
+    "keywords": "minecraft server stats, minecraft server tracking, player count tracker, server performance, minecraft analytics, server monitoring, minecraft statistics, server analytics dashboard, real-time server stats, minecraft server growth",
+    "ogTitle": "Minecraft Stats - Track & Analyze Your Server's Performance",
+    "ogDescription": "Free Minecraft server analytics platform. Monitor player counts, track growth trends, and analyze server performance in real-time. Join thousands of server owners.",
+    "twitterTitle": "Minecraft Stats - Track & Analyze Your Server's Performance",
+    "twitterDescription": "Free Minecraft server analytics. Monitor player counts, track growth trends, and analyze performance in real-time."
+  },
+  "hero": {
+    "badge": "Live monitoring · every 10 minutes",
+    "title": "Track Minecraft server popularity <accent>in real time.</accent>",
+    "subtitle": "Real player counts, growth trends, and side-by-side comparisons — all backed by years of historical data.",
+    "addServer": "Add Your Server",
+    "exploreServers": "Explore Servers"
+  },
+  "stats": {
+    "monitoredServers": "Monitored Servers",
+    "playersOnlineNow": "Players Online Now",
+    "totalDataRows": "Total Data Rows",
+    "error": "Error loading stats"
+  },
+  "globalInsight": {
+    "title": "Global Insight",
+    "description": "Compare aggregated player counts across servers, categories, and languages.",
+    "followingFavorites": "Following your <strong>{count}</strong> {count, plural, one {favorite} other {favorites}}.",
+    "showAllServers": "Show all servers",
+    "customSelection": "Custom selection.",
+    "resetToFavorites": "Reset to favorites"
+  },
+  "allMonitoredServers": "All monitored servers",
+  "players": "players",
+  "categorySelect": {
+    "ariaLabel": "Filter by category",
+    "all": "All categories"
+  },
+  "languageSelect": {
+    "ariaLabel": "Filter by language",
+    "all": "All languages"
+  },
+  "timeRangeSelect": {
+    "ariaLabel": "Time range",
+    "options": {
+      "1day": "24h",
+      "1week": "7 days",
+      "1month": "30 days",
+      "6months": "6 months",
+      "1year": "1 year"
+    }
+  },
+  "aggregationSelect": {
+    "ariaLabel": "Data aggregation interval",
+    "options": {
+      "30min": "30 minutes",
+      "1hour": "1 hour",
+      "6hours": "6 hours",
+      "1day": "1 day"
+    }
+  },
+  "serverSelect": {
+    "ariaLabel": "Select servers to compare",
+    "placeholder": "Search for a server...",
+    "empty": "No server found.",
+    "selected": "{count, plural, one {# server selected} other {# servers selected}}",
+    "serverFallback": "Server {id}",
+    "unknown": "Unknown"
+  },
+  "articles": {
+    "title": "From the blog",
+    "seeAll": "See all →",
+    "category": "News"
+  },
+  "favorites": {
+    "title": "Your favorites"
+  },
+  "browse": {
+    "title": "Browse Servers",
+    "tracked": "{count, number} tracked",
+    "searchPlaceholder": "Search by name or IP...",
+    "categories": "Categories",
+    "searchCategories": "Search categories...",
+    "noCategories": "No categories found.",
+    "languages": "Languages",
+    "searchLanguages": "Search languages...",
+    "noLanguages": "No languages found.",
+    "editionAriaLabel": "Edition",
+    "allEditions": "All editions",
+    "clearFilters": "Clear filters",
+    "showing": "Showing <strong>{start}–{end}</strong> of <strong>{total, number}</strong>",
+    "page": "Page <strong>{current}</strong> of <strong>{total}</strong>",
+    "perPage": "Per page",
+    "perPageAriaLabel": "Servers per page",
+    "noServersFound": "No servers found",
+    "noServersHint": "Try clearing filters or searching a different term."
+  }
+}

@@ -1,9 +1,10 @@
 # SEO Blog Automation
 
-A scheduled Claude agent that writes **one English SEO blog article per week** and creates it as
-a **draft** for review (it never auto-publishes). It picks topics itself: it looks at what's
-already on the blog (via the Minecraft-Stats MCP), chooses the least-covered content type, and
-generates a fresh, data-backed topic.
+A scheduled Claude agent that writes **one SEO blog article per week — in every language the site
+supports (English + French)** — and creates it as a single **draft** for review (it never
+auto-publishes). It picks topics itself: it looks at what's already on the blog (via the
+Minecraft-Stats MCP), chooses the least-covered content type, and generates a fresh, data-backed
+topic, written natively in English then translated to French.
 
 ## Files
 - `PLAYBOOK.md` — the instructions the agent follows every run. Edit this to change behaviour.
@@ -13,7 +14,8 @@ generates a fresh, data-backed topic.
 - **Reads** (existing posts, servers, live stats) → Minecraft-Stats **MCP** (read-only),
   connected to the routine.
 - **Writes** (create the draft) → REST `POST /admin/posts` with an **API token**, because the
-  MCP cannot publish.
+  MCP cannot publish. One call carries every translation (`translations[]` + `defaultLocale`); the
+  shared `coverImage` is reused across languages.
 - **Cover image** → generated with kie.ai **Nano Banana Pro** (`KIE_API_KEY`), then re-hosted via
   our own `POST /uploads/image` endpoint; the returned `/images/blog/…webp` path is stored as
   `coverImage`. Best-effort: a draft is still created if generation fails.

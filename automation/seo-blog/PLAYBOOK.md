@@ -1,61 +1,85 @@
 # SEO Blog Automation — Playbook
 
-This file is the single source of truth for the scheduled agent that writes English SEO blog
+This file is the single source of truth for the scheduled agent that writes multilingual SEO blog
 articles for Minecraft-Stats. The agent reads this file at the start of every run and follows
 it step by step. Edit this file to change the behaviour.
 
 ## Mission
 
-Once per run, produce **one** high-quality, original, English-language SEO article and create
-it as a **draft** via the API. **Do not publish** — Gabriel reviews drafts in the admin and
-publishes manually.
+Once per run, produce **one** high-quality, original SEO article **in every language the site
+supports** and create it as a single **draft** (with all its translations) via the API. **Do not
+publish** — Gabriel reviews drafts in the admin and publishes manually.
 
 Quality over quantity. One excellent, data-backed article beats three generic ones. If you
 cannot produce something genuinely useful this run, create the best draft you can and flag your
 concerns in the summary.
+
+### Languages — generate them all
+
+The blog supports per-locale translations. **Produce the article in every supported content
+locale, every run.** The current locales are:
+
+| Locale | Language | Home domain         |
+| ------ | -------- | ------------------- |
+| `en`   | English  | minecraft-stats.com |
+| `fr`   | French   | minecraft-stats.fr  |
+
+- **`en` is the primary language** (`defaultLocale`): write the article natively in English first,
+  then translate it **faithfully and natively** (not word-for-word) into every other locale —
+  same structure, headings, data and placeholders, idiomatic in each language.
+- A reader on a domain whose translation is missing falls back to the primary language, so always
+  ship at least the `en` translation; ship the others too so French readers get French.
+- If the site adds a locale later, add its code to this table and the create payload — the agent
+  then covers it automatically. (The backend only accepts locales it supports and rejects others.)
 
 ## Configuration
 
 `.fr` and `.com` share the same backend/database, so reading and writing both target the `.fr`
 API; published articles appear on both domains.
 
-| Variable          | Value                                     | Purpose                                          |
-| ----------------- | ----------------------------------------- | ------------------------------------------------ |
-| `MCSTATS_API_URL` | `https://api.minecraft-stats.fr/api/v1`   | REST API (used for the authed write + upload)    |
-| `MCSTATS_TOKEN`   | `oat_…` (env secret)                       | API token of a `writer`/`admin` account          |
-| `KIE_API_KEY`     | `…` (env secret)                           | kie.ai key for Nano Banana Pro cover generation  |
+| Variable          | Value                                   | Purpose                                         |
+| ----------------- | --------------------------------------- | ----------------------------------------------- |
+| `MCSTATS_API_URL` | `https://api.minecraft-stats.fr/api/v1` | REST API (used for the authed write + upload)   |
+| `MCSTATS_TOKEN`   | `oat_…` (env secret)                    | API token of a `writer`/`admin` account         |
+| `KIE_API_KEY`     | `…` (env secret)                        | kie.ai key for Nano Banana Pro cover generation |
 
 - **MCP (reads):** the Minecraft-Stats MCP is connected to this routine (read-only). Prefer its
   tools — `getPosts`, `getPostsBySlug`, `getServers`, `getServersPaginate`, `getServerStats`,
   `getGlobalStats`, `getCategories` — for discovery, dedup, and gathering live data.
 - **REST (write):** publishing/creating is NOT available via MCP. The single create call uses
   the REST API with `MCSTATS_TOKEN`.
-- Internal links in articles should point to `https://minecraft-stats.com` (English audience).
+- Internal links should point to the locale's home domain: the **English** translation links to
+  `https://minecraft-stats.com`, the **French** one to `https://minecraft-stats.fr` (each domain
+  serves both languages, so either resolves — matching the domain to the language is cleanest).
 
 ## Step-by-step
 
 ### 1. Survey what already exists
+
 - Use MCP `getPosts` to list existing published articles (titles, slugs, angles).
 - Also fetch drafts via REST so you never duplicate a pending one:
   `GET {MCSTATS_API_URL}/admin/posts?status=all&limit=100` with `Authorization: Bearer {MCSTATS_TOKEN}`.
 - This combined list is the authoritative "already covered" set.
 
 ### 2. Find the topic (signal-driven ideation)
+
 Don't invent a topic from thin air — **discover** one from real signals, then frame it as an
-archetype. The archetype is how you *frame* the signal, not the starting point. Run this funnel:
+archetype. The archetype is how you _frame_ the signal, not the starting point. Run this funnel:
 
 **2a. Mine our own data first (the moat).** This is the unique angle no competitor can copy.
-Via MCP, scan for what's genuinely newsworthy *this run*:
+Via MCP, scan for what's genuinely newsworthy _this run_:
+
 - **Biggest mover** — the server with the largest weekly/monthly growth, or the sharpest drop
   (`getServers`/`getServersPaginate` + `getServerStats`, growth stats).
 - **Milestone / record just crossed** — a server passing a round number (10k/50k peak), a new
   all-time peak, or a category total crossing a threshold (`getGlobalStats`, `getCategories`).
 - **Fast-climbing newcomer**, or an unusual pattern (weekend vs weekday, month-over-month shift).
-Keep 3–5 candidate "data angles", each backed by a striking real number.
+  Keep 3–5 candidate "data angles", each backed by a striking real number.
 
 **2b. Pull external trend & demand signals.** Confirm a candidate matches real-world interest, or
 surface a fresher angle. These sources are **verified to work in this environment** (see tool
 notes below):
+
 - **New Minecraft versions/features — timely, high demand.** WebFetch
   `https://minecraft.wiki/w/Java_Edition` for the current release, then
   `https://minecraft.wiki/w/Java_Edition_<version>` for its changelog. New mobs/features drive
@@ -84,7 +108,9 @@ minecraft.net, and server-list sites are bot-blocked, so reach those **through W
 than fetching them directly.
 
 ### 3. Gather real data (our SEO moat)
+
 Original, factual data is what ranks. Via MCP:
+
 - `getServers` / `getServersPaginate` for real servers, names, rankings, player counts.
 - `getServerStats` for a server's history/growth; `getGlobalStats` for site-wide trends.
 - Available dynamic placeholders: `GET {MCSTATS_API_URL}/posts/placeholders/list`. Tokens like
@@ -93,17 +119,34 @@ Original, factual data is what ranks. Via MCP:
 - You may use WebSearch for general Minecraft context, but never invent server names or numbers —
   every concrete figure must come from the API or a live placeholder.
 
-### 4. Write the article (Markdown)
-- **Title (`title`)**: 50–60 chars, includes the primary keyword, compelling.
-- **`excerpt`**: 140–160 chars — becomes the meta description; must stand alone and entice.
+### 4. Write the article in every language (Markdown)
+
+**4a. Write the primary (English) version.**
+
+- **Title**: 50–60 chars, includes the primary keyword, compelling.
+- **Excerpt**: 140–160 chars — becomes the meta description; must stand alone and entice.
 - **Body**: 700–1500 words of genuinely useful Markdown. Logical H2/H3 structure, short
   paragraphs, lists/tables where helpful. Natural keyword usage — no stuffing.
 - **Internal links**: at least 2 to relevant `https://minecraft-stats.com` pages (a server page,
   the blog, a category).
 - **Tone**: helpful, factual, English-native. Not promotional fluff, not obviously AI-generated.
-- Don't set `coverImage` here — it's produced in step 5 below from a generated image.
+- Don't set a cover image here — it's produced in step 5 below from a generated image (shared by
+  every translation).
+
+**4b. Translate into every other supported locale (see the Languages table).**
+
+- Produce a **native, idiomatic** translation of the title, excerpt and full body — not a literal
+  word-for-word one. Keep the same structure, headings, data, tables and reading level. Localize
+  the primary keyword to how people actually search in that language.
+- **Keep every placeholder token identical** (e.g. `%PLAYER_COUNT_REALTIME_2%`). They are resolved
+  server-side at render time and must stay byte-for-byte the same across languages.
+- **Internal links**: point each translation at its own home domain (English → `minecraft-stats.com`,
+  French → `minecraft-stats.fr`).
+- **Don't set a slug** — the backend generates a clean, unique slug per locale from each title (so the
+  French translation gets a French URL). Only set one if you need a specific slug.
 
 ### 5. Generate the cover image (Nano Banana Pro → upload)
+
 Generate one original cover illustration for the article's topic with kie.ai's Nano Banana Pro,
 then upload it to our own storage and use the returned path as `coverImage`. Never put a raw
 kie.ai URL in `coverImage` — those expire; always re-host via our upload endpoint.
@@ -111,7 +154,7 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
 1. **Write the image prompt** from the article's topic. Every cover must read as part of the
    Minecraft-Stats brand, so the blog feels like one consistent visual family run after run.
    Build the prompt from this fixed **brand brief** plus a per-article subject:
-   - **Identity:** Minecraft-Stats is a *data/analytics* product, not a generic blocky-Minecraft
+   - **Identity:** Minecraft-Stats is a _data/analytics_ product, not a generic blocky-Minecraft
      skin. The hero motif is **server statistics**: ascending bar charts, glowing line/growth
      curves, dashboard panels, leaderboards — visualised with a tasteful Minecraft-world accent
      (a few voxel/cube elements, a blocky server silhouette), never a full pixel-art scene.
@@ -126,6 +169,7 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
      blocky server lit by a rising bar chart; a growth piece → an upward line graph over a voxel
      landscape; a ranking piece → a podium of chart bars). Keep the palette and style above fixed.
 2. **Create the task:**
+
    ```
    POST https://api.kie.ai/api/v1/jobs/createTask
    Authorization: Bearer {KIE_API_KEY}
@@ -141,7 +185,9 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
      }
    }
    ```
+
    Expect `code: 200`; read `data.taskId`.
+
 3. **Poll for the result:** `GET https://api.kie.ai/api/v1/jobs/recordInfo?taskId={taskId}` with
    `Authorization: Bearer {KIE_API_KEY}`. Wait a few seconds between polls (generation usually
    takes ~10–40 s). Read `data.state`:
@@ -158,27 +204,54 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
    The response is `{ "url": "/images/blog/<uuid>.webp" }` (server converts to WebP). Use that
    relative `url` as `coverImage` in the next step.
 
-### 6. Create the draft (REST)
+### 6. Create the draft with all its translations (REST)
+
+One call creates the post and every translation at once. The text fields (`title`, `slug`,
+`content`, `excerpt`) live **inside each `translations[]` entry**; `coverImage` and `defaultLocale`
+are shared by the whole post.
+
 ```
 POST {MCSTATS_API_URL}/admin/posts
 Authorization: Bearer {MCSTATS_TOKEN}
 Content-Type: application/json
 
 {
-  "title":      "<title>",
-  "content":    "<markdown body>",
-  "excerpt":    "<meta description>",
-  "coverImage": "<url from step 5, omit if generation failed>"
+  "defaultLocale": "en",
+  "coverImage": "<url from step 5, omit if generation failed>",
+  "translations": [
+    {
+      "locale":  "en",
+      "title":   "<English title>",
+      "content": "<English markdown body>",
+      "excerpt": "<English meta description>"
+    },
+    {
+      "locale":  "fr",
+      "title":   "<French title>",
+      "content": "<French markdown body>",
+      "excerpt": "<French meta description>"
+    }
+  ]
 }
 ```
-Expect `201`. The post is created with `published: false`. **Do NOT call the publish endpoint.**
+
+- Include **one `translations` entry per supported locale** (Languages table) — at minimum the
+  `defaultLocale` one; ideally all of them. `slug` is optional (auto-generated per locale); omit it.
+- `defaultLocale` must match a locale present in `translations` (it's the fallback language).
+- Expect `201`. The post is created with `published: false`. **Do NOT call the publish endpoint.**
+- A `422` with `"A translation in the primary language is required."` means the `defaultLocale`
+  entry is missing from `translations` — add it.
 
 ### 7. Report
-Output a short summary: chosen content type, title, primary keyword, word count, whether a cover
-image was generated (and its stored path, or why it was skipped), the draft's slug/id, and the
-review URL `https://minecraft-stats.com/admin/posts`. Flag any quality concerns.
+
+Output a short summary: chosen content type, title, primary keyword, **the languages generated**
+(e.g. `en`, `fr`), word count, whether a cover image was generated (and its stored path, or why it
+was skipped), the draft's id and per-locale slugs, and the review URL
+`https://minecraft-stats.com/admin/posts`. Flag any quality concerns (including any translation you
+were unsure about).
 
 ## Guardrails
+
 - One article per run. Never publish. Never edit or delete existing posts.
 - Never commit or print the tokens. Treat `MCSTATS_TOKEN` and `KIE_API_KEY` as secrets.
 - The cover image is best-effort: if `KIE_API_KEY` is missing or generation fails, create the

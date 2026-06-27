@@ -85,10 +85,10 @@ export default class AdvertisementsController {
    * @responseBody 200 - [{"id": 1, "name": "Summer promo", "type": "custom", "htmlContent": "<a href=\"https://example.com\">Click</a>", "weight": 10}]
    * @responseBody 400 - {"error": "Invalid or missing placement"}
    */
-  async index({ request, response }: HttpContext) {
+  async index({ request, response, i18n }: HttpContext) {
     const placement = normalizePlacement(request.input('placement'))
     if (!placement) {
-      return response.badRequest({ error: 'Invalid or missing placement' })
+      return response.badRequest({ error: i18n.t('messages.advertisements.invalidPlacement') })
     }
 
     const now = new Date()
@@ -222,9 +222,9 @@ export default class AdvertisementsController {
    * @responseBody 401 - {"message": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
    */
-  async adminIndex({ response, auth, bouncer }: HttpContext) {
+  async adminIndex({ response, auth, bouncer, i18n }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
-      return response.forbidden({ error: 'Access denied. Administrator privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.advertisements.adminRequired') })
     }
 
     const ads = await Advertisement.query()
@@ -254,9 +254,9 @@ export default class AdvertisementsController {
    * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
    * @responseBody 404 - {"message": "Row not found"}
    */
-  async show({ params, response, auth, bouncer }: HttpContext) {
+  async show({ params, response, auth, bouncer, i18n }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
-      return response.forbidden({ error: 'Access denied. Administrator privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.advertisements.adminRequired') })
     }
 
     const ad = await Advertisement.query()
@@ -279,9 +279,9 @@ export default class AdvertisementsController {
    * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
-  async store({ request, response, auth, bouncer }: HttpContext) {
+  async store({ request, response, auth, bouncer, i18n }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
-      return response.forbidden({ error: 'Access denied. Administrator privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.advertisements.adminRequired') })
     }
 
     const { categoryIds, startsAt, endsAt, ...data } = await request.validateUsing(
@@ -316,9 +316,9 @@ export default class AdvertisementsController {
    * @responseBody 404 - {"message": "Row not found"}
    * @responseBody 422 - {"errors": [{"message": "Validation failed", "field": "name"}]}
    */
-  async update({ params, request, response, auth, bouncer }: HttpContext) {
+  async update({ params, request, response, auth, bouncer, i18n }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
-      return response.forbidden({ error: 'Access denied. Administrator privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.advertisements.adminRequired') })
     }
 
     const ad = await Advertisement.findOrFail(params.id)
@@ -351,9 +351,9 @@ export default class AdvertisementsController {
    * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
    * @responseBody 404 - {"message": "Row not found"}
    */
-  async destroy({ params, response, auth, bouncer }: HttpContext) {
+  async destroy({ params, response, auth, bouncer, i18n }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
-      return response.forbidden({ error: 'Access denied. Administrator privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.advertisements.adminRequired') })
     }
 
     const ad = await Advertisement.findOrFail(params.id)
@@ -377,9 +377,9 @@ export default class AdvertisementsController {
    * @responseBody 403 - {"error": "Access denied. Administrator privileges required."}
    * @responseBody 404 - {"message": "Row not found"}
    */
-  async stats({ params, request, response, auth, bouncer }: HttpContext) {
+  async stats({ params, request, response, auth, bouncer, i18n }: HttpContext) {
     if (!auth.user || (await bouncer.with(AdvertisementPolicy).denies('manage'))) {
-      return response.forbidden({ error: 'Access denied. Administrator privileges required.' })
+      return response.forbidden({ error: i18n.t('messages.advertisements.adminRequired') })
     }
 
     const ad = await Advertisement.findOrFail(params.id)
