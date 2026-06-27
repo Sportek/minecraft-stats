@@ -19,10 +19,10 @@ concerns in the summary.
 The blog supports per-locale translations. **Produce the article in every supported content
 locale, every run.** The current locales are:
 
-| Locale | Language | Home domain          |
-| ------ | -------- | -------------------- |
-| `en`   | English  | minecraft-stats.com  |
-| `fr`   | French   | minecraft-stats.fr   |
+| Locale | Language | Home domain         |
+| ------ | -------- | ------------------- |
+| `en`   | English  | minecraft-stats.com |
+| `fr`   | French   | minecraft-stats.fr  |
 
 - **`en` is the primary language** (`defaultLocale`): write the article natively in English first,
   then translate it **faithfully and natively** (not word-for-word) into every other locale —
@@ -37,11 +37,11 @@ locale, every run.** The current locales are:
 `.fr` and `.com` share the same backend/database, so reading and writing both target the `.fr`
 API; published articles appear on both domains.
 
-| Variable          | Value                                     | Purpose                                          |
-| ----------------- | ----------------------------------------- | ------------------------------------------------ |
-| `MCSTATS_API_URL` | `https://api.minecraft-stats.fr/api/v1`   | REST API (used for the authed write + upload)    |
-| `MCSTATS_TOKEN`   | `oat_…` (env secret)                       | API token of a `writer`/`admin` account          |
-| `KIE_API_KEY`     | `…` (env secret)                           | kie.ai key for Nano Banana Pro cover generation  |
+| Variable          | Value                                   | Purpose                                         |
+| ----------------- | --------------------------------------- | ----------------------------------------------- |
+| `MCSTATS_API_URL` | `https://api.minecraft-stats.fr/api/v1` | REST API (used for the authed write + upload)   |
+| `MCSTATS_TOKEN`   | `oat_…` (env secret)                    | API token of a `writer`/`admin` account         |
+| `KIE_API_KEY`     | `…` (env secret)                        | kie.ai key for Nano Banana Pro cover generation |
 
 - **MCP (reads):** the Minecraft-Stats MCP is connected to this routine (read-only). Prefer its
   tools — `getPosts`, `getPostsBySlug`, `getServers`, `getServersPaginate`, `getServerStats`,
@@ -55,27 +55,31 @@ API; published articles appear on both domains.
 ## Step-by-step
 
 ### 1. Survey what already exists
+
 - Use MCP `getPosts` to list existing published articles (titles, slugs, angles).
 - Also fetch drafts via REST so you never duplicate a pending one:
   `GET {MCSTATS_API_URL}/admin/posts?status=all&limit=100` with `Authorization: Bearer {MCSTATS_TOKEN}`.
 - This combined list is the authoritative "already covered" set.
 
 ### 2. Find the topic (signal-driven ideation)
+
 Don't invent a topic from thin air — **discover** one from real signals, then frame it as an
-archetype. The archetype is how you *frame* the signal, not the starting point. Run this funnel:
+archetype. The archetype is how you _frame_ the signal, not the starting point. Run this funnel:
 
 **2a. Mine our own data first (the moat).** This is the unique angle no competitor can copy.
-Via MCP, scan for what's genuinely newsworthy *this run*:
+Via MCP, scan for what's genuinely newsworthy _this run_:
+
 - **Biggest mover** — the server with the largest weekly/monthly growth, or the sharpest drop
   (`getServers`/`getServersPaginate` + `getServerStats`, growth stats).
 - **Milestone / record just crossed** — a server passing a round number (10k/50k peak), a new
   all-time peak, or a category total crossing a threshold (`getGlobalStats`, `getCategories`).
 - **Fast-climbing newcomer**, or an unusual pattern (weekend vs weekday, month-over-month shift).
-Keep 3–5 candidate "data angles", each backed by a striking real number.
+  Keep 3–5 candidate "data angles", each backed by a striking real number.
 
 **2b. Pull external trend & demand signals.** Confirm a candidate matches real-world interest, or
 surface a fresher angle. These sources are **verified to work in this environment** (see tool
 notes below):
+
 - **New Minecraft versions/features — timely, high demand.** WebFetch
   `https://minecraft.wiki/w/Java_Edition` for the current release, then
   `https://minecraft.wiki/w/Java_Edition_<version>` for its changelog. New mobs/features drive
@@ -104,7 +108,9 @@ minecraft.net, and server-list sites are bot-blocked, so reach those **through W
 than fetching them directly.
 
 ### 3. Gather real data (our SEO moat)
+
 Original, factual data is what ranks. Via MCP:
+
 - `getServers` / `getServersPaginate` for real servers, names, rankings, player counts.
 - `getServerStats` for a server's history/growth; `getGlobalStats` for site-wide trends.
 - Available dynamic placeholders: `GET {MCSTATS_API_URL}/posts/placeholders/list`. Tokens like
@@ -116,6 +122,7 @@ Original, factual data is what ranks. Via MCP:
 ### 4. Write the article in every language (Markdown)
 
 **4a. Write the primary (English) version.**
+
 - **Title**: 50–60 chars, includes the primary keyword, compelling.
 - **Excerpt**: 140–160 chars — becomes the meta description; must stand alone and entice.
 - **Body**: 700–1500 words of genuinely useful Markdown. Logical H2/H3 structure, short
@@ -127,6 +134,7 @@ Original, factual data is what ranks. Via MCP:
   every translation).
 
 **4b. Translate into every other supported locale (see the Languages table).**
+
 - Produce a **native, idiomatic** translation of the title, excerpt and full body — not a literal
   word-for-word one. Keep the same structure, headings, data, tables and reading level. Localize
   the primary keyword to how people actually search in that language.
@@ -138,6 +146,7 @@ Original, factual data is what ranks. Via MCP:
   French translation gets a French URL). Only set one if you need a specific slug.
 
 ### 5. Generate the cover image (Nano Banana Pro → upload)
+
 Generate one original cover illustration for the article's topic with kie.ai's Nano Banana Pro,
 then upload it to our own storage and use the returned path as `coverImage`. Never put a raw
 kie.ai URL in `coverImage` — those expire; always re-host via our upload endpoint.
@@ -145,7 +154,7 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
 1. **Write the image prompt** from the article's topic. Every cover must read as part of the
    Minecraft-Stats brand, so the blog feels like one consistent visual family run after run.
    Build the prompt from this fixed **brand brief** plus a per-article subject:
-   - **Identity:** Minecraft-Stats is a *data/analytics* product, not a generic blocky-Minecraft
+   - **Identity:** Minecraft-Stats is a _data/analytics_ product, not a generic blocky-Minecraft
      skin. The hero motif is **server statistics**: ascending bar charts, glowing line/growth
      curves, dashboard panels, leaderboards — visualised with a tasteful Minecraft-world accent
      (a few voxel/cube elements, a blocky server silhouette), never a full pixel-art scene.
@@ -160,6 +169,7 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
      blocky server lit by a rising bar chart; a growth piece → an upward line graph over a voxel
      landscape; a ranking piece → a podium of chart bars). Keep the palette and style above fixed.
 2. **Create the task:**
+
    ```
    POST https://api.kie.ai/api/v1/jobs/createTask
    Authorization: Bearer {KIE_API_KEY}
@@ -175,7 +185,9 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
      }
    }
    ```
+
    Expect `code: 200`; read `data.taskId`.
+
 3. **Poll for the result:** `GET https://api.kie.ai/api/v1/jobs/recordInfo?taskId={taskId}` with
    `Authorization: Bearer {KIE_API_KEY}`. Wait a few seconds between polls (generation usually
    takes ~10–40 s). Read `data.state`:
@@ -193,6 +205,7 @@ kie.ai URL in `coverImage` — those expire; always re-host via our upload endpo
    relative `url` as `coverImage` in the next step.
 
 ### 6. Create the draft with all its translations (REST)
+
 One call creates the post and every translation at once. The text fields (`title`, `slug`,
 `content`, `excerpt`) live **inside each `translations[]` entry**; `coverImage` and `defaultLocale`
 are shared by the whole post.
@@ -221,6 +234,7 @@ Content-Type: application/json
   ]
 }
 ```
+
 - Include **one `translations` entry per supported locale** (Languages table) — at minimum the
   `defaultLocale` one; ideally all of them. `slug` is optional (auto-generated per locale); omit it.
 - `defaultLocale` must match a locale present in `translations` (it's the fallback language).
@@ -229,6 +243,7 @@ Content-Type: application/json
   entry is missing from `translations` — add it.
 
 ### 7. Report
+
 Output a short summary: chosen content type, title, primary keyword, **the languages generated**
 (e.g. `en`, `fr`), word count, whether a cover image was generated (and its stored path, or why it
 was skipped), the draft's id and per-locale slugs, and the review URL
@@ -236,6 +251,7 @@ was skipped), the draft's id and per-locale slugs, and the review URL
 were unsure about).
 
 ## Guardrails
+
 - One article per run. Never publish. Never edit or delete existing posts.
 - Never commit or print the tokens. Treat `MCSTATS_TOKEN` and `KIE_API_KEY` as secrets.
 - The cover image is best-effort: if `KIE_API_KEY` is missing or generation fails, create the
