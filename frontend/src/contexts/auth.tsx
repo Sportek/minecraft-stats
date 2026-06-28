@@ -30,6 +30,7 @@ interface AuthContextProps {
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
+  isAuthLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -91,6 +92,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const user = meError ? null : meUser ?? null;
   const isLoggedIn = loggedInOverride ?? (!meError && Boolean(token) && Boolean(meUser));
+
+  // A token exists but /me hasn't settled yet (no data, no error): the session is
+  // still resolving. Guards must wait for this before treating the user as logged
+  // out, otherwise they redirect during the initial /me fetch.
+  const isAuthLoading = Boolean(token) && meUser === undefined && !meError;
 
   // Compat shims for the previous useState setters exposed in the public API.
   const setUser = useCallback(
@@ -205,6 +211,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       changePassword,
       isLoggedIn,
       setIsLoggedIn,
+      isAuthLoading,
     };
   }, [
     user,
@@ -221,6 +228,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     changePassword,
     isLoggedIn,
     setIsLoggedIn,
+    isAuthLoading,
   ]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
