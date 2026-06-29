@@ -1,14 +1,21 @@
 import { MetadataRoute } from 'next';
 import { buildAlternates, buildAlternatesForSlugs, getDomainConfig } from '@/lib/domain-server';
+import { isServerIndexable, serverPath } from '@/lib/server-url';
 
 interface Server {
   id: number;
   name: string;
   updatedAt: string;
+  lastStatsAt: string | null;
 }
 
 interface ServerListItem {
-  server: Server;
+  server: {
+    id: number;
+    name: string;
+    updatedAt: string;
+    lastStatsAt: string | null;
+  };
 }
 
 interface Post {
@@ -39,6 +46,7 @@ async function getAllServers(apiUrl: string): Promise<Server[]> {
       id: item.server.id,
       name: item.server.name,
       updatedAt: item.server.updatedAt,
+      lastStatsAt: item.server.lastStatsAt,
     }));
   } catch (error) {
     console.error('Error fetching servers for sitemap:', error);
@@ -143,21 +151,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: buildAlternatesForSlugs(domainLocale, post.slugs).languages },
   }));
 
-  // Dynamic server routes
-  const serverRoutes: MetadataRoute.Sitemap = servers.map((server) => {
-    const slug = server.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+  // Dynamic server routes. Dead servers (no successful ping for SERVER_STALE_DAYS)
+  // are thin pages Google reports as "crawled, currently not indexed"; keeping them
+  // out of the sitemap concentrates crawl budget on live servers.
+  const serverRoutes: MetadataRoute.Sitemap = servers
+    .filter((server) => isServerIndexable(server.lastStatsAt))
+    .map((server) => {
+      const path = serverPath(server.id, server.name);
 
-    return {
-      url: `${baseUrl}/servers/${server.id}/${slug}`,
-      lastModified: new Date(server.updatedAt),
-      changeFrequency: 'daily' as const,
-      priority: 0.8,
-      alternates: { languages: buildAlternates(domainLocale, `/servers/${server.id}/${slug}`).languages },
-    };
-  });
+      return {
+        url: `${baseUrl}${path}`,
+        lastModified: new Date(server.updatedAt),
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+        alternates: { languages: buildAlternates(domainLocale, path).languages },
+      };
+    });
 
   return [...routes, ...postRoutes, ...serverRoutes];
 }

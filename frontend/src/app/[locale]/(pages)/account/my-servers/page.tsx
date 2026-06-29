@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
 import { deleteServer, getMyServers, MyServerItem } from "@/http/server";
+import { serverPath } from "@/lib/server-url";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardStatTile from "@/components/account/dashboard-stat-tile";
@@ -136,7 +137,7 @@ const MyServersPage = () => {
                   <ServerImage imageUrl={server.imageUrl} name={server.name} className="h-10 w-10" />
                   <div className="min-w-0 flex-1">
                     <Link
-                      href={`/servers/${server.id}/${server.name}`}
+                      href={serverPath(server.id, server.name)}
                       className="block truncate text-sm font-semibold text-foreground transition-colors hover:text-accent"
                     >
                       {server.name}
@@ -155,7 +156,7 @@ const MyServersPage = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <Link
-                      href={`/servers/${server.id}/${server.name}`}
+                      href={serverPath(server.id, server.name)}
                       aria-label={t("myServers.view")}
                       title={t("myServers.viewTitle")}
                       className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
