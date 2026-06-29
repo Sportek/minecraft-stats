@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 
-const localeEnum = vine.enum(['fr', 'en'])
+const localeEnum = vine.enum(['fr', 'en', 'es'])
 
 // Une traduction à la création : titre et contenu requis, slug/excerpt optionnels.
 const translationCreate = vine.object({

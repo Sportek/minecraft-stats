@@ -14,15 +14,21 @@ Quality over quantity. One excellent, data-backed article beats three generic on
 cannot produce something genuinely useful this run, create the best draft you can and flag your
 concerns in the summary.
 
+**Every run must (a) attempt to generate the cover image and (b) produce the article in every
+supported language.** Always run the cover-image generation in step 5 — if it fails for any reason,
+shrug it off and create the draft without a cover (never abort the run over the image). Likewise,
+always write a translation for every locale in the Languages table below, not just the primary one.
+
 ### Languages — generate them all
 
 The blog supports per-locale translations. **Produce the article in every supported content
 locale, every run.** The current locales are:
 
-| Locale | Language | Home domain         |
-| ------ | -------- | ------------------- |
-| `en`   | English  | minecraft-stats.com |
-| `fr`   | French   | minecraft-stats.fr  |
+| Locale | Language | Home domain                |
+| ------ | -------- | -------------------------- |
+| `en`   | English  | minecraft-stats.com        |
+| `fr`   | French   | minecraft-stats.fr         |
+| `es`   | Spanish  | minecraft-stats.com/es     |
 
 - **`en` is the primary language** (`defaultLocale`): write the article natively in English first,
   then translate it **faithfully and natively** (not word-for-word) into every other locale —
@@ -49,8 +55,9 @@ API; published articles appear on both domains.
 - **REST (write):** publishing/creating is NOT available via MCP. The single create call uses
   the REST API with `MCSTATS_TOKEN`.
 - Internal links should point to the locale's home domain: the **English** translation links to
-  `https://minecraft-stats.com`, the **French** one to `https://minecraft-stats.fr` (each domain
-  serves both languages, so either resolves — matching the domain to the language is cleanest).
+  `https://minecraft-stats.com`, the **French** one to `https://minecraft-stats.fr`, and the
+  **Spanish** one to `https://minecraft-stats.com` (Spanish has no dedicated domain). Each domain
+  serves every language, so any of them resolves — matching the domain to the language is cleanest.
 
 ## Step-by-step
 
@@ -141,7 +148,8 @@ Original, factual data is what ranks. Via MCP:
 - **Keep every placeholder token identical** (e.g. `%PLAYER_COUNT_REALTIME_2%`). They are resolved
   server-side at render time and must stay byte-for-byte the same across languages.
 - **Internal links**: point each translation at its own home domain (English → `minecraft-stats.com`,
-  French → `minecraft-stats.fr`).
+  French → `minecraft-stats.fr`, Spanish → `minecraft-stats.com` — Spanish has no dedicated domain
+  and is served on the international `.com` host).
 - **Don't set a slug** — the backend generates a clean, unique slug per locale from each title (so the
   French translation gets a French URL). Only set one if you need a specific slug.
 
@@ -230,6 +238,12 @@ Content-Type: application/json
       "title":   "<French title>",
       "content": "<French markdown body>",
       "excerpt": "<French meta description>"
+    },
+    {
+      "locale":  "es",
+      "title":   "<Spanish title>",
+      "content": "<Spanish markdown body>",
+      "excerpt": "<Spanish meta description>"
     }
   ]
 }

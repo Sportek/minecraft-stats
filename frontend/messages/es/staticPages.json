@@ -1,0 +1,257 @@
+{
+  "about": {
+    "meta": {
+      "title": "Acerca de nosotros",
+      "description": "Conoce nuestra misión: ofrecer una comparación transparente, pública y gratuita de servidores de Minecraft, basada en datos objetivos. Descubre cómo ayudamos a los jugadores a encontrar y comparar servidores.",
+      "keywords": "acerca de, minecraft stats, comparación de servidores, transparencia, lista de servidores de minecraft, clasificación justa",
+      "ogTitle": "Acerca de nosotros - Minecraft Stats",
+      "ogDescription": "Nuestra plataforma ofrece una comparación transparente, pública y gratuita de servidores de Minecraft, basada en datos objetivos y accesibles."
+    },
+    "eyebrow": "Empresa",
+    "title": "Acerca de",
+    "aboutUs": {
+      "title": "Acerca de nosotros",
+      "p1": "Nuestra plataforma se creó con un objetivo sencillo:",
+      "p2": "ofrecer <strong>una comparación transparente, pública y gratuita de servidores de Minecraft</strong>, basada en datos objetivos y accesibles.",
+      "p3": "A diferencia de las listas de servidores tradicionales, cuyo propósito principal es la promoción, nos centramos ante todo en la <strong>comparación y la visibilidad</strong>.",
+      "p4": "Queremos ayudar a los jugadores a comprender el rendimiento de los servidores, su nivel de actividad y su evolución a lo largo del tiempo, mediante indicadores claros como la actividad de los jugadores y las tendencias."
+    },
+    "playersFirst": {
+      "title": "Una herramienta pensada primero para los jugadores",
+      "p1": "Minecraft cuenta con miles de servidores, pero a menudo es difícil encontrar información fiable y neutral.",
+      "p2": "Nuestra plataforma permite a los jugadores:",
+      "item1": "Comparar servidores con criterios públicos y coherentes",
+      "item2": "Seguir la actividad de los jugadores y las tendencias a lo largo del tiempo",
+      "item3": "Obtener una visión más clara del ecosistema de servidores de Minecraft",
+      "p3": "El descubrimiento forma parte naturalmente de la experiencia, pero <strong>no es nuestro objetivo principal</strong>.",
+      "p4": "Nuestra prioridad es ofrecer a los jugadores una <strong>visión justa e imparcial</strong>, no destacar servidores concretos."
+    },
+    "transparency": {
+      "title": "Transparencia y clasificación justa",
+      "p1": "Todas las clasificaciones y estadísticas se generan con la misma metodología para cada servidor.",
+      "p2": "Ningún servidor puede mejorar artificialmente su posición en las clasificaciones mediante pago o promoción.",
+      "p3": "En el futuro, podríamos ofrecer <strong>visibilidad promocional opcional</strong> a los propietarios de servidores (como espacios de visualización dedicados), pero:",
+      "item1": "el contenido promocional siempre estará <strong>claramente identificado</strong>, y",
+      "item2": "<strong>nunca influirá en las clasificaciones ni en las estadísticas</strong>."
+    },
+    "evolving": {
+      "title": "Un proyecto en evolución",
+      "p1": "Esta plataforma evoluciona constantemente.",
+      "p2": "Mejoramos la precisión de los datos, el rendimiento y la experiencia de usuario basándonos en los comentarios de la comunidad y en un desarrollo técnico continuo.",
+      "p3": "Nuestro objetivo es a largo plazo:",
+      "p4": "seguir siendo una <strong>referencia útil, fiable e independiente</strong> para los jugadores de Minecraft de todo el mundo.",
+      "p5": "Si tienes preguntas, sugerencias o comentarios, no dudes en contactarnos."
+    }
+  },
+  "cgu": {
+    "meta": {
+      "title": "Condiciones de uso",
+      "description": "Consulta nuestras condiciones de uso para entender las condiciones de acceso a la plataforma Minecraft Stats, las responsabilidades de los usuarios y tus derechos en virtud del RGPD.",
+      "keywords": "condiciones de uso, términos y condiciones, RGPD, protección de datos, aviso legal minecraft stats",
+      "ogTitle": "Condiciones de uso - Minecraft Stats",
+      "ogDescription": "Condiciones de uso detalladas de la plataforma Minecraft Stats. Conoce las responsabilidades de los usuarios y las condiciones de uso del servicio."
+    },
+    "eyebrow": "Aviso legal",
+    "title": "Condiciones de uso",
+    "lastUpdated": "Última actualización: 2 de junio de 2024",
+    "legalInfo": {
+      "title": "1. Información legal",
+      "body": "Este sitio web es editado por Gabriel Landry. Para cualquier pregunta o reclamación, puedes contactarnos por correo electrónico en la dirección: <mail>legal@minecraft-stats.com</mail>."
+    },
+    "purpose": {
+      "title": "2. Objeto",
+      "body": "Las presentes condiciones de uso definen las condiciones de acceso y uso de los servicios de estadísticas ofrecidos de forma gratuita en el sitio <link>Minecraft-Stats</link>. Cualquier registro o uso del sitio implica la aceptación plena y sin reservas de las presentes condiciones."
+    },
+    "registration": {
+      "title": "3. Registro y cuenta de usuario",
+      "intro": "Para utilizar nuestro servicio de recopilación y compartición de estadísticas, los usuarios deben:",
+      "item1": "Crear una cuenta proporcionando un nombre de usuario, una dirección de correo electrónico y una contraseña.",
+      "item2": "También puedes autenticarte mediante Google o Discord, lo que puede implicar la recopilación de datos adicionales como tu foto de perfil.",
+      "outro": "No se requiere ninguna edad mínima para el registro."
+    },
+    "dataProcessing": {
+      "title": "4. Recopilación y tratamiento de datos personales",
+      "typesTitle": "Tipos de datos recopilados",
+      "typesBody": "Recopilamos y tratamos únicamente los datos proporcionados durante el registro: nombre de usuario, dirección de correo electrónico y contraseña. Si te registras mediante Google o Discord, pueden recopilarse datos adicionales como tu foto de perfil.",
+      "useTitle": "Uso de los datos",
+      "useIntro": "Los datos se utilizan para:",
+      "useItem1": "Gestionar las cuentas de usuario.",
+      "useItem2": "Proporcionar acceso a los servicios y funcionalidades del sitio.",
+      "useItem3": "Garantizar la seguridad y el correcto funcionamiento del sitio.",
+      "cookiesTitle": "Cookies y almacenamiento local",
+      "cookiesBody": "Utilizamos el almacenamiento local para gestionar la autenticación. Para más información, consulta nuestra <link>política de privacidad</link>.",
+      "storageTitle": "Almacenamiento y seguridad de los datos",
+      "storageBody": "Los datos recopilados se almacenan en un VPS de Pulseheberg ubicado en Francia.",
+      "rightsTitle": "Derechos de los usuarios",
+      "rightsIntro": "De conformidad con el RGPD, dispones de los siguientes derechos sobre tus datos personales:",
+      "rightsItem1": "Derecho de acceso",
+      "rightsItem2": "Derecho de rectificación",
+      "rightsItem3": "Derecho de supresión",
+      "rightsItem4": "Derecho a la limitación del tratamiento",
+      "rightsItem5": "Derecho de oposición",
+      "rightsItem6": "Derecho a la portabilidad de los datos",
+      "rightsOutro": "Para ejercer estos derechos, contáctanos en la dirección: <mail>legal@minecraft-stats.com</mail>.",
+      "dpoTitle": "Ausencia de DPD",
+      "dpoBody": "No se ha designado ningún delegado de protección de datos (DPD)."
+    },
+    "intellectualProperty": {
+      "title": "5. Propiedad intelectual",
+      "body": "Las imágenes de los servidores son propiedad de sus respectivos servidores de Minecraft. Todo el demás contenido es propiedad de Gabriel Landry. Los términos «Minecraft» y las demás marcas asociadas pertenecen a Mojang (Microsoft)."
+    },
+    "obligations": {
+      "title": "6. Obligaciones y responsabilidades de los usuarios",
+      "p1": "Los usuarios se comprometen a no crear innecesariamente un gran número de servidores. Cualquier abuso puede conllevar la expulsión de la plataforma.",
+      "p2": "Los usuarios pueden añadir servidores de Minecraft para que se puedan recopilar estadísticas. Al añadir un servidor, el usuario garantiza que tiene derecho a hacerlo. No nos hacemos responsables si un usuario añade un servidor sin tener ese derecho. Para eliminar un servidor, contáctanos en la dirección: <mail>legal@minecraft-stats.com</mail> con el asunto «Solicitud de eliminación de servidor»."
+    },
+    "liability": {
+      "title": "7. Limitación de responsabilidad",
+      "body": "El sitio y sus servicios se proporcionan «tal cual», sin ninguna garantía de funcionamiento continuo o ininterrumpido. Gabriel Landry no puede ser considerado responsable de ningún mal funcionamiento o interrupción del servicio, ni de una eventual pérdida de datos."
+    },
+    "jurisdiction": {
+      "title": "8. Jurisdicción y legislación aplicable",
+      "body": "Las presentes condiciones se rigen por las leyes de Quebec. En caso de litigio, y tras un intento de resolución amistosa, los tribunales de Montreal (Quebec) serán los únicos competentes."
+    },
+    "amendments": {
+      "title": "9. Modificaciones de las condiciones",
+      "body": "Gabriel Landry se reserva el derecho de modificar las presentes condiciones en cualquier momento. Los usuarios serán informados de cualquier modificación mediante una notificación en el sitio. El uso continuado del sitio tras la notificación de las modificaciones constituye la aceptación de las nuevas condiciones."
+    },
+    "contact": {
+      "title": "10. Contacto",
+      "body": "Para cualquier pregunta o reclamación relativa a las presentes condiciones, contáctanos en la dirección: <mail>legal@minecraft-stats.com</mail>."
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "body": "Para saber cómo recopilamos, utilizamos y protegemos tus datos personales, incluidos los servicios de terceros como las estadísticas y la publicidad, lee nuestra <link>política de privacidad</link> dedicada."
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Política de privacidad",
+      "description": "Descubre qué datos recopila Minecraft Stats, nuestras estadísticas internas basadas en el consentimiento, cómo utilizamos las cookies, los servicios de terceros que empleamos (Google Analytics, Google AdSense), tus derechos en virtud del RGPD y cómo contactarnos.",
+      "keywords": "política de privacidad, RGPD, protección de datos, cookies, estadísticas internas, consentimiento, google analytics, google adsense, minecraft stats",
+      "ogTitle": "Política de privacidad - Minecraft Stats",
+      "ogDescription": "Cómo Minecraft Stats recopila y trata los datos, las cookies y los servicios de terceros que utiliza, y tus derechos de privacidad."
+    },
+    "eyebrow": "Aviso legal",
+    "title": "Política de privacidad",
+    "lastUpdated": "Última actualización: 24 de junio de 2026",
+    "overview": {
+      "title": "Resumen",
+      "body": "Minecraft Stats es una plataforma gratuita y de código abierto para el seguimiento de estadísticas de servidores de Minecraft. Procuramos recopilar la menor cantidad posible de datos personales y ser transparentes sobre lo que recopilamos. Esta política explica qué datos tratamos, por qué y los derechos de los que dispones sobre ellos. Complementa nuestras <link>condiciones de uso</link>."
+    },
+    "dataCollect": {
+      "title": "Datos que recopilamos",
+      "accountTitle": "Datos de la cuenta",
+      "accountBody": "Cuando creas una cuenta, almacenamos el nombre de usuario, la dirección de correo electrónico y la contraseña que proporcionas. Las contraseñas se cifran mediante hash y nunca se almacenan en texto plano. Si inicias sesión mediante Google o Discord, también podemos recibir información básica de perfil, como tu nombre visible y tu foto de perfil, de ese proveedor.",
+      "contentTitle": "Contenido que envías",
+      "contentBody": "Si añades un servidor de Minecraft, almacenamos los datos del servidor que proporcionas (como su dirección y su nombre) para poder hacerle ping y mostrar sus estadísticas. Estos datos son públicos por naturaleza.",
+      "usageTitle": "Datos de uso y estadísticas",
+      "usageBody": "Como la mayoría de los sitios web, recibimos automáticamente cierta información técnica (como tu dirección IP, el tipo de navegador y las páginas que consultas) y utilizamos herramientas de análisis para comprender cómo se utiliza el sitio. Esto se hace tanto a través de nuestras propias estadísticas internas como mediante herramientas de terceros. Nuestras estadísticas internas solo se ejecutan tras tu consentimiento, y nunca almacenamos tu dirección IP en texto plano. Consulta las secciones dedicadas más abajo para más detalles."
+    },
+    "howWeUse": {
+      "title": "Cómo utilizamos tus datos",
+      "item1": "Para crear y gestionar tu cuenta y autenticarte.",
+      "item2": "Para proporcionar las funcionalidades de la plataforma, incluidas las estadísticas de los servidores.",
+      "item3": "Para medir la audiencia y mejorar el rendimiento y el contenido del sitio.",
+      "item4": "Para mostrar publicidad que contribuye a mantener el servicio gratuito.",
+      "item5": "Para garantizar la seguridad y el correcto funcionamiento del sitio."
+    },
+    "cookies": {
+      "title": "Cookies y almacenamiento local",
+      "body": "Utilizamos el almacenamiento local del navegador para mantenerte conectado, para recordar tu elección de consentimiento sobre las estadísticas y —una vez que has dado tu consentimiento— para almacenar el identificador de visitante anónimo utilizado por nuestras estadísticas internas. Nuestros proveedores externos (estadísticas y publicidad) también pueden depositar cookies o identificadores similares en tu dispositivo. Puedes controlar o eliminar las cookies y el almacenamiento local desde la configuración de tu navegador, y puedes gestionar tus preferencias publicitarias como se describe a continuación. Desactivar algunos de estos elementos puede afectar al funcionamiento de algunas partes del sitio."
+    },
+    "firstParty": {
+      "title": "Estadísticas internas",
+      "intro": "Además de las herramientas de terceros indicadas a continuación, utilizamos nuestras propias estadísticas, cuyos datos se almacenan en nuestros propios servidores en lugar de compartirse con un proveedor externo. Esto nos ayuda a medir el tráfico que recibe el sitio y cómo se utilizan nuestras páginas, para poder mejorarlas. Funciona en dos niveles, descritos a continuación.",
+      "anonymousTitle": "Medición anónima (no requiere consentimiento)",
+      "anonymousBody": "Para contabilizar el tráfico global y el número de visitantes distintos que recibimos —incluidos aquellos que rechazan las estadísticas detalladas indicadas a continuación— mantenemos un recuento puramente anónimo y agregado. No deposita ningún identificador en tu dispositivo ni almacena ningún dato personal: tu dirección IP y el tipo de navegador se integran en un estimador estadístico (un HyperLogLog) capaz de producir recuentos pero incapaz de aislar, reidentificar o enumerar a ninguna persona. Como este tratamiento es anónimo, se ejecuta sin consentimiento, conforme a las recomendaciones en materia de medición de audiencia.",
+      "detailedTitle": "Estadísticas detalladas (con tu consentimiento)",
+      "detailedBody": "La medición más detallada que se describe a continuación solo se ejecuta después de que la aceptes mediante el banner de consentimiento.",
+      "whatTitle": "Lo que recopilamos",
+      "whatItem1": "Un identificador de visitante anónimo que generamos y almacenamos en el almacenamiento local de tu navegador.",
+      "whatItem2": "Las páginas que consultas, la página que te dirigió hacia nosotros y el tipo de tu navegador (user agent).",
+      "whatItem3": "Un país aproximado, deducido de tu conexión.",
+      "whatItem4": "Una forma cifrada mediante hash y no reversible de tu dirección IP. Nunca almacenamos tu dirección IP en texto plano; el hash solo nos permite agrupar las visitas procedentes de una misma conexión sin conservar la dirección en sí.",
+      "consentTitle": "Consentimiento",
+      "consentBody": "Aceptas las estadísticas detalladas anteriores mediante el banner de consentimiento que se muestra en tu primera visita. Si lo rechazas, no registramos esos eventos detallados; solo continúa el recuento agregado anónimo descrito anteriormente. Puedes cambiar de opinión en cualquier momento borrando el almacenamiento local de tu navegador para este sitio, lo que también restablece tu identificador de visitante anónimo.",
+      "linkTitle": "Vinculación con tu cuenta",
+      "linkBody": "Si has iniciado sesión, podemos asociar tus visitas anónimas con tu cuenta para comprender el uso por parte de los miembros conectados. Un mismo dispositivo o conexión puede estar vinculado a más de una cuenta, y una misma cuenta a varios dispositivos. Puedes solicitar la eliminación de estos datos en cualquier momento (consulta Tus derechos más abajo).",
+      "retentionTitle": "Conservación",
+      "retentionBody": "Los registros individuales de visualización de página se eliminan automáticamente después de 90 días. Solo las estadísticas agregadas y anonimizadas (como los recuentos diarios de páginas) se conservan más allá de ese período."
+    },
+    "thirdParty": {
+      "title": "Servicios de terceros",
+      "umamiTitle": "Umami",
+      "umamiBody": "Utilizamos Umami, un servicio de análisis respetuoso con la privacidad, para medir la audiencia y el tráfico agregados. Umami no utiliza cookies y no recopila datos que te identifiquen individualmente; ofrece indicadores anonimizados y agregados. Los datos de análisis son tratados por Umami en nuestro nombre.",
+      "umamiMore": "Para más información, consulta la <link>política de privacidad de Umami</link>.",
+      "gtmTitle": "Google Tag Manager",
+      "gtmBody": "Utilizamos Google Tag Manager para cargar y gestionar los scripts de medición descritos en esta política. Google Tag Manager no recopila por sí mismo datos personales, pero carga otras etiquetas que sí pueden hacerlo. Es proporcionado por Google, que trata los datos de conformidad con sus políticas.",
+      "gtmMore": "Para más información, consulta la <link>política de privacidad de Google</link>.",
+      "clarityTitle": "Microsoft Clarity",
+      "clarityBody": "Utilizamos Microsoft Clarity para comprender cómo interactúan los visitantes con el sitio, a través de indicadores agregados y, en algunos casos, grabaciones de sesión (como los movimientos del ratón, los clics y el desplazamiento). Clarity puede depositar cookies y tratar datos como tu dirección IP; las grabaciones se enmascaran para evitar capturar entradas sensibles. Microsoft utiliza estos datos de conformidad con sus políticas.",
+      "clarityMore": "Para más información, consulta la <link>declaración de privacidad de Microsoft</link>.",
+      "adsenseTitle": "Google AdSense",
+      "adsenseBody": "Utilizamos Google AdSense para mostrar publicidad, lo que contribuye a mantener Minecraft Stats gratuito. Google y sus socios pueden utilizar cookies e identificadores similares para mostrar anuncios y, cuando proceda, personalizarlos en función de tu actividad. No controlamos los anuncios específicos que se muestran.",
+      "adsenseMore": "Puedes consultar y controlar la manera en que Google personaliza los anuncios, y rechazar la publicidad personalizada, a través de tu <link1>configuración de anuncios de Google</link1>. Hay más información disponible en las <link2>políticas publicitarias de Google</link2>.",
+      "authTitle": "Proveedores de autenticación",
+      "authBody": "Si inicias sesión con Google o Discord, esos proveedores tratan tus datos conforme a sus propias políticas de privacidad. Solo recibimos la información básica de perfil necesaria para crear e identificar tu cuenta."
+    },
+    "storage": {
+      "title": "Almacenamiento y seguridad de los datos",
+      "body": "Los datos de cuenta y de servidor se almacenan en un VPS de Pulseheberg ubicado en Francia. Aplicamos medidas técnicas razonables para proteger tus datos contra accesos no autorizados. Ningún método de transmisión o almacenamiento es completamente seguro, pero nos tomamos la seguridad en serio."
+    },
+    "retention": {
+      "title": "Conservación de los datos",
+      "body": "Conservamos tus datos personales mientras tu cuenta esté activa y se presten los servicios. Si eliminas tu cuenta o nos pides que eliminemos tus datos, los eliminaremos, salvo que estemos obligados a conservarlos por razones legales. Los registros de visualización de página de las estadísticas internas se eliminan después de 90 días, como se ha descrito anteriormente. Las estadísticas agregadas y anonimizadas pueden conservarse indefinidamente."
+    },
+    "rights": {
+      "title": "Tus derechos",
+      "intro": "De conformidad con el RGPD, dispones de los siguientes derechos sobre tus datos personales:",
+      "item1": "Derecho de acceso",
+      "item2": "Derecho de rectificación",
+      "item3": "Derecho de supresión",
+      "item4": "Derecho a la limitación del tratamiento",
+      "item5": "Derecho de oposición",
+      "item6": "Derecho a la portabilidad de los datos",
+      "outro": "Para ejercer cualquiera de estos derechos, contáctanos en la dirección: <mail>legal@minecraft-stats.com</mail>. No se ha designado ningún delegado de protección de datos (DPD)."
+    },
+    "contact": {
+      "title": "Contacto",
+      "body": "Para cualquier pregunta sobre esta política de privacidad o sobre la manera en que se tratan tus datos, contáctanos en la dirección: <mail>legal@minecraft-stats.com</mail> o a través de nuestra <link>página de contacto</link>."
+    }
+  },
+  "contact": {
+    "meta": {
+      "title": "Contacto",
+      "description": "Ponte en contacto con el equipo de Minecraft Stats. Contáctanos a través de Discord, GitHub o correo electrónico para preguntas, comentarios, solicitudes de eliminación de servidor y soporte.",
+      "keywords": "contacto, soporte, minecraft stats, discord, github, comentarios",
+      "ogTitle": "Contacto - Minecraft Stats",
+      "ogDescription": "Contacta con el equipo de Minecraft Stats a través de Discord, GitHub o correo electrónico para preguntas, comentarios y soporte."
+    },
+    "eyebrow": "Contacto",
+    "title": "Ponte en contacto",
+    "subtitle": "¿Una pregunta, un comentario o una solicitud de eliminación de servidor? Contáctanos a través de cualquiera de los canales indicados a continuación; Discord suele ser el más rápido.",
+    "channels": {
+      "discord": {
+        "name": "Discord",
+        "description": "Únete a nuestra comunidad para obtener la respuesta más rápida, soporte y conversaciones sobre funcionalidades.",
+        "cta": "Abrir Discord"
+      },
+      "github": {
+        "name": "GitHub",
+        "description": "Informa de un error, propón una funcionalidad o contribuye al proyecto de código abierto.",
+        "cta": "Abrir GitHub"
+      },
+      "email": {
+        "name": "Correo electrónico",
+        "description": "Para consultas privadas, solicitudes RGPD o solicitudes de eliminación de servidor.",
+        "cta": "Enviar un correo electrónico"
+      }
+    }
+  },
+  "consent": {
+    "description": "Medimos el uso del sitio (páginas visitadas, tráfico) para mejorarlo. Estas estadísticas utilizan tu dirección IP (almacenada de forma anonimizada) y tu navegador. <link>Más información</link>.",
+    "decline": "Rechazar",
+    "accept": "Aceptar"
+  }
+}

@@ -25,7 +25,7 @@ export interface PostFormValues {
   translations: Record<PostLocale, LocaleFields>;
 }
 
-const LOCALES: PostLocale[] = ["en", "fr"];
+const LOCALES: PostLocale[] = ["en", "fr", "es"];
 
 interface PostFormProps {
   values: PostFormValues;
