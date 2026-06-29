@@ -4,7 +4,8 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
 import { isServerIndexable, serverPath } from "@/lib/server-url";
-import { redirect } from "@/i18n/navigation";
+import { getPathname } from "@/i18n/navigation";
+import { permanentRedirect } from "next/navigation";
 
 // ISR — la metadata (OG, title, description) est rebuild toutes les 10 minutes
 // au lieu d'être re-fetched à chaque requête (P.4.3 ; remplace force-dynamic).
@@ -125,9 +126,11 @@ const Layout = async ({
 }) => {
   const { locale, serverId, serverName } = await params;
 
-  // Collapse every non-canonical spelling of a server URL (raw display name, wrong
-  // slug, missing slug) onto the canonical slug with a redirect, so Google stops
-  // bucketing the variants as "duplicate without user-selected canonical".
+  // The slug after the id is purely cosmetic — the page only reads serverId — so
+  // every spelling (raw display name, wrong slug, missing slug) serves identical
+  // content. Collapse them onto the canonical slug with a permanent (308) redirect
+  // so Google transfers signals and stops bucketing the variants as
+  // "duplicate without user-selected canonical".
   let canonicalPath: string | null = null;
   try {
     const { server } = await getServer(Number(serverId));
@@ -139,7 +142,8 @@ const Layout = async ({
   if (canonicalPath) {
     const requestedPath = `/servers/${serverId}${serverName?.length ? `/${serverName.join("/")}` : ""}`;
     if (requestedPath !== canonicalPath) {
-      redirect({ href: canonicalPath, locale });
+      // getPathname re-adds the locale prefix (as-needed) that permanentRedirect needs.
+      permanentRedirect(getPathname({ href: canonicalPath, locale }));
     }
   }
 
