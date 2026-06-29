@@ -23,6 +23,7 @@ export interface Server {
   user: User;
   createdAt: Date;
   lastOnlineAt: Date | null;
+  lastStatsAt: Date | null;
   lastPlayerCount: number | null;
   lastMaxCount: number | null;
   peakPlayerCount: number | null;

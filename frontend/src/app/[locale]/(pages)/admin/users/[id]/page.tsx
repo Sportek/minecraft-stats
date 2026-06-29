@@ -10,6 +10,7 @@ import { Badge, BadgeProps } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth";
 import { AdminUserDetailResponse, getAdminUserDetail } from "@/http/user";
+import { serverPath } from "@/lib/server-url";
 import { RegistrationProvider } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link } from "@/i18n/navigation";
@@ -274,7 +275,7 @@ const AdminUserDetailPage = () => {
                       <ServerImage imageUrl={server.imageUrl ?? ""} name={server.name} className="h-10 w-10" />
                       <div className="min-w-0 flex-1">
                         <Link
-                          href={`/servers/${server.id}/${server.name}`}
+                          href={serverPath(server.id, server.name)}
                           className="block truncate text-sm font-semibold text-foreground transition-colors hover:text-accent"
                         >
                           {server.name}
@@ -306,7 +307,7 @@ const AdminUserDetailPage = () => {
                         {formatDate(server.createdAt)}
                       </div>
                       <Link
-                        href={`/servers/${server.id}/${server.name}`}
+                        href={serverPath(server.id, server.name)}
                         aria-label={t("users.detail.viewServer")}
                         title={t("users.detail.view")}
                         className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
