@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "title": "{name} - Estadísticas y análisis del servidor de Minecraft",
+    "description": "Sigue {name}, un servidor de Minecraft {categories} con {playerCount} jugadores en línea. Estadísticas en tiempo real, gráficos del número de jugadores y tendencias de crecimiento. Idiomas: {languages}.",
+    "notFoundTitle": "Servidor no encontrado - Estadísticas de servidores de Minecraft",
+    "notFoundDescription": "No se pudo encontrar el servidor de Minecraft solicitado. Explora otros servidores de Minecraft y sus estadísticas."
+  },
+  "card": {
+    "edit": "Editar servidor",
+    "favorite": {
+      "add": "Añadir a favoritos",
+      "remove": "Quitar de favoritos",
+      "limitTitle": "Límite de favoritos alcanzado",
+      "limitDescription": "Puedes fijar hasta {max} servidores. Quita uno antes de añadir otro."
+    },
+    "address": {
+      "copy": "Copiar la dirección del servidor",
+      "copied": "Dirección copiada",
+      "clickToCopy": "Haz clic para copiar",
+      "copiedShort": "¡Copiado!"
+    },
+    "website": {
+      "visit": "Visitar {host}"
+    },
+    "status": {
+      "growthTooltip": "Esto compara el número medio de jugadores de esta semana con la media de los últimos 30 días. Los valores positivos indican crecimiento."
+    }
+  },
+  "chart": {
+    "players": "jugadores"
+  },
+  "stats": {
+    "intervalNote": "Según el intervalo seleccionado, actualmente {count, plural, one {# punto de datos} other {# puntos de datos}}.",
+    "peakPlayers": "Pico de jugadores (récord)",
+    "lowestPlayers": "Mínimo de jugadores",
+    "averagePlayers": "Media de jugadores",
+    "medianPlayers": "Mediana de jugadores",
+    "dataSince": "Datos desde",
+    "trackedBy": "Seguido por"
+  },
+  "detail": {
+    "playersOnline": "Jugadores en línea",
+    "breadcrumbAria": "Ruta de navegación",
+    "breadcrumb": "Servidores",
+    "loading": "Cargando los datos del servidor…",
+    "history": {
+      "title": "Historial del número de jugadores",
+      "subtitle": "Jugadores en línea a lo largo del tiempo."
+    },
+    "notFound": {
+      "title": "Servidor no encontrado",
+      "description": "El servidor que buscas no existe o ha sido eliminado.",
+      "backHome": "Volver al inicio"
+    }
+  },
+  "faq": {
+    "heading": "Preguntas frecuentes",
+    "join": {
+      "question": "¿Cómo me uno al servidor de Minecraft {name}?",
+      "answer": "Para unirte a {name}, abre Minecraft y usa la dirección del servidor: {address}. Haz clic en «Multijugador» en el menú principal, luego en «Añadir servidor», pega la dirección y haz clic en «Listo» para guardarla. A continuación, selecciona el servidor y haz clic en «Unirse al servidor» para conectarte."
+    },
+    "playersOnline": {
+      "question": "¿Cuántos jugadores hay en línea en {name}?",
+      "answer": "Actualmente, {count, plural, one {hay # jugador} other {hay # jugadores}} en línea en {name} de una capacidad máxima de {maxPlayers} jugadores. Puedes consultar las estadísticas de jugadores en tiempo real y los datos históricos en esta página."
+    },
+    "version": {
+      "question": "¿Qué versión de Minecraft admite {name}?",
+      "answerKnown": "{name} funciona con la versión {version} de Minecraft. Asegúrate de que tu cliente de Minecraft sea compatible con esta versión para unirte al servidor.",
+      "answerUnknown": "{name} admite varias versiones de Minecraft. Consulta la información del servidor más arriba para conocer los detalles de la versión actual."
+    },
+    "online": {
+      "question": "¿Está {name} en línea y accesible?",
+      "answer": "Sí, {name} se supervisa actualmente cada 10 minutos. Las últimas estadísticas indican que el servidor está {active, select, true {en línea con jugadores activos} other {en línea}}. El historial de disponibilidad y del número de jugadores está disponible en esta página."
+    },
+    "statistics": {
+      "question": "¿Puedo ver las estadísticas de jugadores de {name}?",
+      "answer": "Sí, esta página ofrece estadísticas completas de {name}, incluido el número actual de jugadores, el número máximo de jugadores, las tendencias históricas de jugadores, las estadísticas de crecimiento diarias y semanales, y la supervisión de la disponibilidad del servidor. Las estadísticas se actualizan cada 10 minutos."
+    }
+  },
+  "edit": {
+    "loading": "Cargando el servidor…",
+    "heroTitle": "Editar servidor",
+    "heroBadge": "Editar",
+    "heroSubtitle": "Actualiza los detalles y los ajustes de seguimiento de tu servidor.",
+    "detailsTitle": "Detalles del servidor",
+    "detailsSubtitle": "Actualiza los detalles, las categorías y los idiomas de tu servidor."
+  }
+}

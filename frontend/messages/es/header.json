@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "servers": "Servidores",
+    "blog": "Blog",
+    "api": "API"
+  },
+  "actions": {
+    "addServer": "Añadir un servidor",
+    "addYourServer": "Añade tu servidor",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "createAccount": "Crear una cuenta",
+    "dashboard": "Panel de control"
+  },
+  "a11y": {
+    "userMenu": "Menú de usuario",
+    "userAvatar": "Avatar de usuario",
+    "openMenu": "Abrir el menú de navegación",
+    "closeMenu": "Cerrar el menú de navegación",
+    "navigationMenu": "Menú de navegación",
+    "mainNav": "Principal"
+  },
+  "mobile": {
+    "navigation": "Navegación",
+    "account": "Cuenta",
+    "apiDocs": "Documentación de la API",
+    "theme": "Tema",
+    "connected": "Conectado"
+  }
+}

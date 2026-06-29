@@ -10,14 +10,14 @@ import { defineRouting } from "next-intl/routing";
  * Any unlisted host (e.g. localhost) falls back to the top-level config below.
  */
 export const routing = defineRouting({
-  locales: ["fr", "en"],
+  locales: ["fr", "en", "es"],
   defaultLocale: "fr",
   localePrefix: "as-needed",
   domains: [
-    { domain: "minecraft-stats.fr", defaultLocale: "fr", locales: ["fr", "en"] },
-    { domain: "minecraft-stats.com", defaultLocale: "en", locales: ["fr", "en"] },
-    { domain: "staging.minecraft-stats.fr", defaultLocale: "fr", locales: ["fr", "en"] },
-    { domain: "staging.minecraft-stats.com", defaultLocale: "en", locales: ["fr", "en"] },
+    { domain: "minecraft-stats.fr", defaultLocale: "fr", locales: ["fr", "en", "es"] },
+    { domain: "minecraft-stats.com", defaultLocale: "en", locales: ["fr", "en", "es"] },
+    { domain: "staging.minecraft-stats.fr", defaultLocale: "fr", locales: ["fr", "en", "es"] },
+    { domain: "staging.minecraft-stats.com", defaultLocale: "en", locales: ["fr", "en", "es"] },
   ],
 });
 

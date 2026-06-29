@@ -1,7 +1,7 @@
 import type { LocaleFields, PostFormValues } from "@/components/admin/post-form";
 import type { AdminPost, CreatePostInput, PostLocale, PostTranslationInput } from "@/types/post";
 
-export const POST_LOCALES: PostLocale[] = ["en", "fr"];
+export const POST_LOCALES: PostLocale[] = ["en", "fr", "es"];
 
 export function slugify(text: string): string {
   return text
@@ -14,17 +14,25 @@ function emptyLocaleFields(): LocaleFields {
   return { title: "", slug: "", excerpt: "", content: "" };
 }
 
+/** A blank field set for every supported locale, so the form always has a tab per locale. */
+function emptyTranslations(): Record<PostLocale, LocaleFields> {
+  return Object.fromEntries(POST_LOCALES.map((locale) => [locale, emptyLocaleFields()])) as Record<
+    PostLocale,
+    LocaleFields
+  >;
+}
+
 export function emptyPostFormValues(defaultLocale: PostLocale = "en"): PostFormValues {
   return {
     defaultLocale,
     coverImage: "",
-    translations: { en: emptyLocaleFields(), fr: emptyLocaleFields() },
+    translations: emptyTranslations(),
   };
 }
 
 /** Hydrate the form from an admin post (edit screen). */
 export function postFormValuesFromAdmin(post: AdminPost): PostFormValues {
-  const translations = { en: emptyLocaleFields(), fr: emptyLocaleFields() };
+  const translations = emptyTranslations();
   for (const translation of post.translations) {
     translations[translation.locale] = {
       title: translation.title,

@@ -16,7 +16,7 @@ function toJsonLd(data: unknown): string {
 }
 
 // Short UI locale (next-intl) → BCP47 tag for schema.org `inLanguage`.
-const BCP47: Record<string, string> = { fr: "fr-FR", en: "en-US" };
+const BCP47: Record<string, string> = { fr: "fr-FR", en: "en-US", es: "es-ES" };
 
 function bcp47(locale?: string): string {
   return BCP47[locale ?? ""] ?? "en-US";

@@ -7,8 +7,15 @@ import { z } from "zod";
 // on the client (forms are client components), so configuring the global Zod locale
 // here is safe — no cross-request state on the server. Set synchronously on render
 // so the active locale is in effect before any form schema parses.
+const ZOD_LOCALES = {
+  fr: z.locales.fr,
+  es: z.locales.es,
+  en: z.locales.en,
+} as const;
+
 export function ZodLocaleConfig() {
   const locale = useLocale();
-  z.config(locale === "fr" ? z.locales.fr() : z.locales.en());
+  const zodLocale = ZOD_LOCALES[locale as keyof typeof ZOD_LOCALES] ?? z.locales.en;
+  z.config(zodLocale());
   return null;
 }
