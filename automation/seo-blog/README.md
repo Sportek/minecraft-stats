@@ -1,10 +1,10 @@
 # SEO Blog Automation
 
 A scheduled Claude agent that writes **one SEO blog article per week — in every language the site
-supports (English + French)** — and creates it as a single **draft** for review (it never
+supports (English + French + Spanish)** — and creates it as a single **draft** for review (it never
 auto-publishes). It picks topics itself: it looks at what's already on the blog (via the
 Minecraft-Stats MCP), chooses the least-covered content type, and generates a fresh, data-backed
-topic, written natively in English then translated to French.
+topic, written natively in English then translated to French and Spanish.
 
 ## Files
 - `PLAYBOOK.md` — the instructions the agent follows every run. Edit this to change behaviour.

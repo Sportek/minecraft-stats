@@ -1,0 +1,30 @@
+{
+  "title": "Blog",
+  "description": "Últimas noticias, servidores destacados y novedades del desarrollo.",
+  "news": "Noticias",
+  "recentStories": "Artículos recientes",
+  "empty": "No se encontraron artículos.",
+  "readArticle": "Leer artículo",
+  "readMoreArticles": "Leer más artículos",
+  "backToBlog": "Volver al blog",
+  "viewsCount": "{count, plural, one {# visualización} other {# visualizaciones}}",
+  "pagination": {
+    "label": "Paginación del blog",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {currentPage} de {lastPage}"
+  },
+  "feedback": {
+    "prompt": "¿Te resultó útil este artículo?",
+    "thanks": "¡Gracias por tu opinión!",
+    "yes": "Sí",
+    "no": "No",
+    "error": "Algo salió mal. Por favor, inténtalo de nuevo."
+  },
+  "notFound": {
+    "title": "Artículo no encontrado",
+    "description": "El artículo que buscas no existe o ha sido eliminado.",
+    "metaTitle": "Artículo no encontrado",
+    "metaDescription": "El artículo solicitado no existe"
+  }
+}

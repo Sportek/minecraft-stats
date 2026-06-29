@@ -1,0 +1,24 @@
+{
+  "tagline": "El directorio de servidores de Minecraft gratuito y de código abierto, con estadísticas de jugadores en tiempo real e historial completo.",
+  "sections": {
+    "product": "Producto",
+    "resources": "Recursos",
+    "company": "Empresa"
+  },
+  "links": {
+    "allServers": "Todos los servidores",
+    "addServer": "Añadir un servidor",
+    "blog": "Blog",
+    "apiDocs": "Documentación de la API",
+    "github": "GitHub",
+    "community": "Comunidad",
+    "about": "Acerca de",
+    "contact": "Contacto",
+    "privacy": "Política de privacidad",
+    "terms": "Condiciones de servicio"
+  },
+  "copyright": "© {year} Minecraft Stats. No afiliado a Mojang.",
+  "craftedWith": "Hecho con",
+  "craftedBy": "por",
+  "domainDonatedBy": "Nombre de dominio donado por"
+}
