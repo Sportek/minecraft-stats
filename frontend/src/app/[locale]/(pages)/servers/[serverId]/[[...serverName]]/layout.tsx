@@ -3,6 +3,8 @@ import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
+import { isServerIndexable, serverPath } from "@/lib/server-url";
+import { redirect } from "@/i18n/navigation";
 
 // ISR — la metadata (OG, title, description) est rebuild toutes les 10 minutes
 // au lieu d'être re-fetched à chaque requête (P.4.3 ; remplace force-dynamic).
@@ -23,11 +25,9 @@ export const generateMetadata = async (props: {
     const languages = server.server.languages.map((l) => l.name).join(", ");
     const imageUrl = `${assetsBase}${server.server.imageUrl}.webp`;
 
-    // Create a clean slug for the canonical URL
-    const slug = server.server.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    // Dead servers (no successful ping for a month) are thin pages Google drops as
+    // "crawled, currently not indexed". Tell it explicitly rather than letting it guess.
+    const indexable = isServerIndexable(server.server.lastStatsAt);
 
     const title = t("meta.title", { name: server.server.name });
     const description = t("meta.description", {
@@ -39,7 +39,7 @@ export const generateMetadata = async (props: {
 
     const { canonical, languages: alternateLanguages } = buildAlternates(
       params.locale,
-      `/servers/${server.server.id}/${slug}`,
+      serverPath(server.server.id, server.server.name),
     );
     const og = getOpenGraphLocales(params.locale);
 
@@ -86,10 +86,10 @@ export const generateMetadata = async (props: {
         languages: alternateLanguages,
       },
       robots: {
-        index: true,
+        index: indexable,
         follow: true,
         googleBot: {
-          index: true,
+          index: indexable,
           follow: true,
           'max-video-preview': -1,
           'max-image-preview': 'large',
@@ -116,7 +116,33 @@ export const generateMetadata = async (props: {
   }
 };
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string; serverId: string; serverName?: string[] }>;
+}) => {
+  const { locale, serverId, serverName } = await params;
+
+  // Collapse every non-canonical spelling of a server URL (raw display name, wrong
+  // slug, missing slug) onto the canonical slug with a redirect, so Google stops
+  // bucketing the variants as "duplicate without user-selected canonical".
+  let canonicalPath: string | null = null;
+  try {
+    const { server } = await getServer(Number(serverId));
+    canonicalPath = serverPath(server.id, server.name);
+  } catch {
+    // Unknown/unreachable server — let the client page render its not-found state.
+  }
+
+  if (canonicalPath) {
+    const requestedPath = `/servers/${serverId}${serverName?.length ? `/${serverName.join("/")}` : ""}`;
+    if (requestedPath !== canonicalPath) {
+      redirect({ href: canonicalPath, locale });
+    }
+  }
+
   return <>{children}</>;
 };
 
