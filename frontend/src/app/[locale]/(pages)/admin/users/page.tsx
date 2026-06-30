@@ -6,8 +6,8 @@ import DashboardStatTile from "@/components/account/dashboard-stat-tile";
 import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import { Badge, BadgeProps } from "@/components/ui/badge";
+import { AvatarTile } from "@/components/ui/avatar-tile";
 import { Input } from "@/components/ui/input";
-import { LetterTile } from "@/components/ui/letter-tile";
 import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
@@ -225,7 +225,11 @@ const AdminUsersPage = () => {
                   href={`/admin/users/${u.id}`}
                   className="group flex min-w-0 flex-1 items-center gap-3"
                 >
-                  <LetterTile name={u.username} className="h-10 w-10 rounded-md text-sm" />
+                  <AvatarTile
+                    name={u.username}
+                    src={u.avatarUrl}
+                    className="h-10 w-10 rounded-md text-sm"
+                  />
                   <div className="min-w-0">
                     <p className="truncate font-medium text-foreground transition-colors group-hover:text-accent">
                       {u.username}
