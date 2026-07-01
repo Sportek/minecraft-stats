@@ -56,7 +56,7 @@ const GlobalInsightSection = () => {
   const apiUrl = getClientApiUrl();
 
   const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
-  const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("30 Minutes");
+  const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("1 Hour");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

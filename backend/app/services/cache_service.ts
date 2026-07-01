@@ -100,6 +100,18 @@ export default class CacheService {
   }
 
   /**
+   * Snappe un timestamp epoch ms sur une grille (défaut 5 min = TTL du cache stats)
+   * pour stabiliser les clés de cache. Les clients ancrent leurs bornes sur
+   * `Date.now()` (précis à la ms), ce qui rendait chaque requête unique → 0% de hit
+   * et un recalcul complet à chaque chargement. La granularité des données étant de
+   * 10 min, arrondir la fenêtre de quelques minutes est invisible pour l'utilisateur.
+   */
+  static quantizeEpochMs(epochMs: number, gridSeconds = 300): number {
+    const gridMs = gridSeconds * 1000
+    return Math.floor(epochMs / gridMs) * gridMs
+  }
+
+  /**
    * Génère une clé stable depuis un objet de params (ordre indépendant).
    */
   static hashParams(prefix: string, params: Record<string, unknown>): string {

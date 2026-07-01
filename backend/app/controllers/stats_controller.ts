@@ -39,6 +39,15 @@ export default class StatsController {
       return response.status(200).json(results)
     }
 
+    // Snappe les bornes sur la grille de cache : sans ça, `Date.now()` côté client
+    // rend chaque requête unique et le cache ne sert jamais (cf. quantizeEpochMs).
+    if (validatedData.fromDate) {
+      validatedData.fromDate = CacheService.quantizeEpochMs(validatedData.fromDate)
+    }
+    if (validatedData.toDate) {
+      validatedData.toDate = CacheService.quantizeEpochMs(validatedData.toDate)
+    }
+
     const key = `stats:${validatedData.server_id}:${validatedData.fromDate ?? 0}:${validatedData.toDate ?? 0}:${validatedData.interval ?? 'raw'}`
     const results = await CacheService.cacheOrFetch(
       key,
@@ -67,6 +76,16 @@ export default class StatsController {
   async globalStats(ctx: HttpContext) {
     const { request, response } = ctx
     const validatedData = await GlobalStatValidator.validate(request.qs())
+
+    // Snappe les bornes sur la grille de cache : sans ça, `Date.now()` côté client
+    // rend chaque requête unique et le cache ne sert jamais (cf. quantizeEpochMs).
+    if (validatedData.fromDate) {
+      validatedData.fromDate = CacheService.quantizeEpochMs(validatedData.fromDate)
+    }
+    if (validatedData.toDate) {
+      validatedData.toDate = CacheService.quantizeEpochMs(validatedData.toDate)
+    }
+
     const key = CacheService.hashParams('global-stats', validatedData)
     const results = await CacheService.cacheOrFetch(
       key,
