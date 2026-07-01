@@ -6,6 +6,7 @@ import TurnstileService from '#services/turnstile_service'
 import env from '#start/env'
 import {
   ChangePasswordValidator,
+  ChangeUsernameValidator,
   CreateUserValidator,
   ForgotPasswordValidator,
   LoginUserValidator,
@@ -246,6 +247,25 @@ export default class AuthController {
     )
 
     return response.ok(user)
+  }
+
+  /**
+   * @changeUsername
+   * @operationId changeUsername
+   * @tag AUTH
+   * @summary Change the authenticated user's username
+   * @description Updates the display username of the currently authenticated user. Usernames are not unique. Requires authentication. Returns the updated user (including their own email).
+   * @requestBody <ChangeUsernameValidator>
+   * @responseBody 200 - {"user": {"id": 1, "username": "new_name", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
+   * @responseBody 422 - {"errors": [{"message": "The username field must have at least 3 characters", "rule": "minLength", "field": "username"}]}
+   */
+  async changeUsername({ request, response, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const { username } = await ChangeUsernameValidator.validate(request.only(['username']))
+    user.username = username
+    await user.save()
+    return response.ok({ user: { ...user.serialize(), email: user.email } })
   }
 
   /**

@@ -36,6 +36,12 @@ export const ChangePasswordValidator = vine.compile(
   })
 )
 
+export const ChangeUsernameValidator = vine.compile(
+  vine.object({
+    username: vine.string().trim().minLength(3).maxLength(254),
+  })
+)
+
 export const ForgotPasswordValidator = vine.compile(
   vine.object({
     email: vine.string().email().maxLength(254),

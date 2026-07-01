@@ -103,7 +103,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 108
+            "example": 985
           },
           "name": {
             "type": "string",
@@ -123,7 +123,7 @@
           },
           "weight": {
             "type": "number",
-            "example": 910
+            "example": 572
           },
           "show_on_home": {
             "type": "boolean",
@@ -176,11 +176,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 955
+            "example": 326
           },
           "advertisement_id": {
             "type": "number",
-            "example": 209
+            "example": 401
           },
           "type": {
             "$ref": "#/components/schemas/'impression'",
@@ -192,7 +192,7 @@
           },
           "server_id": {
             "type": "number",
-            "example": 444
+            "example": 904
           },
           "target_url": {
             "type": "string",
@@ -216,7 +216,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 132
+            "example": 640
           },
           "name": {
             "type": "string",
@@ -241,7 +241,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 53
+            "example": 739
           },
           "code": {
             "$ref": "#/components/schemas/LanguageCode",
@@ -274,15 +274,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 256
+            "example": 97
           },
           "visitor_id": {
             "type": "number",
-            "example": 798
+            "example": 903
           },
           "user_id": {
             "type": "number",
-            "example": 800
+            "example": 116
           },
           "path": {
             "type": "string",
@@ -298,7 +298,7 @@
           },
           "duration_ms": {
             "type": "number",
-            "example": 656
+            "example": 846
           },
           "created_at": {
             "type": "string",
@@ -322,7 +322,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 434
+            "example": 462
           },
           "cover_image": {
             "type": "string",
@@ -334,7 +334,7 @@
           },
           "view_count": {
             "type": "number",
-            "example": 795
+            "example": 877
           },
           "default_locale": {
             "type": "string",
@@ -347,7 +347,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 918
+            "example": 250
           },
           "author": {
             "$ref": "#/components/schemas/User",
@@ -379,15 +379,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 745
+            "example": 702
           },
           "post_id": {
             "type": "number",
-            "example": 507
+            "example": 439
           },
           "user_id": {
             "type": "number",
-            "example": 686
+            "example": 577
           },
           "visitor_id": {
             "type": "string",
@@ -424,11 +424,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 863
+            "example": 301
           },
           "post_id": {
             "type": "number",
-            "example": 325
+            "example": 568
           },
           "locale": {
             "type": "string",
@@ -473,7 +473,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 332
+            "example": 243
           },
           "name": {
             "type": "string",
@@ -485,7 +485,7 @@
           },
           "port": {
             "type": "number",
-            "example": 391
+            "example": 565
           },
           "type": {
             "$ref": "#/components/schemas/ServerType",
@@ -525,7 +525,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 968
+            "example": 676
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -556,11 +556,11 @@
           },
           "last_player_count": {
             "type": "number",
-            "example": 253
+            "example": 415
           },
           "last_max_count": {
             "type": "number",
-            "example": 6
+            "example": 512
           },
           "last_stats_at": {
             "type": "string",
@@ -569,7 +569,7 @@
           },
           "peak_player_count": {
             "type": "number",
-            "example": 28
+            "example": 324
           },
           "peak_player_at": {
             "type": "string",
@@ -600,27 +600,27 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 778
+            "example": 780
           },
           "weekly_growth": {
             "type": "number",
-            "example": 296
+            "example": 551
           },
           "monthly_growth": {
             "type": "number",
-            "example": 954
+            "example": 150
           },
           "last_week_average": {
             "type": "number",
-            "example": 921
+            "example": 906
           },
           "previous_week_average": {
             "type": "number",
-            "example": 611
+            "example": 835
           },
           "last_month_average": {
             "type": "number",
-            "example": 442
+            "example": 773
           },
           "last_updated": {
             "type": "string",
@@ -636,7 +636,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 16
+            "example": 70
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -644,15 +644,15 @@
           },
           "server_id": {
             "type": "number",
-            "example": 649
+            "example": 476
           },
           "player_count": {
             "type": "number",
-            "example": 831
+            "example": 302
           },
           "max_count": {
             "type": "number",
-            "example": 564
+            "example": 715
           },
           "created_at": {
             "type": "string",
@@ -668,7 +668,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 696
+            "example": 319
           },
           "date": {
             "type": "string",
@@ -677,15 +677,15 @@
           },
           "http_requests": {
             "type": "number",
-            "example": 133
+            "example": 263
           },
           "http_errors": {
             "type": "number",
-            "example": 361
+            "example": 421
           },
           "unique_visitors": {
             "type": "number",
-            "example": 619
+            "example": 148
           },
           "countries": {
             "$ref": "#/components/schemas/Record<string, number>",
@@ -710,7 +710,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 332
+            "example": 681
           },
           "username": {
             "type": "string",
@@ -763,7 +763,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 695
+            "example": 935
           },
           "uuid": {
             "type": "string",
@@ -814,15 +814,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 515
+            "example": 242
           },
           "visitor_id": {
             "type": "number",
-            "example": 6
+            "example": 11
           },
           "user_id": {
             "type": "number",
-            "example": 977
+            "example": 962
           },
           "linked_at": {
             "type": "string",
@@ -857,7 +857,7 @@
           },
           "type": {
             "type": "number",
-            "example": 618,
+            "example": 892,
             "choices": [
               "custom",
               "network"
@@ -900,13 +900,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 464
+              "example": 517
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 618,
+          "type": 892,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -915,7 +915,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            464
+            517
           ]
         },
         "description": "CreateAdvertisementValidator (Validator)"
@@ -931,7 +931,7 @@
           },
           "type": {
             "type": "number",
-            "example": 86,
+            "example": 370,
             "choices": [
               "custom",
               "network"
@@ -973,13 +973,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 131
+              "example": 66
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 86,
+          "type": 370,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -988,7 +988,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            131
+            66
           ]
         },
         "description": "UpdateAdvertisementValidator (Validator)"
@@ -1034,7 +1034,7 @@
           },
           "durationMs": {
             "type": "number",
-            "example": 713,
+            "example": 512,
             "maximum": 86400000
           }
         },
@@ -1043,7 +1043,7 @@
           "path": "Lorem Ipsum",
           "referrer": "Lorem Ipsum",
           "title": "Lorem Ipsum",
-          "durationMs": 713
+          "durationMs": 512
         },
         "description": "TrackPageViewValidator (Validator)"
       },
@@ -1059,13 +1059,13 @@
           },
           "expiresInDays": {
             "type": "number",
-            "example": 543,
+            "example": 528,
             "maximum": 3650
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "expiresInDays": 543
+          "expiresInDays": 528
         },
         "description": "CreateApiTokenValidator (Validator)"
       },
@@ -1074,12 +1074,12 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 683,
+            "example": 840,
             "required": true
           }
         },
         "example": {
-          "id": 683
+          "id": 840
         },
         "description": "CategoryIdValidator (Validator)"
       },
@@ -1102,7 +1102,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 233,
+            "example": 629,
             "required": true
           },
           "name": {
@@ -1112,7 +1112,7 @@
           }
         },
         "example": {
-          "id": 233,
+          "id": 629,
           "name": "Lorem Ipsum"
         },
         "description": "UpdateCategoryValidator (Validator)"
@@ -1122,15 +1122,15 @@
         "properties": {
           "fromDate": {
             "type": "number",
-            "example": 575
+            "example": 787
           },
           "toDate": {
             "type": "number",
-            "example": 424
+            "example": 831
           },
           "interval": {
             "type": "number",
-            "example": 161,
+            "example": 527,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -1142,19 +1142,19 @@
           },
           "categoryId": {
             "type": "number",
-            "example": 242
+            "example": 867
           },
           "languageId": {
             "type": "number",
-            "example": 356
+            "example": 443
           }
         },
         "example": {
-          "fromDate": 575,
-          "toDate": 424,
-          "interval": 161,
-          "categoryId": 242,
-          "languageId": 356
+          "fromDate": 787,
+          "toDate": 831,
+          "interval": 527,
+          "categoryId": 867,
+          "languageId": 443
         },
         "description": "GlobalStatValidator (Validator)"
       },
@@ -1163,7 +1163,7 @@
         "properties": {
           "defaultLocale": {
             "type": "number",
-            "example": 938,
+            "example": 319,
             "choices": [
               "fr",
               "en",
@@ -1183,7 +1183,7 @@
               "properties": {
                 "locale": {
                   "type": "number",
-                  "example": 946,
+                  "example": 243,
                   "choices": [
                     "fr",
                     "en",
@@ -1212,7 +1212,7 @@
                 },
                 "excerpt": {
                   "type": "number",
-                  "example": 522,
+                  "example": 286,
                   "maximum": 500
                 }
               }
@@ -1241,11 +1241,11 @@
           }
         },
         "example": {
-          "defaultLocale": 938,
+          "defaultLocale": 319,
           "coverImage": "Lorem Ipsum",
           "translations": [
             {
-              "locale": 946,
+              "locale": 243,
               "title": "Lorem Ipsum",
               "slug": "Lorem Ipsum",
               "content": "Lorem Ipsum",
@@ -1265,13 +1265,13 @@
           },
           "serverId": {
             "type": "number",
-            "example": 846,
+            "example": 835,
             "required": true
           }
         },
         "example": {
           "placeholderName": "Lorem Ipsum",
-          "serverId": 846
+          "serverId": 835
         },
         "description": "PreviewPlaceholderValidator (Validator)"
       },
@@ -1329,7 +1329,7 @@
         "properties": {
           "defaultLocale": {
             "type": "number",
-            "example": 769,
+            "example": 708,
             "choices": [
               "fr",
               "en",
@@ -1348,7 +1348,7 @@
               "properties": {
                 "locale": {
                   "type": "number",
-                  "example": 822,
+                  "example": 350,
                   "choices": [
                     "fr",
                     "en",
@@ -1375,7 +1375,7 @@
                 },
                 "excerpt": {
                   "type": "number",
-                  "example": 987,
+                  "example": 147,
                   "maximum": 500
                 }
               }
@@ -1403,11 +1403,11 @@
           }
         },
         "example": {
-          "defaultLocale": 769,
+          "defaultLocale": 708,
           "coverImage": "Lorem Ipsum",
           "translations": [
             {
-              "locale": 822,
+              "locale": 350,
               "title": "Lorem Ipsum",
               "slug": "Lorem Ipsum",
               "content": "Lorem Ipsum",
@@ -1439,7 +1439,7 @@
           },
           "type": {
             "type": "number",
-            "example": 493,
+            "example": 810,
             "choices": [
               "java",
               "bedrock"
@@ -1453,7 +1453,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 870
+              "example": 433
             },
             "required": true,
             "properties": {
@@ -1479,7 +1479,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 363
+              "example": 355
             },
             "required": true
           }
@@ -1488,7 +1488,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 493,
+          "type": 810,
           "imageUrl": "Lorem Ipsum",
           "categories": [
             "Lorem Ipsum"
@@ -1497,7 +1497,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            363
+            355
           ]
         },
         "description": "CreateServerValidator (Validator)"
@@ -1521,7 +1521,7 @@
           },
           "type": {
             "type": "number",
-            "example": 91,
+            "example": 85,
             "choices": [
               "java",
               "bedrock"
@@ -1535,7 +1535,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 883
+              "example": 452
             },
             "properties": {
               "items": {
@@ -1560,7 +1560,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 331
+              "example": 197
             }
           }
         },
@@ -1568,7 +1568,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 91,
+          "type": 85,
           "imageUrl": "Lorem Ipsum",
           "categories": [
             "Lorem Ipsum"
@@ -1577,7 +1577,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            331
+            197
           ]
         },
         "description": "UpdateServerValidator (Validator)"
@@ -1587,18 +1587,18 @@
         "properties": {
           "serverId": {
             "type": "number",
-            "example": 853,
+            "example": 883,
             "required": true
           },
           "categoryId": {
             "type": "number",
-            "example": 298,
+            "example": 741,
             "required": true
           }
         },
         "example": {
-          "serverId": 853,
-          "categoryId": 298
+          "serverId": 883,
+          "categoryId": 741
         },
         "description": "attachServerCategoryValidator (Validator)"
       },
@@ -1607,24 +1607,24 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 332,
+            "example": 180,
             "required": true
           },
           "exactTime": {
             "type": "number",
-            "example": 519
+            "example": 190
           },
           "fromDate": {
             "type": "number",
-            "example": 224
+            "example": 659
           },
           "toDate": {
             "type": "number",
-            "example": 15
+            "example": 754
           },
           "interval": {
             "type": "number",
-            "example": 452,
+            "example": 832,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -1636,11 +1636,11 @@
           }
         },
         "example": {
-          "server_id": 332,
-          "exactTime": 519,
-          "fromDate": 224,
-          "toDate": 15,
-          "interval": 452
+          "server_id": 180,
+          "exactTime": 190,
+          "fromDate": 659,
+          "toDate": 754,
+          "interval": 832
         },
         "description": "StatValidator (Validator)"
       },
@@ -1667,6 +1667,22 @@
           "newPassword": "Lorem Ipsum"
         },
         "description": "ChangePasswordValidator (Validator)"
+      },
+      "ChangeUsernameValidator": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 3,
+            "maxLength": 254
+          }
+        },
+        "example": {
+          "username": "Lorem Ipsum"
+        },
+        "description": "ChangeUsernameValidator (Validator)"
       },
       "CreateUserValidator": {
         "type": "object",
@@ -1864,10 +1880,10 @@
                 "example": [
                   {
                     "server": {
-                      "id": 332,
+                      "id": 243,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 391,
+                      "port": 565,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -1877,12 +1893,12 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 968,
+                      "user_id": 676,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 253,
-                      "last_max_count": 6,
+                      "last_player_count": 415,
+                      "last_max_count": 512,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 28,
+                      "peak_player_count": 324,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "created_at": "2021-03-23T16:13:08.489+01:00",
@@ -1892,12 +1908,12 @@
                       "<Category>"
                     ],
                     "growthStat": {
-                      "server_id": 778,
-                      "weekly_growth": 296,
-                      "monthly_growth": 954,
-                      "last_week_average": 921,
-                      "previous_week_average": 611,
-                      "last_month_average": 442,
+                      "server_id": 780,
+                      "weekly_growth": 551,
+                      "monthly_growth": 150,
+                      "last_week_average": 906,
+                      "previous_week_average": 835,
+                      "last_month_average": 773,
                       "last_updated": "2021-03-23T16:13:08.489+01:00"
                     }
                   }
@@ -3557,6 +3573,144 @@
         }
       }
     },
+    "/api/v1/change-username": {
+      "post": {
+        "summary": "Change the authenticated user's username (changeUsername)",
+        "description": "Updates the display username of the currently authenticated user. Usernames are not unique. Requires authentication. Returns the updated user (including their own email).\n\n _app/controllers/auth_controller.ts_ - **changeUsername**",
+        "operationId": "changeUsername",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": 1,
+                        "username": "new_name",
+                        "email": "player@example.com",
+                        "verified": true,
+                        "provider": "",
+                        "role": "user",
+                        "avatarUrl": "",
+                        "createdAt": "2026-05-28T12:00:00.000Z",
+                        "updatedAt": "2026-05-28T12:00:00.000Z"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "user": {
+                    "id": 1,
+                    "username": "new_name",
+                    "email": "player@example.com",
+                    "verified": true,
+                    "provider": "",
+                    "role": "user",
+                    "avatarUrl": "",
+                    "createdAt": "2026-05-28T12:00:00.000Z",
+                    "updatedAt": "2026-05-28T12:00:00.000Z"
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "Unauthorized access"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "Unauthorized access"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "The username field must have at least 3 characters",
+                            "rule": "minLength",
+                            "field": "username"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "The username field must have at least 3 characters",
+                      "rule": "minLength",
+                      "field": "username"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **422** (Unprocessable Entity) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeUsernameValidator"
+              },
+              "example": {
+                "username": "Lorem Ipsum"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/account/avatar": {
       "post": {
         "summary": "Upload the authenticated user's avatar (updateAvatar)",
@@ -4023,7 +4177,7 @@
               },
               "example": {
                 "name": "Lorem Ipsum",
-                "expiresInDays": 543
+                "expiresInDays": 528
               }
             }
           }
@@ -5584,6 +5738,10 @@
     {
       "name": "WEBSITE-STATS",
       "description": "Everything related to WEBSITE-STATS"
+    },
+    {
+      "name": "AUTH",
+      "description": "Everything related to AUTH"
     },
     {
       "name": "AUTH",
