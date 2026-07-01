@@ -11,6 +11,7 @@
     "invalidVerificationToken": "Jeton de vérification invalide",
     "verificationTokenExpired": "Jeton de vérification expiré",
     "emailAlreadyRegistered": "E-mail déjà enregistré",
+    "usernameTaken": "Ce nom d'utilisateur est déjà pris",
     "invalidOldPassword": "Ancien mot de passe incorrect",
     "passwordResetSent": "Si un compte correspond à cet e-mail, un lien de réinitialisation a été envoyé.",
     "passwordResetSuccess": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.",

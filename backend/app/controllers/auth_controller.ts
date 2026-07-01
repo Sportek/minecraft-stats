@@ -173,6 +173,7 @@ export default class AuthController {
    * @responseBody 200 - {"id": 1, "username": "player", "verified": false, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}
    * @responseBody 400 - {"message": "Captcha verification failed"}
    * @responseBody 400 - {"message": "Email already registered"}
+   * @responseBody 400 - {"message": "This username is already taken"}
    * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
    */
   async register({ request, response, i18n }: HttpContext) {
@@ -184,6 +185,8 @@ export default class AuthController {
     const user = await User.findBy('email', validatedUserData.email)
     if (user)
       return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyRegistered') })
+    if (await User.isUsernameTaken(validatedUserData.username))
+      return response.badRequest({ message: i18n.t('messages.auth.usernameTaken') })
     const newUser = await User.create(validatedUserData)
     const jwtToken = jwt.sign(
       { email: newUser.email, verificationToken: newUser.verificationToken },
@@ -257,12 +260,15 @@ export default class AuthController {
    * @description Updates the display username of the currently authenticated user. Usernames are not unique. Requires authentication. Returns the updated user (including their own email).
    * @requestBody <ChangeUsernameValidator>
    * @responseBody 200 - {"user": {"id": 1, "username": "new_name", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 400 - {"message": "This username is already taken"}
    * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
    * @responseBody 422 - {"errors": [{"message": "The username field must have at least 3 characters", "rule": "minLength", "field": "username"}]}
    */
-  async changeUsername({ request, response, auth }: HttpContext) {
+  async changeUsername({ request, response, auth, i18n }: HttpContext) {
     const user = auth.getUserOrFail()
     const { username } = await ChangeUsernameValidator.validate(request.only(['username']))
+    if (await User.isUsernameTaken(username, user.id))
+      return response.badRequest({ message: i18n.t('messages.auth.usernameTaken') })
     user.username = username
     await user.save()
     return response.ok({ user: { ...user.serialize(), email: user.email } })
@@ -387,16 +393,20 @@ export default class AuthController {
         message: i18n.t('messages.auth.oauthError'),
       })
 
-    const user = await User.firstOrCreate(
-      { email: discordUser.email },
-      {
-        username: discordUser.nickName,
+    // Find-or-create manuel (plutôt que firstOrCreate) : le pseudo Discord peut
+    // entrer en collision avec un username existant, donc on en dérive un unique
+    // à la création pour ne pas violer l'index unique lower(username).
+    let user = await User.findBy('email', discordUser.email)
+    if (!user) {
+      user = await User.create({
+        email: discordUser.email,
+        username: await User.generateUniqueUsername(discordUser.nickName),
         password: Math.random().toString(36).slice(2),
         verified: discordUser.emailVerificationState === 'verified',
         provider: 'discord',
         avatarUrl: discordUser.avatarUrl,
-      }
-    )
+      })
+    }
 
     if (user.provider !== 'discord')
       return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })
@@ -453,16 +463,20 @@ export default class AuthController {
         message: i18n.t('messages.auth.oauthError'),
       })
 
-    const user = await User.firstOrCreate(
-      { email: googleUser.email },
-      {
-        username: googleUser.name,
+    // Find-or-create manuel (plutôt que firstOrCreate) : le nom Google peut entrer
+    // en collision avec un username existant, donc on en dérive un unique à la
+    // création pour ne pas violer l'index unique lower(username).
+    let user = await User.findBy('email', googleUser.email)
+    if (!user) {
+      user = await User.create({
+        email: googleUser.email,
+        username: await User.generateUniqueUsername(googleUser.name),
         password: Math.random().toString(36).slice(2),
         verified: true,
         provider: 'google',
         avatarUrl: googleUser.avatarUrl,
-      }
-    )
+      })
+    }
 
     if (user.provider !== 'google')
       return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })

@@ -11,6 +11,7 @@
     "invalidVerificationToken": "Invalid verification token",
     "verificationTokenExpired": "Verification token expired",
     "emailAlreadyRegistered": "Email already registered",
+    "usernameTaken": "This username is already taken",
     "invalidOldPassword": "Invalid old password",
     "passwordResetSent": "If an account matches this email, a password reset link has been sent.",
     "passwordResetSuccess": "Your password has been reset. You can now sign in.",
