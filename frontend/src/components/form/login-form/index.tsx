@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
 import { Turnstile, isTurnstileEnabled } from "@/components/form/turnstile";
 import { useAuth } from "@/contexts/auth";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -100,6 +101,12 @@ const LoginForm: FC<LoginFormProps> = ({ className, ...props }) => {
               </FormItem>
             )}
           />
+
+          <div className="flex justify-end">
+            <Link href="/forgot-password" className="text-sm font-medium text-accent hover:underline">
+              {t("login.forgotPassword")}
+            </Link>
+          </div>
 
           <Turnstile key={captchaKey} onToken={setCaptchaToken} className="flex justify-center" />
 

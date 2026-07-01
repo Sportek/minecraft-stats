@@ -97,6 +97,12 @@ router
       .post('/verify-email', '#controllers/auth_controller.verifyEmail')
       .use([throttleLight('verify-email', 5), NO_STORE])
     router
+      .post('/forgot-password', '#controllers/auth_controller.forgotPassword')
+      .use([throttleLight('forgot-password', 3), NO_STORE])
+    router
+      .post('/reset-password', '#controllers/auth_controller.resetPassword')
+      .use([throttleLight('reset-password', 5), NO_STORE])
+    router
       .get('/me', '#controllers/auth_controller.retrieveUser')
       .use(middleware.auth())
       .use([throttleLight('me', 5), NO_STORE])

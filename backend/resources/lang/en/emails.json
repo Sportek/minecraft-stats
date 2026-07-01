@@ -8,5 +8,17 @@
     "viewInBrowser": "View this email in your browser",
     "footerReason": "You are receiving this email advertisement because you registered with Minecraft-Stats.fr.",
     "copyright": "© Minecraft-Stats.fr, All Rights Reserved."
+  },
+  "resetPassword": {
+    "subject": "Reset your password",
+    "title": "Reset your Minecraft-Stats.fr password",
+    "greeting": "Hi {username},",
+    "intro": "We received a request to reset the password for your account. Click the button below to choose a new password.",
+    "cta": "Reset my password",
+    "expiry": "This link will expire in 1 hour for your security.",
+    "ignore": "If you didn't request a password reset, you can safely ignore this email — your password won't change.",
+    "viewInBrowser": "View this email in your browser",
+    "footerReason": "You are receiving this email because a password reset was requested for your Minecraft-Stats.fr account.",
+    "copyright": "© Minecraft-Stats.fr, All Rights Reserved."
   }
 }
