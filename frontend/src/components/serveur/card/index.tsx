@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation";
+import { serverPath } from "@/lib/server-url";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import ServerImage from "./server-image";
 import ServerInfo from "./server-info";
@@ -20,7 +21,7 @@ interface ServerCardProps {
 const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart = true }: ServerCardProps) => {
   return (
     <Link
-      href={`/servers/${server.id}/${server.name}`}
+      href={serverPath(server.id, server.name)}
       className="group relative flex h-full w-full flex-col gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground shadow-xs transition-all duration-150 ease-in-out hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md"
     >
       <ServerActions server={server} />

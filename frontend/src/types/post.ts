@@ -1,6 +1,6 @@
 import { User } from './auth'
 
-export type PostLocale = 'fr' | 'en'
+export type PostLocale = 'fr' | 'en' | 'es'
 
 export interface Post {
   id: number

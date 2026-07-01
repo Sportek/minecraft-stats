@@ -3,7 +3,8 @@
   "language": "Langue",
   "languageName": {
     "fr": "Français",
-    "en": "Anglais"
+    "en": "Anglais",
+    "es": "Espagnol"
   },
   "notFound": {
     "title": "Page introuvable",

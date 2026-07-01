@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "Panel de control",
+    "profile": "Perfil",
+    "myServers": "Mis servidores",
+    "addServer": "Añadir servidor",
+    "apiTokens": "Tokens de API",
+    "articles": "Artículos",
+    "analytics": "Estadísticas de tráfico",
+    "users": "Usuarios",
+    "advertisements": "Anuncios"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "error": "Error",
+    "cancel": "Cancelar",
+    "somethingWentWrong": "Algo salió mal"
+  },
+  "avatar": {
+    "change": "Cambiar foto de perfil",
+    "tooLargeTitle": "Imagen demasiado grande",
+    "tooLargeDescription": "El tamaño máximo es de 5 MB.",
+    "updated": "Foto de perfil actualizada",
+    "uploadFailed": "Error al subir"
+  },
+  "dangerZone": {
+    "heading": "Zona de peligro"
+  },
+  "addServer": {
+    "title": "Añadir servidor",
+    "badge": "Nuevo",
+    "subtitle": "Haz seguimiento en directo del número de jugadores y de la disponibilidad de un nuevo servidor de Minecraft.",
+    "detailsTitle": "Detalles del servidor",
+    "detailsSubtitle": "Consultaremos la dirección cada 10 minutos para mantener las estadísticas actualizadas."
+  },
+  "apiTokens": {
+    "loadError": "No se pudieron cargar los tokens",
+    "createError": "No se pudo crear el token",
+    "revokeError": "No se pudo revocar el token",
+    "revokeConfirm": "¿Revocar «{name}»? Cualquier cliente que lo utilice dejará de funcionar.",
+    "revoked": "Token revocado",
+    "title": "Tokens de API",
+    "subtitle": "Crea un token para permitir que un cliente automatizado actúe en tu nombre a través de la API.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Bot de blog SEO",
+    "expiryLabel": "Caduca (días)",
+    "creating": "Creando…",
+    "create": "Crear token",
+    "copyWarning": "Copia este token ahora — no se volverá a mostrar.",
+    "yourTokens": "Tus tokens",
+    "empty": "Todavía no tienes ningún token de API.",
+    "meta": "Creado {created} · Último uso {lastUsed} · Caduca {expires}"
+  },
+  "myServers": {
+    "removedTitle": "Servidor eliminado",
+    "removedDescription": "{name} ya no se está siguiendo.",
+    "removeErrorTitle": "No se pudo eliminar el servidor",
+    "removeErrorDescription": "Se produjo un error.",
+    "title": "Mis servidores",
+    "subtitle": "Los servidores que posees y cuyas estadísticas en directo sigues.",
+    "badge": "{count} seguidos",
+    "addServer": "Añadir servidor",
+    "totalServers": "Total de servidores",
+    "onlineNow": "En línea ahora",
+    "offline": "Sin conexión",
+    "playersTracked": "Jugadores seguidos",
+    "trackedServers": "Servidores seguidos",
+    "emptyTitle": "Aún no hay servidores",
+    "emptyDescription": "Añade un servidor para empezar a seguir su número de jugadores.",
+    "addFirst": "Añade tu primer servidor",
+    "online": "En línea",
+    "offlineStatus": "Sin conexión",
+    "peak": "pico {count}",
+    "view": "Ver servidor",
+    "viewTitle": "Ver",
+    "edit": "Editar servidor",
+    "editTitle": "Editar",
+    "delete": "Eliminar servidor",
+    "deleteTitle": "Eliminar",
+    "dialogTitle": "¿Dejar de seguir este servidor?",
+    "dialogDescription": "<b>{name}</b> se eliminará de tu panel de control junto con su seguimiento. Esta acción no se puede deshacer.",
+    "removing": "Eliminando…",
+    "remove": "Eliminar servidor"
+  },
+  "settings": {
+    "roles": {
+      "user": "Miembro",
+      "writer": "Redactor",
+      "admin": "Administrador"
+    },
+    "logoutAllConfirm": "¿Cerrar sesión en todos los dispositivos? Esto revoca todas las sesiones activas, incluida esta.",
+    "sessionsRevokedTitle": "Se han revocado todas las sesiones",
+    "sessionsRevokedDescription": "Se ha cerrado tu sesión en todos los dispositivos.",
+    "memberSince": "{email} · Miembro desde {date}",
+    "yourInformation": "Tu información",
+    "readOnly": "Solo lectura",
+    "username": "Nombre de usuario",
+    "email": "Correo electrónico",
+    "role": "Rol",
+    "registeredAt": "Registrado el",
+    "managePassword": "Gestionar contraseña",
+    "managePasswordSubtitle": "Elige una contraseña segura que no uses en ningún otro sitio.",
+    "dangerTitle": "Cerrar sesión en todos los dispositivos",
+    "dangerDescription": "Cierra sesión en todas las sesiones activas, incluida esta. Usa esta opción si sospechas que tu cuenta ha sido comprometida.",
+    "loggingOut": "Cerrando sesión…",
+    "logoutEverywhere": "Cerrar sesión en todas partes"
+  }
+}

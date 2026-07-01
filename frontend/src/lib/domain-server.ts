@@ -79,6 +79,8 @@ export async function getBackendUrl(): Promise<string> {
 const LOCALE_HOME: Record<string, string> = {
   fr: "https://minecraft-stats.fr",
   en: "https://minecraft-stats.com",
+  // Spanish has no dedicated domain: it is served prefixed on the international (.com) host.
+  es: "https://minecraft-stats.com/es",
 };
 
 /**
@@ -105,10 +107,9 @@ export async function getLocaleFreePathname(): Promise<string> {
 
 /** hreflang map (locale → absolute URL) for a locale-free path. */
 export function alternateLanguages(path: string = ""): Record<string, string> {
-  return {
-    fr: `${LOCALE_HOME.fr}${path}`,
-    en: `${LOCALE_HOME.en}${path}`,
-  };
+  return Object.fromEntries(
+    Object.entries(LOCALE_HOME).map(([locale, home]) => [locale, `${home}${path}`]),
+  );
 }
 
 export function buildAlternates(locale: string, path: string = ""): { canonical: string; languages: Record<string, string> } {
@@ -159,12 +160,15 @@ export function buildAlternatesForSlugs(
   return { canonical, languages };
 }
 
-// OpenGraph wants the underscore form; our locale tokens are the short fr/en.
-const OG_LOCALE: Record<string, string> = { fr: "fr_FR", en: "en_US" };
+// OpenGraph wants the underscore form; our locale tokens are the short fr/en/es.
+const OG_LOCALE: Record<string, string> = { fr: "fr_FR", en: "en_US", es: "es_ES" };
 
-export function getOpenGraphLocales(locale: string): { locale: string; alternateLocale: string } {
+export function getOpenGraphLocales(locale: string): { locale: string; alternateLocale: string[] } {
   return {
     locale: OG_LOCALE[locale] ?? OG_LOCALE.en,
-    alternateLocale: locale === "fr" ? OG_LOCALE.en : OG_LOCALE.fr,
+    // Every other supported locale is an alternate of the current one.
+    alternateLocale: routing.locales
+      .filter((loc) => loc !== locale)
+      .map((loc) => OG_LOCALE[loc] ?? OG_LOCALE.en),
   };
 }
