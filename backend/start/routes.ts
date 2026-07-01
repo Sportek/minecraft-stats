@@ -20,7 +20,11 @@ const PUBLIC_LONG = cacheHeaders({ maxAge: 3600 })
 const NO_STORE = cacheHeaders({ noStore: true })
 
 router.get('/swagger', async () => {
-  return AutoSwagger.default.docs(router.toJSON(), swagger)
+  // On sert le spec en JSON plutôt qu'en YAML : le sérialiseur YAML d'AutoSwagger ne met
+  // pas entre guillemets les clés de mapping commençant par `%` (ex. les jetons de
+  // placeholder `%PLAYER_COUNT_REALTIME_125%`), ce qui produit un YAML invalide et empêche
+  // Scalar (/docs) comme le serveur MCP de charger la doc. JSON gère ces clés nativement.
+  return AutoSwagger.default.json(router.toJSON(), swagger)
 })
 
 router.get('/docs', async () => {
