@@ -43,6 +43,42 @@ export const verifyEmail = async (credentials: { token: string }) => {
   return response.json() as Promise<User>;
 };
 
+export const requestPasswordReset = async (credentials: { email: string; turnstileToken?: string | null }) => {
+  const response = await fetch(`${getBaseUrl()}/forgot-password`, {
+    method: "POST",
+    headers: {
+      ...localeHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<{ message: string }>;
+};
+
+export const resetPassword = async (credentials: { token: string; password: string }) => {
+  const response = await fetch(`${getBaseUrl()}/reset-password`, {
+    method: "POST",
+    headers: {
+      ...localeHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<{ message: string }>;
+};
+
 export const loginUser = async (credentials: {
   email: string;
   password: string;
@@ -104,6 +140,26 @@ export const changeUserPassword = async (credentials: { oldPassword: string; new
   }
 
   return response.json() as Promise<User>;
+};
+
+export const changeUsername = async (credentials: { username: string }, token: string) => {
+  const response = await fetch(`${getBaseUrl()}/change-username`, {
+    method: "POST",
+    headers: {
+      ...localeHeaders(),
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    const errorMessage = await getErrorMessage(response);
+    throw new Error(errorMessage);
+  }
+
+  const body = (await response.json()) as { user: User };
+  return body.user;
 };
 
 export const uploadUserAvatar = async (file: File, token: string) => {

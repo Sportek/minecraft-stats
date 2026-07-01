@@ -1,3 +1,4 @@
+import ResetPasswordNotification from '#mails/reset_password_notification'
 import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
 import ImageStorageService from '#services/image_storage_service'
@@ -5,14 +6,18 @@ import TurnstileService from '#services/turnstile_service'
 import env from '#start/env'
 import {
   ChangePasswordValidator,
+  ChangeUsernameValidator,
   CreateUserValidator,
+  ForgotPasswordValidator,
   LoginUserValidator,
+  ResetPasswordValidator,
   VerifyEmailValidator,
 } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 import jwt from 'jsonwebtoken'
 import { DateTime } from 'luxon'
+import { createHash, randomBytes } from 'node:crypto'
 import fs from 'node:fs/promises'
 
 export default class AuthController {
@@ -83,6 +88,82 @@ export default class AuthController {
   }
 
   /**
+   * @forgotPassword
+   * @operationId forgotPassword
+   * @tag AUTH
+   * @summary Request a password reset email
+   * @description Sends a password reset link to the account matching the given email, when one exists. To prevent account enumeration the endpoint always returns the same 200 response whether or not an account was found. A reset link is only sent for verified, non-OAuth accounts; the emailed token is high-entropy and only its hash is stored server-side, expiring after 1 hour.
+   * @requestBody <ForgotPasswordValidator>
+   * @responseBody 200 - {"message": "If an account matches this email, a password reset link has been sent."}
+   * @responseBody 400 - {"message": "Captcha verification failed"}
+   * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
+   */
+  async forgotPassword({ request, response, i18n }: HttpContext) {
+    if (!(await TurnstileService.verify(request.input('turnstileToken'), request.ip()))) {
+      return response.badRequest({ message: i18n.t('messages.auth.captchaFailed') })
+    }
+    const { email } = await ForgotPasswordValidator.validate(request.only(['email']))
+    const user = await User.findBy('email', email)
+
+    // Anti-énumération : la réponse est toujours identique. On n'envoie le mail que
+    // pour un compte local vérifié — les comptes OAuth n'ont pas de mot de passe
+    // utilisable (le login les rejette), un reset ne leur servirait à rien.
+    if (user && user.verified && !user.provider) {
+      // Token brut fort envoyé par mail ; seul son hash SHA-256 est persisté, donc
+      // une fuite de la table ne permet pas de forger un reset. Valide 1h.
+      const rawToken = randomBytes(32).toString('base64url')
+      user.passwordResetToken = createHash('sha256').update(rawToken).digest('hex')
+      user.passwordResetTokenExpires = DateTime.now().plus({ hours: 1 })
+      await user.save()
+      await mail.sendLater(new ResetPasswordNotification(user, rawToken, i18n.locale))
+    }
+
+    return response.ok({ message: i18n.t('messages.auth.passwordResetSent') })
+  }
+
+  /**
+   * @resetPassword
+   * @operationId resetPassword
+   * @tag AUTH
+   * @summary Reset a password using an emailed token
+   * @description Validates the reset token from the emailed link (matched against the stored hash and its 1-hour expiry), sets the new password, clears the token so it cannot be reused, and revokes every existing session of the account. Invalid and expired tokens return the same generic error to avoid leaking token state.
+   * @requestBody <ResetPasswordValidator>
+   * @responseBody 200 - {"message": "Your password has been reset. You can now sign in."}
+   * @responseBody 400 - {"message": "This password reset link is invalid or has expired."}
+   * @responseBody 422 - {"errors": [{"message": "The password field must have at least 8 characters", "rule": "minLength", "field": "password"}]}
+   */
+  async resetPassword({ request, response, i18n }: HttpContext) {
+    const { token, password } = await ResetPasswordValidator.validate(
+      request.only(['token', 'password'])
+    )
+
+    const tokenHash = createHash('sha256').update(token).digest('hex')
+    const user = await User.findBy('password_reset_token', tokenHash)
+
+    // Message unique pour token inconnu OU expiré : on ne distingue pas les deux.
+    if (
+      !user ||
+      !user.passwordResetTokenExpires ||
+      user.passwordResetTokenExpires < DateTime.now()
+    ) {
+      return response.badRequest({ message: i18n.t('messages.auth.invalidResetToken') })
+    }
+
+    user.password = password
+    user.passwordResetToken = null
+    user.passwordResetTokenExpires = null
+    await user.save()
+
+    // Un reset invalide tous les accès précédents (sécurité en cas de compromission).
+    const tokens = await User.accessTokens.all(user)
+    await Promise.all(
+      tokens.map((accessToken) => User.accessTokens.delete(user, accessToken.identifier))
+    )
+
+    return response.ok({ message: i18n.t('messages.auth.passwordResetSuccess') })
+  }
+
+  /**
    * @register
    * @operationId register
    * @tag AUTH
@@ -92,6 +173,7 @@ export default class AuthController {
    * @responseBody 200 - {"id": 1, "username": "player", "verified": false, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}
    * @responseBody 400 - {"message": "Captcha verification failed"}
    * @responseBody 400 - {"message": "Email already registered"}
+   * @responseBody 400 - {"message": "This username is already taken"}
    * @responseBody 422 - {"errors": [{"message": "The email field must be a valid email address", "rule": "email", "field": "email"}]}
    */
   async register({ request, response, i18n }: HttpContext) {
@@ -103,6 +185,8 @@ export default class AuthController {
     const user = await User.findBy('email', validatedUserData.email)
     if (user)
       return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyRegistered') })
+    if (await User.isUsernameTaken(validatedUserData.username))
+      return response.badRequest({ message: i18n.t('messages.auth.usernameTaken') })
     const newUser = await User.create(validatedUserData)
     const jwtToken = jwt.sign(
       { email: newUser.email, verificationToken: newUser.verificationToken },
@@ -166,6 +250,28 @@ export default class AuthController {
     )
 
     return response.ok(user)
+  }
+
+  /**
+   * @changeUsername
+   * @operationId changeUsername
+   * @tag AUTH
+   * @summary Change the authenticated user's username
+   * @description Updates the display username of the currently authenticated user. Usernames are not unique. Requires authentication. Returns the updated user (including their own email).
+   * @requestBody <ChangeUsernameValidator>
+   * @responseBody 200 - {"user": {"id": 1, "username": "new_name", "email": "player@example.com", "verified": true, "provider": "", "role": "user", "avatarUrl": "", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}}
+   * @responseBody 400 - {"message": "This username is already taken"}
+   * @responseBody 401 - {"errors": [{"message": "Unauthorized access"}]}
+   * @responseBody 422 - {"errors": [{"message": "The username field must have at least 3 characters", "rule": "minLength", "field": "username"}]}
+   */
+  async changeUsername({ request, response, auth, i18n }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const { username } = await ChangeUsernameValidator.validate(request.only(['username']))
+    if (await User.isUsernameTaken(username, user.id))
+      return response.badRequest({ message: i18n.t('messages.auth.usernameTaken') })
+    user.username = username
+    await user.save()
+    return response.ok({ user: { ...user.serialize(), email: user.email } })
   }
 
   /**
@@ -287,16 +393,20 @@ export default class AuthController {
         message: i18n.t('messages.auth.oauthError'),
       })
 
-    const user = await User.firstOrCreate(
-      { email: discordUser.email },
-      {
-        username: discordUser.nickName,
+    // Find-or-create manuel (plutôt que firstOrCreate) : le pseudo Discord peut
+    // entrer en collision avec un username existant, donc on en dérive un unique
+    // à la création pour ne pas violer l'index unique lower(username).
+    let user = await User.findBy('email', discordUser.email)
+    if (!user) {
+      user = await User.create({
+        email: discordUser.email,
+        username: await User.generateUniqueUsername(discordUser.nickName),
         password: Math.random().toString(36).slice(2),
         verified: discordUser.emailVerificationState === 'verified',
         provider: 'discord',
         avatarUrl: discordUser.avatarUrl,
-      }
-    )
+      })
+    }
 
     if (user.provider !== 'discord')
       return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })
@@ -353,16 +463,20 @@ export default class AuthController {
         message: i18n.t('messages.auth.oauthError'),
       })
 
-    const user = await User.firstOrCreate(
-      { email: googleUser.email },
-      {
-        username: googleUser.name,
+    // Find-or-create manuel (plutôt que firstOrCreate) : le nom Google peut entrer
+    // en collision avec un username existant, donc on en dérive un unique à la
+    // création pour ne pas violer l'index unique lower(username).
+    let user = await User.findBy('email', googleUser.email)
+    if (!user) {
+      user = await User.create({
+        email: googleUser.email,
+        username: await User.generateUniqueUsername(googleUser.name),
         password: Math.random().toString(36).slice(2),
         verified: true,
         provider: 'google',
         avatarUrl: googleUser.avatarUrl,
-      }
-    )
+      })
+    }
 
     if (user.provider !== 'google')
       return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })

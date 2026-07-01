@@ -444,6 +444,79 @@ export default class StatsService {
     return results.map(this.convertToCamelCase)
   }
 
+  /**
+   * Variante horaire de `getGlobalStats` : agrège depuis `server_stats_hourly`.
+   * Par (server, bucket) on pondère l'avg par `samples_count` (comme le path
+   * par-serveur) et on prend le MAX de la capacité, puis on somme par bucket
+   * sur l'ensemble des serveurs. Bien moins de lignes scannées que sur le brut.
+   */
+  private static async getGlobalStatsHourly(params: {
+    intervalSeconds: number
+    fromDateSql: string
+    toDateSql: string
+    categoryId?: number
+    languageId?: number
+  }) {
+    let joins = ''
+    const whereClauses: string[] = ['sh.hour BETWEEN :fromDate AND :toDate']
+
+    if (params.categoryId) {
+      joins += ` INNER JOIN server_categories sc ON sh.server_id = sc.server_id `
+      whereClauses.push('sc.category_id = :categoryId')
+    }
+    if (params.languageId) {
+      joins += ` INNER JOIN server_languages sl ON sh.server_id = sl.server_id `
+      whereClauses.push('sl.language_id = :languageId')
+    }
+
+    const { intervalSeconds } = params
+    const rawQuery = `
+      WITH per_server_bucket AS (
+        SELECT
+          sh.server_id,
+          to_timestamp(
+            floor(extract(epoch from sh.hour) / ${intervalSeconds}) * ${intervalSeconds}
+          ) AS bucket,
+          ROUND(
+            SUM(sh.avg_player_count::bigint * sh.samples_count)::numeric /
+            NULLIF(SUM(sh.samples_count), 0)
+          ) AS player_count,
+          MAX(sh.max_player_count) AS max_count
+        FROM server_stats_hourly sh
+        ${joins}
+        WHERE ${whereClauses.join(' AND ')}
+        GROUP BY sh.server_id, bucket
+      )
+      SELECT
+        bucket AS created_at,
+        SUM(player_count)::bigint AS player_count,
+        SUM(max_count)::bigint AS max_count
+      FROM per_server_bucket
+      GROUP BY bucket
+      ORDER BY bucket
+    `
+
+    const bindings: Record<string, string | number> = {
+      fromDate: params.fromDateSql,
+      toDate: params.toDateSql,
+    }
+    if (params.categoryId) bindings.categoryId = params.categoryId
+    if (params.languageId) bindings.languageId = params.languageId
+
+    const result = await Database.rawQuery(rawQuery, bindings)
+    return result.rows.map(
+      (row: {
+        created_at: string | Date
+        player_count: string | number
+        max_count: string | number
+      }) => ({
+        createdAt: row.created_at,
+        playerCount: Number(row.player_count),
+        maxCount: Number(row.max_count),
+      })
+    )
+  }
+
   static async getGlobalStats(params: {
     fromDate?: number
     toDate?: number
@@ -503,6 +576,21 @@ export default class StatsService {
     // Expression "bucket" calculée une seule fois ; partition idem.
     // En l'absence d'interval, bucket = created_at (chaque ligne est son propre bucket).
     const intervalSeconds = params.interval ? this.intervalToSeconds(params.interval) : null
+
+    // Routage vers la table horaire pré-agrégée (P.4.1) pour les plages longues à
+    // interval ≥ 1h : on lit `server_stats_hourly` au lieu de scanner tout le brut.
+    // Fallback transparent sur le brut si la range n'est pas encore backfillée.
+    if (intervalSeconds && this.shouldUseHourlyTable(intervalSeconds, fromDateSql, toDateSql)) {
+      const hourlyRows = await this.getGlobalStatsHourly({
+        intervalSeconds,
+        fromDateSql: fromDateSql!,
+        toDateSql: toDateSql!,
+        categoryId: params.categoryId,
+        languageId: params.languageId,
+      })
+      if (hourlyRows.length > 0) return hourlyRows
+      logger.warn(params, 'hourly global stats empty for range — falling back to server_stats')
+    }
     const bucketExpr = intervalSeconds
       ? `to_timestamp(floor(extract(epoch from ss.created_at) / ${intervalSeconds}) * ${intervalSeconds})`
       : 'ss.created_at'

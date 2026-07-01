@@ -1,6 +1,7 @@
 "use client";
 
 import ChangePasswordForm from "@/components/form/change-password-form";
+import ChangeUsernameForm from "@/components/form/change-username-form";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
 import DangerZoneCard from "@/components/account/danger-zone-card";
@@ -8,7 +9,7 @@ import InfoField from "@/components/account/info-field";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
-import { KeyRound, User as UserIcon } from "lucide-react";
+import { KeyRound, User as UserIcon, UserCog } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -83,6 +84,20 @@ const SettingsPage = () => {
             label={t("settings.registeredAt")}
             value={`${format.dateTime(createdAt, { dateStyle: "medium" })} ${format.dateTime(createdAt, { timeStyle: "short" })}`}
           />
+        </div>
+      </section>
+
+      {/* Manage username */}
+      <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+        <div className="flex items-center gap-2.5 border-b border-border px-6 py-4">
+          <UserCog className="h-5 w-5 shrink-0 text-muted-foreground" />
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold tracking-tight text-foreground">{t("settings.manageUsername")}</h2>
+            <p className="text-sm text-muted-foreground">{t("settings.manageUsernameSubtitle")}</p>
+          </div>
+        </div>
+        <div className="px-6 py-5">
+          <ChangeUsernameForm />
         </div>
       </section>
 

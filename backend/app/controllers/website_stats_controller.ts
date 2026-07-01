@@ -1,5 +1,6 @@
 import Server from '#models/server'
-import ServerStat from '#models/server_stat'
+import CacheService from '#services/cache_service'
+import Database from '@adonisjs/lucid/services/db'
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 
@@ -18,18 +19,32 @@ export default class WebsiteStatsController {
    * @responseBody 200 - {"totalRecords": 1234567, "totalServers": 320, "playersOnline": 48210}
    */
   async index({ response }: HttpContext) {
-    const onlineSince = DateTime.now().minus({ minutes: ONLINE_WINDOW_MINUTES }).toSQL()
+    const stats = await CacheService.cacheOrFetch('website-stats', 300, async () => {
+      const onlineSince = DateTime.now().minus({ minutes: ONLINE_WINDOW_MINUTES }).toSQL()
 
-    const [recordsRow, serversRow, playersRow] = await Promise.all([
-      ServerStat.query().count('* as total'),
-      Server.query().count('* as total'),
-      Server.query().where('last_stats_at', '>=', onlineSince!).sum('last_player_count as total'),
-    ])
+      const [recordsRow, serversRow, playersRow] = await Promise.all([
+        // `totalRecords` est un compteur vitrine (« lignes de données ») affiché en
+        // millions. Un COUNT(*) exact scanne toute la table time-series (plusieurs
+        // secondes) ; on lit l'estimation du planner (reltuples, tenue à jour par
+        // autovacuum) qui est quasi instantanée et suffisamment précise pour l'usage.
+        Database.rawQuery(
+          `SELECT reltuples::bigint AS total FROM pg_class WHERE oid = 'server_stats'::regclass`
+        ),
+        Server.query().count('* as total'),
+        Server.query().where('last_stats_at', '>=', onlineSince!).sum('last_player_count as total'),
+      ])
 
-    return response.json({
-      totalRecords: Number(recordsRow[0].$extras.total),
-      totalServers: Number(serversRow[0].$extras.total),
-      playersOnline: Number(playersRow[0].$extras.total ?? 0),
+      // reltuples vaut -1 tant qu'aucun ANALYZE n'a tourné (table fraîche) : on
+      // clampe à 0 pour ne jamais renvoyer un total négatif.
+      const estimatedRecords = Number(recordsRow.rows[0]?.total ?? 0)
+
+      return {
+        totalRecords: Math.max(0, estimatedRecords),
+        totalServers: Number(serversRow[0].$extras.total),
+        playersOnline: Number(playersRow[0].$extras.total ?? 0),
+      }
     })
+
+    return response.json(stats)
   }
 }

@@ -1,6 +1,14 @@
 "use client";
 import { getBaseUrl } from "@/app/_cheatcode";
-import { changeUserPassword, getUser, loginUser, logoutAllUser, logoutUser, registerUser } from "@/http/auth";
+import {
+  changeUsername as changeUsernameRequest,
+  changeUserPassword,
+  getUser,
+  loginUser,
+  logoutAllUser,
+  logoutUser,
+  registerUser,
+} from "@/http/auth";
 import { User } from "@/types/auth";
 import { useRouter } from "@/i18n/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
@@ -28,6 +36,7 @@ interface AuthContextProps {
   saveToken: (token: string) => void;
   fetchUser: () => Promise<void>;
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
+  changeUsername: (username: string) => Promise<void>;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   isAuthLoading: boolean;
@@ -187,6 +196,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [getToken]
   );
 
+  const changeUsername = useCallback(
+    async (username: string) => {
+      // Le backend renvoie l'utilisateur à jour : on rafraîchit le cache /me pour
+      // que le hero, les infos et le header reflètent le nouveau nom immédiatement.
+      const updated = await changeUsernameRequest({ username }, getToken() ?? "");
+      setUser(updated);
+    },
+    [getToken, setUser]
+  );
+
   const loginWithDiscord = useCallback(() => {
     router.push(`${getBaseUrl()}/login/discord`);
   }, [router]);
@@ -209,6 +228,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       saveToken,
       fetchUser,
       changePassword,
+      changeUsername,
       isLoggedIn,
       setIsLoggedIn,
       isAuthLoading,
@@ -226,6 +246,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     saveToken,
     fetchUser,
     changePassword,
+    changeUsername,
     isLoggedIn,
     setIsLoggedIn,
     isAuthLoading,

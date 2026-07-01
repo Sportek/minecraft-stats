@@ -78,7 +78,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 269
+          example: 172
         name:
           type: "string"
           example: "John Doe"
@@ -93,7 +93,7 @@ components:
           example: true
         weight:
           type: "number"
-          example: 860
+          example: 721
         show_on_home:
           type: "boolean"
           example: true
@@ -133,10 +133,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 611
+          example: 533
         advertisement_id:
           type: "number"
-          example: 266
+          example: 167
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
@@ -145,7 +145,7 @@ components:
           example: "Lorem Ipsum"
         server_id:
           type: "number"
-          example: 930
+          example: 625
         target_url:
           type: "string"
           example: "Lorem Ipsum"
@@ -163,7 +163,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 528
+          example: 390
         name:
           type: "string"
           example: "John Doe"
@@ -182,7 +182,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 50
+          example: 497
         code:
           $ref: "#/components/schemas/LanguageCode"
           example: null
@@ -201,13 +201,132 @@ components:
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "Language (Model)"
+    PageView:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 448
+        visitor_id:
+          type: "number"
+          example: 835
+        user_id:
+          type: "number"
+          example: 438
+        path:
+          type: "string"
+          example: "Lorem Ipsum"
+        referrer:
+          type: "string"
+          example: "Lorem Ipsum"
+        title:
+          type: "string"
+          example: "Lorem Ipsum"
+        duration_ms:
+          type: "number"
+          example: 832
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        visitor:
+          $ref: "#/components/schemas/Visitor"
+          example: null
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+      description: "PageView (Model)"
     Post:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 429
+          example: 233
+        cover_image:
+          type: "string"
+          example: "Lorem Ipsum"
+        published:
+          type: "boolean"
+          example: true
+        view_count:
+          type: "number"
+          example: 135
+        default_locale:
+          type: "string"
+          example: "Lorem Ipsum"
+        published_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        user_id:
+          type: "number"
+          example: 188
+        author:
+          $ref: "#/components/schemas/User"
+          example: null
+        translations:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PostTranslation"
+            example: null
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Post (Model)"
+    PostFeedback:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 768
+        post_id:
+          type: "number"
+          example: 431
+        user_id:
+          type: "number"
+          example: 660
+        visitor_id:
+          type: "string"
+          example: "Lorem Ipsum"
+        helpful:
+          type: "boolean"
+          example: true
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        post:
+          $ref: "#/components/schemas/Post"
+          example: null
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+      description: "PostFeedback (Model)"
+    PostTranslation:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 121
+        post_id:
+          type: "number"
+          example: 803
+        locale:
+          type: "string"
+          example: "Lorem Ipsum"
         title:
           type: "string"
           example: "Lorem Ipsum"
@@ -220,21 +339,8 @@ components:
         excerpt:
           type: "string"
           example: "Lorem Ipsum"
-        cover_image:
-          type: "string"
-          example: "Lorem Ipsum"
-        published:
-          type: "boolean"
-          example: true
-        published_at:
-          type: "string"
-          example: "2021-03-23T16:13:08.489+01:00"
-          format: "date-time"
-        user_id:
-          type: "number"
-          example: 943
-        author:
-          $ref: "#/components/schemas/User"
+        post:
+          $ref: "#/components/schemas/Post"
           example: null
         created_at:
           type: "string"
@@ -244,14 +350,14 @@ components:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
-      description: "Post (Model)"
+      description: "PostTranslation (Model)"
     Server:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 395
+          example: 59
         name:
           type: "string"
           example: "John Doe"
@@ -260,7 +366,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 406
+          example: 52
         type:
           $ref: "#/components/schemas/ServerType"
           example: null
@@ -285,9 +391,12 @@ components:
         motd_hash:
           type: "string"
           example: "Lorem Ipsum"
+        host_domain:
+          type: "string"
+          example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 484
+          example: 690
         user:
           $ref: "#/components/schemas/User"
           example: null
@@ -310,17 +419,17 @@ components:
           format: "date-time"
         last_player_count:
           type: "number"
-          example: 888
+          example: 75
         last_max_count:
           type: "number"
-          example: 75
+          example: 802
         last_stats_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
         peak_player_count:
           type: "number"
-          example: 260
+          example: 548
         peak_player_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -344,22 +453,22 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 827
+          example: 315
         weekly_growth:
           type: "number"
-          example: 575
+          example: 424
         monthly_growth:
           type: "number"
-          example: 223
+          example: 192
         last_week_average:
           type: "number"
-          example: 438
+          example: 771
         previous_week_average:
           type: "number"
-          example: 817
+          example: 682
         last_month_average:
           type: "number"
-          example: 467
+          example: 738
         last_updated:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -371,31 +480,63 @@ components:
       properties:
         id:
           type: "number"
-          example: 883
+          example: 352
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 0
+          example: 845
         player_count:
           type: "number"
-          example: 844
+          example: 512
         max_count:
           type: "number"
-          example: 916
+          example: 214
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "ServerStat (Model)"
+    TrafficDaily:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 175
+        date:
+          type: "string"
+          example: "2021-03-23"
+          format: "date-time"
+        http_requests:
+          type: "number"
+          example: 405
+        http_errors:
+          type: "number"
+          example: 628
+        unique_visitors:
+          type: "number"
+          example: 955
+        countries:
+          $ref: "#/components/schemas/Record<string, number>"
+          example: null
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "TrafficDaily (Model)"
     User:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 482
+          example: 997
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -429,6 +570,72 @@ components:
             $ref: "#/components/schemas/Post"
             example: null
       description: "User (Model)"
+    Visitor:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 498
+        uuid:
+          type: "string"
+          example: "Lorem Ipsum"
+        ip_hash:
+          type: "string"
+          example: "Lorem Ipsum"
+        user_agent:
+          type: "string"
+          example: "Lorem Ipsum"
+        country:
+          type: "string"
+          example: "United States of America"
+        first_seen_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        last_seen_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        page_views:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PageView"
+            example: null
+        accounts:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/VisitorAccount"
+            example: null
+      description: "Visitor (Model)"
+    VisitorAccount:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 525
+        visitor_id:
+          type: "number"
+          example: 154
+        user_id:
+          type: "number"
+          example: 857
+        linked_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        last_active_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        visitor:
+          $ref: "#/components/schemas/Visitor"
+          example: null
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+      description: "VisitorAccount (Model)"
     CreateAdvertisementValidator:
       type: "object"
       properties:
@@ -440,7 +647,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 615
+          example: 658
           choices:
             - "custom"
             - "network"
@@ -474,10 +681,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 163
+            example: 248
       example:
         name: "Lorem Ipsum"
-        type: 615
+        type: 658
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -486,7 +693,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 163
+          - 248
       description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
       type: "object"
@@ -498,7 +705,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 405
+          example: 639
           choices:
             - "custom"
             - "network"
@@ -531,10 +738,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 914
+            example: 511
       example:
         name: "Lorem Ipsum"
-        type: 405
+        type: 639
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -543,8 +750,50 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 914
+          - 511
       description: "UpdateAdvertisementValidator (Validator)"
+    IdentifyVisitorValidator:
+      type: "object"
+      properties:
+        visitorId:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        visitorId: "Lorem Ipsum"
+      description: "IdentifyVisitorValidator (Validator)"
+    TrackPageViewValidator:
+      type: "object"
+      properties:
+        visitorId:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        path:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 1
+          maxLength: 512
+        referrer:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 2048
+        title:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 512
+        durationMs:
+          type: "number"
+          example: 977
+          maximum: 86400000
+      example:
+        visitorId: "Lorem Ipsum"
+        path: "Lorem Ipsum"
+        referrer: "Lorem Ipsum"
+        title: "Lorem Ipsum"
+        durationMs: 977
+      description: "TrackPageViewValidator (Validator)"
     CreateApiTokenValidator:
       type: "object"
       properties:
@@ -556,21 +805,21 @@ components:
           maxLength: 100
         expiresInDays:
           type: "number"
-          example: 167
+          example: 625
           maximum: 3650
       example:
         name: "Lorem Ipsum"
-        expiresInDays: 167
+        expiresInDays: 625
       description: "CreateApiTokenValidator (Validator)"
     CategoryIdValidator:
       type: "object"
       properties:
         id:
           type: "number"
-          example: 113
+          example: 115
           required: true
       example:
-        id: 113
+        id: 115
       description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
       type: "object"
@@ -587,14 +836,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 218
+          example: 527
           required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
           required: true
       example:
-        id: 218
+        id: 527
         name: "Lorem Ipsum"
       description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
@@ -602,13 +851,13 @@ components:
       properties:
         fromDate:
           type: "number"
-          example: 751
+          example: 793
         toDate:
           type: "number"
-          example: 445
+          example: 319
         interval:
           type: "number"
-          example: 412
+          example: 861
           choices:
             - "30 minutes"
             - "1 hour"
@@ -618,50 +867,89 @@ components:
             - "1 week"
         categoryId:
           type: "number"
-          example: 172
+          example: 283
         languageId:
           type: "number"
-          example: 443
+          example: 35
       example:
-        fromDate: 751
-        toDate: 445
-        interval: 412
-        categoryId: 172
-        languageId: 443
+        fromDate: 793
+        toDate: 319
+        interval: 861
+        categoryId: 283
+        languageId: 35
       description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
       type: "object"
       properties:
-        title:
-          type: "string"
-          example: "Lorem Ipsum"
+        defaultLocale:
+          type: "number"
+          example: 232
+          choices:
+            - "fr"
+            - "en"
+            - "es"
           required: true
-          minLength: 3
-          maxLength: 255
-        slug:
-          type: "string"
-          example: "Lorem Ipsum"
-          minLength: 3
-          maxLength: 255
-        content:
-          type: "string"
-          example: "Lorem Ipsum"
-          required: true
-          minLength: 10
-        excerpt:
-          type: "string"
-          example: "Lorem Ipsum"
-          maxLength: 500
         coverImage:
           type: "string"
           example: "Lorem Ipsum"
           maxLength: 500
+        translations:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              locale:
+                type: "number"
+                example: 192
+                choices:
+                  - "fr"
+                  - "en"
+                  - "es"
+                required: true
+              title:
+                type: "number"
+                example: 3
+                minimum: 3
+                maximum: 255
+                required: true
+              slug:
+                type: "number"
+                example: 3
+                minimum: 3
+                maximum: 255
+              content:
+                type: "number"
+                example: 10
+                minimum: 10
+                required: true
+              excerpt:
+                type: "number"
+                example: 289
+                maximum: 500
+          required: true
+          properties:
+            items:
+              title:
+                type: "string"
+                example: "Lorem Ipsum"
+              slug:
+                type: "string"
+                example: "Lorem Ipsum"
+              content:
+                type: "string"
+                example: "Lorem Ipsum"
+              excerpt:
+                type: "string"
+                example: "Lorem Ipsum"
       example:
-        title: "Lorem Ipsum"
-        slug: "Lorem Ipsum"
-        content: "Lorem Ipsum"
-        excerpt: "Lorem Ipsum"
+        defaultLocale: 232
         coverImage: "Lorem Ipsum"
+        translations:
+          - locale: 192
+            title: "Lorem Ipsum"
+            slug: "Lorem Ipsum"
+            content: "Lorem Ipsum"
+            excerpt: "Lorem Ipsum"
       description: "CreatePostValidator (Validator)"
     PreviewPlaceholderValidator:
       type: "object"
@@ -672,43 +960,116 @@ components:
           required: true
         serverId:
           type: "number"
-          example: 914
+          example: 987
           required: true
       example:
         placeholderName: "Lorem Ipsum"
-        serverId: 914
+        serverId: 987
       description: "PreviewPlaceholderValidator (Validator)"
+    ResolvePlaceholdersValidator:
+      type: "object"
+      properties:
+        placeholders:
+          type: "array"
+          items:
+            type: "number"
+            example: 1
+            minimum: 1
+            maximum: 50
+          required: true
+          properties:
+            items:
+              type: "string"
+              example: "Lorem Ipsum"
+      example:
+        placeholders:
+          - "Lorem Ipsum"
+      description: "ResolvePlaceholdersValidator (Validator)"
+    SubmitFeedbackValidator:
+      type: "object"
+      properties:
+        helpful:
+          type: "boolean"
+          example: true
+          required: true
+        visitorId:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+          maxLength: 64
+      example:
+        helpful: true
+        visitorId: "Lorem Ipsum"
+      description: "SubmitFeedbackValidator (Validator)"
     UpdatePostValidator:
       type: "object"
       properties:
-        title:
-          type: "string"
-          example: "Lorem Ipsum"
-          minLength: 3
-          maxLength: 255
-        slug:
-          type: "string"
-          example: "Lorem Ipsum"
-          minLength: 3
-          maxLength: 255
-        content:
-          type: "string"
-          example: "Lorem Ipsum"
-          minLength: 10
-        excerpt:
-          type: "string"
-          example: "Lorem Ipsum"
-          maxLength: 500
+        defaultLocale:
+          type: "number"
+          example: 866
+          choices:
+            - "fr"
+            - "en"
+            - "es"
         coverImage:
           type: "string"
           example: "Lorem Ipsum"
           maxLength: 500
+        translations:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              locale:
+                type: "number"
+                example: 75
+                choices:
+                  - "fr"
+                  - "en"
+                  - "es"
+                required: true
+              title:
+                type: "number"
+                example: 3
+                minimum: 3
+                maximum: 255
+              slug:
+                type: "number"
+                example: 3
+                minimum: 3
+                maximum: 255
+              content:
+                type: "number"
+                example: 10
+                minimum: 10
+              excerpt:
+                type: "number"
+                example: 782
+                maximum: 500
+          properties:
+            items:
+              title:
+                type: "string"
+                example: "Lorem Ipsum"
+              slug:
+                type: "string"
+                example: "Lorem Ipsum"
+              content:
+                type: "string"
+                example: "Lorem Ipsum"
+              excerpt:
+                type: "string"
+                example: "Lorem Ipsum"
       example:
-        title: "Lorem Ipsum"
-        slug: "Lorem Ipsum"
-        content: "Lorem Ipsum"
-        excerpt: "Lorem Ipsum"
+        defaultLocale: 866
         coverImage: "Lorem Ipsum"
+        translations:
+          - locale: 75
+            title: "Lorem Ipsum"
+            slug: "Lorem Ipsum"
+            content: "Lorem Ipsum"
+            excerpt: "Lorem Ipsum"
       description: "UpdatePostValidator (Validator)"
     CreateServerValidator:
       type: "object"
@@ -729,7 +1090,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 983
+          example: 291
           choices:
             - "java"
             - "bedrock"
@@ -740,7 +1101,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 695
+            example: 279
           required: true
           properties:
             items:
@@ -759,13 +1120,13 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 638
+            example: 783
           required: true
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 983
+        type: 291
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -773,7 +1134,7 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 638
+          - 783
       description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
       type: "object"
@@ -791,7 +1152,7 @@ components:
           minimum: 1
         type:
           type: "number"
-          example: 174
+          example: 470
           choices:
             - "java"
             - "bedrock"
@@ -802,7 +1163,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 363
+            example: 454
           properties:
             items:
               type: "string"
@@ -820,12 +1181,12 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 572
+            example: 966
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 174
+        type: 470
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -833,42 +1194,42 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 572
+          - 966
       description: "UpdateServerValidator (Validator)"
     attachServerCategoryValidator:
       type: "object"
       properties:
         serverId:
           type: "number"
-          example: 851
+          example: 601
           required: true
         categoryId:
           type: "number"
-          example: 415
+          example: 302
           required: true
       example:
-        serverId: 851
-        categoryId: 415
+        serverId: 601
+        categoryId: 302
       description: "attachServerCategoryValidator (Validator)"
     StatValidator:
       type: "object"
       properties:
         server_id:
           type: "number"
-          example: 119
+          example: 66
           required: true
         exactTime:
           type: "number"
-          example: 943
+          example: 18
         fromDate:
           type: "number"
-          example: 474
+          example: 662
         toDate:
           type: "number"
-          example: 462
+          example: 332
         interval:
           type: "number"
-          example: 162
+          example: 906
           choices:
             - "30 minutes"
             - "1 hour"
@@ -877,11 +1238,11 @@ components:
             - "6 hours"
             - "1 week"
       example:
-        server_id: 119
-        exactTime: 943
-        fromDate: 474
-        toDate: 462
-        interval: 162
+        server_id: 66
+        exactTime: 18
+        fromDate: 662
+        toDate: 332
+        interval: 906
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -902,6 +1263,18 @@ components:
         oldPassword: "Lorem Ipsum"
         newPassword: "Lorem Ipsum"
       description: "ChangePasswordValidator (Validator)"
+    ChangeUsernameValidator:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 3
+          maxLength: 254
+      example:
+        username: "Lorem Ipsum"
+      description: "ChangeUsernameValidator (Validator)"
     CreateUserValidator:
       type: "object"
       properties:
@@ -927,6 +1300,17 @@ components:
         email: "Lorem Ipsum"
         password: "Lorem Ipsum"
       description: "CreateUserValidator (Validator)"
+    ForgotPasswordValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          maxLength: 254
+      example:
+        email: "Lorem Ipsum"
+      description: "ForgotPasswordValidator (Validator)"
     LoginUserValidator:
       type: "object"
       properties:
@@ -945,6 +1329,23 @@ components:
         email: "Lorem Ipsum"
         password: "Lorem Ipsum"
       description: "LoginUserValidator (Validator)"
+    ResetPasswordValidator:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+          maxLength: 72
+      example:
+        token: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "ResetPasswordValidator (Validator)"
     UpdateUserValidator:
       type: "object"
       properties:
@@ -1022,10 +1423,10 @@ paths:
                   type: "object"
               example:
                 - server:
-                    id: 395
+                    id: 59
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 406
+                    port: 52
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
@@ -1034,12 +1435,13 @@ paths:
                     favicon_hash: "Lorem Ipsum"
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
-                    user_id: 484
+                    host_domain: "Lorem Ipsum"
+                    user_id: 690
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 888
-                    last_max_count: 75
+                    last_player_count: 75
+                    last_max_count: 802
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 260
+                    peak_player_count: 548
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
@@ -1047,12 +1449,12 @@ paths:
                   categories:
                     - "<Category>"
                   growthStat:
-                    server_id: 827
-                    weekly_growth: 575
-                    monthly_growth: 223
-                    last_week_average: 438
-                    previous_week_average: 817
-                    last_month_average: 467
+                    server_id: 315
+                    weekly_growth: 424
+                    monthly_growth: 192
+                    last_week_average: 771
+                    previous_week_average: 682
+                    last_month_average: 738
                     last_updated: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
         401:
@@ -1716,9 +2118,9 @@ paths:
               schema:
                 type: "object"
                 properties:
-                  message: "Email already registered"
+                  message: "This username is already taken"
               example:
-                message: "Email already registered"
+                message: "This username is already taken"
           description: "Returns **400** (Bad Request) as **application/json**"
         422:
           content:
@@ -1833,6 +2235,123 @@ paths:
               $ref: "#/components/schemas/VerifyEmailValidator"
             example:
               token: "Lorem Ipsum"
+  /api/v1/forgot-password:
+    post:
+      summary: "Request a password reset email (forgotPassword)"
+      description: "Sends a password reset link to the account matching the given email, when one exists. To prevent account enumeration the endpoint always returns the same 200 response whether or not an account was found. A reset link is only sent for verified, non-OAuth accounts; the emailed token is high-entropy and only its hash is stored server-side, expiring after 1 hour.\n\n _app/controllers/auth_controller.ts_ - **forgotPassword**"
+      operationId: "forgotPassword"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "If an account matches this email, a password reset link has been sent."
+              example:
+                message: "If an account matches this email, a password reset link has been sent."
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Captcha verification failed"
+              example:
+                message: "Captcha verification failed"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The email field must be a valid email address"
+                          rule: "email"
+                          field: "email"
+              example:
+                errors:
+                  - message: "The email field must be a valid email address"
+                    rule: "email"
+                    field: "email"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordValidator"
+            example:
+              email: "Lorem Ipsum"
+  /api/v1/reset-password:
+    post:
+      summary: "Reset a password using an emailed token (resetPassword)"
+      description: "Validates the reset token from the emailed link (matched against the stored hash and its 1-hour expiry), sets the new password, clears the token so it cannot be reused, and revokes every existing session of the account. Invalid and expired tokens return the same generic error to avoid leaking token state.\n\n _app/controllers/auth_controller.ts_ - **resetPassword**"
+      operationId: "resetPassword"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Your password has been reset. You can now sign in."
+              example:
+                message: "Your password has been reset. You can now sign in."
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This password reset link is invalid or has expired."
+              example:
+                message: "This password reset link is invalid or has expired."
+          description: "Returns **400** (Bad Request) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The password field must have at least 8 characters"
+                          rule: "minLength"
+                          field: "password"
+              example:
+                errors:
+                  - message: "The password field must have at least 8 characters"
+                    rule: "minLength"
+                    field: "password"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordValidator"
+            example:
+              token: "Lorem Ipsum"
+              password: "Lorem Ipsum"
   /api/v1/me:
     get:
       summary: "Get the currently authenticated user (retrieveUser)"
@@ -1998,6 +2517,186 @@ paths:
             example:
               oldPassword: "Lorem Ipsum"
               newPassword: "Lorem Ipsum"
+  /api/v1/change-username:
+    post:
+      summary: "Change the authenticated user's username (changeUsername)"
+      description: "Updates the display username of the currently authenticated user. Usernames are not unique. Requires authentication. Returns the updated user (including their own email).\n\n _app/controllers/auth_controller.ts_ - **changeUsername**"
+      operationId: "changeUsername"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  user:
+                    type: "object"
+                    properties:
+                      id: 1
+                      username: "new_name"
+                      email: "player@example.com"
+                      verified: true
+                      provider: ""
+                      role: "user"
+                      avatarUrl: ""
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
+              example:
+                user:
+                  id: 1
+                  username: "new_name"
+                  email: "player@example.com"
+                  verified: true
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This username is already taken"
+              example:
+                message: "This username is already taken"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The username field must have at least 3 characters"
+                          rule: "minLength"
+                          field: "username"
+              example:
+                errors:
+                  - message: "The username field must have at least 3 characters"
+                    rule: "minLength"
+                    field: "username"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeUsernameValidator"
+            example:
+              username: "Lorem Ipsum"
+  /api/v1/account/avatar:
+    post:
+      summary: "Upload the authenticated user's avatar (updateAvatar)"
+      description: "Accepts a multipart upload under the form field `avatar` (max 5 MB, extensions `jpg`, `jpeg`, `png`, `webp`, `gif`). The image is converted to a 256x256 WebP, stored via Drive, and its relative URL is saved on the user. Returns the updated user. Requires authentication.\n\n _app/controllers/auth_controller.ts_ - **updateAvatar**"
+      operationId: "updateAvatar"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  user:
+                    type: "object"
+                    properties:
+                      id: 1
+                      username: "player"
+                      email: "player@example.com"
+                      verified: true
+                      provider: ""
+                      role: "user"
+                      avatarUrl: "/images/avatars/1-3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp"
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
+              example:
+                user:
+                  id: 1
+                  username: "player"
+                  email: "player@example.com"
+                  verified: true
+                  provider: ""
+                  role: "user"
+                  avatarUrl: "/images/avatars/1-3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44.webp"
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "No image provided"
+              example:
+                error: "No image provided"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                avatar:
+                  type: "string"
+                  format: "binary"
+              required: []
   /api/v1/logout:
     post:
       summary: "Log out of the current session (logout)"
@@ -2211,7 +2910,7 @@ paths:
               $ref: "#/components/schemas/CreateApiTokenValidator"
             example:
               name: "Lorem Ipsum"
-              expiresInDays: 167
+              expiresInDays: 625
   /api/v1/account/api-tokens/{id}:
     delete:
       summary: "Revoke an API token (destroy)"
@@ -2467,6 +3166,106 @@ paths:
           content:
             application/json: {}
       security: []
+  /api/v1/posts/placeholders/resolve:
+    post:
+      summary: "Resolve content placeholders to their current values (resolvePlaceholders)"
+      description: "Resolves a batch of placeholder tokens to their live values. Returns a map of token → value. Publicly accessible.\n\n _app/controllers/posts_controller.ts_ - **resolvePlaceholders**"
+      operationId: "resolvePlaceholders"
+      parameters: []
+      tags:
+        - "POSTS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  %PLAYER_COUNT_REALTIME_125%: "42"
+                  %SERVER_VERSION_125%: "1.21.4"
+              example:
+                %PLAYER_COUNT_REALTIME_125%: "42"
+                %SERVER_VERSION_125%: "1.21.4"
+          description: "Returns **200** (OK) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The placeholders field must be defined"
+                          field: "placeholders"
+                          rule: "required"
+              example:
+                errors:
+                  - message: "The placeholders field must be defined"
+                    field: "placeholders"
+                    rule: "required"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                placeholders:
+                  type: "object"
+                  properties:
+                    0: "%PLAYER_COUNT_REALTIME_125%"
+                    1: "%SERVER_VERSION_125%"
+            example:
+              placeholders:
+                - "%PLAYER_COUNT_REALTIME_125%"
+                - "%SERVER_VERSION_125%"
+  /api/v1/posts/{slug}/view:
+    post:
+      summary: " (recordView)"
+      description: "\n\n _app/controllers/posts_controller.ts_ - **recordView**"
+      parameters:
+        - in: "path"
+          name: "slug"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "POSTS"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/posts/{slug}/feedback:
+    post:
+      summary: " (submitFeedback)"
+      description: "\n\n _app/controllers/posts_controller.ts_ - **submitFeedback**"
+      parameters:
+        - in: "path"
+          name: "slug"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "POSTS"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
   /api/v1/advertisements:
     get:
       summary: "Get a list of advertisements (index)"
@@ -2519,6 +3318,56 @@ paths:
           content:
             application/json: {}
       security: []
+  /api/v1/analytics/hit:
+    post:
+      summary: " (hit)"
+      description: "\n\n _app/controllers/analytics_controller.ts_ - **hit**"
+      parameters: []
+      tags:
+        - "ANALYTICS"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/analytics/pageview:
+    post:
+      summary: " (pageview)"
+      description: "\n\n _app/controllers/analytics_controller.ts_ - **pageview**"
+      parameters: []
+      tags:
+        - "ANALYTICS"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/analytics/identify:
+    post:
+      summary: " (identify)"
+      description: "\n\n _app/controllers/analytics_controller.ts_ - **identify**"
+      parameters: []
+      tags:
+        - "ANALYTICS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
   /api/v1/admin/posts:
     get:
       summary: " (adminIndex)"
@@ -2593,6 +3442,25 @@ paths:
       security:
         - BearerAuth:
             - "access"
+    get:
+      summary: " (adminShow)"
+      description: "\n\n _app/controllers/posts_controller.ts_ - **adminShow**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ADMIN"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/admin/posts/{id}/publish:
     post:
       summary: " (publish)"
@@ -2639,10 +3507,30 @@ paths:
       requestBody:
         content:
           application/json: {}
+  /api/v1/admin/posts/{id}/stats:
+    get:
+      summary: " (adminStats)"
+      description: "\n\n _app/controllers/posts_controller.ts_ - **adminStats**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ADMIN"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/admin/posts/placeholders/preview:
     post:
       summary: "Preview a placeholder substitution (previewPlaceholder)"
-      description: "Resolves a single placeholder for a given server and returns both the raw placeholder string and the computed value, so the editor UI can show writers what the token will render to. Requires authentication and `manage` ability on the Post policy.\n\n _app/controllers/posts_controller.ts_ - **previewPlaceholder**"
+      description: "Resolves a single placeholder for a given server. Requires `manage` ability.\n\n _app/controllers/posts_controller.ts_ - **previewPlaceholder**"
       operationId: "previewPlaceholder"
       parameters: []
       tags:
@@ -2719,11 +3607,46 @@ paths:
             example:
               placeholderName: "PLAYER_COUNT_REALTIME"
               serverId: "125"
+  /api/v1/admin/analytics:
+    get:
+      summary: " (dashboard)"
+      description: "\n\n _app/controllers/analytics_controller.ts_ - **dashboard**"
+      parameters: []
+      tags:
+        - "ADMIN"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/admin/users:
     get:
       summary: " (adminIndex)"
       description: "\n\n _app/controllers/users_controller.ts_ - **adminIndex**"
       parameters: []
+      tags:
+        - "ADMIN"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/admin/users/{id}:
+    get:
+      summary: " (adminShow)"
+      description: "\n\n _app/controllers/users_controller.ts_ - **adminShow**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
       tags:
         - "ADMIN"
       responses:
@@ -2976,6 +3899,14 @@ tags:
     description: "Everything related to AUTH"
   - name: "AUTH"
     description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
   - name: "API TOKENS"
     description: "Everything related to API TOKENS"
   - name: "API TOKENS"
@@ -2990,8 +3921,12 @@ tags:
     description: "Everything related to AUTH"
   - name: "POSTS"
     description: "Everything related to POSTS"
+  - name: "POSTS"
+    description: "Everything related to POSTS"
   - name: "ADVERTISEMENTS"
     description: "Everything related to ADVERTISEMENTS"
+  - name: "ANALYTICS"
+    description: "Everything related to ANALYTICS"
   - name: "ADMIN"
     description: "Everything related to ADMIN"
   - name: "POSTS_ADMIN"

@@ -20,7 +20,11 @@ const PUBLIC_LONG = cacheHeaders({ maxAge: 3600 })
 const NO_STORE = cacheHeaders({ noStore: true })
 
 router.get('/swagger', async () => {
-  return AutoSwagger.default.docs(router.toJSON(), swagger)
+  // On sert le spec en JSON plutôt qu'en YAML : le sérialiseur YAML d'AutoSwagger ne met
+  // pas entre guillemets les clés de mapping commençant par `%` (ex. les jetons de
+  // placeholder `%PLAYER_COUNT_REALTIME_125%`), ce qui produit un YAML invalide et empêche
+  // Scalar (/docs) comme le serveur MCP de charger la doc. JSON gère ces clés nativement.
+  return AutoSwagger.default.json(router.toJSON(), swagger)
 })
 
 router.get('/docs', async () => {
@@ -97,6 +101,12 @@ router
       .post('/verify-email', '#controllers/auth_controller.verifyEmail')
       .use([throttleLight('verify-email', 5), NO_STORE])
     router
+      .post('/forgot-password', '#controllers/auth_controller.forgotPassword')
+      .use([throttleLight('forgot-password', 3), NO_STORE])
+    router
+      .post('/reset-password', '#controllers/auth_controller.resetPassword')
+      .use([throttleLight('reset-password', 5), NO_STORE])
+    router
       .get('/me', '#controllers/auth_controller.retrieveUser')
       .use(middleware.auth())
       .use([throttleLight('me', 5), NO_STORE])
@@ -104,6 +114,10 @@ router
       .post('/change-password', '#controllers/auth_controller.changePassword')
       .use(middleware.auth())
       .use([throttleLight('change-password', 2), NO_STORE])
+    router
+      .post('/change-username', '#controllers/auth_controller.changeUsername')
+      .use(middleware.auth())
+      .use([throttleLight('change-username', 5), NO_STORE])
     router
       .post('/account/avatar', '#controllers/auth_controller.updateAvatar')
       .use(middleware.auth())

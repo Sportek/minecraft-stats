@@ -8,5 +8,17 @@
     "viewInBrowser": "Afficher cet e-mail dans votre navigateur",
     "footerReason": "Vous recevez cet e-mail car vous vous êtes inscrit sur Minecraft-Stats.fr.",
     "copyright": "© Minecraft-Stats.fr, Tous droits réservés."
+  },
+  "resetPassword": {
+    "subject": "Réinitialisez votre mot de passe",
+    "title": "Réinitialisez votre mot de passe Minecraft-Stats.fr",
+    "greeting": "Bonjour {username},",
+    "intro": "Nous avons reçu une demande de réinitialisation du mot de passe de votre compte. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.",
+    "cta": "Réinitialiser mon mot de passe",
+    "expiry": "Ce lien expirera dans 1 heure pour votre sécurité.",
+    "ignore": "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail : votre mot de passe ne sera pas modifié.",
+    "viewInBrowser": "Afficher cet e-mail dans votre navigateur",
+    "footerReason": "Vous recevez cet e-mail car une réinitialisation de mot de passe a été demandée pour votre compte Minecraft-Stats.fr.",
+    "copyright": "© Minecraft-Stats.fr, Tous droits réservés."
   }
 }
