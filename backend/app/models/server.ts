@@ -59,8 +59,11 @@ export default class Server extends BaseModel {
   @column({ columnName: 'host_domain' })
   declare hostDomain: string | null
 
+  // Nullable : un serveur devient orphelin (user_id = NULL) quand son propriétaire
+  // supprime son compte (FK ON DELETE SET NULL). Il reste suivi mais n'est plus
+  // éditable que par un admin.
   @column({ columnName: 'user_id' })
-  declare userId: number
+  declare userId: number | null
 
   @belongsTo(() => User)
   declare user: relations.BelongsTo<typeof User>
