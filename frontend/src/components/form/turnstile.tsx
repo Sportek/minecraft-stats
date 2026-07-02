@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface TurnstileApi {
   render: (
@@ -45,40 +45,62 @@ export const Turnstile = ({ onToken, className }: TurnstileProps) => {
   const widgetIdRef = useRef<string | null>(null);
   // Keep the latest callback without re-rendering the widget on every parent render.
   const onTokenRef = useRef(onToken);
-  const [scriptReady, setScriptReady] = useState(false);
 
   useEffect(() => {
     onTokenRef.current = onToken;
   }, [onToken]);
 
   useEffect(() => {
-    if (!scriptReady || !TURNSTILE_SITE_KEY || !containerRef.current || !window.turnstile) return;
+    if (!TURNSTILE_SITE_KEY) return;
 
-    const widget = window.turnstile.render(containerRef.current, {
-      sitekey: TURNSTILE_SITE_KEY,
-      theme: "auto",
-      callback: (token) => onTokenRef.current(token),
-      "error-callback": () => onTokenRef.current(null),
-      "expired-callback": () => onTokenRef.current(null),
-    });
-    widgetIdRef.current = widget;
+    let cancelled = false;
+    let pollId: ReturnType<typeof setInterval> | undefined;
+
+    const renderWidget = () => {
+      // Guard against a lost container, a not-yet-ready script, or a double render.
+      if (cancelled || !containerRef.current || !window.turnstile || widgetIdRef.current) return;
+      widgetIdRef.current = window.turnstile.render(containerRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: "auto",
+        callback: (token) => onTokenRef.current(token),
+        "error-callback": () => onTokenRef.current(null),
+        "expired-callback": () => onTokenRef.current(null),
+      });
+    };
+
+    // Ne pas dépendre de `<Script onLoad>` : Next ne le re-déclenche pas quand le
+    // script est déjà chargé (navigation SPA depuis une page qui a déjà monté le
+    // widget), ce qui laissait le captcha vide jusqu'à un hard refresh. On rend
+    // directement si l'API est là, sinon on attend qu'elle soit définie.
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      pollId = setInterval(() => {
+        if (!window.turnstile) return;
+        clearInterval(pollId);
+        pollId = undefined;
+        renderWidget();
+      }, 100);
+    }
 
     return () => {
+      cancelled = true;
+      if (pollId) clearInterval(pollId);
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
         widgetIdRef.current = null;
       }
     };
-  }, [scriptReady]);
+  }, []);
 
   if (!TURNSTILE_SITE_KEY) return null;
 
   return (
     <>
       <Script
+        id="cf-turnstile"
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"
-        onLoad={() => setScriptReady(true)}
       />
       <div ref={containerRef} className={className} />
     </>
