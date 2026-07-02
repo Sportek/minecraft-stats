@@ -45,7 +45,12 @@ class ImageStorageService {
       .toFormat('webp')
       .toBuffer()
 
-    const cacheControl = 'public, max-age=3600'
+    // TTL 6h (navigateur + edge CDN). L'URL du favicon est stable (pas versionnée
+    // par un hash), donc un TTL long = image périmée jusqu'à expiration si le
+    // favicon change. 6h est un bon compromis : cosmétique et rarissime pour un
+    // favicon, mais suffisant pour effondrer l'egress derrière un CDN. On évite
+    // `immutable`/1 an ici, réservé aux assets à URL unique (blog, avatars).
+    const cacheControl = 'public, max-age=21600'
     await Promise.all([
       this.disk.put(`images/servers/${serverId}.png`, buffer, {
         contentType: 'image/png',
