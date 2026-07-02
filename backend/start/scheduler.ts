@@ -117,14 +117,26 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
   try {
     const data = await pingMinecraftServer(server.type, server.address, server.port)
     if (data) {
-      if (data.favicon && (overwriteImage || !server.imageUrl)) {
-        try {
-          server.imageUrl = await ImageStorageService.storeServerFavicon(server.id, data.favicon)
-        } catch (imgErr) {
-          logger.warn(
-            { serverId: server.id, err: (imgErr as Error).message },
-            'SCHEDULER: image processing failed'
-          )
+      // Empreinte du favicon : sert à la fois à la détection de doublon et à
+      // décider s'il faut réécrire l'image. On ne réuploade sur le stockage
+      // (S3 en prod) que si le favicon a réellement changé — ou s'il n'existe
+      // pas encore. Réécrire des octets identiques à chaque ping ne ferait que
+      // générer des PUT S3 inutiles (les favicons ne changent quasi jamais),
+      // ce qui a dominé la facture AWS. `overwriteImage` ne force donc plus la
+      // réécriture : le hash suffit à détecter les vrais changements.
+      if (data.favicon) {
+        const faviconHash = DuplicateDetectionService.hashFavicon(data.favicon)
+        if (!server.imageUrl || faviconHash !== server.faviconHash) {
+          try {
+            server.imageUrl = await ImageStorageService.storeServerFavicon(server.id, data.favicon)
+            server.faviconHash = faviconHash
+          } catch (imgErr) {
+            // On n'avance pas faviconHash : le prochain ping retentera l'upload.
+            logger.warn(
+              { serverId: server.id, err: (imgErr as Error).message },
+              'SCHEDULER: image processing failed'
+            )
+          }
         }
       }
 
@@ -143,12 +155,10 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
         server.peakPlayerAt = DateTime.fromJSDate(createdAt)
       }
 
-      // Rafraîchit les empreintes de détection de doublon. favicon + MOTD sont
-      // recalculés à chaque ping (le MOTD bouge souvent) ; l'endpoint DNS, qui
-      // ne change quasi jamais, n'est re-résolu que lors du job 6h (overwriteImage).
-      if (data.favicon) {
-        server.faviconHash = DuplicateDetectionService.hashFavicon(data.favicon)
-      }
+      // Rafraîchit les empreintes de détection de doublon. Le favicon est déjà
+      // haché plus haut ; le MOTD est recalculé à chaque ping (il bouge souvent) ;
+      // l'endpoint DNS, qui ne change quasi jamais, n'est re-résolu que lors du
+      // job 6h (overwriteImage).
       server.motdHash = DuplicateDetectionService.hashMotd(data.description)
       if (overwriteImage) {
         server.resolvedEndpoint = await DuplicateDetectionService.resolveEndpoint(
@@ -260,8 +270,10 @@ scheduler
   })
   .everyFiveMinutes()
 
-// Force-refresh des favicons toutes les 6h sur TOUS les serveurs (pas seulement dus).
-// Utile pour rafraîchir les images qui auraient changé sans que le ping le détecte.
+// Balayage complet toutes les 6h sur TOUS les serveurs (pas seulement les dus).
+// Re-résout l'endpoint DNS (overwriteImage) et rattrape un favicon changé sur un
+// serveur "dead" rarement pingué. Les favicons ne sont réécrits que si leur hash
+// a changé (voir updateServerInfo), donc ce job ne génère plus de PUT S3 inutiles.
 scheduler
   .call(async () => {
     const start = Date.now()
@@ -280,7 +292,7 @@ scheduler
       `SCHEDULER: favicon refresh job done in ${Date.now() - start}ms — ${statsBatch.length}/${servers.length} pinged`
     )
   })
-  .everyTenMinutes()
+  .everySixHours()
 
 scheduler
   .call(async () => {
