@@ -6,7 +6,7 @@
     <mj-font name="DM Sans" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" />
     <mj-attributes>
       <mj-all font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"></mj-all>
-      <mj-text color="#3f3f46" font-size="15px" line-height="24px"></mj-text>
+      <mj-text color="#3f3f46" font-size="15px" line-height="24px" align="center"></mj-text>
     </mj-attributes>
     <mj-style inline="inline">
       .card { box-shadow: 0 1px 3px rgba(9, 9, 11, 0.08); }
@@ -25,16 +25,16 @@
     <!-- Corps -->
     <mj-section background-color="#ffffff" border-radius="0 0 14px 14px" padding="8px 32px 34px" css-class="card">
       <mj-column>
-        <mj-text color="#09090b" font-size="22px" font-weight="700" padding-top="26px" padding-bottom="10px">
+        <mj-text color="#09090b" font-size="22px" font-weight="700" padding-top="28px" padding-bottom="10px">
           {{ title }}
         </mj-text>
         <mj-text padding-bottom="4px">
           {{ greeting }}
         </mj-text>
-        <mj-text padding-bottom="26px">
+        <mj-text padding-bottom="28px">
           {{ intro }}
         </mj-text>
-        <mj-button href="{{ verify_url }}" background-color="#0074c2" color="#ffffff" font-size="15px" font-weight="600" border-radius="8px" inner-padding="14px 30px" align="left" padding="0">
+        <mj-button href="{{ verify_url }}" background-color="#0074c2" color="#ffffff" font-size="15px" font-weight="600" border-radius="8px" inner-padding="14px 34px" align="center" padding="0">
           {{ cta }}
         </mj-button>
       </mj-column>
@@ -43,10 +43,10 @@
     <!-- Pied -->
     <mj-section padding="22px 24px 12px">
       <mj-column>
-        <mj-text align="center" color="#a1a1aa" font-size="12px" line-height="18px" padding="2px 0">
+        <mj-text color="#a1a1aa" font-size="12px" line-height="18px" padding="2px 0">
           {{ footerReason }}
         </mj-text>
-        <mj-text align="center" color="#a1a1aa" font-size="12px" line-height="18px" padding="2px 0">
+        <mj-text color="#a1a1aa" font-size="12px" line-height="18px" padding="2px 0">
           {{ copyright }}
         </mj-text>
       </mj-column>
