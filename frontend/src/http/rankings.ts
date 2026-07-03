@@ -2,11 +2,17 @@ import { getBaseUrl } from "@/app/_cheatcode";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 
 /**
- * Classements de la page /rankings. Chaque tri est servi par le même endpoint
+ * Classements des pages /rankings. Chaque tri est servi par le même endpoint
  * `/servers/paginate` (avec `?sort=`), donc chaque entrée a la forme d'une ligne
  * de classement standard : le serveur + ses stats 24h + ses relations.
+ * Chaque tri est aussi le segment d'URL de sa page dédiée (/rankings/<sort>).
  */
-export type RankingSort = "players" | "trending" | "peak" | "newest";
+export const RANKING_SORTS = ["players", "trending", "peak", "newest"] as const;
+
+export type RankingSort = (typeof RANKING_SORTS)[number];
+
+export const isRankingSort = (value: string): value is RankingSort =>
+  (RANKING_SORTS as readonly string[]).includes(value);
 
 export interface RankingEntry {
   server: Server;

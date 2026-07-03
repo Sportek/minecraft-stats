@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { buildAlternates, buildAlternatesForSlugs, getDomainConfig } from '@/lib/domain-server';
+import { RANKING_SORTS } from '@/http/rankings';
 import { isServerIndexable, serverPath } from '@/lib/server-url';
 
 interface Server {
@@ -104,13 +105,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
       alternates: { languages: buildAlternates(domainLocale, "").languages },
     },
-    {
-      url: `${baseUrl}/rankings`,
+    // /rankings redirige en 308 vers /rankings/players : seules les pages de
+    // classement dédiées sont listées.
+    ...RANKING_SORTS.map((sort) => ({
+      url: `${baseUrl}/rankings/${sort}`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-      alternates: { languages: buildAlternates(domainLocale, "/rankings").languages },
-    },
+      changeFrequency: 'daily' as const,
+      priority: 0.7,
+      alternates: { languages: buildAlternates(domainLocale, `/rankings/${sort}`).languages },
+    })),
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),

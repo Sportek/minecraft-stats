@@ -1,38 +1,41 @@
 {
   "eyebrow": "Rankings",
-  "title": "Minecraft server rankings",
-  "description": "Discover the best Minecraft servers: the most played right now, the fastest growing, the all-time attendance records, and the newest servers added. Rankings continuously updated from real player data.",
-  "meta": {
-    "title": "Minecraft Server Rankings — Top, Trending & Records",
-    "description": "The Minecraft server rankings: top players online, trending servers, all-time peak records, and newest servers. Real-time data, updated every 10 minutes.",
-    "keywords": "minecraft server rankings, best minecraft servers, top minecraft servers, popular minecraft servers, trending minecraft servers",
-    "ogTitle": "Minecraft Server Rankings",
-    "ogDescription": "Top players online, trending servers, peak records, and newest Minecraft servers — in real time."
-  },
   "sections": {
     "players": {
       "nav": "Top players",
       "title": "Top servers by players online",
       "description": "The Minecraft servers with the most players connected right now. The reference leaderboard, in real time.",
-      "empty": "No player data available yet."
+      "empty": "No player data available yet.",
+      "metaTitle": "Top Minecraft Servers by Players Online — Live Ranking",
+      "metaDescription": "The most played Minecraft servers right now, ranked by players connected. Live leaderboard updated every 10 minutes from real player data.",
+      "metaKeywords": "top minecraft servers, most played minecraft servers, biggest minecraft servers, minecraft servers by players online"
     },
     "trending": {
       "nav": "Trending",
       "title": "Trending servers",
       "description": "The fastest growing servers, ranked by player-count growth over the past week.",
-      "empty": "Not enough growth data yet to build this ranking."
+      "empty": "Not enough growth data yet to build this ranking.",
+      "metaTitle": "Trending Minecraft Servers — Fastest Growing This Week",
+      "metaDescription": "The fastest growing Minecraft servers, ranked by weekly player growth. Spot the next big server before everyone else.",
+      "metaKeywords": "trending minecraft servers, growing minecraft servers, new popular minecraft servers, rising minecraft servers"
     },
     "peak": {
       "nav": "Records",
       "title": "All-time attendance records",
       "description": "The highest player peaks ever recorded. The servers that made history with their attendance.",
-      "empty": "No attendance records available yet."
+      "empty": "No attendance records available yet.",
+      "metaTitle": "Minecraft Server Player Records — All-Time Peaks",
+      "metaDescription": "The highest player counts ever recorded on Minecraft servers. All-time attendance records, measured from real player data.",
+      "metaKeywords": "minecraft server records, minecraft server peak players, most players minecraft server, minecraft player count record"
     },
     "newest": {
       "nav": "Newest",
       "title": "Newest servers",
       "description": "The latest servers added to Minecraft Stats. Discover them before everyone else.",
-      "empty": "No recent servers to show yet."
+      "empty": "No recent servers to show yet.",
+      "metaTitle": "Newest Minecraft Servers — Latest Additions",
+      "metaDescription": "The newest Minecraft servers added to Minecraft Stats. Discover fresh servers before everyone else.",
+      "metaKeywords": "new minecraft servers, newest minecraft servers, latest minecraft servers, recently added minecraft servers"
     }
   },
   "metrics": {

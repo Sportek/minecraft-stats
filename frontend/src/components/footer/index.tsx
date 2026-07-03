@@ -59,7 +59,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/rankings" className={linkClass}>
+                <Link href="/rankings/players" className={linkClass}>
                   {t("links.rankings")}
                 </Link>
               </li>

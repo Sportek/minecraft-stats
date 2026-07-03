@@ -1,25 +1,33 @@
 import { ReactNode } from "react";
+import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 interface RankingsNavProps {
-  items: { id: string; label: string; icon: ReactNode }[];
+  items: { href: string; label: string; icon: ReactNode; active?: boolean }[];
 }
 
 /**
- * Onglets d'ancrage vers chaque section de classement. Simples liens `#hash`
- * (aucun JS) : fonctionnent sans hydratation et restent crawlables.
+ * Onglets vers chaque page de classement. Simples liens server-rendered
+ * (aucun JS client) : fonctionnent sans hydratation et restent crawlables.
  */
 const RankingsNav = ({ items }: RankingsNavProps) => {
   return (
     <nav aria-label="Rankings" className="flex flex-wrap gap-2">
       {items.map((item) => (
-        <a
-          key={item.id}
-          href={`#${item.id}`}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-medium text-muted-foreground shadow-xs transition-colors hover:border-accent/50 hover:text-accent"
+        <Link
+          key={item.href}
+          href={item.href}
+          aria-current={item.active ? "page" : undefined}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium shadow-xs transition-colors",
+            item.active
+              ? "border-accent bg-accent/10 text-accent"
+              : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-accent",
+          )}
         >
           {item.icon}
           {item.label}
-        </a>
+        </Link>
       ))}
     </nav>
   );

@@ -26,7 +26,7 @@ import {
 
 const NAV_LINKS = [
   { href: "/", key: "servers", icon: "material-symbols:list", matchPrefixes: ["/servers"] },
-  { href: "/rankings", key: "rankings", icon: "material-symbols:trophy-outline", matchPrefixes: ["/rankings"] },
+  { href: "/rankings/players", key: "rankings", icon: "material-symbols:trophy-outline", matchPrefixes: ["/rankings"] },
   { href: "/blog", key: "blog", icon: "material-symbols:article-outline", matchPrefixes: ["/blog"] },
 ] as const;
 
