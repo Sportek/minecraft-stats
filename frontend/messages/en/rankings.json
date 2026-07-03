@@ -1,0 +1,44 @@
+{
+  "eyebrow": "Rankings",
+  "title": "Minecraft server rankings",
+  "description": "Discover the best Minecraft servers: the most played right now, the fastest growing, the all-time attendance records, and the newest servers added. Rankings continuously updated from real player data.",
+  "meta": {
+    "title": "Minecraft Server Rankings — Top, Trending & Records",
+    "description": "The Minecraft server rankings: top players online, trending servers, all-time peak records, and newest servers. Real-time data, updated every 10 minutes.",
+    "keywords": "minecraft server rankings, best minecraft servers, top minecraft servers, popular minecraft servers, trending minecraft servers",
+    "ogTitle": "Minecraft Server Rankings",
+    "ogDescription": "Top players online, trending servers, peak records, and newest Minecraft servers — in real time."
+  },
+  "sections": {
+    "players": {
+      "nav": "Top players",
+      "title": "Top servers by players online",
+      "description": "The Minecraft servers with the most players connected right now. The reference leaderboard, in real time.",
+      "empty": "No player data available yet."
+    },
+    "trending": {
+      "nav": "Trending",
+      "title": "Trending servers",
+      "description": "The fastest growing servers, ranked by player-count growth over the past week.",
+      "empty": "Not enough growth data yet to build this ranking."
+    },
+    "peak": {
+      "nav": "Records",
+      "title": "All-time attendance records",
+      "description": "The highest player peaks ever recorded. The servers that made history with their attendance.",
+      "empty": "No attendance records available yet."
+    },
+    "newest": {
+      "nav": "Newest",
+      "title": "Newest servers",
+      "description": "The latest servers added to Minecraft Stats. Discover them before everyone else.",
+      "empty": "No recent servers to show yet."
+    }
+  },
+  "metrics": {
+    "playersOnline": "online",
+    "weeklyGrowth": "this week",
+    "allTimePeak": "all-time peak",
+    "added": "added on"
+  }
+}

@@ -105,6 +105,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: { languages: buildAlternates(domainLocale, "").languages },
     },
     {
+      url: `${baseUrl}/rankings`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+      alternates: { languages: buildAlternates(domainLocale, "/rankings").languages },
+    },
+    {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: 'daily',
