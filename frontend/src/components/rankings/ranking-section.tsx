@@ -1,7 +1,49 @@
 import { ReactNode } from "react";
+import { ChevronRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import Podium, { PodiumRow } from "./podium";
 import RankRow from "./rank-row";
 import { RankingsStructuredData } from "@/components/seo/structured-data";
+
+interface RankingListProps {
+  /** Titre du classement, repris dans le JSON-LD `ItemList`. */
+  name: string;
+  rows: PodiumRow[];
+  emptyLabel: string;
+  locale: string;
+}
+
+/**
+ * Le corps d'un classement : podium des 3 premiers, liste des suivants, et
+ * JSON-LD `ItemList` pour les moteurs et les agents IA. Partagé entre les
+ * sections de la page hub et les pages de classement dédiées.
+ */
+export const RankingList = ({ name, rows, emptyLabel, locale }: RankingListProps) => {
+  if (rows.length === 0) {
+    return (
+      <p className="rounded-lg border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
+        {emptyLabel}
+      </p>
+    );
+  }
+
+  const podium = rows.slice(0, 3);
+  const rest = rows.slice(3);
+
+  return (
+    <>
+      <RankingsStructuredData name={name} rows={rows} locale={locale} />
+      <Podium rows={podium} />
+      {rest.length > 0 && (
+        <ol className="mt-4 flex flex-col gap-2">
+          {rest.map((row) => (
+            <RankRow key={row.entry.server.id} rank={row.rank} entry={row.entry} metric={row.metric} />
+          ))}
+        </ol>
+      )}
+    </>
+  );
+};
 
 interface RankingSectionProps {
   /** Ancre de section (navigation par onglets). */
@@ -12,17 +54,27 @@ interface RankingSectionProps {
   rows: PodiumRow[];
   emptyLabel: string;
   locale: string;
+  /** Lien vers la page du classement complet (/rankings/<sort>). */
+  viewAllHref: string;
+  viewAllLabel: string;
 }
 
 /**
- * Une section de classement : en-tête (icône + titre + description), podium des
- * 3 premiers, puis la liste des suivants. Émet aussi un JSON-LD `ItemList` pour
- * les moteurs et les agents IA. Entièrement server-rendered.
+ * Une section de classement de la page hub : en-tête (icône + titre +
+ * description), aperçu du classement, puis lien vers la page complète.
+ * Entièrement server-rendered.
  */
-const RankingSection = ({ id, icon, title, description, rows, emptyLabel, locale }: RankingSectionProps) => {
-  const podium = rows.slice(0, 3);
-  const rest = rows.slice(3);
-
+const RankingSection = ({
+  id,
+  icon,
+  title,
+  description,
+  rows,
+  emptyLabel,
+  locale,
+  viewAllHref,
+  viewAllLabel,
+}: RankingSectionProps) => {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24">
       <div className="mb-5 flex items-start gap-3">
@@ -37,22 +89,18 @@ const RankingSection = ({ id, icon, title, description, rows, emptyLabel, locale
         </div>
       </div>
 
-      {rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
-          {emptyLabel}
-        </p>
-      ) : (
-        <>
-          <RankingsStructuredData name={title} rows={rows} locale={locale} />
-          {podium.length > 0 && <Podium rows={podium} />}
-          {rest.length > 0 && (
-            <ol className="mt-4 flex flex-col gap-2">
-              {rest.map((row) => (
-                <RankRow key={row.entry.server.id} rank={row.rank} entry={row.entry} metric={row.metric} />
-              ))}
-            </ol>
-          )}
-        </>
+      <RankingList name={title} rows={rows} emptyLabel={emptyLabel} locale={locale} />
+
+      {rows.length > 0 && (
+        <div className="mt-4">
+          <Link
+            href={viewAllHref}
+            className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+          >
+            {viewAllLabel}
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
       )}
     </section>
   );

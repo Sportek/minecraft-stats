@@ -2,6 +2,7 @@
   "eyebrow": "Classements",
   "title": "Classements des serveurs Minecraft",
   "description": "Découvrez les meilleurs serveurs Minecraft : les plus joués en ce moment, ceux qui montent le plus vite, les records historiques de fréquentation et les derniers serveurs ajoutés. Classements mis à jour en continu à partir de données de joueurs réelles.",
+  "viewAll": "Voir le classement complet",
   "meta": {
     "title": "Classements des serveurs Minecraft — Top, tendances et records",
     "description": "Les classements des serveurs Minecraft : top des joueurs en ligne, serveurs en tendance, records de pic all-time et nouveaux serveurs. Données en temps réel, mises à jour toutes les 10 minutes.",
@@ -14,25 +15,37 @@
       "nav": "Top joueurs",
       "title": "Top serveurs par joueurs en ligne",
       "description": "Les serveurs Minecraft avec le plus de joueurs connectés en ce moment. Le classement de référence, en temps réel.",
-      "empty": "Aucune donnée de joueurs disponible pour l'instant."
+      "empty": "Aucune donnée de joueurs disponible pour l'instant.",
+      "metaTitle": "Top serveurs Minecraft par joueurs en ligne — Classement en direct",
+      "metaDescription": "Les serveurs Minecraft les plus joués en ce moment, classés par joueurs connectés. Classement en direct, mis à jour toutes les 10 minutes à partir de données réelles.",
+      "metaKeywords": "top serveur minecraft, serveur minecraft le plus joué, plus gros serveur minecraft, serveur minecraft joueurs en ligne"
     },
     "trending": {
       "nav": "Tendances",
       "title": "Serveurs en tendance",
       "description": "Les serveurs qui montent le plus vite, classés par croissance du nombre de joueurs sur la dernière semaine.",
-      "empty": "Pas encore assez de données de croissance pour établir ce classement."
+      "empty": "Pas encore assez de données de croissance pour établir ce classement.",
+      "metaTitle": "Serveurs Minecraft en tendance — La plus forte croissance cette semaine",
+      "metaDescription": "Les serveurs Minecraft qui grandissent le plus vite, classés par croissance hebdomadaire de joueurs. Repérez le prochain gros serveur avant tout le monde.",
+      "metaKeywords": "serveur minecraft tendance, serveur minecraft en croissance, nouveau serveur minecraft populaire, serveur minecraft qui monte"
     },
     "peak": {
       "nav": "Records",
       "title": "Records de fréquentation all-time",
       "description": "Les plus gros pics de joueurs jamais enregistrés. Les serveurs qui ont marqué l'histoire par leur affluence.",
-      "empty": "Aucun record de fréquentation disponible pour l'instant."
+      "empty": "Aucun record de fréquentation disponible pour l'instant.",
+      "metaTitle": "Records de joueurs des serveurs Minecraft — Pics all-time",
+      "metaDescription": "Les plus hauts pics de joueurs jamais enregistrés sur les serveurs Minecraft. Des records de fréquentation mesurés à partir de données réelles.",
+      "metaKeywords": "record serveur minecraft, pic de joueurs serveur minecraft, record joueurs minecraft, plus de joueurs serveur minecraft"
     },
     "newest": {
       "nav": "Nouveaux",
       "title": "Nouveaux serveurs",
       "description": "Les derniers serveurs ajoutés à Minecraft Stats. À découvrir avant tout le monde.",
-      "empty": "Aucun serveur récent à afficher pour l'instant."
+      "empty": "Aucun serveur récent à afficher pour l'instant.",
+      "metaTitle": "Nouveaux serveurs Minecraft — Derniers ajouts",
+      "metaDescription": "Les derniers serveurs Minecraft ajoutés sur Minecraft Stats. Découvrez les nouveaux serveurs avant tout le monde.",
+      "metaKeywords": "nouveau serveur minecraft, nouveaux serveurs minecraft, derniers serveurs minecraft, serveur minecraft récent"
     }
   },
   "metrics": {

@@ -1,26 +1,20 @@
 import { Metadata } from "next";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
-import { Crown, Sparkles, TrendingUp, Trophy, Users } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { buildAlternates } from "@/lib/domain-server";
-import { getRanking, RankingSort } from "@/http/rankings";
+import { getRanking } from "@/http/rankings";
 import { buildMetric } from "@/components/rankings/metric";
 import RankingSection from "@/components/rankings/ranking-section";
 import RankingsNav from "@/components/rankings/rankings-nav";
 import { PodiumRow } from "@/components/rankings/podium";
+import { RANKING_SECTIONS } from "@/components/rankings/sections";
 
 // ISR : la page est régénérée au plus toutes les 10 min, aligné sur le cache backend.
 export const revalidate = 600;
 
-// Nombre de serveurs par classement (podium 3 + liste 12).
-const RANKING_LIMIT = 15;
-
-// Les 4 classements de la page. `id` sert d'ancre ; `icon` alimente en-tête + nav.
-const SECTIONS: { sort: RankingSort; id: string; icon: React.ReactNode }[] = [
-  { sort: "players", id: "top", icon: <Users className="h-5 w-5" /> },
-  { sort: "trending", id: "trending", icon: <TrendingUp className="h-5 w-5" /> },
-  { sort: "peak", id: "peak", icon: <Crown className="h-5 w-5" /> },
-  { sort: "newest", id: "new", icon: <Sparkles className="h-5 w-5" /> },
-];
+// Aperçu par classement (podium 3 + liste 2) ; le classement complet vit sur
+// sa page dédiée /rankings/<sort>.
+const PREVIEW_LIMIT = 5;
 
 export const generateMetadata = async ({
   params,
@@ -54,10 +48,10 @@ const Rankings = async () => {
   // Un fetch par classement, en parallèle. Un classement qui échoue ne fait pas
   // tomber la page entière : il rend une section vide avec son message.
   const responses = await Promise.all(
-    SECTIONS.map((section) => getRanking(section.sort, RANKING_LIMIT).catch(() => null)),
+    RANKING_SECTIONS.map((section) => getRanking(section.sort, PREVIEW_LIMIT).catch(() => null)),
   );
 
-  const sections = SECTIONS.map((section, index) => {
+  const sections = RANKING_SECTIONS.map((section, index) => {
     const rows: PodiumRow[] = (responses[index]?.data ?? []).map((entry, i) => ({
       rank: i + 1,
       entry,
@@ -66,8 +60,8 @@ const Rankings = async () => {
     return { ...section, rows };
   });
 
-  const navItems = SECTIONS.map((section) => ({
-    id: section.id,
+  const navItems = RANKING_SECTIONS.map((section) => ({
+    href: `/rankings/${section.sort}`,
     label: t(`sections.${section.sort}.nav`),
     icon: section.icon,
   }));
@@ -96,6 +90,8 @@ const Rankings = async () => {
           rows={section.rows}
           emptyLabel={t(`sections.${section.sort}.empty`)}
           locale={locale}
+          viewAllHref={`/rankings/${section.sort}`}
+          viewAllLabel={t("viewAll")}
         />
       ))}
     </main>
