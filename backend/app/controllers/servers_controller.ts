@@ -303,6 +303,7 @@ export default class ServersController {
    * @paramQuery languageIds - CSV of language ids to filter on (e.g. "1,2,3") - @type(string) @example(1,2)
    * @paramQuery search - Case-insensitive substring matched against name and address - @type(string) @example(hypixel)
    * @paramQuery type - Filter by server edition. Any other value is ignored. - @type(string) @enum(java, bedrock)
+   * @paramQuery sort - Ranking order. "players" (default) = most current players online (stale servers demoted); "trending" = highest weekly player growth; "peak" = highest all-time peak player count; "newest" = most recently added. Any other value falls back to "players". Powers the /rankings leaderboards. - @type(string) @enum(players, trending, peak, newest)
    * @paramQuery ids - Restrict to specific server ids. Accepts CSV ("1,2,3") OR repeated param ("ids=1&ids=2"). Positive integers only, deduplicated, max 20 ids (extras dropped). Used for the favorites section. - @type(string) @example(12,34,56)
    * @paramQuery nocache - Set to "1" to bypass the response cache. Only honored in non-production environments or for admin users. - @type(string) @enum(1)
    * @responseBody 200 - {"data": [{"server": "<Server>", "stats": [{"serverId": 1, "createdAt": "2026-05-28T12:00:00.000Z", "playerCount": 1200, "maxCount": 5000}], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}], "meta": {"total": 100, "perPage": 10, "currentPage": 1, "lastPage": 10, "firstPage": 1}}
@@ -318,6 +319,14 @@ export default class ServersController {
     // Édition (java/bedrock). Toute autre valeur est ignorée (pas de filtre).
     const typeParam = request.input('type')
     const type = typeParam === 'java' || typeParam === 'bedrock' ? typeParam : undefined
+
+    // Tri du classement (page /rankings). Whitelist stricte, fallback 'players'
+    // = ordre historique par joueurs actuels. Même logique inline que `type`.
+    const sortParam = request.input('sort')
+    const sort =
+      sortParam === 'trending' || sortParam === 'peak' || sortParam === 'newest'
+        ? sortParam
+        : 'players'
 
     // `ids` restreint la requête à une liste explicite de serveurs — utilisé par
     // la section "favoris", qui affiche les favoris de l'utilisateur dans leur
@@ -342,6 +351,7 @@ export default class ServersController {
       languageIds,
       search,
       type,
+      sort,
       ids: ids.join(','),
     })
 
@@ -364,6 +374,7 @@ export default class ServersController {
           languageIds,
           search,
           type,
+          sort,
           ids,
         })
         return result

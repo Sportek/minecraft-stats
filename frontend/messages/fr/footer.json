@@ -7,6 +7,7 @@
   },
   "links": {
     "allServers": "Tous les serveurs",
+    "rankings": "Classements",
     "addServer": "Ajouter un serveur",
     "blog": "Blog",
     "apiDocs": "Documentation de l'API",
