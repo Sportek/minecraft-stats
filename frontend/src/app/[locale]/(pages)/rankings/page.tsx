@@ -73,7 +73,7 @@ const Rankings = async () => {
   }));
 
   return (
-    <main className="mx-auto w-full max-w-4xl space-y-12 py-8">
+    <main className="mx-auto w-full max-w-4xl space-y-12 py-8 overflow-x-clip">
       <header className="space-y-4">
         <div>
           <div className="mb-1 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-accent">

@@ -3,6 +3,13 @@ import StatsService from '#services/stat_service'
 
 export default class ServerListingService {
   /**
+   * Seuil de joueurs actuels sous lequel un serveur est exclu du classement
+   * "tendance" : évite qu'un micro-serveur avec un pourcentage de croissance
+   * énorme mais dérisoire en absolu ne domine le classement.
+   */
+  private static readonly TRENDING_MIN_PLAYERS = 75
+
+  /**
    * Construit la requête paginée du classement des serveurs à partir de
    * paramètres déjà parsés par le contrôleur, puis transforme chaque ligne
    * en y attachant ses stats (buckets horaires sur 24 h + dernier snapshot live).
@@ -46,11 +53,16 @@ export default class ServerListingService {
       // on ne garde que les croissances strictement positives. `select('servers.*')`
       // est indispensable : Server.query() émet un `select *` non qualifié, sans
       // ça les colonnes de server_growth_stats "bleedent" sur le modèle.
+      //
+      // Seuil minimum de joueurs : un petit serveur qui passe de 1 à 5 joueurs
+      // affiche +400 % et trusterait le classement. On exclut donc les serveurs
+      // sous TRENDING_MIN_PLAYERS pour que "tendance" reflète une vraie traction.
       query = query
         .select('servers.*')
         .leftJoin('server_growth_stats', 'server_growth_stats.server_id', 'servers.id')
         .whereNotNull('server_growth_stats.weekly_growth')
         .where('server_growth_stats.weekly_growth', '>', 0)
+        .where('servers.last_player_count', '>=', ServerListingService.TRENDING_MIN_PLAYERS)
         .orderBy('server_growth_stats.weekly_growth', 'desc')
     } else if (sort === 'peak') {
       // Records all-time. Postgres trie NULLS-first en DESC → NULLS LAST explicite
