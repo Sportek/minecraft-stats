@@ -1,15 +1,5 @@
 {
   "eyebrow": "Rankings",
-  "title": "Minecraft server rankings",
-  "description": "Discover the best Minecraft servers: the most played right now, the fastest growing, the all-time attendance records, and the newest servers added. Rankings continuously updated from real player data.",
-  "viewAll": "View the full ranking",
-  "meta": {
-    "title": "Minecraft Server Rankings — Top, Trending & Records",
-    "description": "The Minecraft server rankings: top players online, trending servers, all-time peak records, and newest servers. Real-time data, updated every 10 minutes.",
-    "keywords": "minecraft server rankings, best minecraft servers, top minecraft servers, popular minecraft servers, trending minecraft servers",
-    "ogTitle": "Minecraft Server Rankings",
-    "ogDescription": "Top players online, trending servers, peak records, and newest Minecraft servers — in real time."
-  },
   "sections": {
     "players": {
       "nav": "Top players",

@@ -105,13 +105,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
       alternates: { languages: buildAlternates(domainLocale, "").languages },
     },
-    {
-      url: `${baseUrl}/rankings`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-      alternates: { languages: buildAlternates(domainLocale, "/rankings").languages },
-    },
+    // /rankings redirige en 308 vers /rankings/players : seules les pages de
+    // classement dédiées sont listées.
     ...RANKING_SORTS.map((sort) => ({
       url: `${baseUrl}/rankings/${sort}`,
       lastModified: new Date(),

@@ -1,15 +1,5 @@
 {
   "eyebrow": "Classements",
-  "title": "Classements des serveurs Minecraft",
-  "description": "Découvrez les meilleurs serveurs Minecraft : les plus joués en ce moment, ceux qui montent le plus vite, les records historiques de fréquentation et les derniers serveurs ajoutés. Classements mis à jour en continu à partir de données de joueurs réelles.",
-  "viewAll": "Voir le classement complet",
-  "meta": {
-    "title": "Classements des serveurs Minecraft — Top, tendances et records",
-    "description": "Les classements des serveurs Minecraft : top des joueurs en ligne, serveurs en tendance, records de pic all-time et nouveaux serveurs. Données en temps réel, mises à jour toutes les 10 minutes.",
-    "keywords": "classement serveur minecraft, meilleur serveur minecraft, top serveur minecraft, serveur minecraft populaire, serveur minecraft tendance",
-    "ogTitle": "Classements des serveurs Minecraft",
-    "ogDescription": "Top des joueurs en ligne, serveurs en tendance, records de pic et nouveaux serveurs Minecraft — en temps réel."
-  },
   "sections": {
     "players": {
       "nav": "Top joueurs",

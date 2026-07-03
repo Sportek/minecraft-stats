@@ -5,7 +5,7 @@ import { Trophy } from "lucide-react";
 import { buildAlternates } from "@/lib/domain-server";
 import { getRanking, isRankingSort, RANKING_SORTS } from "@/http/rankings";
 import { buildMetric } from "@/components/rankings/metric";
-import { RankingList } from "@/components/rankings/ranking-section";
+import RankingList from "@/components/rankings/ranking-list";
 import RankingsNav from "@/components/rankings/rankings-nav";
 import { PodiumRow } from "@/components/rankings/podium";
 import { RANKING_SECTIONS } from "@/components/rankings/sections";
