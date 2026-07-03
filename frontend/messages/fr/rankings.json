@@ -1,0 +1,44 @@
+{
+  "eyebrow": "Classements",
+  "title": "Classements des serveurs Minecraft",
+  "description": "Découvrez les meilleurs serveurs Minecraft : les plus joués en ce moment, ceux qui montent le plus vite, les records historiques de fréquentation et les derniers serveurs ajoutés. Classements mis à jour en continu à partir de données de joueurs réelles.",
+  "meta": {
+    "title": "Classements des serveurs Minecraft — Top, tendances et records",
+    "description": "Les classements des serveurs Minecraft : top des joueurs en ligne, serveurs en tendance, records de pic all-time et nouveaux serveurs. Données en temps réel, mises à jour toutes les 10 minutes.",
+    "keywords": "classement serveur minecraft, meilleur serveur minecraft, top serveur minecraft, serveur minecraft populaire, serveur minecraft tendance",
+    "ogTitle": "Classements des serveurs Minecraft",
+    "ogDescription": "Top des joueurs en ligne, serveurs en tendance, records de pic et nouveaux serveurs Minecraft — en temps réel."
+  },
+  "sections": {
+    "players": {
+      "nav": "Top joueurs",
+      "title": "Top serveurs par joueurs en ligne",
+      "description": "Les serveurs Minecraft avec le plus de joueurs connectés en ce moment. Le classement de référence, en temps réel.",
+      "empty": "Aucune donnée de joueurs disponible pour l'instant."
+    },
+    "trending": {
+      "nav": "Tendances",
+      "title": "Serveurs en tendance",
+      "description": "Les serveurs qui montent le plus vite, classés par croissance du nombre de joueurs sur la dernière semaine.",
+      "empty": "Pas encore assez de données de croissance pour établir ce classement."
+    },
+    "peak": {
+      "nav": "Records",
+      "title": "Records de fréquentation all-time",
+      "description": "Les plus gros pics de joueurs jamais enregistrés. Les serveurs qui ont marqué l'histoire par leur affluence.",
+      "empty": "Aucun record de fréquentation disponible pour l'instant."
+    },
+    "newest": {
+      "nav": "Nouveaux",
+      "title": "Nouveaux serveurs",
+      "description": "Les derniers serveurs ajoutés à Minecraft Stats. À découvrir avant tout le monde.",
+      "empty": "Aucun serveur récent à afficher pour l'instant."
+    }
+  },
+  "metrics": {
+    "playersOnline": "en ligne",
+    "weeklyGrowth": "cette semaine",
+    "allTimePeak": "pic all-time",
+    "added": "ajouté le"
+  }
+}

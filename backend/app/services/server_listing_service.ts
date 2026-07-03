@@ -14,9 +14,11 @@ export default class ServerListingService {
     languageIds?: string
     search: string
     type?: 'java' | 'bedrock'
+    sort?: 'players' | 'trending' | 'peak' | 'newest'
     ids: number[]
   }) {
     const { page, limit, categoryIds, languageIds, search, type, ids } = opts
+    const sort = opts.sort ?? 'players'
 
     // Ordering : on ne classe par `last_player_count` que si le dernier ping
     // réussi est récent (< 30 min, soit ~3 cycles de 10 min). Sinon le serveur
@@ -35,15 +37,42 @@ export default class ServerListingService {
       query = query.whereIn('id', ids)
     }
 
-    query = query
-      .orderByRaw(
-        `CASE
-          WHEN last_stats_at > now() - interval '30 minutes'
-            THEN COALESCE(last_player_count, -1)
-          ELSE -1
-         END DESC`
-      )
-      .orderBy('last_stats_at', 'desc')
+    // Tri du classement selon `sort`. Par défaut ('players'), l'ordre historique
+    // stale-aware : on ne classe par `last_player_count` que si le dernier ping
+    // réussi est récent (< 30 min). Les autres tris alimentent la page /rankings.
+    if (sort === 'trending') {
+      // Serveurs qui montent : croissance hebdo la plus forte. On JOIN la table
+      // de croissance (relation hasOne, 1:1 → pas de multiplication de lignes) et
+      // on ne garde que les croissances strictement positives. `select('servers.*')`
+      // est indispensable : Server.query() émet un `select *` non qualifié, sans
+      // ça les colonnes de server_growth_stats "bleedent" sur le modèle.
+      query = query
+        .select('servers.*')
+        .leftJoin('server_growth_stats', 'server_growth_stats.server_id', 'servers.id')
+        .whereNotNull('server_growth_stats.weekly_growth')
+        .where('server_growth_stats.weekly_growth', '>', 0)
+        .orderBy('server_growth_stats.weekly_growth', 'desc')
+    } else if (sort === 'peak') {
+      // Records all-time. Postgres trie NULLS-first en DESC → NULLS LAST explicite
+      // pour reléguer les serveurs sans pic connu en bas.
+      query = query.orderByRaw('peak_player_count DESC NULLS LAST')
+    } else if (sort === 'newest') {
+      query = query.orderBy('created_at', 'desc')
+    } else {
+      query = query
+        .orderByRaw(
+          `CASE
+            WHEN last_stats_at > now() - interval '30 minutes'
+              THEN COALESCE(last_player_count, -1)
+            ELSE -1
+           END DESC`
+        )
+        .orderBy('last_stats_at', 'desc')
+    }
+
+    // Départage stable : évite qu'un serveur "saute" d'une page à l'autre quand
+    // plusieurs partagent la même valeur de tri (fréquent sur peak/newest).
+    query = query.orderBy('servers.id', 'asc')
 
     if (search) {
       query = query.where((builder) => {

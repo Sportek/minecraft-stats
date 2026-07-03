@@ -1,5 +1,6 @@
 import { getClientDomainConfig, resolveAssetUrl } from "@/lib/domain";
 import { Category, Server } from "@/types/server";
+import { serverPath } from "@/lib/server-url";
 import Script from "next/script";
 
 /**
@@ -266,6 +267,50 @@ export function BlogPostStructuredData({ post, locale }: Readonly<BlogPostStruct
   return (
     <Script
       id={`blog-post-structured-data-${post.id}`}
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
+    />
+  );
+}
+
+interface RankingsStructuredDataProps {
+  /** Titre du classement (ex. "Top serveurs par joueurs en ligne"). */
+  name: string;
+  rows: { rank: number; entry: { server: Pick<Server, "id" | "name"> } }[];
+  locale?: string;
+}
+
+/**
+ * JSON-LD `ItemList` pour un classement. Donne aux moteurs et aux agents IA
+ * l'ordre exact et l'URL de chaque serveur classé — un signal fort et lisible
+ * par machine, en complément du HTML sémantique de la page.
+ */
+export function RankingsStructuredData({ name, rows, locale }: Readonly<RankingsStructuredDataProps>) {
+  const { baseUrl } = getClientDomainConfig();
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    inLanguage: bcp47(locale),
+    numberOfItems: rows.length,
+    itemListOrder: "https://schema.org/ItemListOrderDescending",
+    itemListElement: rows.map(({ rank, entry }) => ({
+      "@type": "ListItem",
+      position: rank,
+      name: entry.server.name,
+      url: `${baseUrl}${serverPath(entry.server.id, entry.server.name)}`,
+    })),
+  };
+
+  const id = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+  return (
+    <Script
+      id={`rankings-structured-data-${id}`}
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
     />
