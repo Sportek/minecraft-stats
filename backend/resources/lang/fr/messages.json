@@ -30,7 +30,10 @@
     "unauthorized": "Non autorisé",
     "notReachable": "Le serveur est injoignable",
     "duplicate": "Ce serveur semble déjà être référencé sur Minecraft Stats.",
-    "notFound": "Serveur introuvable"
+    "notFound": "Serveur introuvable",
+    "alreadyVoted": "Vous avez déjà voté pour ce serveur. Revenez plus tard.",
+    "termsRequired": "Vous devez accepter les conditions d'utilisation pour voter.",
+    "captchaFailed": "Échec de la vérification anti-robot. Veuillez réessayer."
   },
   "posts": {
     "unauthorized": "Non autorisé",

@@ -39,6 +39,12 @@ export function buildMetric(
   const { server, growthStat } = entry;
 
   switch (sort) {
+    case "votes":
+      return {
+        value: format.number(entry.monthlyVoteCount),
+        label: t("metrics.votesThisMonth"),
+        tone: "neutral",
+      };
     case "trending": {
       const growth = growthStat?.weeklyGrowth ?? 0;
       return {

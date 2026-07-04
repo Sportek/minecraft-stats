@@ -7,7 +7,7 @@ import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
  * de classement standard : le serveur + ses stats 24h + ses relations.
  * Chaque tri est aussi le segment d'URL de sa page dédiée (/rankings/<sort>).
  */
-export const RANKING_SORTS = ["players", "trending", "peak", "newest"] as const;
+export const RANKING_SORTS = ["players", "trending", "peak", "newest", "votes"] as const;
 
 export type RankingSort = (typeof RANKING_SORTS)[number];
 
@@ -19,6 +19,8 @@ export interface RankingEntry {
   stats: ServerStat[];
   categories: Category[];
   growthStat: ServerGrowthStat | null;
+  // Votes du mois courant. Renseigné (>0) uniquement pour le classement "votes".
+  monthlyVoteCount: number;
 }
 
 export interface RankingResponse {

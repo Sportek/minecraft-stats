@@ -1,5 +1,7 @@
 import Server from '#models/server'
 import StatsService from '#services/stat_service'
+import db from '@adonisjs/lucid/services/db'
+import { DateTime } from 'luxon'
 
 export default class ServerListingService {
   /**
@@ -21,7 +23,7 @@ export default class ServerListingService {
     languageIds?: string
     search: string
     type?: 'java' | 'bedrock'
-    sort?: 'players' | 'trending' | 'peak' | 'newest'
+    sort?: 'players' | 'trending' | 'peak' | 'newest' | 'votes'
     ids: number[]
   }) {
     const { page, limit, categoryIds, languageIds, search, type, ids } = opts
@@ -70,6 +72,28 @@ export default class ServerListingService {
       query = query.orderByRaw('peak_player_count DESC NULLS LAST')
     } else if (sort === 'newest') {
       query = query.orderBy('created_at', 'desc')
+    } else if (sort === 'votes') {
+      // Classement mensuel : on trie sur le nombre de votes du mois courant via un
+      // sous-select corrélé sélectionné comme colonne (lu via $extras — même valeur
+      // pour le tri et l'affichage, une seule passe). Pas de JOIN — évite tout
+      // risque de multiplication de lignes ; le coût est absorbé par le cache du
+      // classement (TTL 10 min). La borne du mois est calculée côté Node (luxon),
+      // comme VoteService.monthlyCount : un date_trunc PG utiliserait le fuseau de
+      // la session DB et pourrait diverger autour du changement de mois.
+      const monthStart = DateTime.now().startOf('month').toSQL()!
+      query = query
+        .select('servers.*')
+        .select(
+          db.raw(
+            `(
+              SELECT count(*) FROM server_votes sv
+              WHERE sv.server_id = servers.id
+                AND sv.created_at >= ?
+            ) as monthly_vote_count`,
+            [monthStart]
+          )
+        )
+        .orderByRaw('monthly_vote_count DESC')
     } else {
       query = query
         .orderByRaw(
@@ -163,6 +187,8 @@ export default class ServerListingService {
         stats: [...lastStat, ...bucketed],
         categories: server.categories,
         growthStat: server.growthStat,
+        // Colonne calculée du tri 'votes' ; absente (donc 0) pour les autres tris.
+        monthlyVoteCount: Number(server.$extras.monthly_vote_count ?? 0),
       }
     })
 

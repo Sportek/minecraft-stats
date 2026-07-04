@@ -94,6 +94,14 @@
       "dpoTitle": "No DPO",
       "dpoBody": "No Data Protection Officer (DPO) has been appointed."
     },
+    "voting": {
+      "title": "11. Server votes",
+      "intro": "You can vote for a server without creating an account, using only your Minecraft username. By voting, you agree to the following:",
+      "item1": "A vote is limited to once every 90 minutes per server (enforced by username, IP fingerprint and visitor identifier).",
+      "item2": "Data tied to the vote is retained: the Minecraft username you enter, a non-reversible fingerprint of your IP address, an anonymous visitor identifier and a country code. Your username may be enriched via the public Mojang API (UUID and rendered head).",
+      "item3": "Your vote is linked to your anonymous visitor identifier, and to your account if you are signed in.",
+      "consent": "Ticking the terms acceptance box when voting constitutes consent to the analytics tracking described in our <link>Privacy Policy</link>. You can withdraw this consent at any time via the consent banner."
+    },
     "intellectualProperty": {
       "title": "5. Intellectual Property",
       "body": "Server images are the property of their respective Minecraft servers. All other content is the property of Gabriel Landry. The terms \"Minecraft\" and other associated trademarks belong to Mojang (Microsoft)."
@@ -173,7 +181,7 @@
       "whatItem3": "An approximate country, derived from your connection.",
       "whatItem4": "A hashed, non-reversible form of your IP address. We never store your IP address in clear text; the hash only lets us group visits from the same connection without keeping the address itself.",
       "consentTitle": "Consent",
-      "consentBody": "You opt in to the detailed analytics above through the consent banner shown on your first visit. If you decline, we do not record those detailed events — only the anonymous aggregate count described earlier continues. You can change your mind at any time by clearing your browser's local storage for this site, which also resets your anonymous visitor identifier.",
+      "consentBody": "You opt in to the detailed analytics above through the consent banner shown on your first visit, or by accepting the terms of use when you vote for a server (in which case your vote is linked to your anonymous visitor identifier). If you decline, we do not record those detailed events — only the anonymous aggregate count described earlier continues. You can change your mind at any time by clearing your browser's local storage for this site, which also resets your anonymous visitor identifier.",
       "linkTitle": "Link with your account",
       "linkBody": "If you are signed in, we may associate your anonymous visits with your account so we can understand usage by logged-in members. A single device or connection can be linked to more than one account, and a single account to several devices. You can request deletion of this data at any time (see Your Rights below).",
       "retentionTitle": "Retention",

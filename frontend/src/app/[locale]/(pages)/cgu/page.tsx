@@ -142,6 +142,17 @@ const CGU = async () => {
       </section>
 
       <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">{t("cgu.voting.title")}</h2>
+        <p>{t("cgu.voting.intro")}</p>
+        <ul className="list-disc list-inside pl-4">
+          <li>{t("cgu.voting.item1")}</li>
+          <li>{t("cgu.voting.item2")}</li>
+          <li>{t("cgu.voting.item3")}</li>
+        </ul>
+        <p>{t.rich("cgu.voting.consent", { link: privacyLink })}</p>
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-xs">
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">{t("cgu.privacy.title")}</h2>
         <p>{t.rich("cgu.privacy.body", { link: privacyLink })}</p>
       </section>

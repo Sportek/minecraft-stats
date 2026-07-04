@@ -30,7 +30,10 @@
     "unauthorized": "Unauthorized",
     "notReachable": "Server is not reachable",
     "duplicate": "This server appears to already be listed on Minecraft Stats.",
-    "notFound": "Server not found"
+    "notFound": "Server not found",
+    "alreadyVoted": "You have already voted for this server. Come back later.",
+    "termsRequired": "You must accept the terms of use to vote.",
+    "captchaFailed": "Anti-bot verification failed. Please try again."
   },
   "posts": {
     "unauthorized": "Unauthorized",

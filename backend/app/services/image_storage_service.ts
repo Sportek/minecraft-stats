@@ -17,6 +17,12 @@ const MAX_FAVICON_BYTES = 128 * 1024
 const MAX_REMOTE_AVATAR_BYTES = 5 * 1024 * 1024
 
 /**
+ * Taille max d'un skin Minecraft rapatrié depuis textures.minecraft.net. Un skin
+ * légitime est un PNG 64x64 de quelques Ko ; on borne avant décodage Sharp.
+ */
+const MAX_SKIN_BYTES = 1 * 1024 * 1024
+
+/**
  * Centralise tout le stockage d'images (favicons, blog, avatars) : conversion
  * Sharp + écriture via Drive. Le driver effectif (disque local en dev, S3 en
  * prod) est choisi par la config `config/drive.ts` ; ce service ignore où les
@@ -104,6 +110,43 @@ class ImageStorageService {
     })
 
     return `/${key}`
+  }
+
+  /**
+   * Rend et stocke la tête d'un joueur à partir des octets bruts de son skin
+   * Minecraft (PNG 64x64 ou legacy 64x32). Extrait le visage (8x8 en 8,8) puis y
+   * superpose le calque chapeau (8x8 en 40,8), et agrandit en 128x128 au plus
+   * proche (`nearest`) pour garder le pixel-art net. Clé `images/heads/<uuid>.webp`.
+   * TTL 6h comme les favicons : l'URL n'est pas versionnée mais le skin change
+   * rarement. Retourne le chemin relatif sans extension (`/images/heads/<uuid>`).
+   */
+  async storePlayerHead(uuid: string, skinBuffer: Buffer): Promise<string> {
+    if (skinBuffer.byteLength > MAX_SKIN_BYTES) {
+      throw new Error(`skin too large: ${skinBuffer.byteLength} bytes (max ${MAX_SKIN_BYTES})`)
+    }
+
+    const source = () => sharp(skinBuffer, { limitInputPixels: 16_384 * 16_384, failOn: 'error' })
+    const face = await source().extract({ left: 8, top: 8, width: 8, height: 8 }).png().toBuffer()
+    const hat = await source().extract({ left: 40, top: 8, width: 8, height: 8 }).png().toBuffer()
+
+    // Deux instances Sharp distinctes : dans une même chaîne, composite() est
+    // appliqué après resize(), le chapeau resterait un patch 8x8 centré sur le
+    // visage 128x128 au lieu de le recouvrir.
+    const head = await sharp(face)
+      .composite([{ input: hat }])
+      .png()
+      .toBuffer()
+    const webp = await sharp(head)
+      .resize(128, 128, { kernel: 'nearest' })
+      .toFormat('webp')
+      .toBuffer()
+
+    await this.disk.put(`images/heads/${uuid}.webp`, webp, {
+      contentType: 'image/webp',
+      cacheControl: 'public, max-age=21600',
+    })
+
+    return `/images/heads/${uuid}`
   }
 
   /**

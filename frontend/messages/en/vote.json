@@ -1,0 +1,23 @@
+{
+  "button": "Vote",
+  "votesThisMonth": "Votes this month",
+  "totalVotes": "{count} all-time",
+  "alreadyVoted": "Already voted",
+  "nextVoteIn": "Next vote in {time}",
+  "dialogTitle": "Vote for {name}",
+  "dialogDescription": "Enter your Minecraft username. You can vote once every 90 minutes, no account needed.",
+  "usernameLabel": "Minecraft username",
+  "usernamePlaceholder": "e.g. Notch",
+  "termsLabel": "I accept the <link>terms of use</link>, which enables analytics tracking.",
+  "errors": {
+    "termsRequired": "You must accept the terms of use to vote.",
+    "captcha": "Please complete the anti-bot check.",
+    "generic": "The vote failed. Please try again."
+  },
+  "success": {
+    "toast": "Thanks for your vote!",
+    "title": "Thanks for your vote!",
+    "body": "{username}, your support has been counted.",
+    "close": "Close"
+  }
+}

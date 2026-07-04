@@ -94,6 +94,14 @@
       "dpoTitle": "Absence de DPO",
       "dpoBody": "Aucun délégué à la protection des données (DPO) n'a été désigné."
     },
+    "voting": {
+      "title": "11. Votes pour les serveurs",
+      "intro": "Vous pouvez voter pour un serveur sans créer de compte, en indiquant seulement votre pseudo Minecraft. En votant, vous acceptez ce qui suit :",
+      "item1": "Un vote est limité à une fois toutes les 90 minutes par serveur (contrôle par pseudo, empreinte d'adresse IP et identifiant de visiteur).",
+      "item2": "Les données liées au vote sont conservées : pseudo Minecraft saisi, empreinte non réversible de votre adresse IP, identifiant anonyme de visiteur et code pays. Votre pseudo peut être enrichi via l'API publique Mojang (UUID et rendu de votre tête).",
+      "item3": "Votre vote est rattaché à votre identifiant de visiteur anonyme, et à votre compte si vous êtes connecté.",
+      "consent": "Cocher la case d'acceptation des conditions lors d'un vote vaut consentement au suivi statistique décrit dans notre <link>Politique de confidentialité</link>. Vous pouvez retirer ce consentement à tout moment via la bannière de consentement."
+    },
     "intellectualProperty": {
       "title": "5. Propriété intellectuelle",
       "body": "Les images des serveurs sont la propriété de leurs serveurs Minecraft respectifs. Tout autre contenu est la propriété de Gabriel Landry. Les termes « Minecraft » et les autres marques associées appartiennent à Mojang (Microsoft)."
@@ -173,7 +181,7 @@
       "whatItem3": "Un pays approximatif, déduit de votre connexion.",
       "whatItem4": "Une forme hachée et non réversible de votre adresse IP. Nous ne stockons jamais votre adresse IP en clair ; le hachage nous permet uniquement de regrouper les visites provenant d'une même connexion sans conserver l'adresse elle-même.",
       "consentTitle": "Consentement",
-      "consentBody": "Vous consentez aux statistiques détaillées ci-dessus via la bannière de consentement affichée lors de votre première visite. Si vous refusez, nous n'enregistrons pas ces événements détaillés — seul le décompte agrégé anonyme décrit précédemment se poursuit. Vous pouvez changer d'avis à tout moment en effaçant le stockage local de votre navigateur pour ce site, ce qui réinitialise également votre identifiant de visiteur anonyme.",
+      "consentBody": "Vous consentez aux statistiques détaillées ci-dessus via la bannière de consentement affichée lors de votre première visite, ou en acceptant les conditions d'utilisation lorsque vous votez pour un serveur (auquel cas votre vote est rattaché à votre identifiant de visiteur anonyme). Si vous refusez, nous n'enregistrons pas ces événements détaillés — seul le décompte agrégé anonyme décrit précédemment se poursuit. Vous pouvez changer d'avis à tout moment en effaçant le stockage local de votre navigateur pour ce site, ce qui réinitialise également votre identifiant de visiteur anonyme.",
       "linkTitle": "Lien avec votre compte",
       "linkBody": "Si vous êtes connecté, nous pouvons associer vos visites anonymes à votre compte afin de comprendre l'utilisation par les membres connectés. Un même appareil ou une même connexion peut être lié à plusieurs comptes, et un même compte à plusieurs appareils. Vous pouvez demander la suppression de ces données à tout moment (voir Vos droits ci-dessous).",
       "retentionTitle": "Conservation",

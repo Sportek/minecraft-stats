@@ -5,6 +5,7 @@ import { getLastStat } from "@/utils/stats";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
+import VoteButton from "./vote-button";
 
 interface ServerDetailHeaderProps {
   server: Server;
@@ -60,25 +61,33 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
           />
         </div>
 
-        {/* Players online block */}
-        <div className="flex flex-col gap-1 sm:items-end">
-          <span className="text-xs text-muted-foreground">{t("detail.playersOnline")}</span>
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-success ring-2 ring-success/20" />
-            <span className="text-3xl font-extrabold tabular-nums text-foreground">
-              {playerCount != null ? format.number(playerCount) : "N/A"}
-            </span>
+        {/* Right column: players online + vote */}
+        <div className="flex flex-col gap-5 sm:items-end">
+          <div className="flex flex-col gap-1 sm:items-end">
+            <span className="text-xs text-muted-foreground">{t("detail.playersOnline")}</span>
+            <div className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-success ring-2 ring-success/20" />
+              <span className="text-3xl font-extrabold tabular-nums text-foreground">
+                {playerCount != null ? format.number(playerCount) : "N/A"}
+              </span>
+            </div>
+            {monthlyGrowth != null && (
+              <span
+                className={cn(
+                  "text-sm font-medium tabular-nums",
+                  monthlyGrowth >= 0 ? "text-success" : "text-destructive"
+                )}
+              >
+                {formatGrowth(monthlyGrowth)}
+              </span>
+            )}
           </div>
-          {monthlyGrowth != null && (
-            <span
-              className={cn(
-                "text-sm font-medium tabular-nums",
-                monthlyGrowth >= 0 ? "text-success" : "text-destructive"
-              )}
-            >
-              {formatGrowth(monthlyGrowth)}
-            </span>
-          )}
+
+          <VoteButton
+            serverId={server.id}
+            serverName={server.name}
+            initialVoteCount={server.voteCount}
+          />
         </div>
       </div>
     </section>
