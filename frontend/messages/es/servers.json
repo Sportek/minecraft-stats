@@ -51,6 +51,13 @@
       "title": "Servidor no encontrado",
       "description": "El servidor que buscas no existe o ha sido eliminado.",
       "backHome": "Volver al inicio"
+    },
+    "error": {
+      "rateLimitTitle": "Demasiadas solicitudes",
+      "rateLimitDescription": "Has realizado demasiadas solicitudes en poco tiempo. Espera un momento y vuelve a intentarlo.",
+      "genericTitle": "No se pudo cargar el servidor",
+      "genericDescription": "Se produjo un error al cargar los datos del servidor. Vuelve a intentarlo en un momento.",
+      "retry": "Reintentar"
     }
   },
   "faq": {

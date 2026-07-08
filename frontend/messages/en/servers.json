@@ -51,6 +51,13 @@
       "title": "Server Not Found",
       "description": "The server you're looking for doesn't exist or has been removed.",
       "backHome": "Back to Home"
+    },
+    "error": {
+      "rateLimitTitle": "Too many requests",
+      "rateLimitDescription": "You've made too many requests in a short time. Please wait a moment, then try again.",
+      "genericTitle": "Unable to load the server",
+      "genericDescription": "Something went wrong while loading the server data. Please try again in a moment.",
+      "retry": "Try again"
     }
   },
   "faq": {

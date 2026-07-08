@@ -1,3 +1,4 @@
+import { HttpError } from "@/app/_cheatcode";
 import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
@@ -100,6 +101,13 @@ export const generateMetadata = async (props: {
     };
   } catch (error) {
     console.error("Erreur", error);
+    // Seul un vrai 404 doit figer le titre « introuvable » + noindex dans le
+    // cache ISR (revalidate 600). Sur une erreur transitoire (429, 5xx,
+    // timeout), on hérite des metadata parentes pour ne pas désindexer un
+    // serveur valide pendant 10 minutes.
+    if (!(error instanceof HttpError && error.status === 404)) {
+      return {};
+    }
     return {
       title: t("meta.notFoundTitle"),
       description: t("meta.notFoundDescription"),

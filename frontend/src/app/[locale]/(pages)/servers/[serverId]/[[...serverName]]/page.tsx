@@ -1,5 +1,5 @@
 "use client";
-import { fetcher, getBaseUrl } from "@/app/_cheatcode";
+import { fetcher, getBaseUrl, HttpError } from "@/app/_cheatcode";
 import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 import { getServerStats } from "@/http/server";
 import { ServerStat } from "@/types/server";
@@ -153,6 +153,43 @@ const ServerNotFound = () => {
   );
 };
 
+/**
+ * Erreur de chargement autre qu'un vrai 404 : rate-limit (429), erreur
+ * serveur (5xx), panne réseau… On l'annonce comme telle — surtout pas
+ * comme « serveur introuvable » — et on propose de réessayer.
+ */
+const ServerLoadError = ({ error, onRetry }: { error: Error; onRetry: () => void }) => {
+  const t = useTranslations("Servers");
+  const isRateLimited = error instanceof HttpError && error.status === 429;
+  return (
+    <main className="flex-1 space-y-4 py-4">
+      <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+        <div className="bg-card text-card-foreground border border-border rounded-lg shadow-xs p-8 space-y-6 max-w-md w-full">
+          <div className="space-y-2 text-center">
+            <div className="w-16 h-16 mx-auto bg-secondary text-muted-foreground rounded-full flex items-center justify-center">
+              <Icon icon={isRateLimited ? "mdi:timer-sand" : "mdi:alert-circle-outline"} className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-semibold text-foreground">
+              {isRateLimited ? t("detail.error.rateLimitTitle") : t("detail.error.genericTitle")}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {isRateLimited ? t("detail.error.rateLimitDescription") : t("detail.error.genericDescription")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onRetry}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-foreground bg-accent hover:bg-accent/90 rounded-md transition-colors"
+          >
+            <Icon icon="mdi:refresh" className="w-4 h-4" />
+            {t("detail.error.retry")}
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+};
+
 const ServerPage = () => {
   const { serverId } = useParams();
   const locale = useLocale();
@@ -161,6 +198,7 @@ const ServerPage = () => {
     data: serverData,
     error: serverError,
     isLoading: isServerLoading,
+    mutate: retryServer,
   } = useSWR<ServerData, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {
     // Aligné sur le TTL Redis backend (300s) — cf. P.2.1
     refreshInterval: 1000 * 60 * 5,
@@ -220,16 +258,13 @@ const ServerPage = () => {
   }
 
   if (serverError) {
-    if (serverError.message.includes("404")) {
+    if (serverError instanceof HttpError && serverError.status === 404) {
       return <ServerNotFound />;
     }
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-destructive">{serverError.message}</div>
-      </div>
-    );
+    return <ServerLoadError error={serverError} onRetry={() => retryServer()} />;
   }
 
+  // Filet de sécurité : réponse 200 sans payload exploitable.
   if (!serverData?.server) {
     return <ServerNotFound />;
   }
