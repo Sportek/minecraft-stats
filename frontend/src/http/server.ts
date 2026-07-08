@@ -1,4 +1,4 @@
-import { getBaseUrl } from "@/app/_cheatcode";
+import { getBaseUrl, HttpError } from "@/app/_cheatcode";
 import { Category, Server, ServerGrowthStat, ServerStat, ServerType } from "@/types/server";
 
 export interface ServerPayload {
@@ -102,7 +102,7 @@ export const getMyServers = async (token: string) => {
 export const getServer = async (serverId: number) => {
   const response = await fetch(`${getBaseUrl()}/servers/${serverId}`);
   if (!response.ok) {
-    throw new Error(`Failed to fetch server ${serverId}: ${response.status}`);
+    throw new HttpError(`Failed to fetch server ${serverId}`, response.status);
   }
   return response.json() as Promise<{ server: Server; stats: ServerStat[]; categories: Category[] }>;
 };
