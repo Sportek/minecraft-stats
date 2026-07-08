@@ -676,10 +676,10 @@
   resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.2.9.tgz#6e36f17dd615c52761691b7f5be1d9d161abed2a"
   integrity sha512-qr2VL3Ce5QrwgO2yh1ujSBawrimjVKX8FGF/cOynmdYKJY0BdHpGVNIRK1tqONB10Vkm25Ub1BD2bkjWs4+96w==
 
-"@next/third-parties@16.1.1":
-  version "16.1.1"
-  resolved "https://registry.yarnpkg.com/@next/third-parties/-/third-parties-16.1.1.tgz#ca4c2691198bb479a14f802d3fdd175e7698da61"
-  integrity sha512-i3NWXWiNpXGaUi6vGDrK7rC5qLhuCmuhD1BeaOh4Ma8piUBeUhOjEa1UfpVndeC3JcqWXPaYzqO1Hd1U6hql/w==
+"@next/third-parties@16.2.9":
+  version "16.2.9"
+  resolved "https://registry.yarnpkg.com/@next/third-parties/-/third-parties-16.2.9.tgz#830f4cbe91799424cedeafe828e6a9793653a846"
+  integrity sha512-JZPGQRN8eQs2WMfBXOf6Zjrma+JIN0KyA24MvmIa3bUI4BwTaJ1UlxmYVc5ri6l30LQ8fPv6Kmx20447hCltrg==
   dependencies:
     third-party-capital "1.0.20"
 
@@ -1732,10 +1732,10 @@
     "@types/geojson" "*"
     "@types/react" "*"
 
-"@types/react@*", "@types/react@19.2.7":
-  version "19.2.7"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.7.tgz#84e62c0f23e8e4e5ac2cadcea1ffeacccae7f62f"
-  integrity sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg==
+"@types/react@*", "@types/react@19.2.17":
+  version "19.2.17"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.17.tgz#dccac365baa0f1734ec270ff4b51c89465e8dc7f"
+  integrity sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==
   dependencies:
     csstype "^3.2.2"
 
@@ -1969,38 +1969,38 @@ acorn@^8.15.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.17.0.tgz#1785adb84faf8d8add10369b93826fc2bd08f1fe"
   integrity sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==
 
-ag-charts-community@13.3.1, ag-charts-community@^13.3.1:
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-13.3.1.tgz#3631c5727e9f410331bb9e1f49e5b75b0a53c23f"
-  integrity sha512-xRwyuP4xcMoyzaa27fccUhKqGyiWp/0h6vq0ZBuAtj2k0OC5UbV6IQUW6/0AgmLIQ4/K9QlRWFOe3sL/x5MHow==
+ag-charts-community@14.0.0, ag-charts-community@^14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-14.0.0.tgz#4d738b73d79d26203edb65ad204e84b646091f28"
+  integrity sha512-u/O7T/EGxj8s6cZjbYU1CaRObnjMzdfXZVido9uXbeAwBkT4rxXF6OWSq1SkkSrZD1+pwusHn3cbul4Ly3yzPA==
   dependencies:
-    ag-charts-core "13.3.1"
-    ag-charts-locale "13.3.1"
-    ag-charts-types "13.3.1"
+    ag-charts-core "14.0.0"
+    ag-charts-locale "14.0.0"
+    ag-charts-types "14.0.0"
 
-ag-charts-core@13.3.1:
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-core/-/ag-charts-core-13.3.1.tgz#cc98767e1c34111fe1e8534e236c2436927544e5"
-  integrity sha512-oDnK07/S6Z10EwIBxhC4tMDwdf2ck5MMcuSB/h+0/Q2XcL2l3S4jmlq3iKI7Kp9sh0H5JYDDc2sAdkUN87W8RA==
+ag-charts-core@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-core/-/ag-charts-core-14.0.0.tgz#8b179192000f6e3b4ef59e6eaca18c167623fa39"
+  integrity sha512-xcFSQ0Ces8JvH5RpKoZIjrFzdvju91gIXODj33Byg6ShwkixrHyLaCf17addfSsqerSSdMkw0iiceD9afU83UQ==
   dependencies:
-    ag-charts-types "13.3.1"
+    ag-charts-types "14.0.0"
 
-ag-charts-locale@13.3.1:
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-locale/-/ag-charts-locale-13.3.1.tgz#8185e7132a5194cba6058073b32804de4cdaeda7"
-  integrity sha512-jF7iXI3PBFq/LFgBKwt72CykDBWcl3HYgP7B/hSJGsFdK+yuUTPrP67dA/wghgC6sg+Qw2U2GeykhZkG0yH8ww==
+ag-charts-locale@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-locale/-/ag-charts-locale-14.0.0.tgz#e7650882a651c5ee48c0689412ecb910857ea9c7"
+  integrity sha512-14mGnsQgG7VzdQwt7Jq2MFPGPtO8y6jAECN4nae7t3fJAPq162mmrgDaqpwHdAZxKPkMNte98DUQ8ULrtSbUpQ==
 
-ag-charts-react@^13.3.1:
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-react/-/ag-charts-react-13.3.1.tgz#e9b60d867ef3f1dfc6c18930811db1df19f21713"
-  integrity sha512-m1Wqv8HydZ0aQw+k8oV4ind+We1REdb7v0MKcGRbiWt+vX+1J8kWb1Yu61zZPSkT8yX/ZZuLto+yEcTY1n3iPQ==
+ag-charts-react@^14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-react/-/ag-charts-react-14.0.0.tgz#2358de9c467ab3112487b216832fa1f4bf753583"
+  integrity sha512-PTwfdmyFbePzaKHuGWfB2o8KNXO5wR5fOCyUCRqdUNnCEK8cBPwlDsfe28CRsevQSLPZqTNpW2y5qJhHC4q6EQ==
   dependencies:
-    ag-charts-community "13.3.1"
+    ag-charts-community "14.0.0"
 
-ag-charts-types@13.3.1:
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-13.3.1.tgz#c34aaed19847ed633fa468f39caa94bbffc363b3"
-  integrity sha512-m37eUe4g//swvGh8PWMlYQH3gknjSsPeW4sQwBhM3/auGAHmN0wvxEWlrdAn98pBPg4HoKbtOy+yf7gPCYsnvQ==
+ag-charts-types@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-14.0.0.tgz#996ee481a56988840b8e2cafc334e780ce636742"
+  integrity sha512-89X4J/OeOTzTp505126JayGEn3k6QUKz3UHSR0/ggoVZYzVqtMN13k/B136S1+YBwgnzyJ/NARnnIRTPWsWG9g==
 
 ajv@^6.14.0:
   version "6.15.0"
@@ -4299,10 +4299,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-dom@19.2.3:
-  version "19.2.3"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.3.tgz#f0b61d7e5c4a86773889fcc1853af3ed5f215b17"
-  integrity sha512-yELu4WmLPw5Mr/lmeEpox5rw3RETacE++JgHqQzd2dg+YbJuat3jH4ingc+WPZhxaoFzdv9y33G+F7Nl5O0GBg==
+react-dom@19.2.7:
+  version "19.2.7"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.7.tgz#0450dc9ae9ddbff76ef196401cd8b8c7fb466ccc"
+  integrity sha512-t0BRVXvbiE/o20Hfw669rLbMCDWtYZLvmJigy2f0MxsXF+71pxhR3xOkspmsO8h3ZlNzyibAmtCa3l4lYKk6gQ==
   dependencies:
     scheduler "^0.27.0"
 
@@ -4353,10 +4353,10 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
 
-react@19.2.3:
-  version "19.2.3"
-  resolved "https://registry.yarnpkg.com/react/-/react-19.2.3.tgz#d83e5e8e7a258cf6b4fe28640515f99b87cd19b8"
-  integrity sha512-Ku/hhYbVjOQnXDZFv2+RibmLFGwFdeeKHFcOTlrt7xplBnya5OGn/hIRDsqDiSUcfORsDC7MPxwork8jBwsIWA==
+react@19.2.7:
+  version "19.2.7"
+  resolved "https://registry.yarnpkg.com/react/-/react-19.2.7.tgz#1f47a1bfc06f8ec885752c6f4af14369a9f8260b"
+  integrity sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==
 
 reflect.getprototypeof@^1.0.10, reflect.getprototypeof@^1.0.9:
   version "1.0.10"
@@ -4712,9 +4712,9 @@ supports-preserve-symlinks-flag@^1.0.0:
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
 swr@^2.3.3:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/swr/-/swr-2.4.1.tgz#c9e48abff6bf4b04846342e2f1f6be108a078cf6"
-  integrity sha512-2CC6CiKQtEwaEeNiqWTAw9PGykW8SR5zZX8MZk6TeAvEAnVS7Visz8WzphqgtQ8v2xz/4Q5K+j+SeMaKXeeQIA==
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-2.4.2.tgz#741ba9c804db756cfa966376cbc33f84a2d88cfd"
+  integrity sha512-ej644Y2bvkIajfR32KGeSSdBXQW+ScjGjkybZgSE7kFpk9eGnV44XY9FJylXi+W75pavSX1PVNB57W5EbhGIYw==
   dependencies:
     dequal "^2.0.3"
     use-sync-external-store "^1.6.0"
