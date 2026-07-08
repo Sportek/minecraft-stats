@@ -51,6 +51,13 @@
       "title": "Serveur introuvable",
       "description": "Le serveur que vous recherchez n'existe pas ou a été supprimé.",
       "backHome": "Retour à l'accueil"
+    },
+    "error": {
+      "rateLimitTitle": "Trop de requêtes",
+      "rateLimitDescription": "Vous avez effectué trop de requêtes en peu de temps. Patientez un instant, puis réessayez.",
+      "genericTitle": "Impossible de charger le serveur",
+      "genericDescription": "Une erreur est survenue lors du chargement des données du serveur. Réessayez dans un instant.",
+      "retry": "Réessayer"
     }
   },
   "faq": {

@@ -16,8 +16,37 @@ export const localeHeaders = (): Record<string, string> => {
   return lang ? { "Accept-Language": lang } : {};
 };
 
-export const fetcher = (input: RequestInfo, init?: RequestInit) =>
-  fetch(input, { ...init, headers: { ...localeHeaders(), ...init?.headers } }).then((res) => res.json());
+/**
+ * Erreur HTTP porteuse du status, pour que les consommateurs (SWR, layouts)
+ * puissent distinguer un vrai 404 d'un 429/5xx transitoire. SWR s'appuie
+ * aussi sur `status` pour ne pas re-tenter les 404.
+ */
+export class HttpError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
+/** Extrait le message d'un corps d'erreur Adonis ({message} | {errors: [{message}]} | {error: {message}}). */
+const readErrorMessage = async (res: Response): Promise<string | undefined> => {
+  const body = (await res.json().catch(() => undefined)) as
+    | { error?: { message?: string }; errors?: { message?: string }[]; message?: string }
+    | undefined;
+  return body?.error?.message || body?.errors?.[0]?.message || body?.message;
+};
+
+export const fetcher = async (input: RequestInfo, init?: RequestInit) => {
+  const res = await fetch(input, { ...init, headers: { ...localeHeaders(), ...init?.headers } });
+  if (!res.ok) {
+    const message = await readErrorMessage(res);
+    throw new HttpError(message ?? `Request failed with status ${res.status}`, res.status);
+  }
+  return res.json();
+};
 
 /**
  * Returns the base URL for API calls
