@@ -1,6 +1,7 @@
 import redis from '@adonisjs/redis/services/main'
 import logger from '@adonisjs/core/services/logger'
 import { Counter, register } from 'prom-client'
+import type { HttpContext } from '@adonisjs/core/http'
 
 const metricPrefix = `${process.env.APP_NAME ?? 'app'}_`
 
@@ -109,6 +110,17 @@ export default class CacheService {
   static quantizeEpochMs(epochMs: number, gridSeconds = 300): number {
     const gridMs = gridSeconds * 1000
     return Math.floor(epochMs / gridMs) * gridMs
+  }
+
+  /**
+   * Autorise le contournement du cache (`?nocache=1`) : toujours en dev, et en
+   * production uniquement pour un admin. Mutualise la règle qui était dupliquée
+   * entre le StatsController et le ServersController.
+   */
+  static bypassAllowed(ctx: HttpContext): boolean {
+    if (ctx.request.input('nocache') !== '1') return false
+    if (process.env.NODE_ENV !== 'production') return true
+    return ctx.auth?.user?.role === 'admin'
   }
 
   /**

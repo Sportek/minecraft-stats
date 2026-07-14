@@ -1,14 +1,15 @@
 import type { LocaleFields, PostFormValues } from "@/components/admin/post-form";
 import type { AdminPost, CreatePostInput, PostLocale, PostTranslationInput } from "@/types/post";
+import { routing } from "@/i18n/routing";
 
-export const POST_LOCALES: PostLocale[] = ["en", "fr", "es"];
+export { slugify } from "@/lib/slug";
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+/**
+ * Locales dans lesquelles un article peut être rédigé — dérivées du routing i18n
+ * (source unique de vérité) pour ne plus pouvoir diverger de l'ensemble de locales
+ * réellement exposé et servi par le backend.
+ */
+export const POST_LOCALES: PostLocale[] = [...routing.locales];
 
 function emptyLocaleFields(): LocaleFields {
   return { title: "", slug: "", excerpt: "", content: "" };

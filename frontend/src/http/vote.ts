@@ -1,5 +1,4 @@
-import { getBaseUrl } from "@/app/_cheatcode";
-import { getErrorMessage } from "./auth";
+import { apiFetch } from "./client";
 
 export interface VotePlayer {
   username: string;
@@ -34,44 +33,22 @@ interface SubmitVoteInput {
  * traduit renvoyé par l'API (pseudo invalide, conditions non acceptées, captcha,
  * cooldown 429…). Le pseudo Minecraft est le seul champ requis de l'utilisateur.
  */
-export const submitVote = async (
-  serverId: number,
-  input: SubmitVoteInput
-): Promise<VoteResult> => {
-  const response = await fetch(`${getBaseUrl()}/servers/${serverId}/vote`, {
+export const submitVote = (serverId: number, input: SubmitVoteInput): Promise<VoteResult> =>
+  apiFetch<VoteResult>(`/servers/${serverId}/vote`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+    body: {
       username: input.username,
       visitorId: input.visitorId,
       acceptedTerms: input.acceptedTerms,
       turnstileToken: input.turnstileToken ?? undefined,
-    }),
+    },
   });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<VoteResult>;
-};
 
 /**
  * Indique si le visiteur peut voter maintenant pour ce serveur (cooldown), la
  * date du prochain vote possible et le total de votes. Pilote l'état du bouton.
  */
-export const getVoteStatus = async (
-  serverId: number,
-  visitorId: string
-): Promise<VoteStatus> => {
+export const getVoteStatus = (serverId: number, visitorId: string): Promise<VoteStatus> => {
   const params = new URLSearchParams({ visitorId });
-  const response = await fetch(
-    `${getBaseUrl()}/servers/${serverId}/vote-status?${params.toString()}`
-  );
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<VoteStatus>;
+  return apiFetch<VoteStatus>(`/servers/${serverId}/vote-status?${params.toString()}`);
 };

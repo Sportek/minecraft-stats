@@ -6,7 +6,7 @@ import {
   AdvertisementInput,
   PublicAd,
 } from "@/types/advertisement";
-import { getErrorMessage } from "./auth";
+import { apiFetch } from "./client";
 
 // --- Endpoints publics (diffusion) ---
 
@@ -14,24 +14,12 @@ import { getErrorMessage } from "./auth";
  * Récupère les publicités diffusables pour un emplacement donné.
  * Sur les pages serveur, categoryIds permet le ciblage par catégorie.
  */
-export const getActiveAds = async (
-  placement: AdPlacement,
-  categoryIds?: number[]
-): Promise<PublicAd[]> => {
+export const getActiveAds = (placement: AdPlacement, categoryIds?: number[]): Promise<PublicAd[]> => {
   const params = new URLSearchParams({ placement });
   if (categoryIds && categoryIds.length > 0) {
     params.set("categoryIds", categoryIds.join(","));
   }
-
-  const response = await fetch(`${getBaseUrl()}/advertisements?${params.toString()}`, {
-    headers: { "Content-Type": "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<PublicAd[]>;
+  return apiFetch<PublicAd[]>(`/advertisements?${params.toString()}`);
 };
 
 /**
@@ -72,87 +60,31 @@ export const buildAdClickUrl = (
 
 // --- Endpoints admin ---
 
-const authHeaders = (token: string) => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${token}`,
-});
+export const getAdminAdvertisements = (token: string): Promise<Advertisement[]> =>
+  apiFetch<Advertisement[]>("/admin/advertisements", { token });
 
-export const getAdminAdvertisements = async (token: string): Promise<Advertisement[]> => {
-  const response = await fetch(`${getBaseUrl()}/admin/advertisements`, {
-    headers: authHeaders(token),
-  });
+export const getAdminAdvertisement = (id: number, token: string): Promise<Advertisement> =>
+  apiFetch<Advertisement>(`/admin/advertisements/${id}`, { token });
 
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<Advertisement[]>;
-};
-
-export const getAdminAdvertisement = async (
-  id: number,
-  token: string
-): Promise<Advertisement> => {
-  const response = await fetch(`${getBaseUrl()}/admin/advertisements/${id}`, {
-    headers: authHeaders(token),
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<Advertisement>;
-};
-
-export const createAdvertisement = async (
+export const createAdvertisement = (
   data: AdvertisementInput,
   token: string
-): Promise<Advertisement> => {
-  const response = await fetch(`${getBaseUrl()}/admin/advertisements`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+): Promise<Advertisement> =>
+  apiFetch<Advertisement>("/admin/advertisements", { method: "POST", token, body: data });
 
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<Advertisement>;
-};
-
-export const updateAdvertisement = async (
+export const updateAdvertisement = (
   id: number,
   data: Partial<AdvertisementInput>,
   token: string
-): Promise<Advertisement> => {
-  const response = await fetch(`${getBaseUrl()}/admin/advertisements/${id}`, {
-    method: "PUT",
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<Advertisement>;
-};
+): Promise<Advertisement> =>
+  apiFetch<Advertisement>(`/admin/advertisements/${id}`, { method: "PUT", token, body: data });
 
 export const deleteAdvertisement = async (id: number, token: string): Promise<boolean> => {
-  const response = await fetch(`${getBaseUrl()}/admin/advertisements/${id}`, {
-    method: "DELETE",
-    headers: authHeaders(token),
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
+  await apiFetch<void>(`/admin/advertisements/${id}`, { method: "DELETE", token });
   return true;
 };
 
-export const getAdvertisementStats = async (
+export const getAdvertisementStats = (
   id: number,
   token: string,
   options: { interval?: "hour" | "day"; fromDate?: number; toDate?: number } = {}
@@ -162,14 +94,8 @@ export const getAdvertisementStats = async (
   if (options.fromDate) params.set("fromDate", String(options.fromDate));
   if (options.toDate) params.set("toDate", String(options.toDate));
 
-  const response = await fetch(
-    `${getBaseUrl()}/admin/advertisements/${id}/stats?${params.toString()}`,
-    { headers: authHeaders(token) }
+  return apiFetch<AdStatsResponse>(
+    `/admin/advertisements/${id}/stats?${params.toString()}`,
+    { token }
   );
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<AdStatsResponse>;
 };

@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import fs from 'node:fs/promises'
 import ImageStorageService from '#services/image_storage_service'
 import PostPolicy from '#policies/post_policy'
+import { readUploadedImage } from '#utils/uploaded_image'
 
 export default class UploadsController {
   /**
@@ -31,21 +31,19 @@ export default class UploadsController {
       extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
     })
 
-    if (!image) {
-      return response.badRequest({ error: i18n.t('messages.uploads.noImageProvided') })
-    }
-
-    if (!image.isValid) {
-      return response.badRequest({ error: image.errors })
-    }
-
-    if (!image.tmpPath) {
+    const upload = await readUploadedImage(image)
+    if (!upload.ok) {
+      if (upload.reason === 'missing') {
+        return response.badRequest({ error: i18n.t('messages.uploads.noImageProvided') })
+      }
+      if (upload.reason === 'invalid') {
+        return response.badRequest({ error: upload.errors })
+      }
       return response.badRequest({ error: i18n.t('messages.uploads.invalidUpload') })
     }
 
     try {
-      const imageBuffer = await fs.readFile(image.tmpPath)
-      const url = await ImageStorageService.storeBlogImage(imageBuffer)
+      const url = await ImageStorageService.storeBlogImage(upload.buffer)
       return response.ok({ url })
     } catch (error) {
       return response.internalServerError({

@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import { ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
+import { formatGrowth } from "@/lib/format";
 
 interface ServerStatusProps {
   stats: ServerStat[];
@@ -11,7 +12,6 @@ interface ServerStatusProps {
   lastOnlineAt?: string | null;
 }
 
-const formatGrowth = (growth: number) => `${growth >= 0 ? "+" : ""}${Math.round(growth * 100)}%`;
 
 const StatusReading = ({ online, label }: { online: boolean; label: string }) => (
   <div className="flex flex-row items-center gap-2">

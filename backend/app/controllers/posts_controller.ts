@@ -2,7 +2,7 @@ import Post from '#models/post'
 import PostTranslation from '#models/post_translation'
 import PostPolicy from '#policies/post_policy'
 import PlaceholderService from '#services/placeholder_service'
-import { SlugService } from '#services/slug_service'
+import PostService from '#services/post_service'
 import {
   CreatePostValidator,
   PreviewPlaceholderValidator,
@@ -11,59 +11,7 @@ import {
   UpdatePostValidator,
 } from '#validators/post'
 import type { HttpContext } from '@adonisjs/core/http'
-import db from '@adonisjs/lucid/services/db'
-import { DateTime } from 'luxon'
-
-const SUPPORTED_LOCALES = ['fr', 'en'] as const
-const DEFAULT_LOCALE = 'en'
-
-/** Locale demandée via `?locale=`, validée contre les locales supportées. */
-function resolveLocale(value: unknown): string {
-  return SUPPORTED_LOCALES.includes(value as never) ? (value as string) : DEFAULT_LOCALE
-}
-
-function serializeAuthor(post: Post) {
-  if (!post.author) return undefined
-  return { id: post.author.id, username: post.author.username, avatarUrl: post.author.avatarUrl }
-}
-
-/** Forme publique : champs article + traduction résolue (avec fallback) + slugs. */
-function serializePost(post: Post, locale: string) {
-  const resolved = post.forLocale(locale)
-  return {
-    id: post.id,
-    title: resolved.title,
-    slug: resolved.slug,
-    content: resolved.content,
-    excerpt: resolved.excerpt,
-    coverImage: post.coverImage,
-    published: post.published,
-    viewCount: post.viewCount,
-    publishedAt: post.publishedAt,
-    defaultLocale: post.defaultLocale,
-    localeUsed: resolved.localeUsed,
-    slugs: post.slugsByLocale(),
-    userId: post.userId,
-    createdAt: post.createdAt,
-    updatedAt: post.updatedAt,
-    author: serializeAuthor(post),
-  }
-}
-
-/** Forme admin : la forme publique (langue principale) + toutes les traductions brutes. */
-function serializeAdminPost(post: Post) {
-  return {
-    ...serializePost(post, post.defaultLocale),
-    availableLocales: post.translations.map((t) => t.locale),
-    translations: post.translations.map((t) => ({
-      locale: t.locale,
-      title: t.title,
-      slug: t.slug,
-      content: t.content,
-      excerpt: t.excerpt,
-    })),
-  }
-}
+import { resolveLocale } from '../constants/locales.js'
 
 export default class PostsController {
   /**
@@ -94,7 +42,7 @@ export default class PostsController {
 
     return response.ok({
       meta: posts.toJSON().meta,
-      data: posts.all().map((post) => serializePost(post, locale)),
+      data: posts.all().map((post) => PostService.serialize(post, locale)),
     })
   }
 
@@ -135,7 +83,7 @@ export default class PostsController {
       return response.notFound({ message: i18n.t('messages.posts.notFound') })
     }
 
-    return response.ok(serializePost(post, locale))
+    return response.ok(PostService.serialize(post, locale))
   }
 
   /**
@@ -148,14 +96,7 @@ export default class PostsController {
    * @responseBody 204 - No content
    */
   async recordView({ params, response }: HttpContext) {
-    const translation = await PostTranslation.query().where('slug', params.slug).first()
-    if (translation) {
-      await Post.query()
-        .where('id', translation.postId)
-        .where('published', true)
-        .increment('view_count', 1)
-    }
-
+    await PostService.recordView(params.slug)
     return response.noContent()
   }
 
@@ -185,19 +126,7 @@ export default class PostsController {
     // L'endpoint est public : on lit l'utilisateur s'il est connecté sans l'imposer.
     await auth.check()
 
-    const now = DateTime.now().toSQL()
-    await db
-      .table('post_feedbacks')
-      .insert({
-        post_id: post.id,
-        visitor_id: visitorId,
-        user_id: auth.user?.id ?? null,
-        helpful,
-        created_at: now,
-        updated_at: now,
-      })
-      .onConflict(['post_id', 'visitor_id'])
-      .merge({ helpful, user_id: auth.user?.id ?? null, updated_at: now })
+    await PostService.recordFeedback(post, { helpful, visitorId, userId: auth.user?.id ?? null })
 
     return response.noContent()
   }
@@ -265,7 +194,7 @@ export default class PostsController {
 
     return response.ok({
       meta: posts.toJSON().meta,
-      data: posts.all().map((post) => serializeAdminPost(post)),
+      data: posts.all().map((post) => PostService.serializeAdmin(post)),
     })
   }
 
@@ -299,7 +228,7 @@ export default class PostsController {
       return response.forbidden({ error: i18n.t('messages.posts.updateOwnOnly') })
     }
 
-    return response.ok(serializeAdminPost(post))
+    return response.ok(PostService.serializeAdmin(post))
   }
 
   /**
@@ -338,38 +267,9 @@ export default class PostsController {
       })
     }
 
-    const post = await db.transaction(async (trx) => {
-      const created = await Post.create(
-        {
-          userId: user.id,
-          published: false,
-          coverImage: data.coverImage || null,
-          defaultLocale: data.defaultLocale,
-        },
-        { client: trx }
-      )
+    const post = await PostService.create(user.id, data)
 
-      for (const translation of data.translations) {
-        const slug = await SlugService.uniqueSlug(
-          translation.locale,
-          translation.slug || translation.title
-        )
-        await created.related('translations').create({
-          locale: translation.locale,
-          title: translation.title,
-          slug,
-          content: translation.content,
-          excerpt: translation.excerpt || null,
-        })
-      }
-
-      return created
-    })
-
-    await post.load('author')
-    await post.load('translations')
-
-    return response.created(serializeAdminPost(post))
+    return response.created(PostService.serializeAdmin(post))
   }
 
   /**
@@ -399,45 +299,9 @@ export default class PostsController {
 
     const data = await request.validateUsing(UpdatePostValidator)
 
-    await db.transaction(async (trx) => {
-      post.useTransaction(trx)
-      if (data.defaultLocale !== undefined) post.defaultLocale = data.defaultLocale
-      if (data.coverImage !== undefined) post.coverImage = data.coverImage || null
-      await post.save()
+    await PostService.update(post, data)
 
-      for (const entry of data.translations ?? []) {
-        const existing = await PostTranslation.query({ client: trx })
-          .where('post_id', post.id)
-          .where('locale', entry.locale)
-          .first()
-
-        if (existing) {
-          if (entry.title !== undefined) existing.title = entry.title
-          if (entry.content !== undefined) existing.content = entry.content
-          if (entry.excerpt !== undefined) existing.excerpt = entry.excerpt || null
-          if (entry.slug !== undefined) {
-            existing.slug = await SlugService.uniqueSlug(entry.locale, entry.slug, existing.id)
-          }
-          existing.useTransaction(trx)
-          await existing.save()
-        } else if (entry.title && entry.content) {
-          // Nouvelle langue : nécessite au minimum titre + contenu.
-          const slug = await SlugService.uniqueSlug(entry.locale, entry.slug || entry.title)
-          await post.related('translations').create({
-            locale: entry.locale,
-            title: entry.title,
-            slug,
-            content: entry.content,
-            excerpt: entry.excerpt || null,
-          })
-        }
-      }
-    })
-
-    await post.load('author')
-    await post.load('translations')
-
-    return response.ok(serializeAdminPost(post))
+    return response.ok(PostService.serializeAdmin(post))
   }
 
   /**
@@ -493,14 +357,9 @@ export default class PostsController {
       return response.forbidden({ error: i18n.t('messages.posts.publishOwnOnly') })
     }
 
-    post.published = true
-    post.publishedAt = DateTime.now()
-    await post.save()
+    await PostService.setPublished(post, true)
 
-    await post.load('author')
-    await post.load('translations')
-
-    return response.ok(serializeAdminPost(post))
+    return response.ok(PostService.serializeAdmin(post))
   }
 
   /**
@@ -527,14 +386,9 @@ export default class PostsController {
       return response.forbidden({ error: i18n.t('messages.posts.unpublishOwnOnly') })
     }
 
-    post.published = false
-    post.publishedAt = null
-    await post.save()
+    await PostService.setPublished(post, false)
 
-    await post.load('author')
-    await post.load('translations')
-
-    return response.ok(serializeAdminPost(post))
+    return response.ok(PostService.serializeAdmin(post))
   }
 
   /**
@@ -613,59 +467,6 @@ export default class PostsController {
 
     // L'analytics enregistre les vues par chemin exact ; un article a un chemin
     // par langue (slug par locale), on agrège donc sur tous ses slugs.
-    const paths = post.translations.map((t) => `/blog/${t.slug}`)
-    const resolved = post.forLocale(post.defaultLocale)
-
-    const [analyticsRow, feedbackRow, recentViewers] = await Promise.all([
-      db
-        .from('page_views')
-        .whereIn('path', paths)
-        .select(db.raw('count(*) as consented_views'))
-        .select(db.raw('count(*) filter (where user_id is not null) as logged_in_views'))
-        .select(db.raw('count(distinct visitor_id) as unique_visitors'))
-        .first(),
-
-      db
-        .from('post_feedbacks')
-        .where('post_id', post.id)
-        .select(db.raw('count(*) filter (where helpful) as helpful'))
-        .select(db.raw('count(*) filter (where not helpful) as not_helpful'))
-        .first(),
-
-      db
-        .from('page_views')
-        .join('users', 'users.id', 'page_views.user_id')
-        .whereIn('page_views.path', paths)
-        .select('users.id as id', 'users.username as username', 'users.avatar_url as avatar_url')
-        .select(db.raw('max(page_views.created_at) as last_viewed_at'))
-        .groupBy('users.id', 'users.username', 'users.avatar_url')
-        .orderByRaw('max(page_views.created_at) desc')
-        .limit(50),
-    ])
-
-    return response.ok({
-      post: {
-        id: post.id,
-        title: resolved.title,
-        slugs: post.slugsByLocale(),
-        viewCount: post.viewCount,
-      },
-      views: {
-        total: post.viewCount,
-        consented: Number(analyticsRow?.consented_views ?? 0),
-        loggedIn: Number(analyticsRow?.logged_in_views ?? 0),
-        uniqueVisitors: Number(analyticsRow?.unique_visitors ?? 0),
-      },
-      feedback: {
-        helpful: Number(feedbackRow?.helpful ?? 0),
-        notHelpful: Number(feedbackRow?.not_helpful ?? 0),
-      },
-      recentViewers: recentViewers.map((row) => ({
-        id: Number(row.id),
-        username: row.username,
-        avatarUrl: row.avatar_url,
-        lastViewedAt: row.last_viewed_at,
-      })),
-    })
+    return response.ok(await PostService.engagement(post))
   }
 }
