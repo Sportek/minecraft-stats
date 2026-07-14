@@ -12,6 +12,7 @@ import {
 } from '#validators/post'
 import type { HttpContext } from '@adonisjs/core/http'
 import { resolveLocale } from '../constants/locales.js'
+import { requireAbility } from '#utils/require_ability'
 
 export default class PostsController {
   /**
@@ -160,15 +161,13 @@ export default class PostsController {
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    */
-  async adminIndex({ request, response, auth, bouncer, i18n }: HttpContext) {
-    const user = auth.user
-    if (!user) {
-      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
-    }
-
-    if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.posts.writerRequired') })
-    }
+  async adminIndex(ctx: HttpContext) {
+    const { request, response } = ctx
+    const user = await requireAbility(ctx, () => ctx.bouncer.with(PostPolicy).denies('manage'), {
+      unauthorized: 'messages.posts.unauthorized',
+      forbidden: 'messages.posts.writerRequired',
+    })
+    if (!user) return
 
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
     const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20))
@@ -243,15 +242,13 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 422 - {"errors": [{"message": "A translation in the primary language is required.", "field": "translations", "rule": "required"}]}
    */
-  async store({ request, auth, response, bouncer, i18n }: HttpContext) {
-    const user = auth.user
-    if (!user) {
-      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
-    }
-
-    if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.posts.writerRequired') })
-    }
+  async store(ctx: HttpContext) {
+    const { request, response, i18n } = ctx
+    const user = await requireAbility(ctx, () => ctx.bouncer.with(PostPolicy).denies('manage'), {
+      unauthorized: 'messages.posts.unauthorized',
+      forbidden: 'messages.posts.writerRequired',
+    })
+    if (!user) return
 
     const data = await request.validateUsing(CreatePostValidator)
 
@@ -416,15 +413,14 @@ export default class PostsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 422 - {"errors": [{"message": "The serverId field must be defined", "field": "serverId", "rule": "required"}]}
    */
-  async previewPlaceholder({ request, response, auth, bouncer, i18n }: HttpContext) {
-    const user = auth.user
-    if (!user) {
-      return response.unauthorized({ error: i18n.t('messages.posts.unauthorized') })
-    }
-
-    if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.posts.writerRequired') })
-    }
+  async previewPlaceholder(ctx: HttpContext) {
+    const { request, response } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(PostPolicy).denies('manage'),
+      { unauthorized: 'messages.posts.unauthorized', forbidden: 'messages.posts.writerRequired' }
+    )
+    if (!authorized) return
 
     const { placeholderName, serverId } = await request.validateUsing(PreviewPlaceholderValidator)
 

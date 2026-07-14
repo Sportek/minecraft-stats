@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import ImageStorageService from '#services/image_storage_service'
 import PostPolicy from '#policies/post_policy'
 import { readUploadedImage } from '#utils/uploaded_image'
+import { requireAbility } from '#utils/require_ability'
 
 export default class UploadsController {
   /**
@@ -17,15 +18,18 @@ export default class UploadsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 500 - {"error": "Failed to process image", "details": "<sharp error message>"}
    */
-  async uploadImage({ request, response, auth, bouncer, i18n }: HttpContext) {
-    const user = auth.user
-    if (!user) {
-      return response.unauthorized({ error: i18n.t('messages.uploads.unauthorized') })
-    }
+  async uploadImage(ctx: HttpContext) {
+    const { request, response, i18n } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(PostPolicy).denies('manage'),
+      {
+        unauthorized: 'messages.uploads.unauthorized',
+        forbidden: 'messages.uploads.writerRequired',
+      }
+    )
+    if (!authorized) return
 
-    if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.uploads.writerRequired') })
-    }
     const image = request.file('image', {
       size: '5mb',
       extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
