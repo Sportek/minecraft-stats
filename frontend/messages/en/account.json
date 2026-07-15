@@ -81,7 +81,10 @@
     "dialogTitle": "Stop tracking this server?",
     "dialogDescription": "<b>{name}</b> will be removed from your dashboard along with its tracking. This action cannot be undone.",
     "removing": "Removing…",
-    "remove": "Remove server"
+    "remove": "Remove server",
+    "verifiedBadge": "Verified",
+    "verify": "Verify ownership",
+    "verifyTitle": "Verify ownership of this server"
   },
   "settings": {
     "roles": {

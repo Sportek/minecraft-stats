@@ -17,6 +17,7 @@ import { AggregationSelect, AggregationType } from "@/components/home/selects/ag
 import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
 import ServerDetailHeader from "@/components/serveur/server-detail-header";
+import ClaimServerBanner from "@/components/serveur/claim-server-banner";
 import ServerFAQ from "@/components/serveur/server-faq";
 import ImprovedCard from "@/components/serveur/improved-card";
 import AdSlot from "@/components/ads/ad-slot";
@@ -298,6 +299,12 @@ const ServerPage = () => {
         stats={serverData.stats}
         categories={serverData.categories}
         growthStat={serverData.growthStat}
+      />
+
+      <ClaimServerBanner
+        serverId={serverData.server.id}
+        serverName={serverData.server.name}
+        verified={serverData.server.ownerVerifiedAt !== null}
       />
 
       <AdSlot

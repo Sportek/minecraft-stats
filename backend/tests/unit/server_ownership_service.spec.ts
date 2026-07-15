@@ -1,8 +1,9 @@
 import { test } from '@japa/runner'
 import Server from '#models/server'
 import ServerOwnershipService, {
-  dnsTxtValue,
+  textContainsToken,
   txtRecordsContainToken,
+  verificationValue,
 } from '#services/server_ownership_service'
 
 /** Construit un Server minimal en mémoire (pas de persistance) pour les helpers purs. */
@@ -12,13 +13,13 @@ function fakeServer(fields: Partial<Server>): Server {
   return server
 }
 
-test.group('ServerOwnershipService — DNS helpers', () => {
-  test('dnsTxtValue préfixe le jeton', ({ assert }) => {
-    assert.equal(dnsTxtValue('abc123'), 'minecraft-stats-verify=abc123')
+test.group('ServerOwnershipService — verification helpers', () => {
+  test('verificationValue préfixe le jeton', ({ assert }) => {
+    assert.equal(verificationValue('abc123'), 'minecraft-stats-verify=abc123')
   })
 
   test('txtRecordsContainToken recolle les morceaux et ignore la casse', ({ assert }) => {
-    const expected = dnsTxtValue('deadbeef')
+    const expected = verificationValue('deadbeef')
     // Enregistrement découpé en chunks (comportement de dns.resolveTxt).
     assert.isTrue(txtRecordsContainToken([['minecraft-stats-verify=', 'deadbeef']], expected))
     // Casse différente sur l'entête.
@@ -26,6 +27,14 @@ test.group('ServerOwnershipService — DNS helpers', () => {
     // Autres enregistrements TXT sans rapport → pas de faux positif.
     assert.isFalse(txtRecordsContainToken([['v=spf1 include:_spf.google.com ~all']], expected))
     assert.isFalse(txtRecordsContainToken([['minecraft-stats-verify=other']], expected))
+  })
+
+  test('textContainsToken détecte le jeton dans une MOTD (casse ignorée)', ({ assert }) => {
+    const expected = verificationValue('cafe01')
+    assert.isTrue(textContainsToken('Welcome! minecraft-stats-verify=cafe01 §aHave fun', expected))
+    assert.isTrue(textContainsToken('MINECRAFT-STATS-VERIFY=CAFE01', expected))
+    assert.isFalse(textContainsToken('Welcome to my server!', expected))
+    assert.isFalse(textContainsToken('minecraft-stats-verify=other', expected))
   })
 
   test('dnsHostCandidates: domaine racine + adresse exacte, dédupliqués', ({ assert }) => {

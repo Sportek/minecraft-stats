@@ -1,7 +1,7 @@
 import Server from '#models/server'
 import ServerOwnershipClaim from '#models/server_ownership_claim'
 import User from '#models/user'
-import ServerOwnershipService, { dnsTxtValue } from '#services/server_ownership_service'
+import ServerOwnershipService, { verificationValue } from '#services/server_ownership_service'
 import testUtils from '@adonisjs/core/services/test_utils'
 import { test } from '@japa/runner'
 import { randomUUID } from 'node:crypto'
@@ -37,9 +37,20 @@ test.group('Server ownership — claims', (group) => {
   // Résolveur TXT par défaut : ne trouve rien. Les tests DNS le surchargent puis
   // le restaurent, pour rester hermétiques (aucune requête DNS réseau).
   const realResolveTxt = ServerOwnershipService.resolveTxt
+  const realPing = ServerOwnershipService.pingServer
   group.each.teardown(() => {
     ServerOwnershipService.resolveTxt = realResolveTxt
+    ServerOwnershipService.pingServer = realPing
   })
+
+  /** Stub de ping renvoyant une MOTD donnée. */
+  const stubPingMotd = (motd: unknown) => {
+    ServerOwnershipService.pingServer = async () => ({
+      players: { online: 0, max: 0 },
+      version: { name: '1.21' },
+      description: motd,
+    })
+  }
 
   test('exige une authentification (401)', async ({ client }) => {
     const server = await createServer()
@@ -60,7 +71,7 @@ test.group('Server ownership — claims', (group) => {
     assert.equal(body.claim.method, 'dns')
     assert.equal(body.claim.status, 'pending')
     assert.equal(body.dns.recordType, 'TXT')
-    assert.match(body.dns.recordValue, /^minecraft-stats-verify=[0-9a-f]{32}$/)
+    assert.match(body.dns.recordValue, /^minecraft-stats-verify=[0-9a-f]{24}$/)
     // Le jeton brut ne doit jamais être sérialisé tel quel dans `claim`.
     assert.isUndefined(body.claim.token)
   })
@@ -141,7 +152,7 @@ test.group('Server ownership — claims', (group) => {
       .where('server_id', server.id)
       .where('user_id', realOwner.id)
       .firstOrFail()
-    ServerOwnershipService.resolveTxt = async () => [[dnsTxtValue(claim.token!)]]
+    ServerOwnershipService.resolveTxt = async () => [[verificationValue(claim.token!)]]
 
     const verify = await client
       .post(`/api/v1/servers/${server.id}/claim/dns/verify`)
@@ -156,6 +167,91 @@ test.group('Server ownership — claims', (group) => {
 
     await claim.refresh()
     assert.equal(claim.status, 'verified')
+  })
+
+  test('startMotd renvoie la chaîne à insérer dans la MOTD', async ({ client, assert }) => {
+    const user = await createUser()
+    const server = await createServer()
+
+    const response = await client
+      .post(`/api/v1/servers/${server.id}/claim/motd`)
+      .bearerToken(await tokenFor(user))
+
+    response.assertStatus(200)
+    const body = response.body()
+    assert.equal(body.claim.method, 'motd')
+    assert.match(body.motd.value, /^minecraft-stats-verify=[0-9a-f]{24}$/)
+    assert.isUndefined(body.claim.token)
+  })
+
+  test('startMotd est disponible même pour un serveur en IP nue', async ({ client }) => {
+    const user = await createUser()
+    const server = await createServer('192.0.2.10')
+    const response = await client
+      .post(`/api/v1/servers/${server.id}/claim/motd`)
+      .bearerToken(await tokenFor(user))
+    // Contrairement au DNS, la MOTD ne dépend pas d'un domaine.
+    response.assertStatus(200)
+  })
+
+  test('verifyMotd avec le jeton dans la MOTD transfère la propriété', async ({
+    client,
+    assert,
+  }) => {
+    const user = await createUser()
+    const server = await createServer()
+    const authToken = await tokenFor(user)
+
+    await client.post(`/api/v1/servers/${server.id}/claim/motd`).bearerToken(authToken)
+    const claim = await ServerOwnershipClaim.query()
+      .where('server_id', server.id)
+      .where('user_id', user.id)
+      .firstOrFail()
+
+    // MOTD contenant le marqueur, entourée de couleurs et de texte.
+    stubPingMotd(`§aBienvenue ! ${verificationValue(claim.token!)} §ravec nous`)
+
+    const verify = await client
+      .post(`/api/v1/servers/${server.id}/claim/motd/verify`)
+      .bearerToken(authToken)
+    verify.assertStatus(200)
+    assert.isTrue(verify.body().verified)
+
+    await server.refresh()
+    assert.equal(server.ownerVerifiedMethod, 'motd')
+    assert.equal(server.userId, user.id)
+  })
+
+  test('verifyMotd sans le jeton renvoie not_found_record (400)', async ({ client, assert }) => {
+    const user = await createUser()
+    const server = await createServer()
+    const authToken = await tokenFor(user)
+
+    await client.post(`/api/v1/servers/${server.id}/claim/motd`).bearerToken(authToken)
+    stubPingMotd('§aUn serveur génial, rejoignez-nous !')
+
+    const verify = await client
+      .post(`/api/v1/servers/${server.id}/claim/motd/verify`)
+      .bearerToken(authToken)
+    verify.assertStatus(400)
+    assert.equal(verify.body().reason, 'not_found_record')
+  })
+
+  test('verifyMotd renvoie unreachable si le ping échoue (400)', async ({ client, assert }) => {
+    const user = await createUser()
+    const server = await createServer()
+    const authToken = await tokenFor(user)
+
+    await client.post(`/api/v1/servers/${server.id}/claim/motd`).bearerToken(authToken)
+    ServerOwnershipService.pingServer = async () => {
+      throw new Error('timeout')
+    }
+
+    const verify = await client
+      .post(`/api/v1/servers/${server.id}/claim/motd/verify`)
+      .bearerToken(authToken)
+    verify.assertStatus(400)
+    assert.equal(verify.body().reason, 'unreachable')
   })
 
   test('submitManual crée une demande en attente', async ({ client, assert }) => {

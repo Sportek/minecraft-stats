@@ -97,29 +97,39 @@
     "button": "Reclamar este servidor",
     "dialogTitle": "Reclamar {name}",
     "dialogDescription": "Demuestra que administras este servidor para hacerte con su ficha. Elige el método que prefieras.",
+    "recommended": "Recomendado",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "verify": "Verificar",
+    "recheck": "Volver a verificar",
     "method": {
+      "motd": {
+        "title": "Verificación por MOTD",
+        "subtitle": "Añade un token al MOTD del servidor: funciona con cualquier servidor (Java, Bedrock, IP o dominio)."
+      },
       "dns": {
         "title": "Verificación por DNS",
-        "subtitle": "Controlas el dominio del servidor: instantáneo y autónomo.",
-        "unavailable": "No disponible: este servidor no tiene dominio (IP directa). Usa una solicitud manual."
+        "subtitle": "Controlas el dominio del servidor: sin cambios visibles para los jugadores.",
+        "unavailable": "No disponible: este servidor no tiene dominio (IP directa)."
       },
       "manual": {
         "title": "Solicitud manual",
-        "subtitle": "¿Sin acceso al dominio? Envíanos una prueba y nuestro equipo la revisa."
+        "subtitle": "¿No puedes usar lo anterior? Envíanos una prueba y nuestro equipo la revisa."
       }
     },
     "status": {
       "pendingManual": "Ya tienes una solicitud manual pendiente de revisión para este servidor."
+    },
+    "motd": {
+      "intro": "Añade este texto en cualquier parte del MOTD de tu servidor (server.properties → motd), recarga el servidor y pulsa Verificar.",
+      "hint": "El token puede convivir con tu MOTD habitual. Podrás quitarlo una vez verificado."
     },
     "dns": {
       "intro": "Añade el siguiente registro TXT al DNS de tu dominio y luego pulsa Verificar.",
       "recordType": "Tipo",
       "recordName": "Nombre / Host",
       "recordValue": "Valor",
-      "copy": "Copiar",
-      "copied": "¡Copiado!",
-      "hint": "Los cambios de DNS pueden tardar unos minutos en propagarse. Si falla, espera y vuelve a intentarlo.",
-      "verify": "Verificar"
+      "hint": "Los cambios de DNS pueden tardar unos minutos en propagarse. Si falla, espera y vuelve a intentarlo."
     },
     "manual": {
       "intro": "Indícanos cómo confirmar que eres el propietario (etiqueta de Discord, correo del dominio, etc.). Añade un enlace de prueba si lo tienes.",
@@ -129,6 +139,16 @@
       "urlPlaceholder": "https://…",
       "submit": "Enviar solicitud"
     },
+    "pending": {
+      "title": "Aún no verificado",
+      "motd": "No encontramos el token en tu MOTD. Asegúrate de haberlo guardado y recargado el servidor.",
+      "dns": "El registro TXT aún no es visible. Los cambios de DNS pueden tardar unos minutos en propagarse.",
+      "auto": "Verificando automáticamente…"
+    },
+    "banner": {
+      "title": "Este servidor no está reclamado, ¿es tuyo?",
+      "subtitle": "Verifica la propiedad para gestionar su ficha y obtener una insignia verificada."
+    },
     "back": "Volver",
     "close": "Cerrar",
     "success": {
@@ -137,7 +157,6 @@
       "manualTitle": "Solicitud enviada",
       "manualBody": "¡Gracias! Nuestro equipo revisará tu solicitud en breve."
     },
-    "loginPrompt": "<link>Inicia sesión</link> para reclamar este servidor.",
     "errors": {
       "generic": "Algo salió mal. Inténtalo de nuevo."
     }

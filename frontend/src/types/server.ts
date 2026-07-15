@@ -37,7 +37,7 @@ export interface Server {
   ownerVerifiedMethod: OwnershipMethod | null;
 }
 
-export type OwnershipMethod = "dns" | "manual";
+export type OwnershipMethod = "motd" | "dns" | "manual";
 
 export type OwnershipClaimStatus = "pending" | "verified" | "rejected" | "expired";
 
@@ -61,11 +61,16 @@ export interface DnsInstructions {
   acceptedHosts: string[];
 }
 
+/** Chaîne à insérer dans la MOTD du serveur pour prouver la propriété. */
+export interface MotdInstructions {
+  value: string;
+}
+
 /** État de propriété d'un serveur pour l'utilisateur courant (GET /servers/:id/claim). */
 export interface ClaimStatus {
   verified: boolean;
   isOwner: boolean;
-  dnsAvailable: boolean;
+  methods: { motd: boolean; dns: boolean; manual: boolean };
   claim: ServerOwnershipClaim | null;
 }
 

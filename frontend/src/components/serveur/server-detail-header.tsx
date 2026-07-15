@@ -3,11 +3,11 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
 import { formatGrowth } from "@/lib/format";
+import { BadgeCheck } from "lucide-react";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
 import VoteButton from "./vote-button";
-import ClaimServerButton from "./claim-server-button";
 
 interface ServerDetailHeaderProps {
   server: Server;
@@ -91,14 +91,16 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
           />
         </div>
 
-        {/* Row 3: revendication de propriété (badge vérifié ou bouton "Revendiquer"). */}
-        <div className="flex justify-end">
-          <ClaimServerButton
-            serverId={server.id}
-            serverName={server.name}
-            verified={server.ownerVerifiedAt !== null}
-          />
-        </div>
+        {/* Badge de confiance : propriété vérifiée (le CTA de revendication vit dans
+            le bandeau sous l'en-tête, cf. ClaimServerBanner). */}
+        {server.ownerVerifiedAt !== null && (
+          <div className="flex justify-end">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+              <BadgeCheck className="h-3.5 w-3.5" />
+              {t("claim.verifiedBadge")}
+            </span>
+          </div>
+        )}
       </div>
     </section>
   );

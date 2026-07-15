@@ -3,6 +3,7 @@ import {
   Category,
   ClaimStatus,
   DnsInstructions,
+  MotdInstructions,
   Server,
   ServerGrowthStat,
   ServerOwnershipClaim,
@@ -101,6 +102,20 @@ export const editServer = (serverId: number, data: ServerPayload, token: string)
 /** État de propriété du serveur pour l'utilisateur courant + sa demande éventuelle. */
 export const getClaimStatus = (serverId: number, token: string) =>
   apiFetch<ClaimStatus>(`/servers/${serverId}/claim`, { token });
+
+/** Démarre (ou réutilise) une vérification MOTD et renvoie la chaîne à insérer dans la MOTD. */
+export const startMotdClaim = (serverId: number, token: string) =>
+  apiFetch<{ claim: ServerOwnershipClaim; motd: MotdInstructions }>(
+    `/servers/${serverId}/claim/motd`,
+    { method: "POST", token }
+  );
+
+/** Déclenche la vérification MOTD : ping le serveur et transfère la propriété si le jeton y est. */
+export const verifyMotdClaim = (serverId: number, token: string) =>
+  apiFetch<{ verified: boolean; server: Server }>(`/servers/${serverId}/claim/motd/verify`, {
+    method: "POST",
+    token,
+  });
 
 /** Démarre (ou réutilise) une vérification DNS et renvoie l'enregistrement TXT à publier. */
 export const startDnsClaim = (serverId: number, token: string) =>

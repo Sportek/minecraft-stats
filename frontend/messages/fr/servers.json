@@ -97,29 +97,39 @@
     "button": "Revendiquer ce serveur",
     "dialogTitle": "Revendiquer {name}",
     "dialogDescription": "Prouvez que vous gérez ce serveur pour en récupérer la fiche. Choisissez la méthode qui vous convient.",
+    "recommended": "Recommandé",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "verify": "Vérifier",
+    "recheck": "Revérifier",
     "method": {
+      "motd": {
+        "title": "Vérification par MOTD",
+        "subtitle": "Ajoutez un jeton à la MOTD du serveur — marche pour tout serveur (Java, Bedrock, IP ou domaine)."
+      },
       "dns": {
         "title": "Vérification par DNS",
-        "subtitle": "Vous contrôlez le domaine du serveur — instantané, en autonomie.",
-        "unavailable": "Indisponible : ce serveur n'a pas de domaine (IP nue). Utilisez une demande manuelle."
+        "subtitle": "Vous contrôlez le domaine du serveur — sans rien changer côté joueurs.",
+        "unavailable": "Indisponible : ce serveur n'a pas de domaine (IP nue)."
       },
       "manual": {
         "title": "Demande manuelle",
-        "subtitle": "Pas d'accès au domaine ? Envoyez une preuve, notre équipe la vérifie."
+        "subtitle": "Impossible d'utiliser les méthodes ci-dessus ? Envoyez une preuve, notre équipe la vérifie."
       }
     },
     "status": {
       "pendingManual": "Vous avez déjà une demande manuelle en attente de revue pour ce serveur."
+    },
+    "motd": {
+      "intro": "Ajoutez ce texte n'importe où dans la MOTD de votre serveur (server.properties → motd), rechargez le serveur, puis cliquez sur Vérifier.",
+      "hint": "Le jeton peut cohabiter avec votre MOTD habituelle. Vous pourrez le retirer une fois vérifié."
     },
     "dns": {
       "intro": "Ajoutez l'enregistrement TXT suivant au DNS de votre domaine, puis cliquez sur Vérifier.",
       "recordType": "Type",
       "recordName": "Nom / Hôte",
       "recordValue": "Valeur",
-      "copy": "Copier",
-      "copied": "Copié !",
-      "hint": "La propagation DNS peut prendre quelques minutes. Si la vérification échoue, patientez et réessayez.",
-      "verify": "Vérifier"
+      "hint": "La propagation DNS peut prendre quelques minutes. Si la vérification échoue, patientez et réessayez."
     },
     "manual": {
       "intro": "Expliquez comment confirmer que vous êtes le propriétaire (tag Discord, e-mail du domaine, etc.). Ajoutez un lien de preuve si vous en avez un.",
@@ -129,6 +139,16 @@
       "urlPlaceholder": "https://…",
       "submit": "Envoyer la demande"
     },
+    "pending": {
+      "title": "Pas encore vérifié",
+      "motd": "Nous n'avons pas trouvé le jeton dans votre MOTD. Vérifiez que vous l'avez enregistré et rechargé le serveur.",
+      "dns": "L'enregistrement TXT n'est pas encore visible. La propagation DNS peut prendre quelques minutes.",
+      "auto": "Revérification automatique…"
+    },
+    "banner": {
+      "title": "Ce serveur n'est pas revendiqué — c'est le vôtre ?",
+      "subtitle": "Vérifiez la propriété pour gérer sa fiche et obtenir un badge vérifié."
+    },
     "back": "Retour",
     "close": "Fermer",
     "success": {
@@ -137,7 +157,6 @@
       "manualTitle": "Demande envoyée",
       "manualBody": "Merci ! Notre équipe examinera votre demande sous peu."
     },
-    "loginPrompt": "<link>Connectez-vous</link> pour revendiquer ce serveur.",
     "errors": {
       "generic": "Une erreur est survenue. Veuillez réessayer."
     }

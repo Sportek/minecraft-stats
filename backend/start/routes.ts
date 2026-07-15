@@ -57,16 +57,22 @@ router
       .get('servers/:serverId/vote-status', '#controllers/server_votes_controller.status')
       .use([throttleLight('servers.voteStatus', 60), NO_STORE])
 
-    // Réclamation de propriété d'un serveur (DNS self-service + demande manuelle).
+    // Réclamation de propriété d'un serveur (MOTD + DNS self-service + demande manuelle).
     router
       .get('servers/:id/claim', '#controllers/server_ownership_controller.status')
       .use([middleware.auth(), throttleLight('servers.claim.status', 30), NO_STORE])
+    router
+      .post('servers/:id/claim/motd', '#controllers/server_ownership_controller.startMotd')
+      .use([middleware.auth(), throttleLight('servers.claim.motd', 10), NO_STORE])
+    router
+      .post('servers/:id/claim/motd/verify', '#controllers/server_ownership_controller.verifyMotd')
+      .use([middleware.auth(), throttleLight('servers.claim.motdVerify', 15), NO_STORE])
     router
       .post('servers/:id/claim/dns', '#controllers/server_ownership_controller.startDns')
       .use([middleware.auth(), throttleLight('servers.claim.dns', 10), NO_STORE])
     router
       .post('servers/:id/claim/dns/verify', '#controllers/server_ownership_controller.verifyDns')
-      .use([middleware.auth(), throttleLight('servers.claim.dnsVerify', 10), NO_STORE])
+      .use([middleware.auth(), throttleLight('servers.claim.dnsVerify', 15), NO_STORE])
     router
       .post('servers/:id/claim/manual', '#controllers/server_ownership_controller.submitManual')
       .use([middleware.auth(), throttleLight('servers.claim.manual', 5), NO_STORE])
