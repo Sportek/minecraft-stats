@@ -27,6 +27,11 @@ const WRITER_ITEMS: NavItem[] = [
 const ADMIN_ITEMS: NavItem[] = [
   { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
   { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
+  {
+    href: "/admin/ownership-claims",
+    key: "ownershipClaims",
+    icon: "material-symbols:verified-user-outline",
+  },
   { href: "/admin/advertisements", key: "advertisements", icon: "material-symbols:ad-group-outline" },
 ];
 

@@ -12,9 +12,11 @@ import { DateTime } from 'luxon'
 import Category from './category.js'
 import Language from './language.js'
 import ServerGrowthStat from './server_growth_stat.js'
+import ServerOwnershipClaim from './server_ownership_claim.js'
 import ServerVote from './server_vote.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
+import type { OwnershipMethod } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
 import { normalizeWebsite } from '#utils/website'
 import { deriveServerWebsite } from '#utils/server_website'
@@ -76,6 +78,18 @@ export default class Server extends BaseModel {
 
   @belongsTo(() => User)
   declare user: relations.BelongsTo<typeof User>
+
+  // Horodatage de la preuve de propriété. NULL = le `user_id` n'est qu'un "ajouteur"
+  // non confirmé ; une preuve DNS (ou une décision admin) peut alors transférer le
+  // serveur. Non-NULL = propriété confirmée, protégée (cf. ServerOwnershipService).
+  @column.dateTime({ columnName: 'owner_verified_at' })
+  declare ownerVerifiedAt: DateTime | null
+
+  @column({ columnName: 'owner_verified_method' })
+  declare ownerVerifiedMethod: OwnershipMethod | null
+
+  @hasMany(() => ServerOwnershipClaim)
+  declare ownershipClaims: relations.HasMany<typeof ServerOwnershipClaim>
 
   @hasOne(() => ServerGrowthStat)
   declare growthStat: relations.HasOne<typeof ServerGrowthStat>

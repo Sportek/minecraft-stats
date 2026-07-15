@@ -8,7 +8,8 @@
     "articles": "Articles",
     "analytics": "Analytics",
     "users": "Users",
-    "advertisements": "Advertisements"
+    "advertisements": "Advertisements",
+    "ownershipClaims": "Ownership claims"
   },
   "common": {
     "loading": "Loading...",

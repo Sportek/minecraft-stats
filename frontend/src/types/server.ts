@@ -32,6 +32,53 @@ export interface Server {
   languages: Language[];
   // Total cumulatif de votes (all-time). Le classement mensuel est calculé côté API.
   voteCount: number;
+  // Preuve de propriété : non-null = un propriétaire a été confirmé (DNS ou revue admin).
+  ownerVerifiedAt: Date | null;
+  ownerVerifiedMethod: OwnershipMethod | null;
+}
+
+export type OwnershipMethod = "dns" | "manual";
+
+export type OwnershipClaimStatus = "pending" | "verified" | "rejected" | "expired";
+
+/** Dossier de réclamation de propriété de l'utilisateur courant pour un serveur. */
+export interface ServerOwnershipClaim {
+  method: OwnershipMethod;
+  status: OwnershipClaimStatus;
+  evidence: string | null;
+  evidenceUrl: string | null;
+  expiresAt: string | null;
+  verifiedAt: string | null;
+  reviewNote: string | null;
+  createdAt: string;
+}
+
+/** Enregistrement DNS à publier pour prouver la propriété. */
+export interface DnsInstructions {
+  recordType: "TXT";
+  recordName: string | null;
+  recordValue: string;
+  acceptedHosts: string[];
+}
+
+/** État de propriété d'un serveur pour l'utilisateur courant (GET /servers/:id/claim). */
+export interface ClaimStatus {
+  verified: boolean;
+  isOwner: boolean;
+  dnsAvailable: boolean;
+  claim: ServerOwnershipClaim | null;
+}
+
+/** Demande manuelle vue côté admin, serveur + demandeur préchargés. */
+export interface AdminOwnershipClaim {
+  id: number;
+  method: OwnershipMethod;
+  status: OwnershipClaimStatus;
+  evidence: string | null;
+  evidenceUrl: string | null;
+  createdAt: string;
+  server: Server;
+  user: { id: number; username: string; email: string; avatarUrl: string | null };
 }
 
 /**

@@ -91,5 +91,55 @@
     "heroSubtitle": "Actualiza los detalles y los ajustes de seguimiento de tu servidor.",
     "detailsTitle": "Detalles del servidor",
     "detailsSubtitle": "Actualiza los detalles, las categorías y los idiomas de tu servidor."
+  },
+  "claim": {
+    "verifiedBadge": "Propiedad verificada",
+    "button": "Reclamar este servidor",
+    "dialogTitle": "Reclamar {name}",
+    "dialogDescription": "Demuestra que administras este servidor para hacerte con su ficha. Elige el método que prefieras.",
+    "method": {
+      "dns": {
+        "title": "Verificación por DNS",
+        "subtitle": "Controlas el dominio del servidor: instantáneo y autónomo.",
+        "unavailable": "No disponible: este servidor no tiene dominio (IP directa). Usa una solicitud manual."
+      },
+      "manual": {
+        "title": "Solicitud manual",
+        "subtitle": "¿Sin acceso al dominio? Envíanos una prueba y nuestro equipo la revisa."
+      }
+    },
+    "status": {
+      "pendingManual": "Ya tienes una solicitud manual pendiente de revisión para este servidor."
+    },
+    "dns": {
+      "intro": "Añade el siguiente registro TXT al DNS de tu dominio y luego pulsa Verificar.",
+      "recordType": "Tipo",
+      "recordName": "Nombre / Host",
+      "recordValue": "Valor",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "hint": "Los cambios de DNS pueden tardar unos minutos en propagarse. Si falla, espera y vuelve a intentarlo.",
+      "verify": "Verificar"
+    },
+    "manual": {
+      "intro": "Indícanos cómo confirmar que eres el propietario (etiqueta de Discord, correo del dominio, etc.). Añade un enlace de prueba si lo tienes.",
+      "evidenceLabel": "Tu prueba",
+      "evidencePlaceholder": "Ej.: Soy el admin, Discord: nombre#0000, correo del dominio owner@…",
+      "urlLabel": "Enlace de prueba (opcional)",
+      "urlPlaceholder": "https://…",
+      "submit": "Enviar solicitud"
+    },
+    "back": "Volver",
+    "close": "Cerrar",
+    "success": {
+      "verifiedTitle": "¡Estás verificado!",
+      "verifiedBody": "Ahora eres el propietario confirmado de este servidor.",
+      "manualTitle": "Solicitud enviada",
+      "manualBody": "¡Gracias! Nuestro equipo revisará tu solicitud en breve."
+    },
+    "loginPrompt": "<link>Inicia sesión</link> para reclamar este servidor.",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
   }
 }

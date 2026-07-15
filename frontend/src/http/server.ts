@@ -1,4 +1,14 @@
-import { Category, Server, ServerGrowthStat, ServerStat, ServerType } from "@/types/server";
+import {
+  AdminOwnershipClaim,
+  Category,
+  ClaimStatus,
+  DnsInstructions,
+  Server,
+  ServerGrowthStat,
+  ServerOwnershipClaim,
+  ServerStat,
+  ServerType,
+} from "@/types/server";
 import { apiFetch, ApiError } from "./client";
 
 export interface ServerPayload {
@@ -83,3 +93,55 @@ export const deleteServer = async (serverId: number, token: string) => {
 
 export const editServer = (serverId: number, data: ServerPayload, token: string) =>
   apiFetch<Server>(`/servers/${serverId}`, { method: "PUT", token, body: data });
+
+/* -------------------------------------------------------------------------- */
+/*  Réclamation de propriété d'un serveur                                      */
+/* -------------------------------------------------------------------------- */
+
+/** État de propriété du serveur pour l'utilisateur courant + sa demande éventuelle. */
+export const getClaimStatus = (serverId: number, token: string) =>
+  apiFetch<ClaimStatus>(`/servers/${serverId}/claim`, { token });
+
+/** Démarre (ou réutilise) une vérification DNS et renvoie l'enregistrement TXT à publier. */
+export const startDnsClaim = (serverId: number, token: string) =>
+  apiFetch<{ claim: ServerOwnershipClaim; dns: DnsInstructions }>(
+    `/servers/${serverId}/claim/dns`,
+    { method: "POST", token }
+  );
+
+/** Déclenche la vérification DNS : transfère la propriété si le TXT est trouvé. */
+export const verifyDnsClaim = (serverId: number, token: string) =>
+  apiFetch<{ verified: boolean; server: Server }>(`/servers/${serverId}/claim/dns/verify`, {
+    method: "POST",
+    token,
+  });
+
+/** Soumet une demande manuelle (preuve + lien) pour revue admin. */
+export const submitManualClaim = (
+  serverId: number,
+  data: { evidence: string; evidenceUrl?: string },
+  token: string
+) =>
+  apiFetch<{ claim: ServerOwnershipClaim; message: string }>(
+    `/servers/${serverId}/claim/manual`,
+    { method: "POST", token, body: data }
+  );
+
+/* --- Admin : file de revue des demandes manuelles --- */
+
+export const getPendingOwnershipClaims = (token: string) =>
+  apiFetch<AdminOwnershipClaim[]>("/admin/ownership-claims", { token });
+
+export const approveOwnershipClaim = (claimId: number, token: string, note?: string) =>
+  apiFetch<{ message: string; server: Server }>(`/admin/ownership-claims/${claimId}/approve`, {
+    method: "POST",
+    token,
+    body: { note },
+  });
+
+export const rejectOwnershipClaim = (claimId: number, token: string, note?: string) =>
+  apiFetch<{ message: string }>(`/admin/ownership-claims/${claimId}/reject`, {
+    method: "POST",
+    token,
+    body: { note },
+  });

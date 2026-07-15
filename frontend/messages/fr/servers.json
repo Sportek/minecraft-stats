@@ -91,5 +91,55 @@
     "heroSubtitle": "Mettez à jour les détails et les paramètres de suivi de votre serveur.",
     "detailsTitle": "Détails du serveur",
     "detailsSubtitle": "Mettez à jour les détails, catégories et langues de votre serveur."
+  },
+  "claim": {
+    "verifiedBadge": "Propriété vérifiée",
+    "button": "Revendiquer ce serveur",
+    "dialogTitle": "Revendiquer {name}",
+    "dialogDescription": "Prouvez que vous gérez ce serveur pour en récupérer la fiche. Choisissez la méthode qui vous convient.",
+    "method": {
+      "dns": {
+        "title": "Vérification par DNS",
+        "subtitle": "Vous contrôlez le domaine du serveur — instantané, en autonomie.",
+        "unavailable": "Indisponible : ce serveur n'a pas de domaine (IP nue). Utilisez une demande manuelle."
+      },
+      "manual": {
+        "title": "Demande manuelle",
+        "subtitle": "Pas d'accès au domaine ? Envoyez une preuve, notre équipe la vérifie."
+      }
+    },
+    "status": {
+      "pendingManual": "Vous avez déjà une demande manuelle en attente de revue pour ce serveur."
+    },
+    "dns": {
+      "intro": "Ajoutez l'enregistrement TXT suivant au DNS de votre domaine, puis cliquez sur Vérifier.",
+      "recordType": "Type",
+      "recordName": "Nom / Hôte",
+      "recordValue": "Valeur",
+      "copy": "Copier",
+      "copied": "Copié !",
+      "hint": "La propagation DNS peut prendre quelques minutes. Si la vérification échoue, patientez et réessayez.",
+      "verify": "Vérifier"
+    },
+    "manual": {
+      "intro": "Expliquez comment confirmer que vous êtes le propriétaire (tag Discord, e-mail du domaine, etc.). Ajoutez un lien de preuve si vous en avez un.",
+      "evidenceLabel": "Votre preuve",
+      "evidencePlaceholder": "Ex. : Je suis l'admin, Discord : pseudo#0000, e-mail du domaine owner@…",
+      "urlLabel": "Lien de preuve (optionnel)",
+      "urlPlaceholder": "https://…",
+      "submit": "Envoyer la demande"
+    },
+    "back": "Retour",
+    "close": "Fermer",
+    "success": {
+      "verifiedTitle": "Vous êtes vérifié !",
+      "verifiedBody": "Vous êtes désormais le propriétaire confirmé de ce serveur.",
+      "manualTitle": "Demande envoyée",
+      "manualBody": "Merci ! Notre équipe examinera votre demande sous peu."
+    },
+    "loginPrompt": "<link>Connectez-vous</link> pour revendiquer ce serveur.",
+    "errors": {
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
   }
 }

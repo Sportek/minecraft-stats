@@ -91,5 +91,55 @@
     "heroSubtitle": "Update your server's details and tracking settings.",
     "detailsTitle": "Server details",
     "detailsSubtitle": "Update your server's details, categories, and languages."
+  },
+  "claim": {
+    "verifiedBadge": "Verified ownership",
+    "button": "Claim this server",
+    "dialogTitle": "Claim {name}",
+    "dialogDescription": "Prove you run this server to take over its listing. Pick the method that fits you.",
+    "method": {
+      "dns": {
+        "title": "DNS verification",
+        "subtitle": "You control the server's domain — instant, self-service.",
+        "unavailable": "Unavailable: this server has no domain (bare IP). Use a manual request."
+      },
+      "manual": {
+        "title": "Manual request",
+        "subtitle": "No domain access? Send us proof and our team reviews it."
+      }
+    },
+    "status": {
+      "pendingManual": "You already have a manual request awaiting review for this server."
+    },
+    "dns": {
+      "intro": "Add the following TXT record to your domain's DNS, then click Verify.",
+      "recordType": "Type",
+      "recordName": "Name / Host",
+      "recordValue": "Value",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "hint": "DNS changes can take a few minutes to propagate. If verification fails, wait and try again.",
+      "verify": "Verify"
+    },
+    "manual": {
+      "intro": "Tell us how we can confirm you own this server (Discord tag, domain email, etc.). Add a proof link if you have one.",
+      "evidenceLabel": "Your proof",
+      "evidencePlaceholder": "e.g. I'm the server admin, Discord: name#0000, domain email owner@…",
+      "urlLabel": "Proof link (optional)",
+      "urlPlaceholder": "https://…",
+      "submit": "Send request"
+    },
+    "back": "Back",
+    "close": "Close",
+    "success": {
+      "verifiedTitle": "You're verified!",
+      "verifiedBody": "You are now the confirmed owner of this server.",
+      "manualTitle": "Request sent",
+      "manualBody": "Thanks! Our team will review your request shortly."
+    },
+    "loginPrompt": "<link>Sign in</link> to claim this server.",
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }

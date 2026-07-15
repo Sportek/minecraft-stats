@@ -7,6 +7,7 @@ import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
 import VoteButton from "./vote-button";
+import ClaimServerButton from "./claim-server-button";
 
 interface ServerDetailHeaderProps {
   server: Server;
@@ -87,6 +88,15 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
             serverId={server.id}
             serverName={server.name}
             initialVoteCount={server.voteCount}
+          />
+        </div>
+
+        {/* Row 3: revendication de propriété (badge vérifié ou bouton "Revendiquer"). */}
+        <div className="flex justify-end">
+          <ClaimServerButton
+            serverId={server.id}
+            serverName={server.name}
+            verified={server.ownerVerifiedAt !== null}
           />
         </div>
       </div>
