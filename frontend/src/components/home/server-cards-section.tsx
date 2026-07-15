@@ -1,111 +1,27 @@
 "use client";
 
-import useSWR from "swr";
-import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import ServerCard from "@/components/serveur/card";
-import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
-import { fetcher } from "@/app/_cheatcode";
 import { X } from "lucide-react";
-import { useDebounce } from "@/hooks/use-debounce";
-import useSWRImmutable from "swr/immutable";
-import { Category, Language } from "@/types/server";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { FancyMultiSelect } from "@/components/ui/fancy-multi-select";
 import { Pagination } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getClientApiUrl } from "@/lib/domain";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
+import { ServerTypeFilter, useServerFilters } from "./use-server-filters";
 
 const PAGE_SIZE_OPTIONS = [12, 24, 36, 48] as const;
-const DEFAULT_PAGE_SIZE = 24;
 
-interface PaginatedResponse {
-  data: ServerData[];
-  meta: {
-    total: number;
-    perPage: number;
-    currentPage: number;
-    lastPage: number;
-  };
-}
-
+/**
+ * Grille de serveurs de l'accueil : barre de filtres + cartes + pagination.
+ * Purement présentationnelle — l'état et les données vivent dans
+ * {@link useServerFilters}.
+ */
 const ServerCardsSection = () => {
-  const [search, setSearch] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [selectedLanguages, setSelectedLanguages] = useState<number[]>([]);
-  const [selectedType, setSelectedType] = useState<"all" | "java" | "bedrock">("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const debouncedSearch = useDebounce(search, 300);
-  const apiUrl = getClientApiUrl();
-  const format = useFormatter();
   const t = useTranslations("Home");
-
-  const { data: categories } = useSWRImmutable<Category[]>(`${apiUrl}/categories`, fetcher);
-  const { data: languages } = useSWRImmutable<Language[]>(`${apiUrl}/languages`, fetcher);
-
-  const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : "";
-  const categoriesParam = selectedCategories.length > 0 ? `&categoryIds=${selectedCategories.join(",")}` : "";
-  const languagesParam = selectedLanguages.length > 0 ? `&languageIds=${selectedLanguages.join(",")}` : "";
-  const typeParam = selectedType !== "all" ? `&type=${selectedType}` : "";
-
-  const { data, isValidating, isLoading } = useSWR<PaginatedResponse>(
-    `${apiUrl}/servers/paginate?page=${currentPage}&limit=${pageSize}${searchParam}${categoriesParam}${languagesParam}${typeParam}`,
-    fetcher,
-    { keepPreviousData: true }
-  );
-
-  const servers = useMemo(() => data?.data ?? [], [data?.data]);
-  const totalServers = data?.meta?.total ?? 0;
-  const totalPages = data?.meta?.lastPage ?? 1;
-
-  // Chaque changement de filtre remet la pagination à 1.
-  const updateSearch = (value: string) => {
-    setSearch(value);
-    setCurrentPage(1);
-  };
-
-  const updateCategories = (ids: number[]) => {
-    setSelectedCategories(ids);
-    setCurrentPage(1);
-  };
-
-  const updateLanguages = (ids: number[]) => {
-    setSelectedLanguages(ids);
-    setCurrentPage(1);
-  };
-
-  const updateType = (type: "all" | "java" | "bedrock") => {
-    setSelectedType(type);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const updatePageSize = (size: number) => {
-    setPageSize(size);
-    setCurrentPage(1);
-  };
-
-  const clearFilters = () => {
-    setSearch("");
-    setSelectedCategories([]);
-    setSelectedLanguages([]);
-    setSelectedType("all");
-    setCurrentPage(1);
-  };
-
-  const hasActiveFilters =
-    search || selectedCategories.length > 0 || selectedLanguages.length > 0 || selectedType !== "all";
-  const isFetching = isLoading || isValidating;
-
-  const rangeStart = totalServers === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const rangeEnd = Math.min(currentPage * pageSize, totalServers);
+  const f = useServerFilters();
 
   return (
     <section id="server-cards-section" className="w-full scroll-mt-8 space-y-6">
@@ -116,9 +32,9 @@ const ServerCardsSection = () => {
             <Icon icon="material-symbols:search" className="h-5 w-5 shrink-0 text-muted-foreground" />
             <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("browse.title")}</h2>
           </div>
-          {totalServers > 0 && (
+          {f.totalServers > 0 && (
             <span className="text-xs font-medium text-muted-foreground">
-              {t("browse.tracked", { count: totalServers })}
+              {t("browse.tracked", { count: f.totalServers })}
             </span>
           )}
         </div>
@@ -128,17 +44,17 @@ const ServerCardsSection = () => {
           <FancyMultiSelect
             searchOnly
             placeholder={t("browse.searchPlaceholder")}
-            onSearch={updateSearch}
-            searchValue={search}
+            onSearch={f.updateSearch}
+            searchValue={f.search}
             className="sm:flex-1"
           />
 
           <div className="flex flex-wrap items-center gap-2">
             <FancyMultiSelect
               compact
-              options={categories?.map((cat) => ({ id: cat.id, name: cat.name })) ?? []}
-              selectedIds={selectedCategories}
-              onChange={updateCategories}
+              options={f.categories?.map((cat) => ({ id: cat.id, name: cat.name })) ?? []}
+              selectedIds={f.selectedCategories}
+              onChange={f.updateCategories}
               placeholder={t("browse.categories")}
               searchPlaceholder={t("browse.searchCategories")}
               emptyMessage={t("browse.noCategories")}
@@ -146,15 +62,15 @@ const ServerCardsSection = () => {
             />
             <FancyMultiSelect
               compact
-              options={languages?.map((lang) => ({ id: lang.id, name: lang.name, flag: lang.flag })) ?? []}
-              selectedIds={selectedLanguages}
-              onChange={updateLanguages}
+              options={f.languages?.map((lang) => ({ id: lang.id, name: lang.name, flag: lang.flag })) ?? []}
+              selectedIds={f.selectedLanguages}
+              onChange={f.updateLanguages}
               placeholder={t("browse.languages")}
               searchPlaceholder={t("browse.searchLanguages")}
               emptyMessage={t("browse.noLanguages")}
               className="flex-1 sm:flex-none"
             />
-            <Select value={selectedType} onValueChange={(v) => updateType(v as "all" | "java" | "bedrock")}>
+            <Select value={f.selectedType} onValueChange={(v) => f.updateType(v as ServerTypeFilter)}>
               <SelectTrigger aria-label={t("browse.editionAriaLabel")} className="h-9 flex-1 sm:w-auto sm:flex-none">
                 <SelectValue />
               </SelectTrigger>
@@ -167,12 +83,12 @@ const ServerCardsSection = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={clearFilters}
+              onClick={f.clearFilters}
               aria-label={t("browse.clearFilters")}
               title={t("browse.clearFilters")}
               className={cn(
                 "shrink-0 text-muted-foreground hover:text-foreground transition-opacity",
-                hasActiveFilters ? "opacity-100" : "opacity-0 pointer-events-none"
+                f.hasActiveFilters ? "opacity-100" : "opacity-0 pointer-events-none"
               )}
             >
               <X className="h-4 w-4" />
@@ -182,25 +98,25 @@ const ServerCardsSection = () => {
       </div>
 
       {/* Range caption + page size picker */}
-      {totalServers > 0 && (
+      {f.totalServers > 0 && (
         <div className="flex flex-col gap-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>
             {t.rich("browse.showing", {
-              start: rangeStart,
-              end: rangeEnd,
-              total: totalServers,
+              start: f.rangeStart,
+              end: f.rangeEnd,
+              total: f.totalServers,
               strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
             })}
             <span className="mx-1.5">·</span>
             {t.rich("browse.page", {
-              current: currentPage,
-              total: totalPages,
+              current: f.currentPage,
+              total: f.totalPages,
               strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
             })}
           </span>
           <div className="flex items-center gap-2">
             <span>{t("browse.perPage")}</span>
-            <Select value={String(pageSize)} onValueChange={(v) => updatePageSize(Number(v))}>
+            <Select value={String(f.pageSize)} onValueChange={(v) => f.updatePageSize(Number(v))}>
               <SelectTrigger aria-label={t("browse.perPageAriaLabel")} className="h-8 w-auto min-w-18 bg-secondary text-xs">
                 <SelectValue />
               </SelectTrigger>
@@ -217,13 +133,13 @@ const ServerCardsSection = () => {
       )}
 
       {/* Cards grid */}
-      {isLoading ? (
+      {f.isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: pageSize }).map((_, i) => (
+          {Array.from({ length: f.pageSize }).map((_, i) => (
             <Skeleton key={i} className="h-44 w-full rounded-lg" />
           ))}
         </div>
-      ) : servers.length === 0 ? (
+      ) : f.servers.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-card py-16 text-center">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
             <Icon icon="material-symbols:search-off" className="h-5 w-5" />
@@ -232,8 +148,8 @@ const ServerCardsSection = () => {
             <p className="text-sm font-semibold text-foreground">{t("browse.noServersFound")}</p>
             <p className="text-xs text-muted-foreground">{t("browse.noServersHint")}</p>
           </div>
-          {hasActiveFilters && (
-            <Button variant="outline" size="sm" onClick={clearFilters}>
+          {f.hasActiveFilters && (
+            <Button variant="outline" size="sm" onClick={f.clearFilters}>
               {t("browse.clearFilters")}
             </Button>
           )}
@@ -242,10 +158,10 @@ const ServerCardsSection = () => {
         <div
           className={cn(
             "grid grid-cols-1 gap-4 transition-opacity duration-200 sm:grid-cols-2 lg:grid-cols-3",
-            isFetching && "opacity-60"
+            f.isFetching && "opacity-60"
           )}
         >
-          {servers
+          {f.servers
             .filter((item) => item?.server)
             .map((item) => (
               <ServerCard
@@ -260,7 +176,7 @@ const ServerCardsSection = () => {
         </div>
       )}
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      <Pagination currentPage={f.currentPage} totalPages={f.totalPages} onPageChange={f.handlePageChange} />
     </section>
   );
 };
