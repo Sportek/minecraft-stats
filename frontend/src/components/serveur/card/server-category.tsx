@@ -17,7 +17,7 @@ const ServerCategories = ({ categories, version, type, isFull }: ServerCategorie
   const hiddenCount = categories.length - visibleCategories.length;
 
   return (
-    <div className="flex flex-row items-center gap-1.5 truncate">
+    <div className={cn("flex flex-row items-center gap-1.5", isFull ? "flex-wrap" : "truncate")}>
       <Badge
         variant="outline"
         className={cn(

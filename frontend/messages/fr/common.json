@@ -1,5 +1,9 @@
 {
   "loading": "Chargement...",
+  "captcha": {
+    "loadError": "Le captcha n'a pas pu se charger. Désactivez votre bloqueur de publicités ou vérifiez votre connexion, puis réessayez.",
+    "retry": "Réessayer"
+  },
   "language": "Langue",
   "languageName": {
     "fr": "Français",

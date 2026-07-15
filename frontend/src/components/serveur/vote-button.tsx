@@ -12,14 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { useConsent } from "@/contexts/consent";
 import { getVoteStatus, submitVote, VoteResult } from "@/http/vote";
 import { Link } from "@/i18n/navigation";
 import { resolveAssetUrl } from "@/lib/domain";
 import { getVisitorId } from "@/lib/visitor-id";
-import { Loader2, ThumbsUp } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { Check, Loader2, ThumbsUp } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const USERNAME_KEY = "mcstats_vote_username";
@@ -43,12 +44,14 @@ function formatCountdown(untilIso: string | null, now: number): string {
 }
 
 /**
- * Vote control for the server detail page: shows the monthly + total vote counts
- * and opens a dialog where a visitor votes with just a Minecraft username. The
- * signature moment is the player's own rendered head appearing on success.
+ * Vote control for the server detail page: a split "action + counter" control
+ * (GitHub-star style) showing the monthly vote count — the metric used by the
+ * rankings — and opening a dialog where a visitor votes with just a Minecraft
+ * username. The signature moment is the player's own rendered head on success.
  */
 const VoteButton = ({ serverId, serverName, initialVoteCount }: VoteButtonProps) => {
   const t = useTranslations("Vote");
+  const format = useFormatter();
   const { toast } = useToast();
   const { consent, grant } = useConsent();
 
@@ -56,12 +59,16 @@ const VoteButton = ({ serverId, serverName, initialVoteCount }: VoteButtonProps)
   const [username, setUsername] = useState("");
   const [termsChecked, setTermsChecked] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  // Bumping this key remounts the widget to get a fresh token after a failure
+  // (Turnstile tokens are single-use).
+  const [captchaKey, setCaptchaKey] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<VoteResult | null>(null);
   const [headError, setHeadError] = useState(false);
 
   const [total, setTotal] = useState(initialVoteCount);
-  const [monthly, setMonthly] = useState<number | null>(null);
+  // undefined = statut en cours de chargement, null = indisponible (requête échouée).
+  const [monthly, setMonthly] = useState<number | null | undefined>(undefined);
   const [canVote, setCanVote] = useState(true);
   const [nextVoteAt, setNextVoteAt] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -82,7 +89,7 @@ const VoteButton = ({ serverId, serverName, initialVoteCount }: VoteButtonProps)
         setTotal(status.voteCount);
         setMonthly(status.monthlyVoteCount);
       })
-      .catch(() => {});
+      .catch(() => setMonthly(null));
   }, [serverId]);
 
   // Rafraîchit le compte à rebours du cooldown et réactive le bouton quand il
@@ -135,6 +142,8 @@ const VoteButton = ({ serverId, serverName, initialVoteCount }: VoteButtonProps)
       setNextVoteAt(voteResult.nextVoteAt);
       toast({ variant: "success", description: t("success.toast") });
     } catch (error) {
+      setToken(null);
+      setCaptchaKey((key) => key + 1);
       toast({
         variant: "error",
         description: error instanceof Error ? error.message : t("errors.generic"),
@@ -156,39 +165,56 @@ const VoteButton = ({ serverId, serverName, initialVoteCount }: VoteButtonProps)
       : null;
 
   return (
-    <div className="flex flex-col gap-2 sm:items-end">
-      <div className="flex flex-col sm:items-end">
-        <span className="text-xs text-muted-foreground">{t("votesThisMonth")}</span>
-        <span className="text-3xl font-extrabold tabular-nums text-foreground">
-          {monthly ?? "—"}
-        </span>
-        <span className="text-xs text-muted-foreground">{t("totalVotes", { count: total })}</span>
-      </div>
-
+    <div className="flex w-full items-stretch sm:w-auto">
       {canVote ? (
-        <Button variant="accent" onClick={() => setOpen(true)} className="gap-2">
+        <Button
+          variant="accent"
+          onClick={() => setOpen(true)}
+          className="flex-1 gap-2 rounded-r-none sm:flex-none"
+        >
           <ThumbsUp className="h-4 w-4" />
           {t("button")}
         </Button>
       ) : (
-        <div className="flex flex-col gap-1 sm:items-end">
-          <Button variant="secondary" disabled className="gap-2">
-            <ThumbsUp className="h-4 w-4" />
-            {t("alreadyVoted")}
-          </Button>
-          {countdown && (
-            <span className="text-xs text-muted-foreground">
-              {t("nextVoteIn", { time: countdown })}
-            </span>
-          )}
-        </div>
+        <Button
+          variant="secondary"
+          disabled
+          className="flex-1 gap-2 rounded-r-none border-r-0 sm:flex-none"
+        >
+          <Check className="h-4 w-4" />
+          {t("alreadyVoted")}
+        </Button>
       )}
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="flex min-w-12 items-center justify-center rounded-r-md border border-border bg-card px-3 text-sm font-bold tabular-nums text-foreground">
+              {monthly === undefined && (
+                <span className="h-3.5 w-5 animate-pulse rounded-md bg-foreground/10" />
+              )}
+              {monthly === null && "—"}
+              {typeof monthly === "number" && format.number(monthly)}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="text-center">
+            <p>
+              {t("votesThisMonth")} · {t("totalVotes", { count: format.number(total) })}
+            </p>
+            {!canVote && countdown && <p>{t("nextVoteIn", { time: countdown })}</p>}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <Dialog
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
-          if (!next) setResult(null);
+          // Le widget est démonté à la fermeture : on jette le token avec lui,
+          // sinon une réouverture pourrait soumettre un token périmé.
+          if (!next) {
+            setResult(null);
+            setToken(null);
+          }
         }}
       >
         <DialogContent className="sm:max-w-md">
@@ -242,7 +268,7 @@ const VoteButton = ({ serverId, serverName, initialVoteCount }: VoteButtonProps)
                   />
                 </div>
 
-                {isTurnstileEnabled && <Turnstile onToken={setToken} />}
+                {isTurnstileEnabled && <Turnstile key={captchaKey} onToken={setToken} />}
 
                 {needsTerms && (
                   <label className="flex items-start gap-2 text-sm text-muted-foreground">

@@ -1,7 +1,7 @@
 {
   "button": "Votar",
   "votesThisMonth": "Votos este mes",
-  "totalVotes": "{count} en total",
+  "totalVotes": "{count} votos en total",
   "alreadyVoted": "Ya votaste",
   "nextVoteIn": "Próximo voto en {time}",
   "dialogTitle": "Votar por {name}",

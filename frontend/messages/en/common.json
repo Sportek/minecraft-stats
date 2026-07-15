@@ -1,5 +1,9 @@
 {
   "loading": "Loading...",
+  "captcha": {
+    "loadError": "The captcha failed to load. Disable your ad blocker or check your connection, then try again.",
+    "retry": "Try again"
+  },
   "language": "Language",
   "languageName": {
     "fr": "French",

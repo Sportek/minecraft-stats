@@ -14,10 +14,6 @@ export interface ServerData {
   stats: ServerStat[];
   categories: Category[];
   growthStat: ServerGrowthStat | null;
-  lastOnlineAt: string | null;
-  lastPlayerCount: number | null;
-  lastStatsAt: string | null;
-  lastMaxCount: number | null;
 }
 
 const Home = async () => {
