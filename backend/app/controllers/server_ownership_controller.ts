@@ -55,17 +55,19 @@ export default class ServerOwnershipController {
     return server
   }
 
+  /** Clé i18n du message pour chaque motif de blocage. */
+  private static readonly BLOCK_MESSAGE_KEYS = {
+    already_owner: 'alreadyOwner',
+    already_verified: 'alreadyVerified',
+    dns_unavailable: 'dnsUnavailable',
+  } as const
+
   /** Réponse HTTP commune aux cas de blocage d'ouverture de demande. */
   private blocked(
     ctx: HttpContext,
-    status: 'already_owner' | 'already_verified' | 'dns_unavailable'
+    status: keyof typeof ServerOwnershipController.BLOCK_MESSAGE_KEYS
   ) {
-    const key =
-      status === 'already_owner'
-        ? 'alreadyOwner'
-        : status === 'dns_unavailable'
-          ? 'dnsUnavailable'
-          : 'alreadyVerified'
+    const key = ServerOwnershipController.BLOCK_MESSAGE_KEYS[status]
     return ctx.response.conflict({
       message: ctx.i18n.t(`messages.serverOwnership.${key}`),
       reason: status,

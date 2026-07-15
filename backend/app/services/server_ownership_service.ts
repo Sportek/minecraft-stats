@@ -34,6 +34,9 @@ export type VerifyOutcome =
 
 export type ReviewOutcome = { status: 'ok'; server: Server } | { status: 'already_verified' }
 
+/** Résultat d'une recherche de preuve : trouvée, absente, ou serveur/hôte injoignable. */
+type ProofResult = 'found' | 'missing' | 'unreachable'
+
 /** Chaîne à publier (TXT DNS ou MOTD) pour prouver la propriété : `minecraft-stats-verify=<token>`. */
 export function verificationValue(token: string): string {
   return `${VERIFY_PREFIX}=${token}`
@@ -101,12 +104,9 @@ export default class ServerOwnershipService {
    * Retourne un `ClaimOutcome` bloquant, ou null si la voie est libre.
    */
   private static conflict(server: Server, user: User): ClaimOutcome | null {
-    if (server.ownerVerifiedAt) {
-      return server.userId === user.id
-        ? { status: 'already_owner' }
-        : { status: 'already_verified' }
-    }
-    return null
+    if (!server.ownerVerifiedAt) return null
+    if (server.userId === user.id) return { status: 'already_owner' }
+    return { status: 'already_verified' }
   }
 
   /**
@@ -161,15 +161,10 @@ export default class ServerOwnershipService {
     if (blocked) return blocked
     if (method === 'dns' && !this.dnsAvailable(server)) return { status: 'dns_unavailable' }
 
+    // Jeton de la même méthode encore valable : on le réutilise pour ne pas invalider
+    // une preuve déjà publiée par l'utilisateur.
     const existing = await this.findClaim(server.id, user.id)
-    if (
-      existing &&
-      existing.method === method &&
-      existing.status === 'pending' &&
-      existing.isTokenActive
-    ) {
-      return { status: 'ok', claim: existing }
-    }
+    if (existing?.isReusableFor(method)) return { status: 'ok', claim: existing }
 
     const claim = await this.upsertClaim(server, user, {
       method,
@@ -209,13 +204,9 @@ export default class ServerOwnershipService {
       return { status: 'expired' }
     }
 
-    const found =
-      method === 'dns'
-        ? await this.dnsTokenPresent(server, claim.token)
-        : await this.motdTokenPresent(server, claim.token)
-
-    if (found === 'unreachable') return { status: 'unreachable' }
-    if (!found) return { status: 'not_found_record' }
+    const proof = await this.locateProof(server, method, claim.token)
+    if (proof === 'unreachable') return { status: 'unreachable' }
+    if (proof === 'missing') return { status: 'not_found_record' }
 
     await this.transferOwnership(server, user.id, method)
     claim.status = 'verified'
@@ -308,31 +299,36 @@ export default class ServerOwnershipService {
     await server.save()
   }
 
+  /** Cherche la preuve selon la méthode et renvoie un résultat unifié à trois états. */
+  private static locateProof(
+    server: Server,
+    method: 'motd' | 'dns',
+    token: string
+  ): Promise<ProofResult> {
+    return method === 'dns' ? this.dnsProof(server, token) : this.motdProof(server, token)
+  }
+
   /** Le jeton est-il publié dans un TXT d'un des hôtes acceptés ? */
-  private static async dnsTokenPresent(server: Server, token: string): Promise<boolean> {
+  private static async dnsProof(server: Server, token: string): Promise<ProofResult> {
     const expected = verificationValue(token)
     for (const host of this.dnsHostCandidates(server)) {
       try {
         const records = await ServerOwnershipService.resolveTxt(host)
-        if (txtRecordsContainToken(records, expected)) return true
+        if (txtRecordsContainToken(records, expected)) return 'found'
       } catch {
         // NXDOMAIN / aucun TXT sur cet hôte → on tente le suivant.
       }
     }
-    return false
+    return 'missing'
   }
 
-  /**
-   * Le jeton est-il présent dans la MOTD du serveur ? Renvoie 'unreachable' si le ping
-   * échoue (on ne peut alors ni confirmer ni infirmer), true/false sinon.
-   */
-  private static async motdTokenPresent(
-    server: Server,
-    token: string
-  ): Promise<boolean | 'unreachable'> {
+  /** Le jeton est-il présent dans la MOTD ? 'unreachable' si le ping échoue. */
+  private static async motdProof(server: Server, token: string): Promise<ProofResult> {
     try {
       const ping = await ServerOwnershipService.pingServer(server.type, server.address, server.port)
       return textContainsToken(flattenMotd(ping.description), verificationValue(token))
+        ? 'found'
+        : 'missing'
     } catch {
       return 'unreachable'
     }

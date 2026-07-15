@@ -69,9 +69,18 @@ export default class ServerOwnershipClaim extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  /** Un jeton DNS est-il encore valable (non expiré) ? */
+  /** Un jeton est-il encore valable (non expiré) ? */
   get isTokenActive(): boolean {
     if (!this.token || !this.expiresAt) return false
     return this.expiresAt > DateTime.now()
+  }
+
+  /**
+   * Ce dossier peut-il être rejoué tel quel pour `method` ? Vrai quand c'est une
+   * demande auto de la même méthode, en attente, avec un jeton encore actif — on
+   * réutilise alors le jeton au lieu d'en émettre un nouveau.
+   */
+  isReusableFor(method: OwnershipMethod): boolean {
+    return this.method === method && this.status === 'pending' && this.isTokenActive
   }
 }
