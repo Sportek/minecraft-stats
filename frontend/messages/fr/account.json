@@ -8,7 +8,8 @@
     "articles": "Articles",
     "analytics": "Statistiques de fréquentation",
     "users": "Utilisateurs",
-    "advertisements": "Publicités"
+    "advertisements": "Publicités",
+    "ownershipClaims": "Demandes de propriété"
   },
   "common": {
     "loading": "Chargement…",
@@ -80,7 +81,10 @@
     "dialogTitle": "Arrêter de suivre ce serveur ?",
     "dialogDescription": "<b>{name}</b> sera retiré de votre tableau de bord ainsi que son suivi. Cette action est irréversible.",
     "removing": "Suppression…",
-    "remove": "Supprimer le serveur"
+    "remove": "Supprimer le serveur",
+    "verifiedBadge": "Vérifié",
+    "verify": "Vérifier la propriété",
+    "verifyTitle": "Vérifier la propriété de ce serveur"
   },
   "settings": {
     "roles": {

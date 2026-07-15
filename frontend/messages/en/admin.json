@@ -306,5 +306,24 @@
       "fewer": "Fewer",
       "more": "More"
     }
+  },
+  "ownershipClaims": {
+    "title": "Ownership claims",
+    "subtitle": "Review manual server ownership requests.",
+    "pendingBadge": "{count} pending",
+    "loading": "Loading…",
+    "loadingList": "Loading claims…",
+    "accessDenied": "Access denied",
+    "adminOnly": "This area is restricted to administrators.",
+    "emptyTitle": "No pending requests",
+    "emptyDescription": "Manual ownership requests will appear here for review.",
+    "viewProof": "View proof",
+    "approve": "Approve",
+    "reject": "Reject",
+    "confirmApprove": "Transfer ownership of “{server}” to {user}?",
+    "rejectPrompt": "Reason for rejection (optional):",
+    "approved": "Claim approved — ownership transferred.",
+    "rejected": "Claim rejected.",
+    "error": "Action failed. Please try again."
   }
 }

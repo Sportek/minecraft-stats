@@ -3,6 +3,7 @@ import dns from 'node:dns'
 import net from 'node:net'
 import Server from '#models/server'
 import { deriveServerWebsite } from '#utils/server_website'
+import { flattenMotd } from '#utils/motd'
 
 /**
  * Poids de chaque signal dans le score de similarité.
@@ -109,27 +110,13 @@ export default class DuplicateDetectionService {
     return createHash('sha256').update(base64).digest('hex')
   }
 
-  /** Aplatit un MOTD (string ou composant Chat imbriqué) en texte brut. */
-  private static flattenMotd(node: unknown): string {
-    if (node === null || node === undefined) return ''
-    if (typeof node === 'string') return node
-    if (Array.isArray(node)) return node.map((n) => this.flattenMotd(n)).join('')
-    if (typeof node === 'object') {
-      const obj = node as { text?: unknown; extra?: unknown }
-      let text = typeof obj.text === 'string' ? obj.text : ''
-      if (obj.extra) text += this.flattenMotd(obj.extra)
-      return text
-    }
-    return ''
-  }
-
   /**
    * Hash du MOTD *normalisé* : on retire les codes couleur `§x` et les chiffres
    * (compteurs de joueurs en direct, dates) pour ne garder que le squelette
    * texte stable. null si le MOTD est vide ou trop court pour discriminer.
    */
   static hashMotd(motd?: unknown): string | null {
-    const normalized = this.flattenMotd(motd)
+    const normalized = flattenMotd(motd)
       .replace(/§./g, '') // codes couleur/format Minecraft
       .replace(/\d/g, '') // chiffres : joueurs en ligne, dates…
       .toLowerCase()

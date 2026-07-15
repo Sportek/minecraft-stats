@@ -57,6 +57,26 @@ router
       .get('servers/:serverId/vote-status', '#controllers/server_votes_controller.status')
       .use([throttleLight('servers.voteStatus', 60), NO_STORE])
 
+    // Réclamation de propriété d'un serveur (MOTD + DNS self-service + demande manuelle).
+    router
+      .get('servers/:id/claim', '#controllers/server_ownership_controller.status')
+      .use([middleware.auth(), throttleLight('servers.claim.status', 30), NO_STORE])
+    router
+      .post('servers/:id/claim/motd', '#controllers/server_ownership_controller.startMotd')
+      .use([middleware.auth(), throttleLight('servers.claim.motd', 10), NO_STORE])
+    router
+      .post('servers/:id/claim/motd/verify', '#controllers/server_ownership_controller.verifyMotd')
+      .use([middleware.auth(), throttleLight('servers.claim.motdVerify', 15), NO_STORE])
+    router
+      .post('servers/:id/claim/dns', '#controllers/server_ownership_controller.startDns')
+      .use([middleware.auth(), throttleLight('servers.claim.dns', 10), NO_STORE])
+    router
+      .post('servers/:id/claim/dns/verify', '#controllers/server_ownership_controller.verifyDns')
+      .use([middleware.auth(), throttleLight('servers.claim.dnsVerify', 15), NO_STORE])
+    router
+      .post('servers/:id/claim/manual', '#controllers/server_ownership_controller.submitManual')
+      .use([middleware.auth(), throttleLight('servers.claim.manual', 5), NO_STORE])
+
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
       .only(['index', 'store', 'destroy'])
@@ -251,6 +271,17 @@ router
         router
           .get('analytics', '#controllers/analytics_controller.dashboard')
           .use([middleware.admin(), throttleLight('admin.analytics', 30), NO_STORE])
+
+        // Ownership claims — manual review queue (admin only)
+        router
+          .get('ownership-claims', '#controllers/server_ownership_controller.adminIndex')
+          .use([middleware.admin(), throttleLight('admin.ownership.index', 30), NO_STORE])
+        router
+          .post('ownership-claims/:id/approve', '#controllers/server_ownership_controller.approve')
+          .use([middleware.admin(), throttleLight('admin.ownership.approve', 20), NO_STORE])
+        router
+          .post('ownership-claims/:id/reject', '#controllers/server_ownership_controller.reject')
+          .use([middleware.admin(), throttleLight('admin.ownership.reject', 20), NO_STORE])
 
         // User management (admin only via policy)
         router

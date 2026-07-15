@@ -8,7 +8,8 @@
     "articles": "Artículos",
     "analytics": "Estadísticas de tráfico",
     "users": "Usuarios",
-    "advertisements": "Anuncios"
+    "advertisements": "Anuncios",
+    "ownershipClaims": "Solicitudes de propiedad"
   },
   "common": {
     "loading": "Cargando…",
@@ -80,7 +81,10 @@
     "dialogTitle": "¿Dejar de seguir este servidor?",
     "dialogDescription": "<b>{name}</b> se eliminará de tu panel de control junto con su seguimiento. Esta acción no se puede deshacer.",
     "removing": "Eliminando…",
-    "remove": "Eliminar servidor"
+    "remove": "Eliminar servidor",
+    "verifiedBadge": "Verificado",
+    "verify": "Verificar la propiedad",
+    "verifyTitle": "Verificar la propiedad de este servidor"
   },
   "settings": {
     "roles": {

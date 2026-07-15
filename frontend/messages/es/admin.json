@@ -306,5 +306,24 @@
       "fewer": "Menos",
       "more": "Más"
     }
+  },
+  "ownershipClaims": {
+    "title": "Solicitudes de propiedad",
+    "subtitle": "Revisa las solicitudes manuales de propiedad de servidores.",
+    "pendingBadge": "{count} pendientes",
+    "loading": "Cargando…",
+    "loadingList": "Cargando solicitudes…",
+    "accessDenied": "Acceso denegado",
+    "adminOnly": "Esta sección está restringida a administradores.",
+    "emptyTitle": "No hay solicitudes pendientes",
+    "emptyDescription": "Las solicitudes manuales de propiedad aparecerán aquí para su revisión.",
+    "viewProof": "Ver prueba",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "confirmApprove": "¿Transferir la propiedad de «{server}» a {user}?",
+    "rejectPrompt": "Motivo del rechazo (opcional):",
+    "approved": "Solicitud aprobada: propiedad transferida.",
+    "rejected": "Solicitud rechazada.",
+    "error": "La acción falló. Inténtalo de nuevo."
   }
 }

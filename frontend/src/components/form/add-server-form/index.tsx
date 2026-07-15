@@ -9,13 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useServers } from "@/contexts/servers";
 import { DuplicateServerError } from "@/http/server";
+import ClaimServerDialog from "@/components/serveur/claim-server-dialog";
 import { cn } from "@/lib/utils";
-import { Category, Language } from "@/types/server";
+import { Category, Language, Server } from "@/types/server";
 import { cleanWebsiteHost } from "@/utils/server-website";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { BadgeCheck, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWRImmutable from "swr/immutable";
 import { z } from "zod";
@@ -80,6 +82,10 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
 
   const { toast } = useToast();
   const { addServer } = useServers();
+  const router = useRouter();
+  // Serveur tout juste créé : on propose de vérifier la propriété (point d'entrée post-ajout).
+  const [createdServer, setCreatedServer] = useState<Server | null>(null);
+  const [claimOpen, setClaimOpen] = useState(false);
 
   const handleCategorySelectionChange = (selected: string[]) => {
     form.setValue("categories", selected);
@@ -91,7 +97,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
 
   const onSubmit = async (credentials: z.infer<typeof formSchema>) => {
     try {
-      await addServer({
+      const server = await addServer({
         ...credentials,
         port: parseInt(credentials.port),
         website: cleanWebsiteHost(credentials.website) || undefined,
@@ -102,6 +108,8 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
         description: t("addServer.successDescription"),
         variant: "success",
       });
+      // Bascule sur l'invite de vérification de propriété plutôt que de rester sur le formulaire.
+      setCreatedServer(server);
     } catch (error) {
       if (error instanceof DuplicateServerError) {
         const safeServerId = encodeURIComponent(String(error.existingServer.id));
@@ -126,6 +134,43 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       });
     }
   };
+
+  if (createdServer) {
+    return (
+      <div className={cn("flex flex-col", className)}>
+        <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6 text-card-foreground">
+          <div className="flex items-center gap-2 text-success">
+            <BadgeCheck className="h-5 w-5" />
+            <span className="font-semibold">{t("addServer.successTitle")}</span>
+          </div>
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+            <p className="font-semibold text-foreground">{t("addServer.claimPromptTitle")}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{t("addServer.claimPromptBody")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button variant="accent" onClick={() => setClaimOpen(true)} className="gap-1.5">
+                <ShieldCheck className="h-4 w-4" />
+                {t("addServer.claimCta")}
+              </Button>
+              <Link href={`/servers/${createdServer.id}`}>
+                <Button variant="secondary">{t("addServer.viewServer")}</Button>
+              </Link>
+              <Button variant="ghost" onClick={() => setCreatedServer(null)}>
+                {t("addServer.addAnother")}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <ClaimServerDialog
+          serverId={createdServer.id}
+          serverName={createdServer.name}
+          open={claimOpen}
+          onOpenChange={setClaimOpen}
+          onVerified={() => router.push(`/servers/${createdServer.id}`)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={cn("flex flex-col", className)}>
