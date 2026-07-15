@@ -1,5 +1,5 @@
-import { getBaseUrl } from "@/app/_cheatcode";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
+import { apiFetch } from "./client";
 
 /**
  * Classements des pages /rankings. Chaque tri est servi par le même endpoint
@@ -7,7 +7,7 @@ import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
  * de classement standard : le serveur + ses stats 24h + ses relations.
  * Chaque tri est aussi le segment d'URL de sa page dédiée (/rankings/<sort>).
  */
-export const RANKING_SORTS = ["players", "trending", "peak", "newest"] as const;
+export const RANKING_SORTS = ["players", "trending", "peak", "newest", "votes"] as const;
 
 export type RankingSort = (typeof RANKING_SORTS)[number];
 
@@ -19,6 +19,8 @@ export interface RankingEntry {
   stats: ServerStat[];
   categories: Category[];
   growthStat: ServerGrowthStat | null;
+  // Votes du mois courant. Renseigné (>0) uniquement pour le classement "votes".
+  monthlyVoteCount: number;
 }
 
 export interface RankingResponse {
@@ -38,14 +40,7 @@ export interface RankingResponse {
  * pour éviter les problèmes de loopback NAT. ISR : revalidation toutes les 10 min,
  * alignée sur le TTL du cache backend.
  */
-export const getRanking = async (sort: RankingSort, limit = 15): Promise<RankingResponse> => {
-  const response = await fetch(`${getBaseUrl()}/servers/paginate?sort=${sort}&limit=${limit}`, {
+export const getRanking = (sort: RankingSort, limit = 15): Promise<RankingResponse> =>
+  apiFetch<RankingResponse>(`/servers/paginate?sort=${sort}&limit=${limit}`, {
     next: { revalidate: 600 },
   });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${sort} ranking: ${response.status}`);
-  }
-
-  return response.json() as Promise<RankingResponse>;
-};

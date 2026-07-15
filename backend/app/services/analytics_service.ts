@@ -1,6 +1,7 @@
 import PageView from '#models/page_view'
 import { getTrafficCounters } from '#services/analytics_counters'
 import env from '#start/env'
+import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import { createHmac } from 'node:crypto'
 import { DateTime } from 'luxon'
@@ -41,11 +42,30 @@ export default class AnalyticsService {
   }
 
   /**
+   * Normalise le code pays renvoyé par Cloudflare (`CF-IPCountry`). Cloudflare
+   * renvoie `XX`/`T1` quand le pays est inconnu ou anonymisé — on les écarte.
+   */
+  static normalizeCountry(value: string | undefined): string | null {
+    if (!value || value.length !== 2) return null
+    const code = value.toUpperCase()
+    return code === 'XX' || code === 'T1' ? null : code
+  }
+
+  /**
+   * IP réelle du client : derrière Cloudflare, `request.ip()` renverrait l'IP du
+   * proxy — `CF-Connecting-IP` porte celle du visiteur.
+   */
+  static realIp(request: HttpContext['request']): string | null {
+    return request.header('CF-Connecting-IP') || request.ip() || null
+  }
+
+  /**
    * Crée (ou rafraîchit) le visiteur identifié par son UUID anonyme et renvoie
    * sa clé primaire. Upsert atomique pour résister aux vues concurrentes du
-   * même visiteur (première visite multi-onglets).
+   * même visiteur (première visite multi-onglets). Public : réutilisé par le vote
+   * de serveur pour lier une action au visiteur tracké.
    */
-  private static async upsertVisitor(uuid: string, ctx: VisitorContext): Promise<number> {
+  static async ensureVisitor(uuid: string, ctx: VisitorContext): Promise<number> {
     const now = DateTime.now().toSQL()
     const fields = {
       ip_hash: this.hashIp(ctx.ip),
@@ -67,7 +87,7 @@ export default class AnalyticsService {
    * Enregistre une page vue. Best-effort : appelé en fire-and-forget par le client.
    */
   static async recordPageView(input: PageViewInput): Promise<void> {
-    const visitorId = await this.upsertVisitor(input.visitorId, input)
+    const visitorId = await this.ensureVisitor(input.visitorId, input)
 
     await PageView.create({
       visitorId,
@@ -85,7 +105,7 @@ export default class AnalyticsService {
    * compte les vues restées anonymes avant ce premier login.
    */
   static async identify(visitorUuid: string, userId: number, ctx: VisitorContext): Promise<void> {
-    const visitorId = await this.upsertVisitor(visitorUuid, ctx)
+    const visitorId = await this.ensureVisitor(visitorUuid, ctx)
     const now = DateTime.now().toSQL()
 
     await db

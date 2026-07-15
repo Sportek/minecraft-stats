@@ -4,20 +4,6 @@ import { IdentifyVisitorValidator, TrackPageViewValidator } from '#validators/an
 import { parseEpochMs } from '#validators/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 
-/**
- * Normalise le code pays renvoyé par Cloudflare (`CF-IPCountry`). Cloudflare
- * renvoie `XX`/`T1` quand le pays est inconnu ou anonymisé — on les écarte.
- */
-function normalizeCountry(value: string | undefined): string | null {
-  if (!value || value.length !== 2) return null
-  const code = value.toUpperCase()
-  return code === 'XX' || code === 'T1' ? null : code
-}
-
-function realIp(request: HttpContext['request']): string | null {
-  return request.header('CF-Connecting-IP') || request.ip() || null
-}
-
 export default class AnalyticsController {
   /**
    * @trackPageView
@@ -44,9 +30,9 @@ export default class AnalyticsController {
         referrer: payload.referrer ?? null,
         title: payload.title ?? null,
         durationMs: payload.durationMs ?? null,
-        ip: realIp(request),
+        ip: AnalyticsService.realIp(request),
         userAgent: request.header('user-agent') ?? null,
-        country: normalizeCountry(request.header('CF-IPCountry')),
+        country: AnalyticsService.normalizeCountry(request.header('CF-IPCountry')),
       })
     } catch (error) {
       // Le tracking est best-effort : un échec ne doit pas faire échouer la requête.
@@ -73,9 +59,9 @@ export default class AnalyticsController {
 
     try {
       await AnalyticsService.identify(visitorId, user.id, {
-        ip: realIp(request),
+        ip: AnalyticsService.realIp(request),
         userAgent: request.header('user-agent') ?? null,
-        country: normalizeCountry(request.header('CF-IPCountry')),
+        country: AnalyticsService.normalizeCountry(request.header('CF-IPCountry')),
       })
     } catch (error) {
       console.error('Failed to identify visitor', error)
@@ -94,9 +80,9 @@ export default class AnalyticsController {
    */
   async hit({ request, response }: HttpContext) {
     recordAnonymousHit(
-      realIp(request),
+      AnalyticsService.realIp(request),
       request.header('user-agent') ?? null,
-      normalizeCountry(request.header('CF-IPCountry'))
+      AnalyticsService.normalizeCountry(request.header('CF-IPCountry'))
     )
     return response.noContent()
   }

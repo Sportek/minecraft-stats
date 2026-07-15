@@ -1,20 +1,11 @@
-import Category from '#models/category'
 import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
 import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
 import type { HttpContext } from '@adonisjs/core/http'
-import {
-  INTERACTIVE_PING_TIMEOUT,
-  isPingPossible,
-  pingMinecraftServer,
-} from '../../minecraft-ping/minecraft_ping.js'
-import type { NormalizedPing } from '../../minecraft-ping/minecraft_ping.js'
 import Server from '../models/server.js'
 import CacheService from '#services/cache_service'
 import ServerListingService from '#services/server_listing_service'
-import DuplicateDetectionService from '#services/duplicate_detection_service'
-import Language from '#models/language'
-import { deriveServerWebsite } from '#utils/server_website'
+import ServerRegistrationService from '#services/server_registration_service'
 
 export default class ServersController {
   /**
@@ -103,71 +94,27 @@ export default class ServersController {
     }
 
     const validatedData = await CreateServerValidator.validate(data)
-    const type = validatedData.type ?? 'java'
 
-    // Ping interactif : sert à la fois de test de joignabilité ET de source
-    // pour les empreintes de détection de doublon (favicon, MOTD, version).
-    let pingData: NormalizedPing | null = null
-    try {
-      pingData = await pingMinecraftServer(
-        type,
-        validatedData.address,
-        validatedData.port,
-        INTERACTIVE_PING_TIMEOUT
-      )
-    } catch {
-      pingData = null
+    // Orchestration ping → fingerprint → doublon → création → taxonomie dans le
+    // service (testable sans HttpContext). Le controller ne fait que mapper le
+    // résultat sur la réponse HTTP.
+    const result = await ServerRegistrationService.register(validatedData, user)
+    switch (result.status) {
+      case 'unreachable':
+        return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
+      case 'duplicate':
+        return response.conflict({
+          message: i18n.t('messages.servers.duplicate'),
+          existingServer: {
+            id: result.duplicate.server.id,
+            name: result.duplicate.server.name,
+          },
+          score: result.duplicate.score,
+          matchedSignals: result.duplicate.signals,
+        })
+      case 'created':
+        return result.server
     }
-    if (!pingData) {
-      return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
-    }
-
-    // Détection de doublon : un même serveur listé sous plusieurs adresses
-    // (play./mc./IP brute). Lookups indexés — cf. DuplicateDetectionService.
-    const fingerprint = await DuplicateDetectionService.fingerprint(
-      validatedData.address,
-      validatedData.port,
-      pingData
-    )
-    const duplicate = await DuplicateDetectionService.findDuplicate(fingerprint)
-    if (duplicate) {
-      return response.conflict({
-        message: i18n.t('messages.servers.duplicate'),
-        existingServer: { id: duplicate.server.id, name: duplicate.server.name },
-        score: duplicate.score,
-        matchedSignals: duplicate.signals,
-      })
-    }
-
-    const { categories, languages, ...dataToCreate } = validatedData
-
-    // Website: provided by the owner, otherwise derived from the address.
-    const website = dataToCreate.website ?? deriveServerWebsite(validatedData.address)
-
-    const server = await Server.create({
-      ...dataToCreate,
-      type,
-      website,
-      version: fingerprint.version,
-      faviconHash: fingerprint.faviconHash,
-      resolvedEndpoint: fingerprint.resolvedEndpoint,
-      motdHash: fingerprint.motdHash,
-    })
-
-    const categoriesToAttach = await Promise.all(
-      categories.map((name) => Category.findBy('name', name))
-    )
-
-    await server.related('categories').attach(categoriesToAttach.flatMap((c) => (c ? [c.id] : [])))
-
-    const languagesToAttach = await Promise.all(
-      languages.map((code) => Language.findBy('code', code))
-    )
-
-    await server.related('languages').attach(languagesToAttach.flatMap((l) => (l ? [l.id] : [])))
-
-    await server.related('user').associate(user)
-    return server
   }
 
   private async getActualStats(server: Server, amount: number = 1) {
@@ -232,40 +179,12 @@ export default class ServersController {
       return response.forbidden({ message: i18n.t('messages.servers.unauthorized') })
     }
 
-    const { categories, languages, ...dataToUpdate } = validatedData
-
-    // If the address changes without an explicit website, re-derive it.
-    if (dataToUpdate.website === undefined && validatedData.address) {
-      const derived = deriveServerWebsite(validatedData.address)
-      if (derived) dataToUpdate.website = derived
-    }
-
-    const successPing = await isPingPossible(
-      validatedData.type ?? server.type,
-      validatedData.address ?? server.address,
-      validatedData.port ?? server.port
-    )
-    if (!successPing) {
+    // Re-ping de joignabilité + sync taxonomie + persistance dans le service.
+    const result = await ServerRegistrationService.update(server, validatedData)
+    if (result.status === 'unreachable') {
       return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
     }
-
-    if (categories) {
-      const categoriesToAttach = await Promise.all(
-        categories.map((name) => Category.findBy('name', name))
-      )
-
-      await server.related('categories').sync(categoriesToAttach.flatMap((c) => (c ? [c.id] : [])))
-    }
-
-    if (languages) {
-      const languagesToAttach = await Promise.all(
-        languages.map((code) => Language.findBy('code', code))
-      )
-
-      await server.related('languages').sync(languagesToAttach.flatMap((l) => (l ? [l.id] : [])))
-    }
-
-    return server.merge(dataToUpdate).save()
+    return result.server
   }
 
   /**
@@ -303,7 +222,7 @@ export default class ServersController {
    * @paramQuery languageIds - CSV of language ids to filter on (e.g. "1,2,3") - @type(string) @example(1,2)
    * @paramQuery search - Case-insensitive substring matched against name and address - @type(string) @example(hypixel)
    * @paramQuery type - Filter by server edition. Any other value is ignored. - @type(string) @enum(java, bedrock)
-   * @paramQuery sort - Ranking order. "players" (default) = most current players online (stale servers demoted); "trending" = highest weekly player growth; "peak" = highest all-time peak player count; "newest" = most recently added. Any other value falls back to "players". Powers the /rankings leaderboards. - @type(string) @enum(players, trending, peak, newest)
+   * @paramQuery sort - Ranking order. "players" (default) = most current players online (stale servers demoted); "trending" = highest weekly player growth; "peak" = highest all-time peak player count; "newest" = most recently added; "votes" = most votes in the current month. Any other value falls back to "players". Powers the /rankings leaderboards. - @type(string) @enum(players, trending, peak, newest, votes)
    * @paramQuery ids - Restrict to specific server ids. Accepts CSV ("1,2,3") OR repeated param ("ids=1&ids=2"). Positive integers only, deduplicated, max 20 ids (extras dropped). Used for the favorites section. - @type(string) @example(12,34,56)
    * @paramQuery nocache - Set to "1" to bypass the response cache. Only honored in non-production environments or for admin users. - @type(string) @enum(1)
    * @responseBody 200 - {"data": [{"server": "<Server>", "stats": [{"serverId": 1, "createdAt": "2026-05-28T12:00:00.000Z", "playerCount": 1200, "maxCount": 5000}], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}], "meta": {"total": 100, "perPage": 10, "currentPage": 1, "lastPage": 10, "firstPage": 1}}
@@ -324,7 +243,10 @@ export default class ServersController {
     // = ordre historique par joueurs actuels. Même logique inline que `type`.
     const sortParam = request.input('sort')
     const sort =
-      sortParam === 'trending' || sortParam === 'peak' || sortParam === 'newest'
+      sortParam === 'trending' ||
+      sortParam === 'peak' ||
+      sortParam === 'newest' ||
+      sortParam === 'votes'
         ? sortParam
         : 'players'
 
@@ -355,9 +277,7 @@ export default class ServersController {
       ids: ids.join(','),
     })
 
-    const nocache = request.input('nocache') === '1'
-    const bypass =
-      nocache && (process.env.NODE_ENV !== 'production' || ctx.auth?.user?.role === 'admin')
+    const bypass = CacheService.bypassAllowed(ctx)
 
     // TTL réduit quand la requête est personnalisée (favoris) — la fragmentation
     // cache coûte moins en stockage, et les stats changent toutes les 10 min.

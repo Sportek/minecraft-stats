@@ -49,6 +49,14 @@ router
       .middleware(['destroy', 'store', 'update'], NO_STORE)
       .use('*', throttleLight('servers', 35))
 
+    // Votes de serveur (public, anonyme : pseudo Minecraft + consentement RGPD)
+    router
+      .post('servers/:serverId/vote', '#controllers/server_votes_controller.store')
+      .use([throttleLight('servers.vote', 10), NO_STORE])
+    router
+      .get('servers/:serverId/vote-status', '#controllers/server_votes_controller.status')
+      .use([throttleLight('servers.voteStatus', 60), NO_STORE])
+
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
       .only(['index', 'store', 'destroy'])

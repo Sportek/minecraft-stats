@@ -157,6 +157,36 @@ export class LanguageSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class MinecraftPlayerSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'headPath',
+    'id',
+    'resolvedAt',
+    'textureHash',
+    'updatedAt',
+    'username',
+    'uuid',
+  ] as const
+  $columns = MinecraftPlayerSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare headPath: string | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare resolvedAt: DateTime | null
+  @column()
+  declare textureHash: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare username: string
+  @column()
+  declare uuid: string
+}
+
 export class PageViewDailySchema extends BaseModel {
   static $columns = ['date', 'id', 'path', 'uniqueVisitors', 'views'] as const
   $columns = PageViewDailySchema.$columns
@@ -399,6 +429,42 @@ export class ServerStatsHourlySchema extends BaseModel {
   declare serverId: number
 }
 
+export class ServerVoteSchema extends BaseModel {
+  static $columns = [
+    'country',
+    'createdAt',
+    'id',
+    'ipHash',
+    'mojangUuid',
+    'serverId',
+    'updatedAt',
+    'userId',
+    'username',
+    'visitorId',
+  ] as const
+  $columns = ServerVoteSchema.$columns
+  @column()
+  declare country: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare ipHash: string | null
+  @column()
+  declare mojangUuid: string | null
+  @column()
+  declare serverId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number | null
+  @column()
+  declare username: string
+  @column()
+  declare visitorId: number | null
+}
+
 export class ServerSchema extends BaseModel {
   static $columns = [
     'address',
@@ -424,6 +490,7 @@ export class ServerSchema extends BaseModel {
     'updatedAt',
     'userId',
     'version',
+    'voteCount',
     'website',
   ] as const
   $columns = ServerSchema.$columns
@@ -474,6 +541,8 @@ export class ServerSchema extends BaseModel {
   @column()
   declare version: string | null
   @column()
+  declare voteCount: number
+  @column()
   declare website: string | null
 }
 
@@ -514,6 +583,8 @@ export class UserSchema extends BaseModel {
     'email',
     'id',
     'password',
+    'passwordResetToken',
+    'passwordResetTokenExpires',
     'provider',
     'role',
     'updatedAt',
@@ -533,6 +604,10 @@ export class UserSchema extends BaseModel {
   declare id: number
   @column({ serializeAs: null })
   declare password: string
+  @column()
+  declare passwordResetToken: string | null
+  @column.dateTime()
+  declare passwordResetTokenExpires: DateTime | null
   @column()
   declare provider: string | null
   @column()

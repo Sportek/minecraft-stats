@@ -282,14 +282,14 @@ const ServerPage = () => {
       <ServerStructuredData
         server={serverData.server}
         categories={serverData.categories}
-        playerCount={serverData.lastPlayerCount ?? 0}
-        maxPlayers={serverData.lastMaxCount ?? undefined}
+        playerCount={serverData.server.lastPlayerCount ?? 0}
+        maxPlayers={serverData.server.lastMaxCount ?? undefined}
         locale={locale}
       />
       <ServerFAQStructuredData
         server={serverData.server}
-        currentPlayers={serverData.lastPlayerCount ?? 0}
-        maxPlayers={serverData.lastMaxCount ?? 0}
+        currentPlayers={serverData.server.lastPlayerCount ?? 0}
+        maxPlayers={serverData.server.lastMaxCount ?? 0}
         locale={locale}
       />
 
@@ -347,8 +347,8 @@ const ServerPage = () => {
 
       <ServerFAQ
         server={serverData.server}
-        currentPlayers={serverData.lastPlayerCount ?? 0}
-        maxPlayers={serverData.lastMaxCount ?? 0}
+        currentPlayers={serverData.server.lastPlayerCount ?? 0}
+        maxPlayers={serverData.server.lastMaxCount ?? 0}
       />
     </main>
   );

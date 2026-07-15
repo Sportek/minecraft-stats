@@ -94,6 +94,14 @@
       "dpoTitle": "Ausencia de DPD",
       "dpoBody": "No se ha designado ningún delegado de protección de datos (DPD)."
     },
+    "voting": {
+      "title": "11. Votos para servidores",
+      "intro": "Puedes votar por un servidor sin crear una cuenta, indicando solo tu nombre de Minecraft. Al votar, aceptas lo siguiente:",
+      "item1": "Un voto está limitado a una vez cada 90 minutos por servidor (control por nombre, huella de dirección IP e identificador de visitante).",
+      "item2": "Los datos vinculados al voto se conservan: el nombre de Minecraft que introduces, una huella no reversible de tu dirección IP, un identificador anónimo de visitante y un código de país. Tu nombre puede enriquecerse mediante la API pública de Mojang (UUID y renderizado de tu cabeza).",
+      "item3": "Tu voto se vincula a tu identificador anónimo de visitante y a tu cuenta si has iniciado sesión.",
+      "consent": "Marcar la casilla de aceptación de las condiciones al votar constituye el consentimiento al seguimiento estadístico descrito en nuestra <link>Política de privacidad</link>. Puedes retirar este consentimiento en cualquier momento mediante el banner de consentimiento."
+    },
     "intellectualProperty": {
       "title": "5. Propiedad intelectual",
       "body": "Las imágenes de los servidores son propiedad de sus respectivos servidores de Minecraft. Todo el demás contenido es propiedad de Gabriel Landry. Los términos «Minecraft» y las demás marcas asociadas pertenecen a Mojang (Microsoft)."
@@ -173,7 +181,7 @@
       "whatItem3": "Un país aproximado, deducido de tu conexión.",
       "whatItem4": "Una forma cifrada mediante hash y no reversible de tu dirección IP. Nunca almacenamos tu dirección IP en texto plano; el hash solo nos permite agrupar las visitas procedentes de una misma conexión sin conservar la dirección en sí.",
       "consentTitle": "Consentimiento",
-      "consentBody": "Aceptas las estadísticas detalladas anteriores mediante el banner de consentimiento que se muestra en tu primera visita. Si lo rechazas, no registramos esos eventos detallados; solo continúa el recuento agregado anónimo descrito anteriormente. Puedes cambiar de opinión en cualquier momento borrando el almacenamiento local de tu navegador para este sitio, lo que también restablece tu identificador de visitante anónimo.",
+      "consentBody": "Aceptas las estadísticas detalladas anteriores mediante el banner de consentimiento que se muestra en tu primera visita, o al aceptar las condiciones de uso cuando votas por un servidor (en cuyo caso tu voto se vincula a tu identificador de visitante anónimo). Si lo rechazas, no registramos esos eventos detallados; solo continúa el recuento agregado anónimo descrito anteriormente. Puedes cambiar de opinión en cualquier momento borrando el almacenamiento local de tu navegador para este sitio, lo que también restablece tu identificador de visitante anónimo.",
       "linkTitle": "Vinculación con tu cuenta",
       "linkBody": "Si has iniciado sesión, podemos asociar tus visitas anónimas con tu cuenta para comprender el uso por parte de los miembros conectados. Un mismo dispositivo o conexión puede estar vinculado a más de una cuenta, y una misma cuenta a varios dispositivos. Puedes solicitar la eliminación de estos datos en cualquier momento (consulta Tus derechos más abajo).",
       "retentionTitle": "Conservación",

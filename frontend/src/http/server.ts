@@ -1,5 +1,5 @@
-import { getBaseUrl, HttpError } from "@/app/_cheatcode";
 import { Category, Server, ServerGrowthStat, ServerStat, ServerType } from "@/types/server";
+import { apiFetch, ApiError } from "./client";
 
 export interface ServerPayload {
   name: string;
@@ -10,9 +10,9 @@ export interface ServerPayload {
   languages?: string[];
   website?: string;
 }
+
 // Note: GET /api/v1/servers is a lightweight endpoint that returns only { server } (no stats/categories).
 // For richer data, use /servers/paginate or /servers/:id.
-import { getErrorMessage } from "./auth";
 
 export interface DuplicateServerInfo {
   id: number;
@@ -34,48 +34,23 @@ export class DuplicateServerError extends Error {
   }
 }
 
-export const addMinecraftServer = async (
-  data: ServerPayload,
-  token: string
-) => {
-  const response = await fetch(`${getBaseUrl()}/servers`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    if (response.status === 409) {
-      const body = await response.json().catch(() => null);
+export const addMinecraftServer = async (data: ServerPayload, token: string) => {
+  try {
+    return await apiFetch<Server>("/servers", { method: "POST", token, body: data });
+  } catch (err) {
+    // Conflit 409 = doublon : on remonte l'info du serveur existant à l'UI.
+    if (err instanceof ApiError && err.status === 409) {
+      const body = err.body as { message?: string; existingServer?: DuplicateServerInfo } | undefined;
       throw new DuplicateServerError(
         body?.message ?? "This server is already listed.",
         body?.existingServer ?? { id: 0, name: "" }
       );
     }
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
+    throw err;
   }
-
-  return response.json() as Promise<Server>;
 };
 
-export const getServers = async () => {
-  const response = await fetch(`${getBaseUrl()}/servers`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<{ server: Server }[]>;
-};
+export const getServers = () => apiFetch<{ server: Server }[]>("/servers");
 
 export interface MyServerItem {
   server: Server;
@@ -83,90 +58,28 @@ export interface MyServerItem {
   growthStat: ServerGrowthStat | null;
 }
 
-export const getMyServers = async (token: string) => {
-  const response = await fetch(`${getBaseUrl()}/servers/mine`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const getMyServers = (token: string) =>
+  apiFetch<MyServerItem[]>("/servers/mine", { token });
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
+export const getServer = (serverId: number) =>
+  apiFetch<{ server: Server; stats: ServerStat[]; categories: Category[] }>(`/servers/${serverId}`);
 
-  return response.json() as Promise<MyServerItem[]>;
-};
-
-export const getServer = async (serverId: number) => {
-  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`);
-  if (!response.ok) {
-    throw new HttpError(`Failed to fetch server ${serverId}`, response.status);
-  }
-  return response.json() as Promise<{ server: Server; stats: ServerStat[]; categories: Category[] }>;
-};
-
-export const getServerStats = async (
+export const getServerStats = (
   serverId: number,
   fromDate: EpochTimeStamp,
   toDate: EpochTimeStamp,
   interval?: string
-) => {
-  const response = await fetch(
-    `${getBaseUrl()}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}${
+) =>
+  apiFetch<ServerStat[]>(
+    `/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}${
       interval ? `&interval=${interval}` : ""
-    }`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
+    }`
   );
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<ServerStat[]>;
-};
-
 export const deleteServer = async (serverId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
+  await apiFetch<void>(`/servers/${serverId}`, { method: "DELETE", token });
   return true;
 };
 
-export const editServer = async (
-  serverId: number,
-  data: ServerPayload,
-  token: string
-) => {
-  const response = await fetch(`${getBaseUrl()}/servers/${serverId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<Server>;
-};
+export const editServer = (serverId: number, data: ServerPayload, token: string) =>
+  apiFetch<Server>(`/servers/${serverId}`, { method: "PUT", token, body: data });

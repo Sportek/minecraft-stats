@@ -36,12 +36,22 @@
       "metaTitle": "Newest Minecraft Servers — Latest Additions",
       "metaDescription": "The newest Minecraft servers added to Minecraft Stats. Discover fresh servers before everyone else.",
       "metaKeywords": "new minecraft servers, newest minecraft servers, latest minecraft servers, recently added minecraft servers"
+    },
+    "votes": {
+      "nav": "Votes",
+      "title": "Top servers by votes this month",
+      "description": "The servers most backed by the community this month. Anyone can vote every 90 minutes — the ranking resets at the start of each month.",
+      "empty": "No votes yet this month. Be the first to back your server!",
+      "metaTitle": "Top Minecraft Servers by Votes — Monthly Ranking",
+      "metaDescription": "The most-voted Minecraft servers this month, chosen by the community. Vote for your favorite server, no account needed, with your Minecraft username.",
+      "metaKeywords": "vote minecraft server, top minecraft servers votes, minecraft server vote ranking, best minecraft server"
     }
   },
   "metrics": {
     "playersOnline": "online",
     "weeklyGrowth": "this week",
     "allTimePeak": "all-time peak",
-    "added": "added on"
+    "added": "added on",
+    "votesThisMonth": "votes this month"
   }
 }

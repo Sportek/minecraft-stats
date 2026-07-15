@@ -1,7 +1,6 @@
-import { getBaseUrl } from '@/app/_cheatcode'
 import { AdminUserProfile, User } from '@/types/auth'
 import { AdminUserServer } from '@/types/server'
-import { getErrorMessage } from './auth'
+import { apiFetch } from './client'
 
 export interface UsersListResponse {
   data: User[]
@@ -35,7 +34,7 @@ export interface AdminUserDetailResponse {
   }
 }
 
-export const getAdminUsers = async (
+export const getAdminUsers = (
   token: string,
   page: number = 1,
   limit: number = 20,
@@ -55,55 +54,14 @@ export const getAdminUsers = async (
     params.append('role', role)
   }
 
-  const response = await fetch(`${getBaseUrl()}/admin/users?${params.toString()}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<UsersListResponse>
+  return apiFetch<UsersListResponse>(`/admin/users?${params.toString()}`, { token })
 }
 
-export const getAdminUserDetail = async (userId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/users/${userId}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
+export const getAdminUserDetail = (userId: number, token: string) =>
+  apiFetch<AdminUserDetailResponse>(`/admin/users/${userId}`, { token })
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<AdminUserDetailResponse>
-}
-
-export const updateUserRole = async (
+export const updateUserRole = (
   userId: number,
   role: 'admin' | 'writer' | 'user',
   token: string
-) => {
-  const response = await fetch(`${getBaseUrl()}/admin/users/${userId}/role`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ role }),
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<User>
-}
+) => apiFetch<User>(`/admin/users/${userId}/role`, { method: 'PATCH', token, body: { role } })

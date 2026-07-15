@@ -30,6 +30,8 @@ export interface Server {
   peakPlayerCount: number | null;
   peakPlayerAt: Date | null;
   languages: Language[];
+  // Total cumulatif de votes (all-time). Le classement mensuel est calculé côté API.
+  voteCount: number;
 }
 
 /**

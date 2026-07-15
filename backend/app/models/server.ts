@@ -1,9 +1,18 @@
-import { BaseModel, beforeSave, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeSave,
+  belongsTo,
+  column,
+  hasMany,
+  hasOne,
+  manyToMany,
+} from '@adonisjs/lucid/orm'
 import * as relations from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Category from './category.js'
 import Language from './language.js'
 import ServerGrowthStat from './server_growth_stat.js'
+import ServerVote from './server_vote.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
 import type { ServerType } from '../constants/server_type.js'
@@ -71,6 +80,14 @@ export default class Server extends BaseModel {
   @hasOne(() => ServerGrowthStat)
   declare growthStat: relations.HasOne<typeof ServerGrowthStat>
 
+  @hasMany(() => ServerVote)
+  declare votes: relations.HasMany<typeof ServerVote>
+
+  // Compteur total dénormalisé (all-time), incrémenté à chaque vote. Le classement
+  // mensuel agrège `server_votes` sur la fenêtre du mois courant.
+  @column()
+  declare voteCount: number
+
   @manyToMany(() => Category, { pivotTimestamps: true, pivotTable: 'server_categories' })
   declare categories: relations.ManyToMany<typeof Category>
 
@@ -131,6 +148,25 @@ export default class Server extends BaseModel {
     if (server.$dirty.address !== undefined || server.hostDomain === null) {
       server.hostDomain = deriveServerWebsite(server.address)
     }
+  }
+
+  /**
+   * Résout des noms de catégories en ids existants (les inconnus sont ignorés).
+   * Mutualise le lookup nom→id dupliqué entre la création et la mise à jour d'un
+   * serveur (attach vs sync).
+   */
+  static async resolveCategoryIds(names: string[]): Promise<number[]> {
+    const categories = await Promise.all(names.map((name) => Category.findBy('name', name)))
+    return categories.flatMap((c) => (c ? [c.id] : []))
+  }
+
+  /**
+   * Résout des codes de langues en ids existants (les inconnus sont ignorés).
+   * Pendant de {@link resolveCategoryIds} pour la relation langues.
+   */
+  static async resolveLanguageIds(codes: string[]): Promise<number[]> {
+    const languages = await Promise.all(codes.map((code) => Language.findBy('code', code)))
+    return languages.flatMap((l) => (l ? [l.id] : []))
   }
 
   async syncLanguages(languageCodes: LanguageCode[]) {

@@ -36,12 +36,22 @@
       "metaTitle": "Nuevos servidores de Minecraft — Últimas incorporaciones",
       "metaDescription": "Los últimos servidores de Minecraft añadidos a Minecraft Stats. Descubre los servidores nuevos antes que nadie.",
       "metaKeywords": "nuevo servidor minecraft, nuevos servidores minecraft, últimos servidores minecraft, servidor minecraft reciente"
+    },
+    "votes": {
+      "nav": "Votos",
+      "title": "Top servidores por votos este mes",
+      "description": "Los servidores más apoyados por la comunidad este mes. Cualquiera puede votar cada 90 minutos — la clasificación se reinicia al principio de cada mes.",
+      "empty": "Aún no hay votos este mes. ¡Sé el primero en apoyar tu servidor!",
+      "metaTitle": "Top servidores de Minecraft por votos — Clasificación mensual",
+      "metaDescription": "Los servidores de Minecraft más votados este mes por la comunidad. Vota por tu servidor favorito, sin cuenta, con tu nombre de Minecraft.",
+      "metaKeywords": "votar servidor minecraft, top servidores minecraft votos, clasificación votos servidor minecraft, mejor servidor minecraft"
     }
   },
   "metrics": {
     "playersOnline": "en línea",
     "weeklyGrowth": "esta semana",
     "allTimePeak": "pico histórico",
-    "added": "añadido el"
+    "added": "añadido el",
+    "votesThisMonth": "votos este mes"
   }
 }

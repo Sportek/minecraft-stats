@@ -2,9 +2,11 @@ import { cn } from "@/lib/utils";
 import { useFormatter, useTranslations } from "next-intl";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
+import { formatGrowth } from "@/lib/format";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
+import VoteButton from "./vote-button";
 
 interface ServerDetailHeaderProps {
   server: Server;
@@ -13,7 +15,6 @@ interface ServerDetailHeaderProps {
   growthStat: ServerGrowthStat | null;
 }
 
-const formatGrowth = (growth: number) => `${growth >= 0 ? "+" : ""}${Math.round(growth * 100)}%`;
 
 /**
  * Server detail page header card. Composes the existing card subcomponents
@@ -34,10 +35,10 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_140%_at_0%_0%,hsl(var(--accent)/0.06),transparent_55%)]"
       />
 
-      <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between">
-        {/* Identity: avatar + name/address/website + badges */}
-        <div className="flex min-w-0 flex-col gap-3">
-          <div className="flex items-start gap-3">
+      <div className="relative flex flex-col gap-4 p-4 sm:p-6">
+        {/* Row 1: avatar + name/address/website · players online */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 flex-1 items-start gap-3">
             <ServerImage
               imageUrl={server.imageUrl}
               name={server.name}
@@ -52,33 +53,41 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
               />
             </div>
           </div>
+          <div className="flex shrink-0 items-center justify-between gap-0.5 sm:flex-col sm:items-end">
+            <span className="text-xs text-muted-foreground">{t("detail.playersOnline")}</span>
+            <div className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-success ring-2 ring-success/20" />
+              <span className="text-3xl font-extrabold leading-none tabular-nums text-foreground">
+                {playerCount != null ? format.number(playerCount) : "N/A"}
+              </span>
+              {monthlyGrowth != null && (
+                <span
+                  className={cn(
+                    "text-sm font-medium tabular-nums",
+                    monthlyGrowth >= 0 ? "text-success" : "text-destructive"
+                  )}
+                >
+                  {formatGrowth(monthlyGrowth)}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: badges · vote — the vote control fills the dead space beside
+            the categories instead of stretching the right column. */}
+        <div className="flex flex-wrap items-end justify-between gap-3">
           <ServerCategories
             categories={categories}
             version={server.version ?? undefined}
             type={server.type}
             isFull
           />
-        </div>
-
-        {/* Players online block */}
-        <div className="flex flex-col gap-1 sm:items-end">
-          <span className="text-xs text-muted-foreground">{t("detail.playersOnline")}</span>
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-success ring-2 ring-success/20" />
-            <span className="text-3xl font-extrabold tabular-nums text-foreground">
-              {playerCount != null ? format.number(playerCount) : "N/A"}
-            </span>
-          </div>
-          {monthlyGrowth != null && (
-            <span
-              className={cn(
-                "text-sm font-medium tabular-nums",
-                monthlyGrowth >= 0 ? "text-success" : "text-destructive"
-              )}
-            >
-              {formatGrowth(monthlyGrowth)}
-            </span>
-          )}
+          <VoteButton
+            serverId={server.id}
+            serverName={server.name}
+            initialVoteCount={server.voteCount}
+          />
         </div>
       </div>
     </section>

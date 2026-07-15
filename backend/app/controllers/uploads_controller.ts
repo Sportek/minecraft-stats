@@ -1,7 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import fs from 'node:fs/promises'
 import ImageStorageService from '#services/image_storage_service'
 import PostPolicy from '#policies/post_policy'
+import { readUploadedImage } from '#utils/uploaded_image'
+import { requireAbility } from '#utils/require_ability'
 
 export default class UploadsController {
   /**
@@ -17,35 +18,36 @@ export default class UploadsController {
    * @responseBody 403 - {"error": "Access denied. Writer privileges required."}
    * @responseBody 500 - {"error": "Failed to process image", "details": "<sharp error message>"}
    */
-  async uploadImage({ request, response, auth, bouncer, i18n }: HttpContext) {
-    const user = auth.user
-    if (!user) {
-      return response.unauthorized({ error: i18n.t('messages.uploads.unauthorized') })
-    }
+  async uploadImage(ctx: HttpContext) {
+    const { request, response, i18n } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(PostPolicy).denies('manage'),
+      {
+        unauthorized: 'messages.uploads.unauthorized',
+        forbidden: 'messages.uploads.writerRequired',
+      }
+    )
+    if (!authorized) return
 
-    if (await bouncer.with(PostPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.uploads.writerRequired') })
-    }
     const image = request.file('image', {
       size: '5mb',
       extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
     })
 
-    if (!image) {
-      return response.badRequest({ error: i18n.t('messages.uploads.noImageProvided') })
-    }
-
-    if (!image.isValid) {
-      return response.badRequest({ error: image.errors })
-    }
-
-    if (!image.tmpPath) {
+    const upload = await readUploadedImage(image)
+    if (!upload.ok) {
+      if (upload.reason === 'missing') {
+        return response.badRequest({ error: i18n.t('messages.uploads.noImageProvided') })
+      }
+      if (upload.reason === 'invalid') {
+        return response.badRequest({ error: upload.errors })
+      }
       return response.badRequest({ error: i18n.t('messages.uploads.invalidUpload') })
     }
 
     try {
-      const imageBuffer = await fs.readFile(image.tmpPath)
-      const url = await ImageStorageService.storeBlogImage(imageBuffer)
+      const url = await ImageStorageService.storeBlogImage(upload.buffer)
       return response.ok({ url })
     } catch (error) {
       return response.internalServerError({

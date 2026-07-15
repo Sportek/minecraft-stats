@@ -1,6 +1,6 @@
 import { getBaseUrl } from "@/app/_cheatcode";
 import { AnalyticsDashboard } from "@/types/analytics";
-import { getErrorMessage } from "./auth";
+import { apiFetch } from "./client";
 
 // --- Tracking public (best-effort, fire-and-forget) ---
 
@@ -76,7 +76,7 @@ export const identifyVisitor = (visitorId: string, token: string): void => {
 
 // --- Dashboard admin ---
 
-export const getAnalyticsDashboard = async (
+export const getAnalyticsDashboard = (
   token: string,
   options: { fromDate?: number; toDate?: number } = {}
 ): Promise<AnalyticsDashboard> => {
@@ -84,13 +84,5 @@ export const getAnalyticsDashboard = async (
   if (options.fromDate) params.set("fromDate", String(options.fromDate));
   if (options.toDate) params.set("toDate", String(options.toDate));
 
-  const response = await fetch(`${getBaseUrl()}/admin/analytics?${params.toString()}`, {
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<AnalyticsDashboard>;
+  return apiFetch<AnalyticsDashboard>(`/admin/analytics?${params.toString()}`, { token });
 };

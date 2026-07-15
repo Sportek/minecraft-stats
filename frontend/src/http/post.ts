@@ -9,58 +9,23 @@ import {
   PostsListResponse,
   UpdatePostInput,
 } from '@/types/post'
-import { getErrorMessage } from './auth'
+import { apiFetch } from './client'
 
 // Public endpoints
 
-export const getPosts = async (page: number = 1, limit: number = 10, locale: PostLocale = 'en') => {
-  const response = await fetch(`${getBaseUrl()}/posts?page=${page}&limit=${limit}&locale=${locale}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
+export const getPosts = (page: number = 1, limit: number = 10, locale: PostLocale = 'en') =>
+  apiFetch<PostsListResponse>(`/posts?page=${page}&limit=${limit}&locale=${locale}`, {
     cache: 'no-store',
   })
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<PostsListResponse>
-}
-
-export const resolvePlaceholders = async (placeholders: string[]) => {
-  const response = await fetch(`${getBaseUrl()}/posts/placeholders/resolve`, {
+export const resolvePlaceholders = (placeholders: string[]) =>
+  apiFetch<Record<string, string>>('/posts/placeholders/resolve', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ placeholders }),
+    body: { placeholders },
   })
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<Record<string, string>>
-}
-
-export const getPostBySlug = async (slug: string, locale: PostLocale = 'en') => {
-  const response = await fetch(`${getBaseUrl()}/posts/${slug}?locale=${locale}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<Post>
-}
+export const getPostBySlug = (slug: string, locale: PostLocale = 'en') =>
+  apiFetch<Post>(`/posts/${slug}?locale=${locale}`, { cache: 'no-store' })
 
 /**
  * Records a view for the article. Consent-exempt and best-effort: it only bumps
@@ -88,233 +53,73 @@ export const submitPostFeedback = async (
   visitorId: string,
   token?: string | null
 ) => {
-  const response = await fetch(`${getBaseUrl()}/posts/${slug}/feedback`, {
+  await apiFetch<void>(`/posts/${slug}/feedback`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify({ helpful, visitorId }),
+    token: token ?? undefined,
+    body: { helpful, visitorId },
   })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
   return true
 }
 
 // Admin endpoints
 
-export const getAdminPosts = async (
+export const getAdminPosts = (
   token: string,
   page: number = 1,
   limit: number = 20,
   status: 'all' | 'published' | 'draft' = 'all'
-) => {
-  const response = await fetch(
-    `${getBaseUrl()}/admin/posts?page=${page}&limit=${limit}&status=${status}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    }
+) =>
+  apiFetch<AdminPostsListResponse>(
+    `/admin/posts?page=${page}&limit=${limit}&status=${status}`,
+    { token }
   )
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<AdminPostsListResponse>
-}
-
 /** Single post with all its translations, for the edit screen. */
-export const getAdminPost = async (postId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
+export const getAdminPost = (postId: number, token: string) =>
+  apiFetch<AdminPost>(`/admin/posts/${postId}`, { token })
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
+export const getAdminPostStats = (postId: number, token: string) =>
+  apiFetch<PostStats>(`/admin/posts/${postId}/stats`, { token })
 
-  return response.json() as Promise<AdminPost>
-}
+export const createPost = (data: CreatePostInput, token: string) =>
+  apiFetch<AdminPost>('/admin/posts', { method: 'POST', token, body: data })
 
-export const getAdminPostStats = async (postId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}/stats`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<PostStats>
-}
-
-export const createPost = async (data: CreatePostInput, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<AdminPost>
-}
-
-export const updatePost = async (postId: number, data: UpdatePostInput, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<AdminPost>
-}
+export const updatePost = (postId: number, data: UpdatePostInput, token: string) =>
+  apiFetch<AdminPost>(`/admin/posts/${postId}`, { method: 'PUT', token, body: data })
 
 export const deletePost = async (postId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
+  await apiFetch<void>(`/admin/posts/${postId}`, { method: 'DELETE', token })
   return true
 }
 
-export const publishPost = async (postId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}/publish`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
+export const publishPost = (postId: number, token: string) =>
+  apiFetch<Post>(`/admin/posts/${postId}/publish`, { method: 'POST', token })
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
+export const unpublishPost = (postId: number, token: string) =>
+  apiFetch<Post>(`/admin/posts/${postId}/unpublish`, { method: 'POST', token })
 
-  return response.json() as Promise<Post>
-}
-
-export const unpublishPost = async (postId: number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/${postId}/unpublish`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<Post>
-}
-
-export const uploadImage = async (file: File, token: string) => {
+export const uploadImage = (file: File, token: string) => {
   const formData = new FormData()
   formData.append('image', file)
-
-  const response = await fetch(`${getBaseUrl()}/uploads/image`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<{ url: string }>
+  return apiFetch<{ url: string }>('/uploads/image', { method: 'POST', token, body: formData })
 }
 
 // Placeholders
 
-export const getPlaceholders = async () => {
-  const response = await fetch(`${getBaseUrl()}/posts/placeholders/list`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  })
+export const getPlaceholders = () =>
+  apiFetch<PlaceholderInfo[]>('/posts/placeholders/list', { cache: 'no-store' })
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<PlaceholderInfo[]>
-}
-
-export const previewPlaceholder = async (
-  placeholderName: string,
-  serverId: number,
-  token: string
-) => {
-  const response = await fetch(`${getBaseUrl()}/admin/posts/placeholders/preview`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ placeholderName, serverId }),
-  })
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response)
-    throw new Error(errorMessage)
-  }
-
-  return response.json() as Promise<{
+export const previewPlaceholder = (placeholderName: string, serverId: number, token: string) =>
+  apiFetch<{
     placeholder: string
     value: string
     serverId: number
     placeholderName: string
-  }>
-}
+  }>('/admin/posts/placeholders/preview', {
+    method: 'POST',
+    token,
+    body: { placeholderName, serverId },
+  })
 
 export interface PlaceholderInfo {
   name: string

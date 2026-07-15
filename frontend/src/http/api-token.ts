@@ -1,49 +1,12 @@
-import { getBaseUrl } from "@/app/_cheatcode";
 import { ApiToken, CreateApiTokenInput, CreatedApiToken } from "@/types/api-token";
-import { getErrorMessage } from "./auth";
+import { apiFetch } from "./client";
 
-export const getApiTokens = async (token: string) => {
-  const response = await fetch(`${getBaseUrl()}/account/api-tokens`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const getApiTokens = (token: string) =>
+  apiFetch<ApiToken[]>("/account/api-tokens", { token });
 
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<ApiToken[]>;
-};
-
-export const createApiToken = async (input: CreateApiTokenInput, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/account/api-tokens`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(input),
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return response.json() as Promise<CreatedApiToken>;
-};
+export const createApiToken = (input: CreateApiTokenInput, token: string) =>
+  apiFetch<CreatedApiToken>("/account/api-tokens", { method: "POST", token, body: input });
 
 export const revokeApiToken = async (id: string | number, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/account/api-tokens/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
+  await apiFetch<void>(`/account/api-tokens/${id}`, { method: "DELETE", token });
 };

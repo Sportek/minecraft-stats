@@ -78,7 +78,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 172
+          example: 521
         name:
           type: "string"
           example: "John Doe"
@@ -93,7 +93,7 @@ components:
           example: true
         weight:
           type: "number"
-          example: 721
+          example: 297
         show_on_home:
           type: "boolean"
           example: true
@@ -133,10 +133,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 533
+          example: 249
         advertisement_id:
           type: "number"
-          example: 167
+          example: 900
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
@@ -145,7 +145,7 @@ components:
           example: "Lorem Ipsum"
         server_id:
           type: "number"
-          example: 625
+          example: 564
         target_url:
           type: "string"
           example: "Lorem Ipsum"
@@ -163,7 +163,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 390
+          example: 424
         name:
           type: "string"
           example: "John Doe"
@@ -182,7 +182,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 497
+          example: 183
         code:
           $ref: "#/components/schemas/LanguageCode"
           example: null
@@ -201,19 +201,51 @@ components:
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "Language (Model)"
+    MinecraftPlayer:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 235
+        uuid:
+          type: "string"
+          example: "Lorem Ipsum"
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+        head_path:
+          type: "string"
+          example: "Lorem Ipsum"
+        texture_hash:
+          type: "string"
+          example: "Lorem Ipsum"
+        resolved_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "MinecraftPlayer (Model)"
     PageView:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 448
+          example: 408
         visitor_id:
           type: "number"
-          example: 835
+          example: 24
         user_id:
           type: "number"
-          example: 438
+          example: 386
         path:
           type: "string"
           example: "Lorem Ipsum"
@@ -225,7 +257,7 @@ components:
           example: "Lorem Ipsum"
         duration_ms:
           type: "number"
-          example: 832
+          example: 105
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -243,7 +275,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 233
+          example: 644
         cover_image:
           type: "string"
           example: "Lorem Ipsum"
@@ -252,7 +284,7 @@ components:
           example: true
         view_count:
           type: "number"
-          example: 135
+          example: 599
         default_locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -262,7 +294,7 @@ components:
           format: "date-time"
         user_id:
           type: "number"
-          example: 188
+          example: 524
         author:
           $ref: "#/components/schemas/User"
           example: null
@@ -286,13 +318,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 768
+          example: 999
         post_id:
           type: "number"
-          example: 431
+          example: 135
         user_id:
           type: "number"
-          example: 660
+          example: 954
         visitor_id:
           type: "string"
           example: "Lorem Ipsum"
@@ -320,10 +352,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 121
+          example: 538
         post_id:
           type: "number"
-          example: 803
+          example: 242
         locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -357,7 +389,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 59
+          example: 134
         name:
           type: "string"
           example: "John Doe"
@@ -366,7 +398,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 52
+          example: 365
         type:
           $ref: "#/components/schemas/ServerType"
           example: null
@@ -396,13 +428,21 @@ components:
           example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 690
+          example: 413
         user:
           $ref: "#/components/schemas/User"
           example: null
         growth_stat:
           $ref: "#/components/schemas/ServerGrowthStat"
           example: null
+        votes:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ServerVote"
+            example: null
+        vote_count:
+          type: "number"
+          example: 635
         categories:
           type: "array"
           items:
@@ -419,17 +459,17 @@ components:
           format: "date-time"
         last_player_count:
           type: "number"
-          example: 75
+          example: 143
         last_max_count:
           type: "number"
-          example: 802
+          example: 15
         last_stats_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
         peak_player_count:
           type: "number"
-          example: 548
+          example: 912
         peak_player_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -453,22 +493,22 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 315
+          example: 158
         weekly_growth:
           type: "number"
-          example: 424
+          example: 286
         monthly_growth:
           type: "number"
-          example: 192
+          example: 260
         last_week_average:
           type: "number"
-          example: 771
+          example: 98
         previous_week_average:
           type: "number"
-          example: 682
+          example: 784
         last_month_average:
           type: "number"
-          example: 738
+          example: 223
         last_updated:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -480,44 +520,87 @@ components:
       properties:
         id:
           type: "number"
-          example: 352
+          example: 497
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 845
+          example: 825
         player_count:
           type: "number"
-          example: 512
+          example: 137
         max_count:
           type: "number"
-          example: 214
+          example: 630
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "ServerStat (Model)"
+    ServerVote:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 497
+        server:
+          $ref: "#/components/schemas/Server"
+          example: null
+        server_id:
+          type: "number"
+          example: 123
+        visitor_id:
+          type: "number"
+          example: 51
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+        user_id:
+          type: "number"
+          example: 60
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+        mojang_uuid:
+          type: "string"
+          example: "Lorem Ipsum"
+        ip_hash:
+          type: "string"
+          example: "Lorem Ipsum"
+        country:
+          type: "string"
+          example: "United States of America"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerVote (Model)"
     TrafficDaily:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 175
+          example: 388
         date:
           type: "string"
           example: "2021-03-23"
           format: "date-time"
         http_requests:
           type: "number"
-          example: 405
+          example: 772
         http_errors:
           type: "number"
-          example: 628
+          example: 343
         unique_visitors:
           type: "number"
-          example: 955
+          example: 899
         countries:
           $ref: "#/components/schemas/Record<string, number>"
           example: null
@@ -536,7 +619,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 997
+          example: 557
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -576,7 +659,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 498
+          example: 611
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -614,13 +697,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 525
+          example: 992
         visitor_id:
           type: "number"
-          example: 154
+          example: 107
         user_id:
           type: "number"
-          example: 857
+          example: 429
         linked_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -647,7 +730,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 658
+          example: 244
           choices:
             - "custom"
             - "network"
@@ -681,10 +764,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 248
+            example: 943
       example:
         name: "Lorem Ipsum"
-        type: 658
+        type: 244
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -693,7 +776,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 248
+          - 943
       description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
       type: "object"
@@ -705,7 +788,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 639
+          example: 589
           choices:
             - "custom"
             - "network"
@@ -738,10 +821,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 511
+            example: 79
       example:
         name: "Lorem Ipsum"
-        type: 639
+        type: 589
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -750,7 +833,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 511
+          - 79
       description: "UpdateAdvertisementValidator (Validator)"
     IdentifyVisitorValidator:
       type: "object"
@@ -785,14 +868,14 @@ components:
           maxLength: 512
         durationMs:
           type: "number"
-          example: 977
+          example: 18
           maximum: 86400000
       example:
         visitorId: "Lorem Ipsum"
         path: "Lorem Ipsum"
         referrer: "Lorem Ipsum"
         title: "Lorem Ipsum"
-        durationMs: 977
+        durationMs: 18
       description: "TrackPageViewValidator (Validator)"
     CreateApiTokenValidator:
       type: "object"
@@ -805,21 +888,21 @@ components:
           maxLength: 100
         expiresInDays:
           type: "number"
-          example: 625
+          example: 982
           maximum: 3650
       example:
         name: "Lorem Ipsum"
-        expiresInDays: 625
+        expiresInDays: 982
       description: "CreateApiTokenValidator (Validator)"
     CategoryIdValidator:
       type: "object"
       properties:
         id:
           type: "number"
-          example: 115
+          example: 959
           required: true
       example:
-        id: 115
+        id: 959
       description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
       type: "object"
@@ -836,14 +919,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 527
+          example: 473
           required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
           required: true
       example:
-        id: 527
+        id: 473
         name: "Lorem Ipsum"
       description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
@@ -851,13 +934,13 @@ components:
       properties:
         fromDate:
           type: "number"
-          example: 793
+          example: 186
         toDate:
           type: "number"
-          example: 319
+          example: 952
         interval:
           type: "number"
-          example: 861
+          example: 499
           choices:
             - "30 minutes"
             - "1 hour"
@@ -867,23 +950,23 @@ components:
             - "1 week"
         categoryId:
           type: "number"
-          example: 283
+          example: 359
         languageId:
           type: "number"
-          example: 35
+          example: 439
       example:
-        fromDate: 793
-        toDate: 319
-        interval: 861
-        categoryId: 283
-        languageId: 35
+        fromDate: 186
+        toDate: 952
+        interval: 499
+        categoryId: 359
+        languageId: 439
       description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
       type: "object"
       properties:
         defaultLocale:
           type: "number"
-          example: 232
+          example: 120
           choices:
             - "fr"
             - "en"
@@ -900,7 +983,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 192
+                example: 934
                 choices:
                   - "fr"
                   - "en"
@@ -924,7 +1007,7 @@ components:
                 required: true
               excerpt:
                 type: "number"
-                example: 289
+                example: 39
                 maximum: 500
           required: true
           properties:
@@ -942,10 +1025,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 232
+        defaultLocale: 120
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 192
+          - locale: 934
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -960,11 +1043,11 @@ components:
           required: true
         serverId:
           type: "number"
-          example: 987
+          example: 130
           required: true
       example:
         placeholderName: "Lorem Ipsum"
-        serverId: 987
+        serverId: 130
       description: "PreviewPlaceholderValidator (Validator)"
     ResolvePlaceholdersValidator:
       type: "object"
@@ -1007,7 +1090,7 @@ components:
       properties:
         defaultLocale:
           type: "number"
-          example: 866
+          example: 714
           choices:
             - "fr"
             - "en"
@@ -1023,7 +1106,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 75
+                example: 67
                 choices:
                   - "fr"
                   - "en"
@@ -1045,7 +1128,7 @@ components:
                 minimum: 10
               excerpt:
                 type: "number"
-                example: 782
+                example: 305
                 maximum: 500
           properties:
             items:
@@ -1062,10 +1145,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 866
+        defaultLocale: 714
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 75
+          - locale: 67
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1090,7 +1173,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 291
+          example: 702
           choices:
             - "java"
             - "bedrock"
@@ -1101,7 +1184,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 279
+            example: 412
           required: true
           properties:
             items:
@@ -1120,13 +1203,13 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 783
+            example: 739
           required: true
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 291
+        type: 702
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -1134,7 +1217,7 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 783
+          - 739
       description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
       type: "object"
@@ -1152,7 +1235,7 @@ components:
           minimum: 1
         type:
           type: "number"
-          example: 470
+          example: 843
           choices:
             - "java"
             - "bedrock"
@@ -1163,7 +1246,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 454
+            example: 60
           properties:
             items:
               type: "string"
@@ -1181,12 +1264,12 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 966
+            example: 922
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 470
+        type: 843
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -1194,42 +1277,76 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 966
+          - 922
       description: "UpdateServerValidator (Validator)"
     attachServerCategoryValidator:
       type: "object"
       properties:
         serverId:
           type: "number"
-          example: 601
+          example: 505
           required: true
         categoryId:
           type: "number"
-          example: 302
+          example: 110
           required: true
       example:
-        serverId: 601
-        categoryId: 302
+        serverId: 505
+        categoryId: 110
       description: "attachServerCategoryValidator (Validator)"
+    CreateServerVoteValidator:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          example: "Lorem Ipsum"
+          pattern: "/^[a-zA-Z0-9_]{3,16}$/"
+          required: true
+        visitorId:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        acceptedTerms:
+          type: "boolean"
+          example: true
+          required: true
+        turnstileToken:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        username: "Lorem Ipsum"
+        visitorId: "Lorem Ipsum"
+        acceptedTerms: true
+        turnstileToken: "Lorem Ipsum"
+      description: "CreateServerVoteValidator (Validator)"
+    ServerVoteStatusValidator:
+      type: "object"
+      properties:
+        visitorId:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        visitorId: "Lorem Ipsum"
+      description: "ServerVoteStatusValidator (Validator)"
     StatValidator:
       type: "object"
       properties:
         server_id:
           type: "number"
-          example: 66
+          example: 275
           required: true
         exactTime:
           type: "number"
-          example: 18
+          example: 498
         fromDate:
           type: "number"
-          example: 662
+          example: 970
         toDate:
           type: "number"
-          example: 332
+          example: 354
         interval:
           type: "number"
-          example: 906
+          example: 609
           choices:
             - "30 minutes"
             - "1 hour"
@@ -1238,11 +1355,11 @@ components:
             - "6 hours"
             - "1 week"
       example:
-        server_id: 66
-        exactTime: 18
-        fromDate: 662
-        toDate: 332
-        interval: 906
+        server_id: 275
+        exactTime: 498
+        fromDate: 970
+        toDate: 354
+        interval: 609
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -1423,10 +1540,10 @@ paths:
                   type: "object"
               example:
                 - server:
-                    id: 59
+                    id: 134
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 52
+                    port: 365
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
@@ -1436,12 +1553,13 @@ paths:
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
                     host_domain: "Lorem Ipsum"
-                    user_id: 690
+                    user_id: 413
+                    vote_count: 635
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 75
-                    last_max_count: 802
+                    last_player_count: 143
+                    last_max_count: 15
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 548
+                    peak_player_count: 912
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
@@ -1449,12 +1567,12 @@ paths:
                   categories:
                     - "<Category>"
                   growthStat:
-                    server_id: 315
-                    weekly_growth: 424
-                    monthly_growth: 192
-                    last_week_average: 771
-                    previous_week_average: 682
-                    last_month_average: 738
+                    server_id: 158
+                    weekly_growth: 286
+                    monthly_growth: 260
+                    last_week_average: 98
+                    previous_week_average: 784
+                    last_month_average: 223
                     last_updated: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
         401:
@@ -1561,6 +1679,181 @@ paths:
       security:
         - BearerAuth:
             - "access"
+  /api/v1/servers/{serverId}/vote:
+    post:
+      summary: "Vote for a server (store)"
+      description: "Registers an anonymous vote for a server. The voter only supplies a Minecraft username; no account is required. Accepting the terms (`acceptedTerms: true`) is mandatory and also grants tracking consent. A voter may vote once per server every 90 minutes (enforced across the tracked visitor, the hashed IP and the username). When enabled, a Cloudflare Turnstile token is verified. The vote is linked to the tracked visitor, and to the logged-in account when authenticated. The Minecraft username is enriched best-effort via Mojang (UUID + self-hosted head). Publicly accessible.\n\n _app/controllers/server_votes_controller.ts_ - **store**"
+      operationId: "voteForServer"
+      parameters:
+        - in: "path"
+          name: "serverId"
+          description: "Server id"
+          schema:
+            example: "42"
+            type: "number"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  voteCount: 128
+                  monthlyVoteCount: 12
+                  nextVoteAt: "2026-07-04T13:30:00.000Z"
+                  player:
+                    type: "object"
+                    properties:
+                      username: "Notch"
+                      uuid: "069a79f444e94726a5befca90e38aaf5"
+                      headPath: "/images/heads/069a79f444e94726a5befca90e38aaf5"
+              example:
+                voteCount: 128
+                monthlyVoteCount: 12
+                nextVoteAt: "2026-07-04T13:30:00.000Z"
+                player:
+                  username: "Notch"
+                  uuid: "069a79f444e94726a5befca90e38aaf5"
+                  headPath: "/images/heads/069a79f444e94726a5befca90e38aaf5"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "You must accept the terms of use to vote."
+              example:
+                message: "You must accept the terms of use to vote."
+          description: "Returns **400** (Bad Request) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The username field format is invalid"
+                          field: "username"
+                          rule: "regex"
+              example:
+                errors:
+                  - message: "The username field format is invalid"
+                    field: "username"
+                    rule: "regex"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+        429:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "You have already voted for this server. Come back later."
+                  nextVoteAt: "2026-07-04T13:30:00.000Z"
+              example:
+                message: "You have already voted for this server. Come back later."
+                nextVoteAt: "2026-07-04T13:30:00.000Z"
+          description: "Returns **429** (Too Many Requests) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServerVoteValidator"
+            example:
+              username: "Lorem Ipsum"
+              visitorId: "Lorem Ipsum"
+              acceptedTerms: true
+              turnstileToken: "Lorem Ipsum"
+  /api/v1/servers/{serverId}/vote-status:
+    get:
+      summary: "Whether the current visitor can vote for a server (status)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/server_votes_controller.ts_ - **status**"
+      operationId: "serverVoteStatus"
+      parameters:
+        - in: "path"
+          name: "serverId"
+          description: "Server id"
+          schema:
+            example: "42"
+            type: "number"
+          required: true
+        - in: "query"
+          name: "visitorId"
+          description: "Anonymous visitor UUID"
+          schema:
+            example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+            type: "string"
+          required: false
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  canVote: false
+                  nextVoteAt: "2026-07-04T13:30:00.000Z"
+                  voteCount: 128
+                  monthlyVoteCount: 12
+              example:
+                canVote: false
+                nextVoteAt: "2026-07-04T13:30:00.000Z"
+                voteCount: 128
+                monthlyVoteCount: 12
+          description: "Returns **200** (OK) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The visitorId field must be a valid UUID"
+                          field: "visitorId"
+                          rule: "uuid"
+              example:
+                errors:
+                  - message: "The visitorId field must be a valid UUID"
+                    field: "visitorId"
+                    rule: "uuid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
   /api/v1/servers/{server_id}/categories:
     get:
       summary: "Get a list of servers (index)"
@@ -2910,7 +3203,7 @@ paths:
               $ref: "#/components/schemas/CreateApiTokenValidator"
             example:
               name: "Lorem Ipsum"
-              expiresInDays: 625
+              expiresInDays: 982
   /api/v1/account/api-tokens/{id}:
     delete:
       summary: "Revoke an API token (destroy)"
@@ -3869,6 +4162,10 @@ paths:
                   format: "binary"
               required: []
 tags:
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
   - name: "SERVERS"
     description: "Everything related to SERVERS"
   - name: "SERVERS"
