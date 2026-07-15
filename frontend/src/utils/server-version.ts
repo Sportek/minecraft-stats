@@ -32,11 +32,14 @@ export function extractVersions(inputString: string) {
     const matches = inputString.match(versionRegex);
     if (!matches) return [];
 
+    // Séparateurs qui dénotent une liste/plage de versions ("1.8, 1.9", "1.8-1.12"…).
+    const hasListSeparator = [",", "-", "à", "/"].some((sep) => inputString.includes(sep));
+
     if (matches.length === 1) {
       return [matches[0]]
     } else if (matches.length === 2 && inputString.includes("-")) {
       return expandRange(matches[0], matches[1]);
-    } else if (inputString.includes(",") || inputString.includes("-") || inputString.includes("à") || inputString.includes("/")) {
+    } else if (hasListSeparator) {
       return matches;
     }
 

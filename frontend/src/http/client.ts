@@ -22,6 +22,12 @@ function extractMessage(body: unknown): string | undefined {
   return b?.error?.message || b?.errors?.[0]?.message || b?.message;
 }
 
+/** Sérialise le corps de requête : `FormData` tel quel, sinon JSON ; `undefined` reste vide. */
+function resolveBody(body: unknown, isForm: boolean): BodyInit | undefined {
+  if (body === undefined) return undefined;
+  return isForm ? (body as FormData) : JSON.stringify(body);
+}
+
 /**
  * Erreur HTTP enrichie du corps d'erreur parsé. Étend `HttpError` (donc porte le
  * `status`, ce sur quoi SWR s'appuie pour ne pas re-tenter un 404) et expose en
@@ -69,7 +75,7 @@ export async function apiFetch<T>(path: string, opts: ApiOptions = {}): Promise<
   const response = await fetch(`${getBaseUrl()}${path}`, {
     method,
     headers: finalHeaders,
-    body: body === undefined ? undefined : isForm ? (body as FormData) : JSON.stringify(body),
+    body: resolveBody(body, isForm),
     signal,
     cache,
     next,

@@ -334,10 +334,12 @@ export default class StatsService {
       const prevWeek = row.prev_week_avg ?? 0
       const lastMonth = row.last_month_avg ?? 0
 
-      const weeklyGrowth =
-        prevWeek === 0 ? 0 : Math.round(((lastWeek - prevWeek) / prevWeek) * 100) / 100
-      const monthlyGrowth =
-        lastMonth === 0 ? 0 : Math.round(((lastWeek - lastMonth) / lastMonth) * 100) / 100
+      // Croissance relative de `lastWeek` par rapport à une base, arrondie à 2 décimales.
+      // 0 quand la base est nulle (pas de point de comparaison).
+      const growthVs = (base: number) =>
+        base === 0 ? 0 : Math.round(((lastWeek - base) / base) * 100) / 100
+      const weeklyGrowth = growthVs(prevWeek)
+      const monthlyGrowth = growthVs(lastMonth)
 
       return {
         server_id: row.server_id,

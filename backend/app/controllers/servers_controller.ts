@@ -240,15 +240,9 @@ export default class ServersController {
     const type = typeParam === 'java' || typeParam === 'bedrock' ? typeParam : undefined
 
     // Tri du classement (page /rankings). Whitelist stricte, fallback 'players'
-    // = ordre historique par joueurs actuels. Même logique inline que `type`.
+    // = ordre historique par joueurs actuels.
     const sortParam = request.input('sort')
-    const sort =
-      sortParam === 'trending' ||
-      sortParam === 'peak' ||
-      sortParam === 'newest' ||
-      sortParam === 'votes'
-        ? sortParam
-        : 'players'
+    const sort = ServersController.RANKING_SORTS.includes(sortParam) ? sortParam : 'players'
 
     // `ids` restreint la requête à une liste explicite de serveurs — utilisé par
     // la section "favoris", qui affiche les favoris de l'utilisateur dans leur
@@ -305,6 +299,19 @@ export default class ServersController {
 
   private static readonly MAX_IDS = 20
 
+  // Valeurs de tri acceptées pour le classement (hors défaut 'players').
+  private static readonly RANKING_SORTS = ['trending', 'peak', 'newest', 'votes'] as const
+
+  /**
+   * Découpe le paramètre `ids` brut en tokens. AdonisJS (qs) parse `?ids=1` en
+   * STRING mais `?ids=1,2` ET `?ids=1&ids=2` en ARRAY — on accepte donc les deux.
+   */
+  private static toTokens(raw: unknown): string[] {
+    if (Array.isArray(raw)) return raw.flatMap((v) => String(v).split(','))
+    if (typeof raw === 'string') return raw.split(',')
+    return []
+  }
+
   /**
    * Normalise le paramètre `ids` en liste d'entiers positifs, dédupliquée et
    * plafonnée à MAX_IDS. AdonisJS (qs) parse `?ids=1` en STRING "1" mais
@@ -313,11 +320,7 @@ export default class ServersController {
    * a 2+ IDs (cf. FavoritesSection côté frontend).
    */
   private parseIdList(raw: unknown): number[] {
-    const tokens: string[] = Array.isArray(raw)
-      ? raw.flatMap((v) => String(v).split(','))
-      : typeof raw === 'string'
-        ? raw.split(',')
-        : []
+    const tokens = ServersController.toTokens(raw)
 
     const ids: number[] = []
     const seen = new Set<number>()
