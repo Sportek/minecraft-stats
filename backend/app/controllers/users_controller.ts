@@ -3,6 +3,7 @@ import User from '#models/user'
 import UserPolicy from '#policies/user_policy'
 import DuplicateAccountService from '#services/duplicate_account_service'
 import { CreateUserValidator, UpdateUserValidator } from '#validators/user'
+import { requireAbility } from '#utils/require_ability'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
@@ -125,15 +126,17 @@ export default class UsersController {
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    */
-  async adminIndex({ request, response, auth, bouncer, i18n }: HttpContext) {
-    const currentUser = auth.user
-    if (!currentUser) {
-      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
-    }
-
-    if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.users.adminRequired') })
-    }
+  async adminIndex(ctx: HttpContext) {
+    const { request, response } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(UserPolicy).denies('manage'),
+      {
+        unauthorized: 'messages.users.unauthorized',
+        forbidden: 'messages.users.adminRequired',
+      }
+    )
+    if (!authorized) return
 
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
     const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20))
@@ -169,15 +172,17 @@ export default class UsersController {
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    * @responseBody 404 - {"error": "User not found"}
    */
-  async adminShow({ params, response, auth, bouncer, i18n }: HttpContext) {
-    const currentUser = auth.user
-    if (!currentUser) {
-      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
-    }
-
-    if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.users.adminRequired') })
-    }
+  async adminShow(ctx: HttpContext) {
+    const { params, response, i18n } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(UserPolicy).denies('manage'),
+      {
+        unauthorized: 'messages.users.unauthorized',
+        forbidden: 'messages.users.adminRequired',
+      }
+    )
+    if (!authorized) return
 
     const user = await User.find(params.id)
     if (!user) {
