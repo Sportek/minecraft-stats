@@ -18,7 +18,7 @@ import mail from '@adonisjs/mail/services/main'
 import jwt from 'jsonwebtoken'
 import { DateTime } from 'luxon'
 import { createHash, randomBytes } from 'node:crypto'
-import fs from 'node:fs/promises'
+import { readUploadedImage } from '#utils/uploaded_image'
 
 export default class AuthController {
   /**
@@ -292,13 +292,19 @@ export default class AuthController {
       extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
     })
 
-    if (!image) return response.badRequest({ error: i18n.t('messages.auth.noImageProvided') })
-    if (!image.isValid) return response.badRequest({ error: image.errors })
-    if (!image.tmpPath) return response.badRequest({ error: i18n.t('messages.auth.invalidUpload') })
+    const upload = await readUploadedImage(image)
+    if (!upload.ok) {
+      if (upload.reason === 'missing') {
+        return response.badRequest({ error: i18n.t('messages.auth.noImageProvided') })
+      }
+      if (upload.reason === 'invalid') {
+        return response.badRequest({ error: upload.errors })
+      }
+      return response.badRequest({ error: i18n.t('messages.auth.invalidUpload') })
+    }
 
-    const buffer = await fs.readFile(image.tmpPath)
     const previousAvatar = user.avatarUrl
-    user.avatarUrl = await ImageStorageService.storeUserAvatar(user.id, buffer)
+    user.avatarUrl = await ImageStorageService.storeUserAvatar(user.id, upload.buffer)
     await user.save()
 
     // Remove the previous avatar (only our own uploads — never an OAuth URL).

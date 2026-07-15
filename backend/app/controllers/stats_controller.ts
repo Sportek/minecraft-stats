@@ -4,12 +4,6 @@ import { StatValidator } from '#validators/stat'
 import { GlobalStatValidator } from '#validators/global_stat'
 import type { HttpContext } from '@adonisjs/core/http'
 
-function bypassFlag(ctx: HttpContext): boolean {
-  if (ctx.request.input('nocache') !== '1') return false
-  if (process.env.NODE_ENV !== 'production') return true
-  return ctx.auth?.user?.role === 'admin'
-}
-
 export default class StatsController {
   /**
    * @index
@@ -53,7 +47,7 @@ export default class StatsController {
       key,
       300,
       () => StatsService.getStats(validatedData),
-      { bypass: bypassFlag(ctx) }
+      { bypass: CacheService.bypassAllowed(ctx) }
     )
     return response.status(200).json(results)
   }
@@ -91,7 +85,7 @@ export default class StatsController {
       key,
       300,
       () => StatsService.getGlobalStats(validatedData),
-      { bypass: bypassFlag(ctx) }
+      { bypass: CacheService.bypassAllowed(ctx) }
     )
     return response.status(200).json(results)
   }

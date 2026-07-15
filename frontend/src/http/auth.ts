@@ -1,164 +1,67 @@
 "use client";
 
-import { getBaseUrl, localeHeaders } from "@/app/_cheatcode";
+import { localeHeaders } from "@/app/_cheatcode";
 import { AccessToken, User } from "@/types/auth";
+import { apiFetch } from "./client";
 
-export const registerUser = async (credentials: {
+export const registerUser = (credentials: {
   username: string;
   email: string;
   password: string;
   turnstileToken?: string | null;
-}) => {
-  const response = await fetch(`${getBaseUrl()}/register`, {
+}) => apiFetch<User>("/register", { method: "POST", body: credentials, headers: localeHeaders() });
+
+export const verifyEmail = (credentials: { token: string }) =>
+  apiFetch<User>("/verify-email", { method: "POST", body: credentials, headers: localeHeaders() });
+
+export const requestPasswordReset = (credentials: { email: string; turnstileToken?: string | null }) =>
+  apiFetch<{ message: string }>("/forgot-password", {
     method: "POST",
-    body: JSON.stringify(credentials),
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-    },
+    body: credentials,
+    headers: localeHeaders(),
   });
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-  return response.json() as Promise<User>;
-};
-
-export const verifyEmail = async (credentials: { token: string }) => {
-  const response = await fetch(`${getBaseUrl()}/verify-email`, {
+export const resetPassword = (credentials: { token: string; password: string }) =>
+  apiFetch<{ message: string }>("/reset-password", {
     method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
+    body: credentials,
+    headers: localeHeaders(),
   });
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<User>;
-};
-
-export const requestPasswordReset = async (credentials: { email: string; turnstileToken?: string | null }) => {
-  const response = await fetch(`${getBaseUrl()}/forgot-password`, {
-    method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<{ message: string }>;
-};
-
-export const resetPassword = async (credentials: { token: string; password: string }) => {
-  const response = await fetch(`${getBaseUrl()}/reset-password`, {
-    method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<{ message: string }>;
-};
-
-export const loginUser = async (credentials: {
+export const loginUser = (credentials: {
   email: string;
   password: string;
   turnstileToken?: string | null;
-}) => {
-  const response = await fetch(`${getBaseUrl()}/login`, {
+}) =>
+  apiFetch<{ accessToken: AccessToken; user: User }>("/login", {
     method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
+    body: credentials,
+    headers: localeHeaders(),
   });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<{
-    accessToken: AccessToken;
-    user: User;
-  }>;
-};
 
 export const getUser = async (token: string) => {
-  const response = await fetch(`${getBaseUrl()}/me`, {
-    method: "GET",
-    headers: {
-      ...localeHeaders(),
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  const body = (await response.json()) as { user?: User };
+  const body = await apiFetch<{ user?: User }>("/me", { token, headers: localeHeaders() });
   return body.user;
 };
 
-export const changeUserPassword = async (credentials: { oldPassword: string; newPassword: string }, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/change-password`, {
+export const changeUserPassword = (
+  credentials: { oldPassword: string; newPassword: string },
+  token: string
+) =>
+  apiFetch<User>("/change-password", {
     method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(credentials),
+    token,
+    body: credentials,
+    headers: localeHeaders(),
   });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json() as Promise<User>;
-};
 
 export const changeUsername = async (credentials: { username: string }, token: string) => {
-  const response = await fetch(`${getBaseUrl()}/change-username`, {
+  const body = await apiFetch<{ user: User }>("/change-username", {
     method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(credentials),
+    token,
+    body: credentials,
+    headers: localeHeaders(),
   });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  const body = (await response.json()) as { user: User };
   return body.user;
 };
 
@@ -166,62 +69,17 @@ export const uploadUserAvatar = async (file: File, token: string) => {
   const formData = new FormData();
   formData.append("avatar", file);
 
-  const response = await fetch(`${getBaseUrl()}/account/avatar`, {
+  const body = await apiFetch<{ user: User }>("/account/avatar", {
     method: "POST",
-    headers: {
-      ...localeHeaders(),
-      Authorization: `Bearer ${token}`,
-    },
+    token,
     body: formData,
+    headers: localeHeaders(),
   });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  const body = (await response.json()) as { user: User };
   return body.user;
 };
 
-export const logoutUser = async (token: string) => {
-  const response = await fetch(`${getBaseUrl()}/logout`, {
-    method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const logoutUser = (token: string) =>
+  apiFetch<{ message: string }>("/logout", { method: "POST", token, headers: localeHeaders() });
 
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json();
-};
-
-export const logoutAllUser = async (token: string) => {
-  const response = await fetch(`${getBaseUrl()}/logout-all`, {
-    method: "POST",
-    headers: {
-      ...localeHeaders(),
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    const errorMessage = await getErrorMessage(response);
-    throw new Error(errorMessage);
-  }
-
-  return response.json();
-};
-
-export const getErrorMessage = async (response: Response): Promise<string | undefined> => {
-  const error = (await response.json()) as { error?: { message?: string }; errors?: { message?: string }[]; message?: string };
-  const errorMessage = error?.error?.message || error?.errors?.[0]?.message || error?.message;
-  return errorMessage;
-};
+export const logoutAllUser = (token: string) =>
+  apiFetch<{ message: string }>("/logout-all", { method: "POST", token, headers: localeHeaders() });

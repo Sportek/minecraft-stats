@@ -1,4 +1,5 @@
 import { RankingEntry, RankingSort } from "@/http/rankings";
+import { formatGrowth } from "@/lib/format";
 
 export type MetricTone = "up" | "down" | "neutral";
 
@@ -23,7 +24,6 @@ interface Formatter {
   dateTime: (value: Date, options?: { dateStyle?: "full" | "long" | "medium" | "short" }) => string;
 }
 
-const formatGrowth = (growth: number) => `${growth >= 0 ? "+" : ""}${Math.round(growth * 100)}%`;
 
 /**
  * Métrique mise en avant pour une entrée de classement, selon le tri. Centralise

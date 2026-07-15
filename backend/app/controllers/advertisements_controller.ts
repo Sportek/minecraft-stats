@@ -2,6 +2,7 @@ import Advertisement from '#models/advertisement'
 import AdvertisementEvent from '#models/advertisement_event'
 import AdvertisementPolicy from '#policies/advertisement_policy'
 import AdvertisementStatsService from '#services/advertisement_stats_service'
+import AdRedirectService from '#services/ad_redirect_service'
 import {
   CreateAdvertisementValidator,
   UpdateAdvertisementValidator,
@@ -19,42 +20,6 @@ function parseDate(value: string | null | undefined): DateTime | null {
   if (!value) return null
   const parsed = DateTime.fromISO(value)
   return parsed.isValid ? parsed : null
-}
-
-/**
- * Décode les entités HTML les plus courantes (le navigateur les décode côté client,
- * il faut donc comparer sur la même base).
- */
-function decodeHtmlEntities(value: string): string {
-  // Décodage en une seule passe : la sortie n'est jamais re-traitée, donc
-  // aucun risque de double-décodage (ex. "&amp;#38;" reste "&#38;").
-  return value.replace(/&(?:amp|#38|#x26);/gi, '&')
-}
-
-/**
- * Retire les caractères de contrôle (saut de ligne, tabulation, etc.) d'une URL.
- * Les navigateurs les retirent des URLs ; ils sont surtout interdits dans un
- * en-tête HTTP et provoqueraient un crash s'ils étaient renvoyés tels quels.
- */
-function sanitizeUrl(value: string): string {
-  // eslint-disable-next-line no-control-regex
-  return value.replace(/[\x00-\x1F\x7F]/g, '').trim()
-}
-
-/**
- * Extrait les URLs des attributs href présents dans le HTML d'une publicité.
- * Sert de liste blanche pour la redirection de clic (anti open-redirect).
- */
-function extractHrefs(html: string): Set<string> {
-  const urls = new Set<string>()
-  const regex = /href\s*=\s*["']([^"']+)["']/gi
-  let match: RegExpExecArray | null
-  while ((match = regex.exec(html)) !== null) {
-    const href = sanitizeUrl(match[1])
-    urls.add(href)
-    urls.add(sanitizeUrl(decodeHtmlEntities(href)))
-  }
-  return urls
 }
 
 /**
@@ -175,21 +140,9 @@ export default class AdvertisementsController {
       return response.redirect('/')
     }
 
-    const to = sanitizeUrl(String(request.input('to', '')))
-
-    let target: string | null = null
-    if (to && extractHrefs(ad.htmlContent).has(to)) {
-      try {
-        const parsed = new URL(to)
-        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
-          // parsed.href est normalisé : garanti sûr pour un en-tête HTTP Location.
-          target = parsed.href
-        }
-      } catch {
-        target = null
-      }
-    }
-
+    // Allow-list anti open-redirect : la cible doit être un http(s) présent dans
+    // les href du HTML de la pub (cf. AdRedirectService, testé unitairement).
+    const target = AdRedirectService.resolveTarget(ad.htmlContent, String(request.input('to', '')))
     if (!target) {
       return response.redirect('/')
     }

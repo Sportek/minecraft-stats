@@ -9,12 +9,11 @@
  * one shared definition so they always agree.
  */
 
+import { slugify } from "@/lib/slug";
+
 /** Lowercase, hyphenated slug derived from a server's display name. */
 export function serverSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+  return slugify(name);
 }
 
 /**

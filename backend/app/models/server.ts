@@ -150,6 +150,25 @@ export default class Server extends BaseModel {
     }
   }
 
+  /**
+   * Résout des noms de catégories en ids existants (les inconnus sont ignorés).
+   * Mutualise le lookup nom→id dupliqué entre la création et la mise à jour d'un
+   * serveur (attach vs sync).
+   */
+  static async resolveCategoryIds(names: string[]): Promise<number[]> {
+    const categories = await Promise.all(names.map((name) => Category.findBy('name', name)))
+    return categories.flatMap((c) => (c ? [c.id] : []))
+  }
+
+  /**
+   * Résout des codes de langues en ids existants (les inconnus sont ignorés).
+   * Pendant de {@link resolveCategoryIds} pour la relation langues.
+   */
+  static async resolveLanguageIds(codes: string[]): Promise<number[]> {
+    const languages = await Promise.all(codes.map((code) => Language.findBy('code', code)))
+    return languages.flatMap((l) => (l ? [l.id] : []))
+  }
+
   async syncLanguages(languageCodes: LanguageCode[]) {
     const trx = await db.transaction()
     try {

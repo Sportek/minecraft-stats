@@ -1,9 +1,10 @@
 import Server from '#models/server'
 import User from '#models/user'
 import UserPolicy from '#policies/user_policy'
+import DuplicateAccountService from '#services/duplicate_account_service'
 import { CreateUserValidator, UpdateUserValidator } from '#validators/user'
+import { requireAbility } from '#utils/require_ability'
 import type { HttpContext } from '@adonisjs/core/http'
-import db from '@adonisjs/lucid/services/db'
 
 export default class UsersController {
   /**
@@ -125,15 +126,17 @@ export default class UsersController {
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    */
-  async adminIndex({ request, response, auth, bouncer, i18n }: HttpContext) {
-    const currentUser = auth.user
-    if (!currentUser) {
-      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
-    }
-
-    if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.users.adminRequired') })
-    }
+  async adminIndex(ctx: HttpContext) {
+    const { request, response } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(UserPolicy).denies('manage'),
+      {
+        unauthorized: 'messages.users.unauthorized',
+        forbidden: 'messages.users.adminRequired',
+      }
+    )
+    if (!authorized) return
 
     const page = Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1)
     const limit = Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20))
@@ -169,15 +172,17 @@ export default class UsersController {
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    * @responseBody 404 - {"error": "User not found"}
    */
-  async adminShow({ params, response, auth, bouncer, i18n }: HttpContext) {
-    const currentUser = auth.user
-    if (!currentUser) {
-      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
-    }
-
-    if (await bouncer.with(UserPolicy).denies('manage')) {
-      return response.forbidden({ error: i18n.t('messages.users.adminRequired') })
-    }
+  async adminShow(ctx: HttpContext) {
+    const { params, response, i18n } = ctx
+    const authorized = await requireAbility(
+      ctx,
+      () => ctx.bouncer.with(UserPolicy).denies('manage'),
+      {
+        unauthorized: 'messages.users.unauthorized',
+        forbidden: 'messages.users.adminRequired',
+      }
+    )
+    if (!authorized) return
 
     const user = await User.find(params.id)
     if (!user) {
@@ -189,7 +194,7 @@ export default class UsersController {
       .preload('languages')
       .orderBy('created_at', 'desc')
 
-    const duplicates = await this.findDuplicateAccounts(user.id)
+    const duplicates = await DuplicateAccountService.forUser(user.id)
 
     // `email` and `provider` are intentionally surfaced here even though the model
     // hides `email` from default serialization — this admin-only view needs them.
@@ -212,69 +217,6 @@ export default class UsersController {
         duplicateCount: duplicates.length,
       },
     })
-  }
-
-  /**
-   * Finds other accounts that share a device (same anonymous visitor) or a
-   * network (same hashed IP) with the given user — the strongest signals we have
-   * for spotting multi-accounting, sourced from the analytics visitor tables.
-   */
-  private async findDuplicateAccounts(userId: number) {
-    const ownLinks = await db.from('visitor_accounts').where('user_id', userId).select('visitor_id')
-    const visitorIds = ownLinks.map((row) => row.visitor_id)
-    if (visitorIds.length === 0) return []
-
-    const ipHashRows = await db
-      .from('visitors')
-      .whereIn('id', visitorIds)
-      .whereNotNull('ip_hash')
-      .select('ip_hash')
-    const ipHashes = ipHashRows.map((row) => row.ip_hash)
-
-    let sharedIpVisitorIds: number[] = []
-    if (ipHashes.length > 0) {
-      const ipVisitorRows = await db.from('visitors').whereIn('ip_hash', ipHashes).select('id')
-      sharedIpVisitorIds = ipVisitorRows.map((row) => row.id)
-    }
-
-    // candidate userId → which signals tie them back to the target user.
-    const signals = new Map<number, { sameDevice: boolean; sameIp: boolean }>()
-    const flag = (rows: { user_id: number }[], key: 'sameDevice' | 'sameIp') => {
-      for (const { user_id: candidateId } of rows) {
-        if (candidateId === userId) continue
-        const entry = signals.get(candidateId) ?? { sameDevice: false, sameIp: false }
-        entry[key] = true
-        signals.set(candidateId, entry)
-      }
-    }
-
-    const deviceRows = await db
-      .from('visitor_accounts')
-      .whereIn('visitor_id', visitorIds)
-      .select('user_id')
-    flag(deviceRows, 'sameDevice')
-
-    if (sharedIpVisitorIds.length > 0) {
-      const ipRows = await db
-        .from('visitor_accounts')
-        .whereIn('visitor_id', sharedIpVisitorIds)
-        .select('user_id')
-      flag(ipRows, 'sameIp')
-    }
-
-    if (signals.size === 0) return []
-
-    const candidates = await User.query().whereIn('id', [...signals.keys()])
-    return candidates
-      .map((candidate) => ({
-        id: candidate.id,
-        username: candidate.username,
-        email: candidate.email,
-        role: candidate.role,
-        createdAt: candidate.createdAt,
-        signals: signals.get(candidate.id)!,
-      }))
-      .sort((a, b) => Number(b.signals.sameDevice) - Number(a.signals.sameDevice))
   }
 
   /**

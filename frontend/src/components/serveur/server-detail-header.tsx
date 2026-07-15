@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useFormatter, useTranslations } from "next-intl";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
+import { formatGrowth } from "@/lib/format";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
@@ -14,7 +15,6 @@ interface ServerDetailHeaderProps {
   growthStat: ServerGrowthStat | null;
 }
 
-const formatGrowth = (growth: number) => `${growth >= 0 ? "+" : ""}${Math.round(growth * 100)}%`;
 
 /**
  * Server detail page header card. Composes the existing card subcomponents
