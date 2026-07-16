@@ -393,6 +393,54 @@ export class ServerLanguageSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class ServerOwnershipClaimSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'evidence',
+    'evidenceUrl',
+    'expiresAt',
+    'id',
+    'method',
+    'reviewNote',
+    'reviewedBy',
+    'serverId',
+    'status',
+    'token',
+    'updatedAt',
+    'userId',
+    'verifiedAt',
+  ] as const
+  $columns = ServerOwnershipClaimSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare evidence: string | null
+  @column()
+  declare evidenceUrl: string | null
+  @column.dateTime()
+  declare expiresAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare method: string
+  @column()
+  declare reviewNote: string | null
+  @column()
+  declare reviewedBy: number | null
+  @column()
+  declare serverId: number
+  @column()
+  declare status: string
+  @column()
+  declare token: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+  @column()
+  declare userId: number
+  @column.dateTime()
+  declare verifiedAt: DateTime | null
+}
+
 export class ServerStatSchema extends BaseModel {
   static $columns = ['createdAt', 'id', 'maxCount', 'playerCount', 'serverId'] as const
   $columns = ServerStatSchema.$columns
@@ -482,6 +530,8 @@ export class ServerSchema extends BaseModel {
     'motdHash',
     'name',
     'nextPingAt',
+    'ownerVerifiedAt',
+    'ownerVerifiedMethod',
     'peakPlayerAt',
     'peakPlayerCount',
     'port',
@@ -524,6 +574,10 @@ export class ServerSchema extends BaseModel {
   declare name: string
   @column.dateTime()
   declare nextPingAt: DateTime | null
+  @column.dateTime()
+  declare ownerVerifiedAt: DateTime | null
+  @column()
+  declare ownerVerifiedMethod: string | null
   @column.dateTime()
   declare peakPlayerAt: DateTime | null
   @column()
@@ -574,6 +628,39 @@ export class TrafficDailySchema extends BaseModel {
   declare uniqueVisitors: number
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+}
+
+export class UserProviderSchema extends BaseModel {
+  static $columns = [
+    'confirmedAt',
+    'createdAt',
+    'id',
+    'linkTokenExpiresAt',
+    'linkTokenHash',
+    'provider',
+    'providerUserId',
+    'updatedAt',
+    'userId',
+  ] as const
+  $columns = UserProviderSchema.$columns
+  @column.dateTime()
+  declare confirmedAt: DateTime | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare linkTokenExpiresAt: DateTime | null
+  @column()
+  declare linkTokenHash: string | null
+  @column()
+  declare provider: string
+  @column()
+  declare providerUserId: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
 }
 
 export class UserSchema extends BaseModel {

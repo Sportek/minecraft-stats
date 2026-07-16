@@ -1,6 +1,8 @@
+import ProviderLinkNotification from '#mails/provider_link_notification'
 import ResetPasswordNotification from '#mails/reset_password_notification'
 import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
+import UserProvider from '#models/user_provider'
 import ImageStorageService from '#services/image_storage_service'
 import TurnstileService from '#services/turnstile_service'
 import env from '#start/env'
@@ -375,54 +377,15 @@ export default class AuthController {
    * @operationId oauthDiscordCallback
    * @tag AUTH
    * @summary OAuth callback endpoint for Discord
-   * @description Handles the redirect from Discord after the user grants or denies access. On success, finds or creates the user (using Discord nickname, avatar and verified-email state), then returns the user along with a freshly issued access token. Errors during the OAuth handshake (cancellation, state mismatch, generic provider error) are returned as 400 responses.
+   * @description Handles the redirect from Discord after the user grants or denies access. On success, finds or creates the user (using Discord nickname, avatar and verified-email state), then returns the user along with a freshly issued access token. If an account with the same email already exists but Discord is not linked to it yet, no login happens: a confirmation email is sent to the account owner and a 202 is returned (the link becomes usable once confirmProviderLink is called). Errors during the OAuth handshake (cancellation, state mismatch, generic provider error) are returned as 400 responses.
    * @responseBody 200 - {"user": {"id": 1, "username": "discord_user", "verified": true, "provider": "discord", "role": "user", "avatarUrl": "https://cdn.discordapp.com/avatars/...", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "accessToken": {"type": "bearer", "token": "oat_...", "expiresAt": "2026-06-27T12:00:00.000Z"}}
+   * @responseBody 202 - {"status": "link_email_sent", "message": "We sent you an email to confirm adding this sign-in method to your account."}
    * @responseBody 400 - {"message": "You have cancelled the login process"}
    * @responseBody 400 - {"message": "We are unable to verify the request. Please try again"}
    * @responseBody 400 - {"message": "An error occurred while logging in. Please try again"}
-   * @responseBody 400 - {"message": "Cannot login with this third-party provider"}
    */
-  async discordCallback({ ally, response, i18n }: HttpContext) {
-    const discordInstance = ally.use('discord')
-    const discordUser = await discordInstance.user()
-
-    if (discordInstance.accessDenied())
-      return response.badRequest({ message: i18n.t('messages.auth.oauthCancelled') })
-
-    if (discordInstance.stateMisMatch())
-      return response.badRequest({
-        message: i18n.t('messages.auth.oauthStateMismatch'),
-      })
-
-    if (discordInstance.hasError())
-      return response.badRequest({
-        message: i18n.t('messages.auth.oauthError'),
-      })
-
-    // Find-or-create manuel (plutôt que firstOrCreate) : le pseudo Discord peut
-    // entrer en collision avec un username existant, donc on en dérive un unique
-    // à la création pour ne pas violer l'index unique lower(username).
-    let user = await User.findBy('email', discordUser.email)
-    if (!user) {
-      user = await User.create({
-        email: discordUser.email,
-        username: await User.generateUniqueUsername(discordUser.nickName),
-        password: Math.random().toString(36).slice(2),
-        verified: discordUser.emailVerificationState === 'verified',
-        provider: 'discord',
-        avatarUrl: discordUser.avatarUrl,
-      })
-    }
-
-    if (user.provider !== 'discord')
-      return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })
-
-    await this.rehostProviderAvatar(user)
-
-    return {
-      user,
-      accessToken: await User.accessTokens.create(user),
-    }
+  async discordCallback(ctx: HttpContext) {
+    return this.handleProviderCallback(ctx, 'discord')
   }
 
   /**
@@ -445,16 +408,32 @@ export default class AuthController {
    * @operationId oauthGoogleCallback
    * @tag AUTH
    * @summary OAuth callback endpoint for Google
-   * @description Handles the redirect from Google after the user grants or denies access. On success, finds or creates the user (Google accounts are treated as verified) and returns the user with a freshly issued access token. Errors during the OAuth handshake (cancellation, state mismatch, generic provider error) are returned as 400 responses.
+   * @description Handles the redirect from Google after the user grants or denies access. On success, finds or creates the user (Google accounts are treated as verified) and returns the user with a freshly issued access token. If an account with the same email already exists but Google is not linked to it yet, no login happens: a confirmation email is sent to the account owner and a 202 is returned (the link becomes usable once confirmProviderLink is called). Errors during the OAuth handshake (cancellation, state mismatch, generic provider error) are returned as 400 responses.
    * @responseBody 200 - {"user": {"id": 1, "username": "Google User", "verified": true, "provider": "google", "role": "user", "avatarUrl": "https://lh3.googleusercontent.com/...", "createdAt": "2026-05-28T12:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "accessToken": {"type": "bearer", "token": "oat_...", "expiresAt": "2026-06-27T12:00:00.000Z"}}
+   * @responseBody 202 - {"status": "link_email_sent", "message": "We sent you an email to confirm adding this sign-in method to your account."}
    * @responseBody 400 - {"message": "You have cancelled the login process"}
    * @responseBody 400 - {"message": "We are unable to verify the request. Please try again"}
    * @responseBody 400 - {"message": "An error occurred while logging in. Please try again"}
-   * @responseBody 400 - {"message": "Cannot login with this third-party provider"}
    */
-  async googleCallback({ ally, response, i18n }: HttpContext) {
-    const driverInstance = ally.use('google')
-    const googleUser = await driverInstance.user()
+  async googleCallback(ctx: HttpContext) {
+    return this.handleProviderCallback(ctx, 'google')
+  }
+
+  /**
+   * Handshake OAuth commun aux deux providers. Trois issues possibles :
+   * - compte inexistant → création (provider confirmé d'office) + connexion ;
+   * - provider déjà lié (ligne user_providers confirmée) → connexion ;
+   * - compte existant sans ce provider → AUCUNE connexion : un email identique ne
+   *   prouve pas la possession du compte (pre-account takeover). On envoie un
+   *   email de confirmation et le lien ne devient utilisable qu'une fois validé
+   *   via confirmProviderLink.
+   */
+  private async handleProviderCallback(
+    { ally, response, i18n }: HttpContext,
+    provider: 'google' | 'discord'
+  ) {
+    const driverInstance = ally.use(provider)
+    const oauthUser = await driverInstance.user()
 
     if (driverInstance.accessDenied())
       return response.badRequest({ message: i18n.t('messages.auth.oauthCancelled') })
@@ -469,23 +448,53 @@ export default class AuthController {
         message: i18n.t('messages.auth.oauthError'),
       })
 
-    // Find-or-create manuel (plutôt que firstOrCreate) : le nom Google peut entrer
-    // en collision avec un username existant, donc on en dérive un unique à la
-    // création pour ne pas violer l'index unique lower(username).
-    let user = await User.findBy('email', googleUser.email)
+    // Find-or-create manuel (plutôt que firstOrCreate) : le pseudo fourni peut
+    // entrer en collision avec un username existant, donc on en dérive un unique
+    // à la création pour ne pas violer l'index unique lower(username).
+    let user = await User.findBy('email', oauthUser.email)
     if (!user) {
       user = await User.create({
-        email: googleUser.email,
-        username: await User.generateUniqueUsername(googleUser.name),
+        email: oauthUser.email,
+        username: await User.generateUniqueUsername(
+          provider === 'discord' ? oauthUser.nickName : oauthUser.name
+        ),
         password: Math.random().toString(36).slice(2),
-        verified: true,
-        provider: 'google',
-        avatarUrl: googleUser.avatarUrl,
+        // Google affirme l'email vérifié ; Discord expose l'état explicitement.
+        verified: provider === 'google' || oauthUser.emailVerificationState === 'verified',
+        provider,
+        avatarUrl: oauthUser.avatarUrl,
+      })
+      await UserProvider.create({
+        userId: user.id,
+        provider,
+        providerUserId: String(oauthUser.id),
+        confirmedAt: DateTime.now(),
       })
     }
 
-    if (user.provider !== 'google')
-      return response.badRequest({ message: i18n.t('messages.auth.cannotLoginWithProvider') })
+    const link = await UserProvider.query()
+      .where('user_id', user.id)
+      .where('provider', provider)
+      .first()
+
+    if (!link?.confirmedAt) {
+      // Même pattern que le reset de mot de passe : token brut fort dans le mail,
+      // seul son hash SHA-256 est persisté, valide 1h.
+      const rawToken = randomBytes(32).toString('base64url')
+      await UserProvider.updateOrCreate(
+        { userId: user.id, provider },
+        {
+          providerUserId: String(oauthUser.id),
+          linkTokenHash: createHash('sha256').update(rawToken).digest('hex'),
+          linkTokenExpiresAt: DateTime.now().plus({ hours: 1 }),
+        }
+      )
+      await mail.sendLater(new ProviderLinkNotification(user, provider, rawToken, i18n.locale))
+      return response.accepted({
+        status: 'link_email_sent',
+        message: i18n.t('messages.auth.providerLinkEmailSent'),
+      })
+    }
 
     await this.rehostProviderAvatar(user)
 

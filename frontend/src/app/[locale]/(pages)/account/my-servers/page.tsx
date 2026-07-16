@@ -12,6 +12,7 @@ import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardStatTile from "@/components/account/dashboard-stat-tile";
 import ServerImage from "@/components/serveur/card/server-image";
+import ClaimServerDialog from "@/components/serveur/claim-server-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,6 +48,8 @@ const MyServersPage = () => {
 
   const [pendingDelete, setPendingDelete] = useState<MyServerItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  // Serveur dont on ouvre la modale de vérification de propriété.
+  const [claimTarget, setClaimTarget] = useState<MyServerItem | null>(null);
 
   const confirmDelete = async () => {
     if (!pendingDelete) return;
@@ -148,6 +151,12 @@ const MyServersPage = () => {
                     <span className={online ? "h-1.5 w-1.5 rounded-full bg-current" : "h-1.5 w-1.5 rounded-full bg-muted-foreground"} />
                     {online ? t("myServers.online") : t("myServers.offlineStatus")}
                   </Badge>
+                  {server.ownerVerifiedAt && (
+                    <Badge variant="success" className="gap-1.5">
+                      <Icon icon="material-symbols:verified-outline" className="h-3.5 w-3.5" />
+                      {t("myServers.verifiedBadge")}
+                    </Badge>
+                  )}
                   <div className="w-20 text-right">
                     <div className="text-sm font-bold tabular-nums text-foreground">
                       {formatNumber(server.lastPlayerCount ?? 0)}
@@ -155,6 +164,17 @@ const MyServersPage = () => {
                     <div className="text-[11px] text-muted-foreground">{t("myServers.peak", { count: formatNumber(server.peakPlayerCount ?? 0) })}</div>
                   </div>
                   <div className="flex items-center gap-1">
+                    {!server.ownerVerifiedAt && (
+                      <button
+                        type="button"
+                        onClick={() => setClaimTarget(item)}
+                        aria-label={t("myServers.verify")}
+                        title={t("myServers.verifyTitle")}
+                        className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                      >
+                        <Icon icon="material-symbols:verified-user-outline" className="h-4 w-4" />
+                      </button>
+                    )}
                     <Link
                       href={serverPath(server.id, server.name)}
                       aria-label={t("myServers.view")}
@@ -189,6 +209,16 @@ const MyServersPage = () => {
           </div>
         )}
       </div>
+
+      {claimTarget && (
+        <ClaimServerDialog
+          serverId={claimTarget.server.id}
+          serverName={claimTarget.server.name}
+          open={claimTarget !== null}
+          onOpenChange={(open) => !open && setClaimTarget(null)}
+          onVerified={() => mutate()}
+        />
+      )}
 
       <Dialog open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
         <DialogContent>

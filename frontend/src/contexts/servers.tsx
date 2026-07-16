@@ -1,11 +1,12 @@
 "use client";
 
 import { addMinecraftServer, ServerPayload } from "@/http/server";
+import { Server } from "@/types/server";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { useAuth } from "./auth";
 
 interface ServersContextProps {
-  addServer: (data: ServerPayload) => Promise<void>;
+  addServer: (data: ServerPayload) => Promise<Server>;
 }
 
 export const ServersContext = createContext<ServersContextProps | null>(null);
@@ -25,7 +26,8 @@ export const ServersProvider = ({ children }: { children: React.ReactNode }) => 
     async (data: ServerPayload) => {
       // Pas de wrapping de l'erreur : on laisse remonter l'instance d'origine
       // (notamment DuplicateServerError) pour que le formulaire puisse la typer.
-      await addMinecraftServer(data, getToken() ?? "");
+      // Renvoie le serveur créé (utile pour proposer la vérification de propriété).
+      return addMinecraftServer(data, getToken() ?? "");
     },
     [getToken]
   );

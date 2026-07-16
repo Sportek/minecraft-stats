@@ -7,6 +7,7 @@ import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import { randomBytes } from 'node:crypto'
 import Post from '#models/post'
+import UserProvider from '#models/user_provider'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -58,6 +59,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @hasMany(() => Post)
   declare posts: HasMany<typeof Post>
+
+  @hasMany(() => UserProvider)
+  declare providers: HasMany<typeof UserProvider>
 
   static readonly accessTokens = DbAccessTokensProvider.forModel(User, {
     expiresIn: '30 days',

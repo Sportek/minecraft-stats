@@ -24,7 +24,11 @@
     "oauthCancelled": "You have cancelled the login process",
     "oauthStateMismatch": "We are unable to verify the request. Please try again",
     "oauthError": "An error occurred while logging in. Please try again",
-    "cannotLoginWithProvider": "Cannot login with this third-party provider"
+    "providerLinkEmailSent": "We sent you an email to confirm adding this sign-in method to your account.",
+    "invalidProviderLinkToken": "This confirmation link is invalid or has expired.",
+    "providerNotLinked": "This provider is not linked to your account",
+    "cannotUnlinkLastMethod": "You cannot remove your only sign-in method",
+    "providerUnlinked": "Sign-in method removed"
   },
   "servers": {
     "unauthorized": "Unauthorized",
@@ -34,6 +38,20 @@
     "alreadyVoted": "You have already voted for this server. Come back later.",
     "termsRequired": "You must accept the terms of use to vote.",
     "captchaFailed": "Anti-bot verification failed. Please try again."
+  },
+  "serverOwnership": {
+    "unauthorized": "Unauthorized",
+    "alreadyOwner": "You already own this server.",
+    "alreadyVerified": "This server has already been claimed by a verified owner. Please contact support if you believe this is a mistake.",
+    "dnsUnavailable": "DNS verification is not available for this server (no resolvable domain). Try the MOTD method or a manual claim instead.",
+    "recordNotFound": "We could not find your verification token yet. It can take a moment to apply — try again shortly.",
+    "unreachable": "We could not reach the server to read its MOTD. Make sure it is online and try again.",
+    "tokenExpired": "This verification token has expired. Please start a new verification.",
+    "noClaim": "No pending verification found for this server. Start one first.",
+    "claimNotFound": "Ownership claim not found",
+    "manualSubmitted": "Your ownership request was submitted and is awaiting review.",
+    "approved": "Ownership claim approved.",
+    "rejected": "Ownership claim rejected."
   },
   "posts": {
     "unauthorized": "Unauthorized",

@@ -12,10 +12,12 @@ export const controllers = {
   Languages: () => import('#controllers/languages_controller'),
   Posts: () => import('#controllers/posts_controller'),
   ServerCategories: () => import('#controllers/server_categories_controller'),
+  ServerOwnership: () => import('#controllers/server_ownership_controller'),
   ServerVotes: () => import('#controllers/server_votes_controller'),
   Servers: () => import('#controllers/servers_controller'),
   Stats: () => import('#controllers/stats_controller'),
   Uploads: () => import('#controllers/uploads_controller'),
+  UserProviders: () => import('#controllers/user_providers_controller'),
   Users: () => import('#controllers/users_controller'),
   WebsiteStats: () => import('#controllers/website_stats_controller'),
 }
