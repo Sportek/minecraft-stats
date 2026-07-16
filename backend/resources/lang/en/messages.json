@@ -24,7 +24,11 @@
     "oauthCancelled": "You have cancelled the login process",
     "oauthStateMismatch": "We are unable to verify the request. Please try again",
     "oauthError": "An error occurred while logging in. Please try again",
-    "cannotLoginWithProvider": "Cannot login with this third-party provider"
+    "providerLinkEmailSent": "We sent you an email to confirm adding this sign-in method to your account.",
+    "invalidProviderLinkToken": "This confirmation link is invalid or has expired.",
+    "providerNotLinked": "This provider is not linked to your account",
+    "cannotUnlinkLastMethod": "You cannot remove your only sign-in method",
+    "providerUnlinked": "Sign-in method removed"
   },
   "servers": {
     "unauthorized": "Unauthorized",

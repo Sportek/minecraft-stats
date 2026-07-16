@@ -78,7 +78,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 521
+          example: 354
         name:
           type: "string"
           example: "John Doe"
@@ -93,7 +93,7 @@ components:
           example: true
         weight:
           type: "number"
-          example: 297
+          example: 898
         show_on_home:
           type: "boolean"
           example: true
@@ -133,10 +133,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 249
+          example: 928
         advertisement_id:
           type: "number"
-          example: 900
+          example: 999
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
@@ -145,7 +145,7 @@ components:
           example: "Lorem Ipsum"
         server_id:
           type: "number"
-          example: 564
+          example: 435
         target_url:
           type: "string"
           example: "Lorem Ipsum"
@@ -163,7 +163,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 424
+          example: 461
         name:
           type: "string"
           example: "John Doe"
@@ -182,7 +182,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 183
+          example: 30
         code:
           $ref: "#/components/schemas/LanguageCode"
           example: null
@@ -207,7 +207,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 235
+          example: 973
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -239,13 +239,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 408
+          example: 62
         visitor_id:
           type: "number"
-          example: 24
+          example: 971
         user_id:
           type: "number"
-          example: 386
+          example: 474
         path:
           type: "string"
           example: "Lorem Ipsum"
@@ -257,7 +257,7 @@ components:
           example: "Lorem Ipsum"
         duration_ms:
           type: "number"
-          example: 105
+          example: 169
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -275,7 +275,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 644
+          example: 515
         cover_image:
           type: "string"
           example: "Lorem Ipsum"
@@ -284,7 +284,7 @@ components:
           example: true
         view_count:
           type: "number"
-          example: 599
+          example: 892
         default_locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -294,7 +294,7 @@ components:
           format: "date-time"
         user_id:
           type: "number"
-          example: 524
+          example: 323
         author:
           $ref: "#/components/schemas/User"
           example: null
@@ -318,13 +318,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 999
+          example: 633
         post_id:
           type: "number"
-          example: 135
+          example: 739
         user_id:
           type: "number"
-          example: 954
+          example: 465
         visitor_id:
           type: "string"
           example: "Lorem Ipsum"
@@ -352,10 +352,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 538
+          example: 816
         post_id:
           type: "number"
-          example: 242
+          example: 935
         locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -389,7 +389,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 134
+          example: 410
         name:
           type: "string"
           example: "John Doe"
@@ -398,7 +398,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 365
+          example: 533
         type:
           $ref: "#/components/schemas/ServerType"
           example: null
@@ -428,7 +428,7 @@ components:
           example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 413
+          example: 248
         user:
           $ref: "#/components/schemas/User"
           example: null
@@ -442,7 +442,7 @@ components:
             example: null
         vote_count:
           type: "number"
-          example: 635
+          example: 95
         categories:
           type: "array"
           items:
@@ -459,17 +459,17 @@ components:
           format: "date-time"
         last_player_count:
           type: "number"
-          example: 143
+          example: 104
         last_max_count:
           type: "number"
-          example: 15
+          example: 157
         last_stats_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
         peak_player_count:
           type: "number"
-          example: 912
+          example: 215
         peak_player_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -493,22 +493,22 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 158
+          example: 264
         weekly_growth:
           type: "number"
-          example: 286
+          example: 528
         monthly_growth:
           type: "number"
-          example: 260
+          example: 0
         last_week_average:
           type: "number"
-          example: 98
+          example: 590
         previous_week_average:
           type: "number"
-          example: 784
+          example: 188
         last_month_average:
           type: "number"
-          example: 223
+          example: 171
         last_updated:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -520,19 +520,19 @@ components:
       properties:
         id:
           type: "number"
-          example: 497
+          example: 62
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 825
+          example: 171
         player_count:
           type: "number"
-          example: 137
+          example: 133
         max_count:
           type: "number"
-          example: 630
+          example: 586
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -544,22 +544,22 @@ components:
       properties:
         id:
           type: "number"
-          example: 497
+          example: 207
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 123
+          example: 624
         visitor_id:
           type: "number"
-          example: 51
+          example: 736
         user:
           $ref: "#/components/schemas/User"
           example: null
         user_id:
           type: "number"
-          example: 60
+          example: 669
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -587,20 +587,20 @@ components:
       properties:
         id:
           type: "number"
-          example: 388
+          example: 646
         date:
           type: "string"
           example: "2021-03-23"
           format: "date-time"
         http_requests:
           type: "number"
-          example: 772
+          example: 197
         http_errors:
           type: "number"
-          example: 343
+          example: 604
         unique_visitors:
           type: "number"
-          example: 899
+          example: 63
         countries:
           $ref: "#/components/schemas/Record<string, number>"
           example: null
@@ -619,7 +619,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 557
+          example: 670
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -652,14 +652,51 @@ components:
           items:
             $ref: "#/components/schemas/Post"
             example: null
+        providers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserProvider"
+            example: null
       description: "User (Model)"
+    UserProvider:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 507
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+        user_id:
+          type: "number"
+          example: 973
+        provider:
+          $ref: "#/components/schemas/'google'"
+          example: null
+        provider_user_id:
+          type: "string"
+          example: "Lorem Ipsum"
+        confirmed_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "UserProvider (Model)"
     Visitor:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 611
+          example: 878
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -697,13 +734,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 992
+          example: 972
         visitor_id:
           type: "number"
-          example: 107
+          example: 935
         user_id:
           type: "number"
-          example: 429
+          example: 30
         linked_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -730,7 +767,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 244
+          example: 447
           choices:
             - "custom"
             - "network"
@@ -764,10 +801,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 943
+            example: 984
       example:
         name: "Lorem Ipsum"
-        type: 244
+        type: 447
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -776,7 +813,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 943
+          - 984
       description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
       type: "object"
@@ -788,7 +825,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 589
+          example: 638
           choices:
             - "custom"
             - "network"
@@ -821,10 +858,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 79
+            example: 572
       example:
         name: "Lorem Ipsum"
-        type: 589
+        type: 638
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -833,7 +870,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 79
+          - 572
       description: "UpdateAdvertisementValidator (Validator)"
     IdentifyVisitorValidator:
       type: "object"
@@ -868,14 +905,14 @@ components:
           maxLength: 512
         durationMs:
           type: "number"
-          example: 18
+          example: 354
           maximum: 86400000
       example:
         visitorId: "Lorem Ipsum"
         path: "Lorem Ipsum"
         referrer: "Lorem Ipsum"
         title: "Lorem Ipsum"
-        durationMs: 18
+        durationMs: 354
       description: "TrackPageViewValidator (Validator)"
     CreateApiTokenValidator:
       type: "object"
@@ -888,21 +925,21 @@ components:
           maxLength: 100
         expiresInDays:
           type: "number"
-          example: 982
+          example: 319
           maximum: 3650
       example:
         name: "Lorem Ipsum"
-        expiresInDays: 982
+        expiresInDays: 319
       description: "CreateApiTokenValidator (Validator)"
     CategoryIdValidator:
       type: "object"
       properties:
         id:
           type: "number"
-          example: 959
+          example: 629
           required: true
       example:
-        id: 959
+        id: 629
       description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
       type: "object"
@@ -919,14 +956,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 473
+          example: 232
           required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
           required: true
       example:
-        id: 473
+        id: 232
         name: "Lorem Ipsum"
       description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
@@ -934,39 +971,39 @@ components:
       properties:
         fromDate:
           type: "number"
-          example: 186
+          example: 698
         toDate:
           type: "number"
-          example: 952
+          example: 589
         interval:
           type: "number"
-          example: 499
+          example: 581
           choices:
             - "30 minutes"
             - "1 hour"
-            - "1 day"
             - "2 hours"
             - "6 hours"
+            - "1 day"
             - "1 week"
         categoryId:
           type: "number"
-          example: 359
+          example: 894
         languageId:
           type: "number"
-          example: 439
+          example: 66
       example:
-        fromDate: 186
-        toDate: 952
-        interval: 499
-        categoryId: 359
-        languageId: 439
+        fromDate: 698
+        toDate: 589
+        interval: 581
+        categoryId: 894
+        languageId: 66
       description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
       type: "object"
       properties:
         defaultLocale:
           type: "number"
-          example: 120
+          example: 320
           choices:
             - "fr"
             - "en"
@@ -983,7 +1020,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 934
+                example: 352
                 choices:
                   - "fr"
                   - "en"
@@ -1007,7 +1044,7 @@ components:
                 required: true
               excerpt:
                 type: "number"
-                example: 39
+                example: 601
                 maximum: 500
           required: true
           properties:
@@ -1025,10 +1062,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 120
+        defaultLocale: 320
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 934
+          - locale: 352
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1043,11 +1080,11 @@ components:
           required: true
         serverId:
           type: "number"
-          example: 130
+          example: 473
           required: true
       example:
         placeholderName: "Lorem Ipsum"
-        serverId: 130
+        serverId: 473
       description: "PreviewPlaceholderValidator (Validator)"
     ResolvePlaceholdersValidator:
       type: "object"
@@ -1090,7 +1127,7 @@ components:
       properties:
         defaultLocale:
           type: "number"
-          example: 714
+          example: 332
           choices:
             - "fr"
             - "en"
@@ -1106,7 +1143,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 67
+                example: 713
                 choices:
                   - "fr"
                   - "en"
@@ -1128,7 +1165,7 @@ components:
                 minimum: 10
               excerpt:
                 type: "number"
-                example: 305
+                example: 694
                 maximum: 500
           properties:
             items:
@@ -1145,10 +1182,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 714
+        defaultLocale: 332
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 67
+          - locale: 713
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1173,7 +1210,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 702
+          example: 245
           choices:
             - "java"
             - "bedrock"
@@ -1184,7 +1221,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 412
+            example: 865
           required: true
           properties:
             items:
@@ -1203,13 +1240,13 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 739
+            example: 371
           required: true
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 702
+        type: 245
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -1217,7 +1254,7 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 739
+          - 371
       description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
       type: "object"
@@ -1235,7 +1272,7 @@ components:
           minimum: 1
         type:
           type: "number"
-          example: 843
+          example: 366
           choices:
             - "java"
             - "bedrock"
@@ -1246,7 +1283,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 60
+            example: 55
           properties:
             items:
               type: "string"
@@ -1264,12 +1301,12 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 922
+            example: 912
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 843
+        type: 366
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -1277,22 +1314,22 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 922
+          - 912
       description: "UpdateServerValidator (Validator)"
     attachServerCategoryValidator:
       type: "object"
       properties:
         serverId:
           type: "number"
-          example: 505
+          example: 870
           required: true
         categoryId:
           type: "number"
-          example: 110
+          example: 998
           required: true
       example:
-        serverId: 505
-        categoryId: 110
+        serverId: 870
+        categoryId: 998
       description: "attachServerCategoryValidator (Validator)"
     CreateServerVoteValidator:
       type: "object"
@@ -1333,33 +1370,33 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 275
+          example: 417
           required: true
         exactTime:
           type: "number"
-          example: 498
+          example: 642
         fromDate:
           type: "number"
-          example: 970
+          example: 913
         toDate:
           type: "number"
-          example: 354
+          example: 144
         interval:
           type: "number"
-          example: 609
+          example: 157
           choices:
             - "30 minutes"
             - "1 hour"
-            - "1 day"
             - "2 hours"
             - "6 hours"
+            - "1 day"
             - "1 week"
       example:
-        server_id: 275
-        exactTime: 498
-        fromDate: 970
-        toDate: 354
-        interval: 609
+        server_id: 417
+        exactTime: 642
+        fromDate: 913
+        toDate: 144
+        interval: 157
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -1428,6 +1465,16 @@ components:
       example:
         email: "Lorem Ipsum"
       description: "ForgotPasswordValidator (Validator)"
+    LinkProviderValidator:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        token: "Lorem Ipsum"
+      description: "LinkProviderValidator (Validator)"
     LoginUserValidator:
       type: "object"
       properties:
@@ -1540,10 +1587,10 @@ paths:
                   type: "object"
               example:
                 - server:
-                    id: 134
+                    id: 410
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 365
+                    port: 533
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
@@ -1553,13 +1600,13 @@ paths:
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
                     host_domain: "Lorem Ipsum"
-                    user_id: 413
-                    vote_count: 635
+                    user_id: 248
+                    vote_count: 95
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 143
-                    last_max_count: 15
+                    last_player_count: 104
+                    last_max_count: 157
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 912
+                    peak_player_count: 215
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
@@ -1567,12 +1614,12 @@ paths:
                   categories:
                     - "<Category>"
                   growthStat:
-                    server_id: 158
-                    weekly_growth: 286
-                    monthly_growth: 260
-                    last_week_average: 98
-                    previous_week_average: 784
-                    last_month_average: 223
+                    server_id: 264
+                    weekly_growth: 528
+                    monthly_growth: 0
+                    last_week_average: 590
+                    previous_week_average: 188
+                    last_month_average: 171
                     last_updated: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
         401:
@@ -3203,7 +3250,7 @@ paths:
               $ref: "#/components/schemas/CreateApiTokenValidator"
             example:
               name: "Lorem Ipsum"
-              expiresInDays: 982
+              expiresInDays: 319
   /api/v1/account/api-tokens/{id}:
     delete:
       summary: "Revoke an API token (destroy)"
@@ -3346,15 +3393,27 @@ paths:
                   token: "oat_..."
                   expiresAt: "2026-06-27T12:00:00.000Z"
           description: "Returns **200** (OK) as **application/json**"
+        202:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status: "link_email_sent"
+                  message: "We sent you an email to confirm adding this sign-in method to your account."
+              example:
+                status: "link_email_sent"
+                message: "We sent you an email to confirm adding this sign-in method to your account."
+          description: "Returns **202** (Accepted) as **application/json**"
         400:
           content:
             application/json:
               schema:
                 type: "object"
                 properties:
-                  message: "Cannot login with this third-party provider"
+                  message: "An error occurred while logging in. Please try again"
               example:
-                message: "Cannot login with this third-party provider"
+                message: "An error occurred while logging in. Please try again"
           description: "Returns **400** (Bad Request) as **application/json**"
       security: []
   /api/v1/callback/discord:
@@ -3404,17 +3463,236 @@ paths:
                   token: "oat_..."
                   expiresAt: "2026-06-27T12:00:00.000Z"
           description: "Returns **200** (OK) as **application/json**"
+        202:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status: "link_email_sent"
+                  message: "We sent you an email to confirm adding this sign-in method to your account."
+              example:
+                status: "link_email_sent"
+                message: "We sent you an email to confirm adding this sign-in method to your account."
+          description: "Returns **202** (Accepted) as **application/json**"
         400:
           content:
             application/json:
               schema:
                 type: "object"
                 properties:
-                  message: "Cannot login with this third-party provider"
+                  message: "An error occurred while logging in. Please try again"
               example:
-                message: "Cannot login with this third-party provider"
+                message: "An error occurred while logging in. Please try again"
           description: "Returns **400** (Bad Request) as **application/json**"
       security: []
+  /api/v1/link-provider:
+    post:
+      summary: "Confirm adding an OAuth provider to an existing account (confirm)"
+      description: "Validates the token from the confirmation email sent when an OAuth login matched an existing account (see googleCallback/discordCallback), marks the provider link as confirmed and clears the token. Clicking the emailed link proves ownership of the address, so the account is also marked verified and the user is signed in directly (user + fresh access token returned). Invalid and expired tokens return the same generic error to avoid leaking token state.\n\n _app/controllers/user_providers_controller.ts_ - **confirm**"
+      operationId: "confirmProviderLink"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  user:
+                    type: "object"
+                    properties:
+                      id: 1
+                      username: "player"
+                      verified: true
+                      provider: ""
+                      role: "user"
+                      avatarUrl: ""
+                      createdAt: "2026-05-28T12:00:00.000Z"
+                      updatedAt: "2026-05-28T12:00:00.000Z"
+                  accessToken:
+                    type: "object"
+                    properties:
+                      type: "bearer"
+                      token: "oat_..."
+                      expiresAt: "2026-06-27T12:00:00.000Z"
+              example:
+                user:
+                  id: 1
+                  username: "player"
+                  verified: true
+                  provider: ""
+                  role: "user"
+                  avatarUrl: ""
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  updatedAt: "2026-05-28T12:00:00.000Z"
+                accessToken:
+                  type: "bearer"
+                  token: "oat_..."
+                  expiresAt: "2026-06-27T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This confirmation link is invalid or has expired."
+              example:
+                message: "This confirmation link is invalid or has expired."
+          description: "Returns **400** (Bad Request) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The token field must be defined"
+                          rule: "required"
+                          field: "token"
+              example:
+                errors:
+                  - message: "The token field must be defined"
+                    rule: "required"
+                    field: "token"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkProviderValidator"
+            example:
+              token: "Lorem Ipsum"
+  /api/v1/account/providers:
+    get:
+      summary: "List the OAuth providers linked to the authenticated account (index)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/user_providers_controller.ts_ - **index**"
+      operationId: "listLinkedProviders"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  providers:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          provider: "google"
+                          linkedAt: "2026-05-28T12:00:00.000Z"
+              example:
+                providers:
+                  - provider: "google"
+                    linkedAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/account/providers/{provider}:
+    delete:
+      summary: "Unlink an OAuth provider from the authenticated account (destroy)"
+      description: "Removes a confirmed OAuth sign-in method from the current user. Refused when it is the account's last usable sign-in method (accounts created via OAuth have no usable password). Requires authentication.\n\n _app/controllers/user_providers_controller.ts_ - **destroy**"
+      operationId: "unlinkProvider"
+      parameters:
+        - in: "path"
+          name: "provider"
+          description: "The OAuth provider to unlink"
+          schema:
+            example: "google"
+            type: "string"
+            enum:
+              - "google"
+              - "discord"
+          required: true
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Sign-in method removed"
+              example:
+                message: "Sign-in method removed"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "You cannot remove your only sign-in method"
+              example:
+                message: "You cannot remove your only sign-in method"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This provider is not linked to your account"
+              example:
+                message: "This provider is not linked to your account"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/posts:
     get:
       summary: "Get a list of posts (index)"
@@ -4210,6 +4488,12 @@ tags:
     description: "Everything related to API TOKENS"
   - name: "API TOKENS"
     description: "Everything related to API TOKENS"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
   - name: "AUTH"
     description: "Everything related to AUTH"
   - name: "AUTH"

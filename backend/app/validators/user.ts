@@ -54,3 +54,9 @@ export const ResetPasswordValidator = vine.compile(
     password: vine.string().maxLength(72).minLength(8),
   })
 )
+
+export const LinkProviderValidator = vine.compile(
+  vine.object({
+    token: vine.string().trim(),
+  })
+)

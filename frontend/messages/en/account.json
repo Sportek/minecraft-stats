@@ -86,6 +86,19 @@
     "verify": "Verify ownership",
     "verifyTitle": "Verify ownership of this server"
   },
+  "signInMethods": {
+    "title": "Sign-in methods",
+    "subtitle": "Link Google or Discord (using {email}) to sign in with one click. We'll email you a confirmation before anything is added.",
+    "linkedSince": "Connected since {date}",
+    "notLinked": "Not connected",
+    "link": "Connect",
+    "unlink": "Disconnect",
+    "unlinking": "Disconnecting…",
+    "unlinkConfirm": "Disconnect {provider}? You will no longer be able to sign in with it.",
+    "unlinkedTitle": "Sign-in method removed",
+    "unlinkedDescription": "{provider} has been disconnected from your account.",
+    "lastMethodHint": "You can't remove your only sign-in method."
+  },
   "settings": {
     "roles": {
       "user": "Member",
