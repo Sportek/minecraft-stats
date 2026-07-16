@@ -6,14 +6,14 @@ interface OAuthButtonsProps {
 }
 
 /** Discord brand glyph (single-color). */
-const DiscordGlyph = () => (
+export const DiscordGlyph = () => (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="#5865F2" aria-hidden="true">
     <path d="M19.27 5.33A16.6 16.6 0 0 0 15.1 4l-.2.4a15.4 15.4 0 0 1 3.71 1.2 13.3 13.3 0 0 0-11.22 0A15.4 15.4 0 0 1 11.1 4.4L10.9 4a16.6 16.6 0 0 0-4.17 1.33C3.4 9.3 2.5 13.16 2.95 16.96a16.7 16.7 0 0 0 5.1 2.58l.4-.56a11 11 0 0 1-1.62-.78l.13-.1a11.9 11.9 0 0 0 10.1 0l.13.1c-.5.3-1.05.56-1.62.78l.4.56a16.7 16.7 0 0 0 5.1-2.58c.5-4.4-.86-8.23-3.13-11.63zM9.3 14.84c-.8 0-1.45-.74-1.45-1.65s.64-1.66 1.45-1.66c.81 0 1.46.75 1.45 1.66 0 .91-.65 1.65-1.45 1.65zm5.4 0c-.8 0-1.45-.74-1.45-1.65s.64-1.66 1.45-1.66c.81 0 1.46.75 1.45 1.66 0 .91-.64 1.65-1.45 1.65z" />
   </svg>
 );
 
 /** Google brand glyph (4-color G). */
-const GoogleGlyph = () => (
+export const GoogleGlyph = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
     <path
       fill="#4285F4"

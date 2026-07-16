@@ -16,6 +16,7 @@ export const controllers = {
   Servers: () => import('#controllers/servers_controller'),
   Stats: () => import('#controllers/stats_controller'),
   Uploads: () => import('#controllers/uploads_controller'),
+  UserProviders: () => import('#controllers/user_providers_controller'),
   Users: () => import('#controllers/users_controller'),
   WebsiteStats: () => import('#controllers/website_stats_controller'),
 }

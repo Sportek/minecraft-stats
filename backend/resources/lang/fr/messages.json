@@ -24,7 +24,11 @@
     "oauthCancelled": "Vous avez annulé le processus de connexion",
     "oauthStateMismatch": "Nous ne parvenons pas à vérifier la requête. Veuillez réessayer",
     "oauthError": "Une erreur est survenue lors de la connexion. Veuillez réessayer",
-    "cannotLoginWithProvider": "Connexion impossible avec ce fournisseur tiers"
+    "providerLinkEmailSent": "Nous vous avons envoyé un e-mail pour confirmer l'ajout de cette méthode de connexion à votre compte.",
+    "invalidProviderLinkToken": "Ce lien de confirmation est invalide ou a expiré.",
+    "providerNotLinked": "Ce fournisseur n'est pas lié à votre compte",
+    "cannotUnlinkLastMethod": "Vous ne pouvez pas supprimer votre seule méthode de connexion",
+    "providerUnlinked": "Méthode de connexion supprimée"
   },
   "servers": {
     "unauthorized": "Non autorisé",

@@ -20,5 +20,16 @@
     "viewInBrowser": "Afficher cet e-mail dans votre navigateur",
     "footerReason": "Vous recevez cet e-mail car une réinitialisation de mot de passe a été demandée pour votre compte Minecraft-Stats.fr.",
     "copyright": "© Minecraft-Stats.fr, Tous droits réservés."
+  },
+  "providerLink": {
+    "subject": "Confirmez l'ajout de {provider} à votre compte",
+    "title": "Ajoutez {provider} à votre compte Minecraft-Stats.fr",
+    "greeting": "Bonjour {username},",
+    "intro": "Quelqu'un a tenté de se connecter à votre compte via {provider}. Si c'était vous, cliquez sur le bouton ci-dessous pour ajouter {provider} comme méthode de connexion — vous pourrez ensuite l'utiliser à tout moment.",
+    "cta": "Ajouter {provider} à mon compte",
+    "expiry": "Ce lien expirera dans 1 heure pour votre sécurité.",
+    "ignore": "Si vous n'êtes pas à l'origine de cette tentative, vous pouvez ignorer cet e-mail : rien ne changera sur votre compte.",
+    "footerReason": "Vous recevez cet e-mail car une connexion avec un nouveau fournisseur a été tentée sur votre compte Minecraft-Stats.fr.",
+    "copyright": "© Minecraft-Stats.fr, Tous droits réservés."
   }
 }

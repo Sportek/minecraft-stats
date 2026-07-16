@@ -82,6 +82,19 @@
     "removing": "Eliminando…",
     "remove": "Eliminar servidor"
   },
+  "signInMethods": {
+    "title": "Métodos de inicio de sesión",
+    "subtitle": "Vincula Google o Discord (con {email}) para iniciar sesión con un clic. Te enviaremos un correo de confirmación antes de añadir nada.",
+    "linkedSince": "Conectado desde el {date}",
+    "notLinked": "No conectado",
+    "link": "Conectar",
+    "unlink": "Desconectar",
+    "unlinking": "Desconectando…",
+    "unlinkConfirm": "¿Desconectar {provider}? Ya no podrás iniciar sesión con él.",
+    "unlinkedTitle": "Método de inicio de sesión eliminado",
+    "unlinkedDescription": "{provider} ha sido desconectado de tu cuenta.",
+    "lastMethodHint": "No puedes eliminar tu único método de inicio de sesión."
+  },
   "settings": {
     "roles": {
       "user": "Miembro",

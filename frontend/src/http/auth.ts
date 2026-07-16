@@ -1,7 +1,7 @@
 "use client";
 
 import { localeHeaders } from "@/app/_cheatcode";
-import { AccessToken, User } from "@/types/auth";
+import { AccessToken, LinkedProvider, OAuthProvider, User } from "@/types/auth";
 import { apiFetch } from "./client";
 
 export const registerUser = (credentials: {
@@ -77,6 +77,28 @@ export const uploadUserAvatar = async (file: File, token: string) => {
   });
   return body.user;
 };
+
+export const confirmProviderLink = (credentials: { token: string }) =>
+  apiFetch<{ accessToken: AccessToken; user: User }>("/link-provider", {
+    method: "POST",
+    body: credentials,
+    headers: localeHeaders(),
+  });
+
+export const getLinkedProviders = async (token: string) => {
+  const body = await apiFetch<{ providers: LinkedProvider[] }>("/account/providers", {
+    token,
+    headers: localeHeaders(),
+  });
+  return body.providers;
+};
+
+export const unlinkProvider = (provider: OAuthProvider, token: string) =>
+  apiFetch<{ message: string }>(`/account/providers/${provider}`, {
+    method: "DELETE",
+    token,
+    headers: localeHeaders(),
+  });
 
 export const logoutUser = (token: string) =>
   apiFetch<{ message: string }>("/logout", { method: "POST", token, headers: localeHeaders() });

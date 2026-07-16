@@ -576,6 +576,39 @@ export class TrafficDailySchema extends BaseModel {
   declare updatedAt: DateTime
 }
 
+export class UserProviderSchema extends BaseModel {
+  static $columns = [
+    'confirmedAt',
+    'createdAt',
+    'id',
+    'linkTokenExpiresAt',
+    'linkTokenHash',
+    'provider',
+    'providerUserId',
+    'updatedAt',
+    'userId',
+  ] as const
+  $columns = UserProviderSchema.$columns
+  @column.dateTime()
+  declare confirmedAt: DateTime | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare linkTokenExpiresAt: DateTime | null
+  @column()
+  declare linkTokenHash: string | null
+  @column()
+  declare provider: string
+  @column()
+  declare providerUserId: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class UserSchema extends BaseModel {
   static $columns = [
     'avatarUrl',

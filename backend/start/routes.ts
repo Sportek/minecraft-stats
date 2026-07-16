@@ -164,6 +164,20 @@ router
       .get('/callback/discord', '#controllers/auth_controller.discordCallback')
       .use([throttleLight('discord-callback', 5), NO_STORE])
 
+    // Liaison de providers OAuth (multi-méthodes de connexion par compte)
+    router
+      .post('/link-provider', '#controllers/user_providers_controller.confirm')
+      .use([throttleLight('link-provider', 5), NO_STORE])
+    router
+      .get('/account/providers', '#controllers/user_providers_controller.index')
+      .use(middleware.auth())
+      .use([throttleLight('account.providers.index', 20), NO_STORE])
+    router
+      .delete('/account/providers/:provider', '#controllers/user_providers_controller.destroy')
+      .where('provider', /google|discord/)
+      .use(middleware.auth())
+      .use([throttleLight('account.providers.destroy', 10), NO_STORE])
+
     // Blog - Posts publics
     router.get('posts', '#controllers/posts_controller.index').use(throttleLight('posts.index', 50))
 

@@ -1,25 +1,34 @@
+/** How a user signed up: `null` means email & password, otherwise the OAuth provider. */
+export type RegistrationProvider = "discord" | "google" | null;
+
+/** OAuth providers that can be linked to an account as sign-in methods. */
+export type OAuthProvider = "discord" | "google";
+
 export type User = {
   id: number;
   username: string;
   email: string;
   role: 'user' | 'writer' | 'admin';
+  provider: RegistrationProvider;
   verificationTokenExpires: Date;
   avatarUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
 
-/** How a user signed up: `null` means email & password, otherwise the OAuth provider. */
-export type RegistrationProvider = "discord" | "google" | null;
+/** A confirmed OAuth sign-in method on the current account. */
+export type LinkedProvider = {
+  provider: OAuthProvider;
+  linkedAt: string;
+};
 
 /**
  * Full profile exposed to admins. Builds on the public `User` shape (minus the
- * transient verification-token expiry) and adds fields hidden from the public
- * API: the registration `provider` and email `verified` status.
+ * transient verification-token expiry) and adds the email `verified` status,
+ * hidden from the public API.
  */
 export type AdminUserProfile = Omit<User, "verificationTokenExpires"> & {
   verified: boolean;
-  provider: RegistrationProvider;
 };
 
 export type Error = {

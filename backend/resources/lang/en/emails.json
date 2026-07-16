@@ -20,5 +20,16 @@
     "viewInBrowser": "View this email in your browser",
     "footerReason": "You are receiving this email because a password reset was requested for your Minecraft-Stats.fr account.",
     "copyright": "© Minecraft-Stats.fr, All Rights Reserved."
+  },
+  "providerLink": {
+    "subject": "Confirm adding {provider} to your account",
+    "title": "Add {provider} to your Minecraft-Stats.fr account",
+    "greeting": "Hi {username},",
+    "intro": "Someone tried to sign in to your account using {provider}. If it was you, click the button below to add {provider} as a sign-in method — you'll then be able to sign in with it at any time.",
+    "cta": "Add {provider} to my account",
+    "expiry": "This link will expire in 1 hour for your security.",
+    "ignore": "If you didn't try to sign in with {provider}, you can safely ignore this email — nothing will change on your account.",
+    "footerReason": "You are receiving this email because a sign-in with a new provider was attempted on your Minecraft-Stats.fr account.",
+    "copyright": "© Minecraft-Stats.fr, All Rights Reserved."
   }
 }

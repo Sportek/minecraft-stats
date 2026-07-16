@@ -82,6 +82,19 @@
     "removing": "Suppression…",
     "remove": "Supprimer le serveur"
   },
+  "signInMethods": {
+    "title": "Méthodes de connexion",
+    "subtitle": "Liez Google ou Discord (avec {email}) pour vous connecter en un clic. Un e-mail de confirmation vous sera envoyé avant tout ajout.",
+    "linkedSince": "Connecté depuis le {date}",
+    "notLinked": "Non connecté",
+    "link": "Connecter",
+    "unlink": "Déconnecter",
+    "unlinking": "Déconnexion…",
+    "unlinkConfirm": "Déconnecter {provider} ? Vous ne pourrez plus vous connecter avec.",
+    "unlinkedTitle": "Méthode de connexion supprimée",
+    "unlinkedDescription": "{provider} a été déconnecté de votre compte.",
+    "lastMethodHint": "Impossible de supprimer votre seule méthode de connexion."
+  },
   "settings": {
     "roles": {
       "user": "Membre",

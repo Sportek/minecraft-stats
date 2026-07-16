@@ -6,6 +6,7 @@ import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
 import DangerZoneCard from "@/components/account/danger-zone-card";
 import InfoField from "@/components/account/info-field";
+import LinkedProviders from "@/components/account/linked-providers";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
@@ -116,6 +117,9 @@ const SettingsPage = () => {
           <ChangePasswordForm />
         </div>
       </section>
+
+      {/* Sign-in methods (OAuth providers) */}
+      <LinkedProviders />
 
       {/* Danger zone */}
       <DangerZoneCard
