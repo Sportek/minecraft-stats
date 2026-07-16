@@ -226,15 +226,17 @@ export default class DuplicateDetectionService {
       return Number(rows[0].$extras.total)
     }
 
-    // Endpoint partagé par plusieurs serveurs => proxy / mutualisé => non fiable.
-    const endpointTrusted = resolvedEndpoint
-      ? (await countSharing('resolved_endpoint', resolvedEndpoint)) < SHARED_ENDPOINT_LIMIT
-      : false
+    // Un signal (endpoint, domaine…) n'est fiable que s'il n'est pas partagé par trop de
+    // serveurs — au-delà de `limit` c'est un proxy / hébergeur mutualisé. `false` si absent.
+    const trustedBelowLimit = async (column: string, value: string | null, limit: number) =>
+      value ? (await countSharing(column, value)) < limit : false
 
-    // Domaine partagé par trop de serveurs => hébergeur à sous-domaines => non fiable.
-    const domainTrusted = domain
-      ? (await countSharing('host_domain', domain)) < SHARED_DOMAIN_LIMIT
-      : false
+    const endpointTrusted = await trustedBelowLimit(
+      'resolved_endpoint',
+      resolvedEndpoint,
+      SHARED_ENDPOINT_LIMIT
+    )
+    const domainTrusted = await trustedBelowLimit('host_domain', domain, SHARED_DOMAIN_LIMIT)
 
     // Aucun signal *discriminant* utilisable (players/version sont trop communs
     // pour servir de critère de sélection) → inutile de scanner.

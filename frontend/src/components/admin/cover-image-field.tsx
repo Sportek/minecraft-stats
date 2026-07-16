@@ -12,6 +12,12 @@ import { useRef, useState } from "react";
 
 const MAX_COVER_BYTES = 5 * 1024 * 1024;
 
+/** Clé de traduction du bouton d'upload selon l'état (en cours / remplacer / ajouter). */
+function uploadLabelKey(isUploading: boolean, hasValue: boolean): string {
+  if (isUploading) return "coverImage.uploading";
+  return hasValue ? "coverImage.replace" : "coverImage.upload";
+}
+
 interface CoverImageFieldProps {
   value: string;
   onChange: (value: string) => void;
@@ -87,11 +93,7 @@ export const CoverImageField = ({ value, onChange }: CoverImageFieldProps) => {
               disabled={isUploading}
             >
               <Upload className="mr-2 h-4 w-4" />
-              {isUploading
-                ? t("coverImage.uploading")
-                : value
-                  ? t("coverImage.replace")
-                  : t("coverImage.upload")}
+              {t(uploadLabelKey(isUploading, !!value))}
             </Button>
             {value && (
               <Button type="button" variant="ghost" onClick={() => onChange("")} disabled={isUploading}>
