@@ -103,20 +103,22 @@ const AdminOwnershipClaimsPage = () => {
                   >
                     {claim.server.name}
                   </Link>
-                  <Badge variant="secondary">{claim.server.address}</Badge>
+                  <Badge variant="secondary" className="max-w-full truncate">{claim.server.address}</Badge>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <AvatarTile
                     name={claim.user.username}
                     src={claim.user.avatarUrl}
-                    className="h-7 w-7 rounded-md text-xs"
+                    className="h-7 w-7 shrink-0 rounded-md text-xs"
                   />
-                  <span className="text-foreground">{claim.user.username}</span>
-                  <span>·</span>
-                  <span>{claim.user.email}</span>
-                  <span>·</span>
-                  <span>{format.dateTime(new Date(claim.createdAt), { dateStyle: "medium" })}</span>
+                  {/* Colonne tronquée : pseudo + e-mail/date ne débordent plus sur mobile. */}
+                  <div className="min-w-0">
+                    <div className="truncate font-medium text-foreground">{claim.user.username}</div>
+                    <div className="truncate text-xs">
+                      {claim.user.email} · {format.dateTime(new Date(claim.createdAt), { dateStyle: "medium" })}
+                    </div>
+                  </div>
                 </div>
 
                 {claim.evidence && (

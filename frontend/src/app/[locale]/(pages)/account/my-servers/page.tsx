@@ -136,34 +136,42 @@ const MyServersPage = () => {
               const { server } = item;
               const online = isOnline(server.lastOnlineAt);
               return (
-                <div key={server.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 p-4 transition-colors hover:bg-secondary/40">
-                  <ServerImage imageUrl={server.imageUrl} name={server.name} className="h-10 w-10" />
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      href={serverPath(server.id, server.name)}
-                      className="block truncate text-sm font-semibold text-foreground transition-colors hover:text-accent"
-                    >
-                      {server.name}
-                    </Link>
-                    <div className="truncate font-mono text-xs text-muted-foreground">{server.address}</div>
-                  </div>
-                  <Badge variant={online ? "success" : "secondary"} className="gap-1.5">
-                    <span className={online ? "h-1.5 w-1.5 rounded-full bg-current" : "h-1.5 w-1.5 rounded-full bg-muted-foreground"} />
-                    {online ? t("myServers.online") : t("myServers.offlineStatus")}
-                  </Badge>
-                  {server.ownerVerifiedAt && (
-                    <Badge variant="success" className="gap-1.5">
-                      <Icon icon="material-symbols:verified-outline" className="h-3.5 w-3.5" />
-                      {t("myServers.verifiedBadge")}
-                    </Badge>
-                  )}
-                  <div className="w-20 text-right">
-                    <div className="text-sm font-bold tabular-nums text-foreground">
-                      {formatNumber(server.lastPlayerCount ?? 0)}
+                <div key={server.id} className="flex flex-col gap-3 p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center sm:gap-4">
+                  {/* Identité : pleine largeur sur mobile → le nom n'est plus tronqué. */}
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <ServerImage imageUrl={server.imageUrl} name={server.name} className="h-10 w-10 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={serverPath(server.id, server.name)}
+                        className="block truncate text-sm font-semibold text-foreground transition-colors hover:text-accent"
+                      >
+                        {server.name}
+                      </Link>
+                      <div className="truncate font-mono text-xs text-muted-foreground">{server.address}</div>
                     </div>
-                    <div className="text-[11px] text-muted-foreground">{t("myServers.peak", { count: formatNumber(server.peakPlayerCount ?? 0) })}</div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  {/* Statut à gauche, stats + actions à droite : passe sous l'identité sur mobile. */}
+                  <div className="flex items-center justify-between gap-3 sm:justify-end sm:gap-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant={online ? "success" : "secondary"} className="gap-1.5">
+                        <span className={online ? "h-1.5 w-1.5 rounded-full bg-current" : "h-1.5 w-1.5 rounded-full bg-muted-foreground"} />
+                        {online ? t("myServers.online") : t("myServers.offlineStatus")}
+                      </Badge>
+                      {server.ownerVerifiedAt && (
+                        <Badge variant="success" className="gap-1.5">
+                          <Icon icon="material-symbols:verified-outline" className="h-3.5 w-3.5" />
+                          {t("myServers.verifiedBadge")}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                      <div className="text-right tabular-nums">
+                        <div className="text-sm font-bold text-foreground">
+                          {formatNumber(server.lastPlayerCount ?? 0)}
+                        </div>
+                        <div className="text-[11px] font-normal text-muted-foreground">{t("myServers.peak", { count: formatNumber(server.peakPlayerCount ?? 0) })}</div>
+                      </div>
+                      <div className="flex items-center gap-1">
                     {!server.ownerVerifiedAt && (
                       <button
                         type="button"
@@ -202,6 +210,8 @@ const MyServersPage = () => {
                         <Icon icon="material-symbols:delete-outline" className="h-4 w-4" />
                       </button>
                     )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
