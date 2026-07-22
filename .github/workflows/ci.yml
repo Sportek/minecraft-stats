@@ -16,9 +16,61 @@ jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
+    # Sans Redis joignable, le client ioredis retente indéfiniment et `node ace test`
+    # ne rend jamais la main : sans cette borne, le job tournerait jusqu'à la limite
+    # de 6 h de GitHub au lieu d'échouer.
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: ./backend
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: minecraft_stats_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      HOST: 127.0.0.1
+      PORT: 3333
+      LOG_LEVEL: error
+      # Clé jetable, propre au job — aucun secret réel n'est nécessaire pour les tests.
+      APP_KEY: iH0AhBLAGkMs2fBmYT9jTNb2ByHqXBiK
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: minecraft_stats_test
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+      LIMITER_STORE: memory
+      # `start/env.ts` valide ces clés au démarrage : les tests ne les appellent pas,
+      # mais l'application refuse de booter si elles manquent.
+      RESEND_API_KEY: test
+      DISCORD_CLIENT_ID: test
+      DISCORD_CLIENT_SECRET: test
+      GOOGLE_CLIENT_ID: test
+      GOOGLE_CLIENT_SECRET: test
 
     steps:
       - name: Checkout code
@@ -43,9 +95,16 @@ jobs:
       - name: Build
         run: yarn build
 
+      - name: Run migrations
+        run: node ace migration:run --force
+
+      - name: Test
+        run: yarn test
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: ./frontend
@@ -66,6 +125,9 @@ jobs:
 
       - name: Lint
         run: yarn lint
+
+      - name: Test
+        run: yarn test
 
       - name: Build
         run: yarn build

@@ -7,3 +7,4 @@
 - [Serveur MCP](mcp-server.md) — service mcp/ auto-généré depuis OpenAPI ; live sur mcp-staging.minecraft-stats.fr ; gotchas YAML + healthcheck IPv6
 - [Pas de trailer Co-Authored-By](no-coauthor-trailer.md) — ne jamais ajouter d'attribution IA aux commits/PRs
 - [Architecture i18n](i18n-architecture.md) — FR/EN via next-intl (routing hybride domaine+préfixe, catalogue messages/<locale>/<feature>.json) + @adonisjs/i18n ; contenu BDD mono-langue
+- [Rollups stats & backfill](stats-rollups-backfill.md) — 3 paliers brut/horaire/journalier ; rejouer les backfills après toute migration de colonne, horaire AVANT journalier
