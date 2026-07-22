@@ -27,7 +27,9 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
 
   // Pic all-time persisté côté serveur. Repli sur le max de l'intervalle affiché
   // tant qu'aucun ping n'a renseigné la colonne (nouveau serveur).
-  const windowedPeak = stats.reduce((acc, curr) => Math.max(acc, curr.playerCount), 0);
+  // `peakPlayerCount` / `minPlayerCount` portent les extrêmes réels du bucket ;
+  // lire `playerCount` ici sous-estimerait le pic et surestimerait le creux.
+  const windowedPeak = stats.reduce((acc, curr) => Math.max(acc, curr.peakPlayerCount), 0);
   const allTimePeak = server.peakPlayerCount ?? windowedPeak;
 
   if (isLoading) {
@@ -67,7 +69,7 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
         <StatCard
           title={t("stats.lowestPlayers")}
           value={format.number(
-            stats.reduce((acc, curr) => Math.min(acc, curr.playerCount), Number.MAX_SAFE_INTEGER)
+            stats.reduce((acc, curr) => Math.min(acc, curr.minPlayerCount), Number.MAX_SAFE_INTEGER)
           )}
           icon={<Icon icon="mdi:trending-down" className="h-5 w-5" />}
         />

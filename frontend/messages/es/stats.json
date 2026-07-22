@@ -1,0 +1,45 @@
+{
+  "period": {
+    "ariaLabel": "Periodo mostrado",
+    "customRange": "{from} → {to}",
+    "tabs": {
+      "presets": "Atajos",
+      "custom": "Personalizado"
+    },
+    "presets": {
+      "24h": "24 h",
+      "7d": "7 días",
+      "30d": "30 días",
+      "3mo": "3 meses",
+      "6mo": "6 meses",
+      "1y": "1 año",
+      "2y": "2 años",
+      "all": "Todo"
+    },
+    "resolution": "Resolución",
+    "resolutions": {
+      "30 minutes": "30 min",
+      "1 hour": "1 h",
+      "6 hours": "6 h",
+      "1 day": "1 día",
+      "1 week": "1 sem."
+    },
+    "auto": "Auto · {resolution}",
+    "points": "{count, plural, one {# punto} other {# puntos}}",
+    "wholeHistory": "Todo el historial",
+    "unavailable": {
+      "tooManyPoints": "Demasiados puntos para este intervalo",
+      "rangeTooShort": "Intervalo demasiado corto para este paso"
+    },
+    "from": "Desde",
+    "to": "Hasta",
+    "previous": "Periodo anterior",
+    "next": "Periodo siguiente"
+  },
+  "seriesMode": {
+    "ariaLabel": "Valor destacado",
+    "average": "Media",
+    "peak": "Pico",
+    "peakGlobal": "Pico (suma por servidor)"
+  }
+}

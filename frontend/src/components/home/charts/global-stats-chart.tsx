@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { Server } from "../selects/server-select";
 import dynamic from 'next/dynamic';
 import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
+import { SeriesMode } from "@/components/stats/series-mode-toggle";
 import { Spinner } from "@/components/ui/spinner";
 
 // Load the AG Charts core (module registration) and renderer together in this
@@ -32,6 +33,7 @@ interface ChartDatum {
 interface GlobalStatsChartProps {
   globalStats: ServerStat[];
   serverStats: { server: Server; stats: ServerStat[] }[];
+  seriesMode: SeriesMode;
   isLoading: boolean;
 }
 
@@ -92,50 +94,76 @@ const createEmptyChartOptions = (theme: string | undefined): AgCartesianChartOpt
   theme: theme === 'dark' ? 'ag-default-dark' : 'ag-default',
 } as AgCartesianChartOptions);
 
-const createAreaSeries = (
-  xKey: string,
-  yKey: string,
-  yName: string,
-  color: { light: string; dark: string },
-  theme: string | undefined,
-  locale: string,
-  playersLabel: string
-): AgAreaSeriesOptions => ({
-  type: 'area',
-  xKey,
+interface SeriesConfig {
+  yKey: string;
+  yName: string;
+  color: { light: string; dark: string };
+  theme: string | undefined;
+  locale: string;
+  playersLabel: string;
+  /** `ghost` = courbe d'arrière-plan : trait fin pointillé, remplissage discret, pas de tooltip. */
+  emphasis: 'primary' | 'ghost';
+  /** Valeur montrée en seconde ligne du tooltip — l'autre bout de l'amplitude. */
+  secondary?: { key: string; label: string };
+}
+
+const createAreaSeries = ({
   yKey,
   yName,
-  stroke: theme === 'dark' ? color.dark : color.light,
-  strokeWidth: 2,
-  marker: {
-    enabled: false,
-  },
-  fillOpacity: 0.1,
-  fill: theme === 'dark' ? color.dark : color.light,
-  interpolation: {
-    type: 'smooth'
-  },
-  tooltip: {
-    enabled: true,
-    position: {
-      anchorTo: 'pointer',
-      placement: 'top',
-    },
-    renderer: ({ datum }: { datum: Record<string, number | Date> }) => {
-      return generateTooltipHtml(
-        { time: new Date(datum.time), playerCount: Number(datum[yKey] ?? 0) },
-        { isDarkMode: theme === 'dark' },
-        locale,
-        playersLabel
-      );
-    },
-  },
-} as AgAreaSeriesOptions);
+  color,
+  theme,
+  locale,
+  playersLabel,
+  emphasis,
+  secondary,
+}: SeriesConfig): AgAreaSeriesOptions => {
+  const stroke = theme === 'dark' ? color.dark : color.light;
+  const isGhost = emphasis === 'ghost';
 
-export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading }: GlobalStatsChartProps) => {
+  return {
+    type: 'area',
+    xKey: 'time',
+    yKey,
+    yName,
+    stroke,
+    strokeWidth: isGhost ? 1 : 2,
+    lineDash: isGhost ? [4, 4] : undefined,
+    strokeOpacity: isGhost ? 0.7 : 1,
+    marker: {
+      enabled: false,
+    },
+    fillOpacity: isGhost ? 0.05 : 0.12,
+    fill: stroke,
+    interpolation: {
+      type: 'smooth'
+    },
+    tooltip: {
+      enabled: !isGhost,
+      position: {
+        anchorTo: 'pointer',
+        placement: 'top',
+      },
+      renderer: ({ datum }: { datum: Record<string, number | Date> }) => {
+        return generateTooltipHtml(
+          {
+            time: new Date(datum.time),
+            playerCount: Number(datum[yKey] ?? 0),
+            secondary: secondary && { label: secondary.label, value: Number(datum[secondary.key] ?? 0) },
+          },
+          { isDarkMode: theme === 'dark' },
+          locale,
+          playersLabel
+        );
+      },
+    },
+  } as AgAreaSeriesOptions;
+};
+
+export const GlobalStatsChart = ({ globalStats = [], serverStats = [], seriesMode, isLoading }: GlobalStatsChartProps) => {
   const { resolvedTheme } = useTheme();
   const locale = useLocale();
   const t = useTranslations("Home");
+  const tStats = useTranslations("Stats");
 
   const options = useMemo(() => {
     // Vérifier si on a des données valides
@@ -143,13 +171,22 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       return createEmptyChartOptions(resolvedTheme);
     }
 
+    const isPeak = seriesMode === 'peak';
+    // Le pic somme les pics de chaque serveur, qui ne tombent pas à la même minute :
+    // ce n'est pas le pic simultané de la plateforme. Le libellé le dit.
+    const peakLabel = tStats("seriesMode.peakGlobal");
+    const averageLabel = tStats("seriesMode.average");
+
     // Si on a des stats globales, les utiliser
     if (globalStats.length > 0) {
       const data = globalStats
         .filter(stat => stat.createdAt)
         .map(stat => ({
           time: new Date(stat.createdAt),
-          playerCount: stat.playerCount ?? 0
+          playerCount: stat.playerCount ?? 0,
+          // Repli sur la moyenne le temps que le cache backend renouvelle les
+          // réponses d'avant l'ajout du pic.
+          peakPlayerCount: stat.peakPlayerCount ?? stat.playerCount ?? 0,
         }));
 
       // Calculer les dates min et max
@@ -157,10 +194,29 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
       const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
 
+      const shared = { color: COLORS[0], theme: resolvedTheme, locale, playersLabel: t("players") };
+
       return {
         ...BASE_CHART_OPTIONS,
         data,
-        series: [createAreaSeries('time', 'playerCount', t("allMonitoredServers"), COLORS[0], resolvedTheme, locale, t("players"))],
+        // Le pic passe toujours en premier : dessiné derrière, il n'occulte jamais
+        // la moyenne, quel que soit le mode mis en avant.
+        series: [
+          createAreaSeries({
+            ...shared,
+            yKey: 'peakPlayerCount',
+            yName: peakLabel,
+            emphasis: isPeak ? 'primary' : 'ghost',
+            secondary: { key: 'playerCount', label: averageLabel },
+          }),
+          createAreaSeries({
+            ...shared,
+            yKey: 'playerCount',
+            yName: t("allMonitoredServers"),
+            emphasis: isPeak ? 'ghost' : 'primary',
+            secondary: { key: 'peakPlayerCount', label: peakLabel },
+          }),
+        ],
         theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
         axes: {
           x: { ...BASE_AXES.x, min: minDate, max: maxDate },
@@ -175,7 +231,9 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       return createEmptyChartOptions(resolvedTheme);
     }
 
-    // Préparer les données pour les serveurs individuels
+    // Préparer les données pour les serveurs individuels.
+    // Pas d'enveloppe ici : avec plusieurs serveurs superposés, doubler les courbes
+    // rendrait le graphique illisible. Le mode choisit donc la valeur tracée.
     try {
       const allData = firstServerStats
         .filter((stat: ServerStat) => stat.createdAt)
@@ -183,14 +241,15 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
           const basePoint: ChartDatum = {
             time: new Date(stat.createdAt)
           };
-        
+
         serverStats.forEach(({ server, stats }) => {
           if (server && stats) {
             const matchingStat = stats.find(s => s?.createdAt === stat.createdAt);
-            basePoint[`playerCount_${server.id}`] = matchingStat?.playerCount ?? 0;
+            const value = isPeak ? matchingStat?.peakPlayerCount : matchingStat?.playerCount;
+            basePoint[`playerCount_${server.id}`] = value ?? matchingStat?.playerCount ?? 0;
           }
         });
-        
+
         return basePoint;
       });
 
@@ -202,16 +261,16 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       const series = serverStats
         .filter(({ server, stats }) => server && stats && stats.length > 0)
         .map(({ server }, index) => {
-          const colorIndex = index % COLORS.length;
-          return createAreaSeries(
-            'time',
-            `playerCount_${server.id}`,
-            server.name || t("serverSelect.serverFallback", { id: server.id }),
-            COLORS[colorIndex],
-            resolvedTheme,
+          const serverName = server.name || t("serverSelect.serverFallback", { id: server.id });
+          return createAreaSeries({
+            yKey: `playerCount_${server.id}`,
+            yName: isPeak ? `${serverName} · ${peakLabel}` : serverName,
+            color: COLORS[index % COLORS.length],
+            theme: resolvedTheme,
             locale,
-            t("players")
-          );
+            playersLabel: t("players"),
+            emphasis: 'primary',
+          });
         });
 
       return {
@@ -228,7 +287,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], isLoading
       console.error('Error processing server stats:', error);
       return createEmptyChartOptions(resolvedTheme);
     }
-  }, [globalStats, serverStats, resolvedTheme, locale, t]);
+  }, [globalStats, serverStats, seriesMode, resolvedTheme, locale, t, tStats]);
 
   return (
     <div className="flex flex-col gap-2">

@@ -13,8 +13,9 @@ import {
 import { AgCharts } from "ag-charts-react";
 
 import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
-import { AggregationSelect, AggregationType } from "@/components/home/selects/aggregation-select";
-import { TimeRangeSelect, TimeRangeType } from "@/components/home/selects/time-range-select";
+import { DEFAULT_PERIOD, Period, toStatsQuery } from "@/components/stats/period";
+import { PeriodPicker } from "@/components/stats/period-picker";
+import { SeriesMode, SeriesModeToggle } from "@/components/stats/series-mode-toggle";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
 import ServerDetailHeader from "@/components/serveur/server-detail-header";
 import ClaimServerBanner from "@/components/serveur/claim-server-banner";
@@ -29,23 +30,6 @@ import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
-
-const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
-  "1 Day": 1000 * 60 * 60 * 24,
-  "1 Week": 1000 * 60 * 60 * 24 * 7,
-  "1 Month": 1000 * 60 * 60 * 24 * 30,
-  "6 Months": 1000 * 60 * 60 * 24 * 30 * 6,
-  "1 Year": 1000 * 60 * 60 * 24 * 30 * 12,
-};
-
-const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
-  "30 Minutes": "30 minutes",
-  "1 Hour": "1 hour",
-  "2 Hours": "2 hours",
-  "6 Hours": "6 hours",
-  "1 Day": "1 day",
-  "1 Week": "1 week",
-};
 
 const BASE_AXES: { x: AgTimeAxisOptions; y: AgCartesianAxisOptions } = {
   x: {
@@ -87,44 +71,68 @@ const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
   },
 };
 
-const createAreaSeries = (
-  xKey: string,
-  yKey: string,
-  yName: string,
-  theme: string | undefined,
-  locale: string,
-  playersLabel: string
-): AgAreaSeriesOptions => ({
-  type: "area",
-  xKey,
+interface SeriesConfig {
+  yKey: "playerCount" | "peakPlayerCount";
+  yName: string;
+  theme: string | undefined;
+  locale: string;
+  playersLabel: string;
+  /** `ghost` = courbe d'arrière-plan : trait fin pointillé, remplissage discret, pas de tooltip. */
+  emphasis: "primary" | "ghost";
+  /** Valeur montrée en seconde ligne du tooltip — l'autre bout de l'amplitude. */
+  secondary: { key: "playerCount" | "peakPlayerCount"; label: string };
+}
+
+const createAreaSeries = ({
   yKey,
   yName,
-  stroke: theme === "dark" ? "#60A5FA" : "#2563EB",
-  strokeWidth: 2,
-  marker: {
-    enabled: false,
-  },
-  fillOpacity: 0.1,
-  fill: theme === "dark" ? "#60A5FA" : "#2563EB",
-  interpolation: {
-    type: "smooth",
-  },
-  tooltip: {
-    enabled: true,
-    position: {
-      anchorTo: "pointer",
-      placement: "top",
+  theme,
+  locale,
+  playersLabel,
+  emphasis,
+  secondary,
+}: SeriesConfig): AgAreaSeriesOptions => {
+  const stroke = theme === "dark" ? "#60A5FA" : "#2563EB";
+  const isGhost = emphasis === "ghost";
+
+  return {
+    type: "area",
+    xKey: "time",
+    yKey,
+    yName,
+    stroke,
+    strokeWidth: isGhost ? 1 : 2,
+    lineDash: isGhost ? [4, 4] : undefined,
+    strokeOpacity: isGhost ? 0.7 : 1,
+    marker: {
+      enabled: false,
     },
-    renderer: ({ datum }: { datum: { time: string | number | Date; playerCount: number } }) => {
-      return generateTooltipHtml(
-        { time: new Date(datum.time), playerCount: datum.playerCount },
-        { isDarkMode: theme === "dark" },
-        locale,
-        playersLabel
-      );
+    fillOpacity: isGhost ? 0.05 : 0.12,
+    fill: stroke,
+    interpolation: {
+      type: "smooth",
     },
-  },
-});
+    tooltip: {
+      enabled: !isGhost,
+      position: {
+        anchorTo: "pointer",
+        placement: "top",
+      },
+      renderer: ({ datum }: { datum: Record<string, number | Date> }) => {
+        return generateTooltipHtml(
+          {
+            time: new Date(datum.time),
+            playerCount: Number(datum[yKey] ?? 0),
+            secondary: { label: secondary.label, value: Number(datum[secondary.key] ?? 0) },
+          },
+          { isDarkMode: theme === "dark" },
+          locale,
+          playersLabel
+        );
+      },
+    },
+  };
+};
 
 const ServerNotFound = () => {
   const t = useTranslations("Servers");
@@ -195,6 +203,7 @@ const ServerPage = () => {
   const { serverId } = useParams();
   const locale = useLocale();
   const t = useTranslations("Servers");
+  const tStats = useTranslations("Stats");
   const {
     data: serverData,
     error: serverError,
@@ -205,17 +214,15 @@ const ServerPage = () => {
     refreshInterval: 1000 * 60 * 5,
   });
 
-  const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
-  const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("1 Hour");
+  const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
+  const [seriesMode, setSeriesMode] = useState<SeriesMode>("average");
   const { resolvedTheme } = useTheme();
 
   const { data: statsData, isLoading: isStatsLoading } = useSWR<ServerStat[], Error>(
-    ["server-stats", serverId, dataRangeInterval, dataAggregationInterval],
+    ["server-stats", serverId, period],
     () => {
-      const now = Date.now();
-      const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
-      const interval = dataAggregationInterval ? AGGREGATION_INTERVALS[dataAggregationInterval] : undefined;
-      return getServerStats(Number(serverId), fromDate, now, interval);
+      const { fromDate, toDate, interval } = toStatsQuery(period, Date.now());
+      return getServerStats(Number(serverId), fromDate, toDate, interval);
     },
     { refreshInterval: 1000 * 60 * 2 }
   );
@@ -226,16 +233,41 @@ const ServerPage = () => {
     const data = stats.map((stat) => ({
       time: new Date(stat.createdAt),
       playerCount: stat.playerCount,
+      // Repli sur la moyenne le temps que le cache backend renouvelle les
+      // réponses d'avant l'ajout du pic.
+      peakPlayerCount: stat.peakPlayerCount ?? stat.playerCount,
     }));
 
     const dates = data.map((d) => d.time);
     const minDate = dates.length > 0 ? Math.min(...dates.map((d) => d.getTime())) : undefined;
     const maxDate = dates.length > 0 ? Math.max(...dates.map((d) => d.getTime())) : undefined;
 
+    const isPeak = seriesMode === "peak";
+    const shared = { theme: resolvedTheme, locale, playersLabel: t("chart.players") };
+    const peakLabel = tStats("seriesMode.peak");
+    const averageLabel = tStats("seriesMode.average");
+
     return {
       ...BASE_CHART_OPTIONS,
       data,
-      series: [createAreaSeries("time", "playerCount", "Online players", resolvedTheme, locale, t("chart.players"))],
+      // Le pic passe toujours en premier : dessiné derrière, il n'occulte jamais
+      // la moyenne, quel que soit le mode mis en avant.
+      series: [
+        createAreaSeries({
+          ...shared,
+          yKey: "peakPlayerCount",
+          yName: peakLabel,
+          emphasis: isPeak ? "primary" : "ghost",
+          secondary: { key: "playerCount", label: averageLabel },
+        }),
+        createAreaSeries({
+          ...shared,
+          yKey: "playerCount",
+          yName: averageLabel,
+          emphasis: isPeak ? "ghost" : "primary",
+          secondary: { key: "peakPlayerCount", label: peakLabel },
+        }),
+      ],
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
       axes: {
         x: { ...BASE_AXES.x, min: minDate, max: maxDate },
@@ -245,7 +277,7 @@ const ServerPage = () => {
         },
       },
     };
-  }, [stats, resolvedTheme, locale, t]);
+  }, [stats, seriesMode, resolvedTheme, locale, t, tStats]);
 
   if (isServerLoading) {
     return (
@@ -323,12 +355,8 @@ const ServerPage = () => {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <TimeRangeSelect value={dataRangeInterval} onChange={setDataRangeInterval} disabled={isStatsLoading} />
-            <AggregationSelect
-              value={dataAggregationInterval}
-              onChange={setDataAggregationInterval}
-              disabled={isStatsLoading}
-            />
+            <PeriodPicker value={period} onChange={setPeriod} disabled={isStatsLoading} />
+            <SeriesModeToggle value={seriesMode} onChange={setSeriesMode} />
           </div>
         </div>
 
