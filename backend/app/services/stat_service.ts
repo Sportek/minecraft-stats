@@ -161,11 +161,7 @@ export default class StatsService {
    * - `hourly` : le gros des cas, de quelques jours à quelques mois ;
    * - `daily` : au-delà de 90 jours, où l'horaire ferait scanner 24× plus de lignes.
    */
-  private static pickSource(
-    intervalSeconds: number,
-    fromMs: number,
-    toMs: number
-  ): StatsSource {
+  private static pickSource(intervalSeconds: number, fromMs: number, toMs: number): StatsSource {
     const rangeMs = toMs - fromMs
     if (intervalSeconds < HOUR_SECONDS || rangeMs <= DAY_SECONDS * 1000) return 'raw'
     if (intervalSeconds >= DAY_SECONDS && rangeMs > DAILY_ROLLUP_THRESHOLD_MS) return 'daily'
