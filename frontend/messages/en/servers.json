@@ -36,7 +36,11 @@
     "averagePlayers": "Average Players",
     "medianPlayers": "Median Players",
     "dataSince": "Data Since",
-    "trackedBy": "Tracked By"
+    "trackedBy": "Tracked By",
+    "empty": {
+      "title": "No data in this period",
+      "description": "Pick a wider range or a more recent period."
+    }
   },
   "detail": {
     "playersOnline": "Players online",

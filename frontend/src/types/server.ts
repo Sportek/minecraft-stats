@@ -95,7 +95,12 @@ export type AdminUserServer = Omit<Server, "user">;
 export interface ServerStat {
   id: number;
   serverId: number;
+  /** Moyenne des joueurs sur le bucket. */
   playerCount: number;
+  /** Plus haute et plus basse valeur du bucket — égales à `playerCount` pour un point unique. */
+  peakPlayerCount: number;
+  minPlayerCount: number;
+  /** Capacité en slots, pas un nombre de joueurs. */
   maxCount: number;
   createdAt: Date;
 }

@@ -71,21 +71,25 @@ export default class BackfillHourlyStats extends BaseCommand {
       // (anciens stats créés sans association valide avant le bulk insert P.1.4).
       const result = await Database.rawQuery(
         `
-        INSERT INTO server_stats_hourly (server_id, hour, avg_player_count, max_player_count, samples_count)
+        INSERT INTO server_stats_hourly (server_id, hour, avg_player_count, peak_player_count, min_player_count, max_slot_count, samples_count)
         SELECT
           server_id,
           date_trunc('hour', created_at) AS hour,
           ROUND(AVG(player_count))::int AS avg_player_count,
-          MAX(max_count) AS max_player_count,
+          MAX(player_count)::int AS peak_player_count,
+          MIN(player_count)::int AS min_player_count,
+          MAX(max_count) AS max_slot_count,
           COUNT(*)::int AS samples_count
         FROM server_stats
         WHERE created_at >= :dayStart AND created_at < :dayEnd
           AND server_id IS NOT NULL
         GROUP BY server_id, hour
         ON CONFLICT (server_id, hour) DO UPDATE SET
-          avg_player_count = EXCLUDED.avg_player_count,
-          max_player_count = EXCLUDED.max_player_count,
-          samples_count    = EXCLUDED.samples_count
+          avg_player_count  = EXCLUDED.avg_player_count,
+          peak_player_count = EXCLUDED.peak_player_count,
+          min_player_count  = EXCLUDED.min_player_count,
+          max_slot_count    = EXCLUDED.max_slot_count,
+          samples_count     = EXCLUDED.samples_count
         `,
         { dayStart: cursor.toISOString(), dayEnd: nextDay.toISOString() }
       )

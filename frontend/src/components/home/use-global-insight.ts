@@ -2,27 +2,18 @@
 
 import { useFavorite } from "@/contexts/favorite";
 import { getClientApiUrl } from "@/lib/domain";
+import { DEFAULT_PERIOD, Period, toStatsQuery } from "@/components/stats/period";
+import { SeriesMode } from "@/components/stats/series-mode-toggle";
 import { ServerStat } from "@/types/server";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AggregationType } from "./selects/aggregation-select";
 import { Server } from "./selects/server-select";
-import { TimeRangeType } from "./selects/time-range-select";
 
-const TIME_RANGE_OFFSETS: Record<TimeRangeType, number> = {
-  "1 Day": 1000 * 60 * 60 * 24,
-  "1 Week": 1000 * 60 * 60 * 24 * 7,
-  "1 Month": 1000 * 60 * 60 * 24 * 30,
-  "6 Months": 1000 * 60 * 60 * 24 * 30 * 6,
-  "1 Year": 1000 * 60 * 60 * 24 * 30 * 12,
-};
-
-const AGGREGATION_INTERVALS: Record<AggregationType, string> = {
-  "30 Minutes": "30 minutes",
-  "1 Hour": "1 hour",
-  "2 Hours": "2 hours",
-  "6 Hours": "6 hours",
-  "1 Day": "1 day",
-  "1 Week": "1 week",
+/** Query-string des bornes de la période, `fromDate` omis pour « Tout ». */
+const periodQueryString = (period: Period) => {
+  const { fromDate, toDate, interval } = toStatsQuery(period, Date.now());
+  const params = new URLSearchParams({ toDate: String(toDate), interval });
+  if (fromDate !== undefined) params.set("fromDate", String(fromDate));
+  return params.toString();
 };
 
 export type ServerSeries = { server: Server; stats: ServerStat[] };
@@ -52,8 +43,8 @@ export function useGlobalInsight() {
   const [mounted, setMounted] = useState(false);
   const apiUrl = getClientApiUrl();
 
-  const [dataRangeInterval, setDataRangeInterval] = useState<TimeRangeType>("1 Week");
-  const [dataAggregationInterval, setDataAggregationInterval] = useState<AggregationType>("1 Hour");
+  const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
+  const [seriesMode, setSeriesMode] = useState<SeriesMode>("average");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -85,11 +76,11 @@ export function useGlobalInsight() {
     setManualSelection([]);
   }, []);
 
-  // Range/interval change → invalidation complète du cache (données obsolètes).
+  // Changement de période → invalidation complète du cache (données obsolètes).
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatsCache(new Map());
-  }, [dataRangeInterval, dataAggregationInterval]);
+  }, [period]);
 
   // Branche agrégée (selectedServers vide) : fetch /global-stats.
   useEffect(() => {
@@ -98,12 +89,8 @@ export function useGlobalInsight() {
     const controller = new AbortController();
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
-    const now = Date.now();
-    const interval = AGGREGATION_INTERVALS[dataAggregationInterval];
-    const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
-    const toDate = now;
 
-    let url = `${apiUrl}/global-stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`;
+    let url = `${apiUrl}/global-stats?${periodQueryString(period)}`;
     if (selectedCategory) url += `&categoryId=${selectedCategory}`;
     if (selectedLanguage) url += `&languageId=${selectedLanguage}`;
 
@@ -124,7 +111,7 @@ export function useGlobalInsight() {
       });
 
     return () => controller.abort();
-  }, [selectedServers.length, dataAggregationInterval, dataRangeInterval, selectedCategory, selectedLanguage, apiUrl]);
+  }, [selectedServers.length, period, selectedCategory, selectedLanguage, apiUrl]);
 
   // Branche par-serveur : fetch incrémental, seulement ce qui manque au cache.
   useEffect(() => {
@@ -139,18 +126,12 @@ export function useGlobalInsight() {
 
     const controller = new AbortController();
     setIsLoading(true);
-    const now = Date.now();
-    const interval = AGGREGATION_INTERVALS[dataAggregationInterval];
-    const fromDate = now - TIME_RANGE_OFFSETS[dataRangeInterval];
-    const toDate = now;
+    const query = periodQueryString(period);
 
     Promise.all(
       missing.map(async (serverId) => {
         const [statsRes, serverRes] = await Promise.all([
-          fetch(
-            `${apiUrl}/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}&interval=${interval}`,
-            { signal: controller.signal }
-          ),
+          fetch(`${apiUrl}/servers/${serverId}/stats?${query}`, { signal: controller.signal }),
           fetch(`${apiUrl}/servers/${serverId}`, { signal: controller.signal }),
         ]);
         if (!statsRes.ok) throw new Error(`Failed to fetch stats for server ${serverId}`);
@@ -176,7 +157,7 @@ export function useGlobalInsight() {
       });
 
     return () => controller.abort();
-  }, [selectedServers, statsCache, dataAggregationInterval, dataRangeInterval, apiUrl]);
+  }, [selectedServers, statsCache, period, apiUrl]);
 
   // Vue projetée pour le chart : on lit le cache dans l'ordre de selectedServers.
   // Les entrées encore en vol sont juste absentes — le chart affiche les autres
@@ -196,10 +177,10 @@ export function useGlobalInsight() {
     setSelectedCategory,
     selectedLanguage,
     setSelectedLanguage,
-    dataRangeInterval,
-    setDataRangeInterval,
-    dataAggregationInterval,
-    setDataAggregationInterval,
+    period,
+    setPeriod,
+    seriesMode,
+    setSeriesMode,
     selectedServers,
     handleSelectionChange,
     resetToFavorites,

@@ -75,17 +75,19 @@ export const getMyServers = (token: string) =>
 export const getServer = (serverId: number) =>
   apiFetch<{ server: Server; stats: ServerStat[]; categories: Category[] }>(`/servers/${serverId}`);
 
+/** `fromDate` omis = depuis la première donnée connue du serveur (vue « Tout »). */
 export const getServerStats = (
   serverId: number,
-  fromDate: EpochTimeStamp,
+  fromDate: EpochTimeStamp | undefined,
   toDate: EpochTimeStamp,
   interval?: string
-) =>
-  apiFetch<ServerStat[]>(
-    `/servers/${serverId}/stats?fromDate=${fromDate}&toDate=${toDate}${
-      interval ? `&interval=${interval}` : ""
-    }`
-  );
+) => {
+  const params = new URLSearchParams({ toDate: String(toDate) });
+  if (fromDate !== undefined) params.set("fromDate", String(fromDate));
+  if (interval) params.set("interval", interval);
+
+  return apiFetch<ServerStat[]>(`/servers/${serverId}/stats?${params}`);
+};
 
 export const deleteServer = async (serverId: number, token: string) => {
   await apiFetch<void>(`/servers/${serverId}`, { method: "DELETE", token });

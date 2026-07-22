@@ -1,8 +1,9 @@
 "use client";
 
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { TimeRangeSelect } from "./selects/time-range-select";
-import { AggregationSelect } from "./selects/aggregation-select";
+import { axisTimeFormat, effectiveResolution } from "@/components/stats/period";
+import { PeriodPicker } from "@/components/stats/period-picker";
+import { SeriesModeToggle } from "@/components/stats/series-mode-toggle";
 import { GlobalStatsChart } from "./charts/global-stats-chart";
 import { ServerSelect } from "./selects/server-select";
 import { CategorySelect } from "./selects/category-select";
@@ -23,25 +24,23 @@ const GlobalInsightSection = () => {
 
   return (
     <section className="w-full rounded-xl border border-border bg-card text-card-foreground shadow-xs">
-      <div className="flex flex-col gap-1.5 border-b border-border px-5 py-4 sm:px-6 sm:py-5">
-        <div className="flex items-center gap-2.5">
-          <Icon icon="material-symbols:analytics-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("globalInsight.title")}</h2>
+      <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-6 sm:py-5">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2.5">
+            <Icon icon="material-symbols:analytics-outline" className="h-5 w-5 shrink-0 text-muted-foreground" />
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">{t("globalInsight.title")}</h2>
+          </div>
+          <p className="text-sm text-muted-foreground sm:pl-9">{t("globalInsight.description")}</p>
         </div>
-        <p className="text-sm text-muted-foreground sm:pl-9">{t("globalInsight.description")}</p>
+        <SeriesModeToggle value={insight.seriesMode} onChange={insight.setSeriesMode} />
       </div>
 
       <div className="flex flex-col gap-4 p-4 sm:p-6">
-        {/* Filters wrap freely; each select grows on mobile so the row stays tidy. */}
+        {/* Filters wrap freely; each control grows on mobile so the row stays tidy. */}
         <div className="flex flex-wrap gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
           <CategorySelect value={insight.selectedCategory} onChange={insight.setSelectedCategory} disabled={insight.filtersDisabled} />
           <LanguageSelect value={insight.selectedLanguage} onChange={insight.setSelectedLanguage} disabled={insight.filtersDisabled} />
-          <TimeRangeSelect value={insight.dataRangeInterval} onChange={insight.setDataRangeInterval} disabled={insight.controlsDisabled} />
-          <AggregationSelect
-            value={insight.dataAggregationInterval}
-            onChange={insight.setDataAggregationInterval}
-            disabled={insight.controlsDisabled}
-          />
+          <PeriodPicker value={insight.period} onChange={insight.setPeriod} disabled={insight.controlsDisabled} />
         </div>
         <ServerSelect selectedServers={insight.selectedServers} onChange={insight.handleSelectionChange} disabled={insight.controlsDisabled} />
         {insight.hasFavorites && (
@@ -82,7 +81,13 @@ const GlobalInsightSection = () => {
             )}
           </div>
         )}
-        <GlobalStatsChart globalStats={insight.globalStats} serverStats={insight.serverStats} isLoading={insight.isLoading} />
+        <GlobalStatsChart
+          globalStats={insight.globalStats}
+          serverStats={insight.serverStats}
+          seriesMode={insight.seriesMode}
+          axisFormat={axisTimeFormat(effectiveResolution(insight.period))}
+          isLoading={insight.isLoading}
+        />
       </div>
     </section>
   );

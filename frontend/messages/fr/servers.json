@@ -36,7 +36,11 @@
     "averagePlayers": "Moyenne de joueurs",
     "medianPlayers": "Médiane de joueurs",
     "dataSince": "Données depuis",
-    "trackedBy": "Suivi par"
+    "trackedBy": "Suivi par",
+    "empty": {
+      "title": "Aucune donnée sur cette période",
+      "description": "Choisissez une plage plus large ou une période plus récente."
+    }
   },
   "detail": {
     "playersOnline": "Joueurs en ligne",
