@@ -1,0 +1,45 @@
+{
+  "period": {
+    "ariaLabel": "Displayed period",
+    "customRange": "{from} → {to}",
+    "tabs": {
+      "presets": "Shortcuts",
+      "custom": "Custom"
+    },
+    "presets": {
+      "24h": "24h",
+      "7d": "7 days",
+      "30d": "30 days",
+      "3mo": "3 months",
+      "6mo": "6 months",
+      "1y": "1 year",
+      "2y": "2 years",
+      "all": "All"
+    },
+    "resolution": "Resolution",
+    "resolutions": {
+      "30 minutes": "30 min",
+      "1 hour": "1h",
+      "6 hours": "6h",
+      "1 day": "1 day",
+      "1 week": "1 week"
+    },
+    "auto": "Auto · {resolution}",
+    "points": "{count, plural, one {# point} other {# points}}",
+    "wholeHistory": "Whole history",
+    "unavailable": {
+      "tooManyPoints": "Too many points for this range",
+      "rangeTooShort": "Range too short for this step"
+    },
+    "from": "From",
+    "to": "To",
+    "previous": "Previous period",
+    "next": "Next period"
+  },
+  "seriesMode": {
+    "ariaLabel": "Highlighted value",
+    "average": "Average",
+    "peak": "Peak",
+    "peakGlobal": "Peak (sum per server)"
+  }
+}

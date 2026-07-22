@@ -39,25 +39,6 @@
     "ariaLabel": "Filtrar por idioma",
     "all": "Todos los idiomas"
   },
-  "timeRangeSelect": {
-    "ariaLabel": "Intervalo de tiempo",
-    "options": {
-      "1day": "24 h",
-      "1week": "7 días",
-      "1month": "30 días",
-      "6months": "6 meses",
-      "1year": "1 año"
-    }
-  },
-  "aggregationSelect": {
-    "ariaLabel": "Intervalo de agregación de datos",
-    "options": {
-      "30min": "30 minutos",
-      "1hour": "1 hora",
-      "6hours": "6 horas",
-      "1day": "1 día"
-    }
-  },
   "serverSelect": {
     "ariaLabel": "Seleccionar servidores para comparar",
     "placeholder": "Buscar un servidor...",

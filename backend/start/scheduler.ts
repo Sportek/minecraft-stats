@@ -312,12 +312,14 @@ scheduler
   .call(async () => {
     const start = Date.now()
     const result = await Database.rawQuery(`
-      INSERT INTO server_stats_hourly (server_id, hour, avg_player_count, max_player_count, samples_count)
+      INSERT INTO server_stats_hourly (server_id, hour, avg_player_count, peak_player_count, min_player_count, max_slot_count, samples_count)
       SELECT
         server_id,
         date_trunc('hour', created_at) AS hour,
         ROUND(AVG(player_count))::int AS avg_player_count,
-        MAX(max_count) AS max_player_count,
+        MAX(player_count)::int AS peak_player_count,
+        MIN(player_count)::int AS min_player_count,
+        MAX(max_count) AS max_slot_count,
         COUNT(*)::int AS samples_count
       FROM server_stats
       WHERE created_at >= date_trunc('hour', now() - interval '1 hour')
@@ -325,13 +327,50 @@ scheduler
         AND server_id IS NOT NULL
       GROUP BY server_id, hour
       ON CONFLICT (server_id, hour) DO UPDATE SET
-        avg_player_count = EXCLUDED.avg_player_count,
-        max_player_count = EXCLUDED.max_player_count,
-        samples_count    = EXCLUDED.samples_count
+        avg_player_count  = EXCLUDED.avg_player_count,
+        peak_player_count = EXCLUDED.peak_player_count,
+        min_player_count  = EXCLUDED.min_player_count,
+        max_slot_count    = EXCLUDED.max_slot_count,
+        samples_count     = EXCLUDED.samples_count
     `)
     const rowCount = result.rowCount ?? 0
     logger.info(
       `SCHEDULER: hourly_stats aggregation completed in ${Date.now() - start}ms (${rowCount} rows upserted)`
+    )
+  })
+  .hourly()
+
+// Palier journalier, agrégé depuis l'horaire (jamais depuis le brut : 24 lignes à
+// lire au lieu de 144). Recalcule hier + aujourd'hui à chaque heure — idempotent,
+// ce qui rattrape la journée en cours au fil de l'eau sans job de fin de journée.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const result = await Database.rawQuery(`
+      INSERT INTO server_stats_daily (server_id, day, avg_player_count, peak_player_count, min_player_count, max_slot_count, samples_count)
+      SELECT
+        server_id,
+        date_trunc('day', hour) AS day,
+        ROUND(
+          SUM(avg_player_count::bigint * samples_count)::numeric /
+          NULLIF(SUM(samples_count), 0)
+        )::int AS avg_player_count,
+        MAX(peak_player_count)::int AS peak_player_count,
+        MIN(min_player_count)::int AS min_player_count,
+        MAX(max_slot_count)::int AS max_slot_count,
+        SUM(samples_count)::int AS samples_count
+      FROM server_stats_hourly
+      WHERE hour >= date_trunc('day', now() - interval '1 day')
+      GROUP BY server_id, day
+      ON CONFLICT (server_id, day) DO UPDATE SET
+        avg_player_count  = EXCLUDED.avg_player_count,
+        peak_player_count = EXCLUDED.peak_player_count,
+        min_player_count  = EXCLUDED.min_player_count,
+        max_slot_count    = EXCLUDED.max_slot_count,
+        samples_count     = EXCLUDED.samples_count
+    `)
+    logger.info(
+      `SCHEDULER: daily_stats aggregation completed in ${Date.now() - start}ms (${result.rowCount ?? 0} rows upserted)`
     )
   })
   .hourly()

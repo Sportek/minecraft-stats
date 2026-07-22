@@ -1,6 +1,8 @@
 interface TooltipData {
   time: Date;
   playerCount: number;
+  /** Seconde ligne, en retrait : le pic sous la moyenne, ou l'inverse. */
+  secondary?: { label: string; value: number };
 }
 
 interface TooltipOptions {
@@ -31,7 +33,24 @@ export const generateTooltipHtml = (
   }).format(data.time);
 
   // Formatage du nombre de joueurs avec séparateur de milliers
-  const formattedPlayerCount = new Intl.NumberFormat(locale).format(data.playerCount);
+  const numberFormat = new Intl.NumberFormat(locale);
+  const formattedPlayerCount = numberFormat.format(data.playerCount);
+
+  const secondaryRow = data.secondary
+    ? `
+      <div style="
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-left: 1rem;
+        color: ${textColor};
+        font-size: 0.8125rem;
+      ">
+        <span>${data.secondary.label}</span>
+        <span style="font-weight: 600;">${numberFormat.format(data.secondary.value)}</span>
+      </div>
+    `
+    : "";
 
   return `
     <div style="
@@ -95,6 +114,7 @@ export const generateTooltipHtml = (
           ">${playersLabel}</span>
         </div>
       </div>
+      ${secondaryRow}
     </div>
   `;
 };

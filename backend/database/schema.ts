@@ -456,11 +456,40 @@ export class ServerStatSchema extends BaseModel {
   declare serverId: number | null
 }
 
+export class ServerStatsDailySchema extends BaseModel {
+  static $columns = [
+    'avgPlayerCount',
+    'day',
+    'maxSlotCount',
+    'minPlayerCount',
+    'peakPlayerCount',
+    'samplesCount',
+    'serverId',
+  ] as const
+  $columns = ServerStatsDailySchema.$columns
+  @column()
+  declare avgPlayerCount: number | null
+  @column.dateTime()
+  declare day: DateTime
+  @column()
+  declare maxSlotCount: number | null
+  @column()
+  declare minPlayerCount: number | null
+  @column()
+  declare peakPlayerCount: number | null
+  @column()
+  declare samplesCount: number
+  @column({ isPrimary: true })
+  declare serverId: number
+}
+
 export class ServerStatsHourlySchema extends BaseModel {
   static $columns = [
     'avgPlayerCount',
     'hour',
-    'maxPlayerCount',
+    'maxSlotCount',
+    'minPlayerCount',
+    'peakPlayerCount',
     'samplesCount',
     'serverId',
   ] as const
@@ -470,7 +499,11 @@ export class ServerStatsHourlySchema extends BaseModel {
   @column.dateTime()
   declare hour: DateTime
   @column()
-  declare maxPlayerCount: number | null
+  declare maxSlotCount: number | null
+  @column()
+  declare minPlayerCount: number | null
+  @column()
+  declare peakPlayerCount: number | null
   @column()
   declare samplesCount: number
   @column({ isPrimary: true })
