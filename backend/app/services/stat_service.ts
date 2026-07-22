@@ -522,7 +522,7 @@ export default class StatsService {
     if (!parsed.isValid) {
       throw new Exception(`Invalid ${field} format`, { status: 400 })
     }
-    return parsed.toSQL()!
+    return parsed.toSQL()
   }
 
   /**
