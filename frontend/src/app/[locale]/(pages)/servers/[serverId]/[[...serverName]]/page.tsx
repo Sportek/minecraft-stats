@@ -13,7 +13,7 @@ import {
 import { AgCharts } from "ag-charts-react";
 
 import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
-import { DEFAULT_PERIOD, Period, toStatsQuery } from "@/components/stats/period";
+import { axisTimeFormat, DEFAULT_PERIOD, effectiveResolution, Period, toStatsQuery } from "@/components/stats/period";
 import { PeriodPicker } from "@/components/stats/period-picker";
 import { SeriesMode, SeriesModeToggle } from "@/components/stats/series-mode-toggle";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
@@ -270,14 +270,19 @@ const ServerPage = () => {
       ],
       theme: resolvedTheme === "dark" ? "ag-default-dark" : "ag-default",
       axes: {
-        x: { ...BASE_AXES.x, min: minDate, max: maxDate },
+        x: {
+          ...BASE_AXES.x,
+          min: minDate,
+          max: maxDate,
+          label: { format: axisTimeFormat(effectiveResolution(period)) },
+        },
         y: {
           ...BASE_AXES.y,
           label: { formatter: ({ value }: { value: number }) => new Intl.NumberFormat(locale).format(value) },
         },
       },
     };
-  }, [stats, seriesMode, resolvedTheme, locale, t, tStats]);
+  }, [stats, period, seriesMode, resolvedTheme, locale, t, tStats]);
 
   if (isServerLoading) {
     return (

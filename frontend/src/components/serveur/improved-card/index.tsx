@@ -54,6 +54,19 @@ const ImprovedCard = ({ server, stats, isLoading }: ImprovedCardProps) => {
     );
   }
 
+  // Une plage personnalisée peut ne couvrir aucune donnée (période antérieure au
+  // serveur, trou de collecte). Sans ce cas, les agrégats plus bas renverraient
+  // MAX_SAFE_INTEGER pour le minimum et NaN pour la moyenne.
+  if (stats.length === 0) {
+    return (
+      <section className="rounded-lg border border-border bg-card p-6 text-center">
+        <Icon icon="material-symbols:search-off" className="mx-auto h-6 w-6 text-muted-foreground" />
+        <p className="mt-2 text-sm font-medium text-foreground">{t("stats.empty.title")}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{t("stats.empty.description")}</p>
+      </section>
+    );
+  }
+
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">

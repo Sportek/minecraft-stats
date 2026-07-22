@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { axisTimeFormat, effectiveResolution } from "@/components/stats/period";
 import { PeriodPicker } from "@/components/stats/period-picker";
 import { SeriesModeToggle } from "@/components/stats/series-mode-toggle";
 import { GlobalStatsChart } from "./charts/global-stats-chart";
@@ -84,6 +85,7 @@ const GlobalInsightSection = () => {
           globalStats={insight.globalStats}
           serverStats={insight.serverStats}
           seriesMode={insight.seriesMode}
+          axisFormat={axisTimeFormat(effectiveResolution(insight.period))}
           isLoading={insight.isLoading}
         />
       </div>

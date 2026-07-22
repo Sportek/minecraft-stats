@@ -101,6 +101,14 @@ export function resolutionAvailability(period: Period, resolution: Resolution): 
   return { available: true };
 }
 
+/**
+ * Format d'étiquette de l'axe temporel. Au-delà du pas journalier, afficher
+ * l'heure ne dit plus rien — et sur deux ans, « 01/11 00:00 » se répète.
+ */
+export function axisTimeFormat(resolution: Resolution): string {
+  return RESOLUTION_MS[resolution] >= DAY ? "%d/%m/%y" : "%d/%m %H:%M";
+}
+
 export interface StatsQuery {
   /** Absent = depuis la première donnée connue. */
   fromDate?: number;

@@ -34,6 +34,8 @@ interface GlobalStatsChartProps {
   globalStats: ServerStat[];
   serverStats: { server: Server; stats: ServerStat[] }[];
   seriesMode: SeriesMode;
+  /** Format d'étiquette de l'axe temporel, dérivé de la résolution (cf. `axisTimeFormat`). */
+  axisFormat: string;
   isLoading: boolean;
 }
 
@@ -159,7 +161,7 @@ const createAreaSeries = ({
   } as AgAreaSeriesOptions;
 };
 
-export const GlobalStatsChart = ({ globalStats = [], serverStats = [], seriesMode, isLoading }: GlobalStatsChartProps) => {
+export const GlobalStatsChart = ({ globalStats = [], serverStats = [], seriesMode, axisFormat, isLoading }: GlobalStatsChartProps) => {
   const { resolvedTheme } = useTheme();
   const locale = useLocale();
   const t = useTranslations("Home");
@@ -219,7 +221,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], seriesMod
         ],
         theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
         axes: {
-          x: { ...BASE_AXES.x, min: minDate, max: maxDate },
+          x: { ...BASE_AXES.x, min: minDate, max: maxDate, label: { format: axisFormat } },
           y: BASE_AXES.y,
         }
       } as AgCartesianChartOptions;
@@ -279,7 +281,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], seriesMod
         series,
         theme: resolvedTheme === 'dark' ? 'ag-default-dark' : 'ag-default',
         axes: {
-          x: { ...BASE_AXES.x, min: minDate, max: maxDate },
+          x: { ...BASE_AXES.x, min: minDate, max: maxDate, label: { format: axisFormat } },
           y: BASE_AXES.y,
         }
       } as AgCartesianChartOptions;
@@ -287,7 +289,7 @@ export const GlobalStatsChart = ({ globalStats = [], serverStats = [], seriesMod
       console.error('Error processing server stats:', error);
       return createEmptyChartOptions(resolvedTheme);
     }
-  }, [globalStats, serverStats, seriesMode, resolvedTheme, locale, t, tStats]);
+  }, [globalStats, serverStats, seriesMode, axisFormat, resolvedTheme, locale, t, tStats]);
 
   return (
     <div className="flex flex-col gap-2">
