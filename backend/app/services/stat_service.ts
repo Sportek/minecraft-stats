@@ -33,6 +33,25 @@ const ROLLUPS = {
 type RollupTier = keyof typeof ROLLUPS
 type StatsSource = RollupTier | 'raw'
 
+/**
+ * Journée type : au-delà de cette fenêtre, le brut ferait scanner ~150 lignes par
+ * jour et par serveur pour une seule page. On bascule sur le rollup horaire, dont
+ * la granularité plafonne les créneaux à 1 h au lieu de 30 min.
+ */
+const RHYTHM_RAW_MAX_DAYS = 31
+
+type DayType = 'weekday' | 'weekend'
+
+interface RhythmSlot {
+  slot: number
+  minuteOfDay: number
+  playerCount: number
+  peakPlayerCount: number
+  minPlayerCount: number
+  samplesCount: number
+  daysCount: number
+}
+
 export default class StatsService {
   static convertToCamelCase(input: {
     server_id: number
@@ -287,6 +306,179 @@ export default class StatsService {
       toDate: toDateSql,
     })
     return result.rows
+  }
+
+  /**
+   * Agrège les relevés par créneau horaire **local** et par type de jour.
+   *
+   * Le brut est normalisé sur les colonnes du rollup (un relevé = un sample) pour
+   * qu'une seule expression d'agrégat serve les deux sources. La sous-requête
+   * convertit une fois pour toutes en heure locale : `EXTRACT` et `::date` en aval
+   * raisonnent alors sur l'horloge du visiteur, pas sur UTC.
+   */
+  private static async getRhythmRows(params: {
+    source: 'raw' | 'hourly'
+    serverId: number
+    fromDateSql: string
+    toDateSql: string
+    timezone: string
+  }) {
+    const isRaw = params.source === 'raw'
+
+    // `CAST(... AS text)` plutôt que `::text` : un paramètre de type inconnu rendrait
+    // `timezone(unknown, timestamptz)` ambigu pour Postgres, et la syntaxe `::` entre
+    // en conflit avec les bindings d'identifiant de Knex (`:nom:`).
+    const localTime = (column: string) => `${column} AT TIME ZONE CAST(:timezone AS text)`
+
+    const localised = isRaw
+      ? `SELECT ${localTime('created_at')} AS local,
+                player_count AS avg_player_count,
+                player_count AS peak_player_count,
+                player_count AS min_player_count,
+                1 AS samples_count
+           FROM server_stats
+          WHERE server_id = :serverId
+            AND created_at >= :fromDate AND created_at < :toDate
+            AND player_count IS NOT NULL`
+      : `SELECT ${localTime('hour')} AS local,
+                avg_player_count, peak_player_count, min_player_count, samples_count
+           FROM server_stats_hourly
+          WHERE server_id = :serverId
+            AND hour >= :fromDate AND hour < :toDate
+            AND avg_player_count IS NOT NULL`
+
+    const slotExpr = isRaw
+      ? `EXTRACT(hour FROM local)::int * 2 + FLOOR(EXTRACT(minute FROM local) / 30)::int`
+      : `EXTRACT(hour FROM local)::int`
+
+    const query = `
+      SELECT
+        CASE WHEN EXTRACT(isodow FROM local) >= 6 THEN 'weekend' ELSE 'weekday' END AS day_type,
+        ${slotExpr} AS slot,
+        ROUND(
+          SUM(avg_player_count::bigint * samples_count)::numeric /
+          NULLIF(SUM(samples_count), 0)
+        )::int AS player_count,
+        MAX(COALESCE(peak_player_count, avg_player_count))::int AS peak_player_count,
+        MIN(COALESCE(min_player_count, avg_player_count))::int AS min_player_count,
+        SUM(samples_count)::int AS samples_count,
+        COUNT(DISTINCT local::date)::int AS days_count
+      FROM (${localised}) s
+      GROUP BY 1, 2
+      ORDER BY 1, 2
+    `
+
+    const result = await Database.rawQuery(query, {
+      serverId: params.serverId,
+      fromDate: params.fromDateSql,
+      toDate: params.toDateSql,
+      timezone: params.timezone,
+    })
+    return result.rows as Array<{
+      day_type: DayType
+      slot: number
+      player_count: number
+      peak_player_count: number
+      min_player_count: number
+      samples_count: number
+      days_count: number
+    }>
+  }
+
+  /**
+   * Fusionne semaine et week-end en une série « tous les jours ». Les deux portent
+   * des dates disjointes, donc sommer `daysCount` est exact ; la moyenne, elle,
+   * doit être repondérée par `samplesCount` — un week-end pèse deux jours sur sept.
+   */
+  private static mergeRhythmSeries(series: RhythmSlot[][]): RhythmSlot[] {
+    const bySlot = new Map<number, RhythmSlot>()
+
+    for (const slot of series.flat()) {
+      const known = bySlot.get(slot.slot)
+      if (!known) {
+        bySlot.set(slot.slot, { ...slot })
+        continue
+      }
+
+      const samplesCount = known.samplesCount + slot.samplesCount
+      bySlot.set(slot.slot, {
+        slot: slot.slot,
+        minuteOfDay: slot.minuteOfDay,
+        playerCount: Math.round(
+          (known.playerCount * known.samplesCount + slot.playerCount * slot.samplesCount) /
+            samplesCount
+        ),
+        peakPlayerCount: Math.max(known.peakPlayerCount, slot.peakPlayerCount),
+        minPlayerCount: Math.min(known.minPlayerCount, slot.minPlayerCount),
+        samplesCount,
+        daysCount: known.daysCount + slot.daysCount,
+      })
+    }
+
+    return [...bySlot.values()].sort((a, b) => a.slot - b.slot)
+  }
+
+  /**
+   * « Journée type » : l'historique replié sur 24 h. Chaque créneau porte la moyenne
+   * des relevés tombés à cette heure-là sur la fenêtre demandée, ce qui répond à une
+   * question que la chronologie ne sait pas poser — *quand* ce serveur est-il vivant.
+   *
+   * Le découpage se fait dans le fuseau de celui qui lit (`timezone`) et non en UTC :
+   * un pic « à 21 h » ne veut rien dire sans une horloge de référence.
+   */
+  static async getDailyRhythm(params: { server_id: number; days: number; timezone: string }) {
+    const toMs = Date.now()
+    const fromMs = toMs - params.days * DAY_SECONDS * 1000
+    const shared = {
+      serverId: params.server_id,
+      fromDateSql: DateTime.fromMillis(fromMs).toSQL()!,
+      toDateSql: DateTime.fromMillis(toMs).toSQL()!,
+      timezone: params.timezone,
+    }
+
+    let source: 'raw' | 'hourly' = params.days <= RHYTHM_RAW_MAX_DAYS ? 'raw' : 'hourly'
+    let rows = await this.getRhythmRows({ ...shared, source })
+
+    // Même repli transparent que `getStatsWithInterval` : tant que le backfill horaire
+    // n'a pas couvert la plage, mieux vaut un brut coûteux qu'une réponse vide.
+    if (source === 'hourly' && rows.length === 0) {
+      logger.warn(shared, 'hourly rollup empty for rhythm range — falling back to server_stats')
+      source = 'raw'
+      rows = await this.getRhythmRows({ ...shared, source })
+    }
+
+    const slotMinutes = source === 'raw' ? 30 : 60
+    const toSlot = (row: (typeof rows)[number]): RhythmSlot => ({
+      slot: row.slot,
+      minuteOfDay: row.slot * slotMinutes,
+      playerCount: row.player_count,
+      peakPlayerCount: row.peak_player_count,
+      minPlayerCount: row.min_player_count,
+      samplesCount: row.samples_count,
+      daysCount: row.days_count,
+    })
+
+    const weekday = rows.filter((row) => row.day_type === 'weekday').map(toSlot)
+    const weekend = rows.filter((row) => row.day_type === 'weekend').map(toSlot)
+    const all = this.mergeRhythmSeries([weekday, weekend])
+
+    // Un serveur qui ne répond que le soir n'a de relevés que sur ses créneaux du
+    // soir : le maximum, et non la moyenne, donne le nombre de jours réellement vus.
+    const daysObserved = (series: RhythmSlot[]) =>
+      series.reduce((max, slot) => Math.max(max, slot.daysCount), 0)
+
+    return {
+      timezone: params.timezone,
+      slotMinutes,
+      from: DateTime.fromMillis(fromMs).toISO(),
+      to: DateTime.fromMillis(toMs).toISO(),
+      daysObserved: {
+        all: daysObserved(all),
+        weekday: daysObserved(weekday),
+        weekend: daysObserved(weekend),
+      },
+      series: { all, weekday, weekend },
+    }
   }
 
   /**

@@ -41,5 +41,45 @@
     "average": "Moyenne",
     "peak": "Pic",
     "peakGlobal": "Pic (somme par serveur)"
+  },
+  "rhythm": {
+    "title": "Journée type",
+    "subtitle": "L'historique replié sur 24 h, pour voir quand ce serveur est vivant.",
+    "dayType": {
+      "ariaLabel": "Jours pris en compte",
+      "all": "Tous les jours",
+      "weekday": "Semaine",
+      "weekend": "Week-end"
+    },
+    "summary": {
+      "lead": "Le serveur est au plus haut de <b>{from}</b> à <b>{to}</b>.",
+      "detailAverage": "<b>{peak}</b> joueurs en moyenne vers {peakAt}, contre <b>{low}</b> au creux de {lowAt}.",
+      "detailPeak": "<b>{peak}</b> joueurs au plus haut vers {peakAt}, contre <b>{low}</b> au creux de {lowAt}.",
+      "flatLead": "Ce serveur n'a pas d'heure de pointe marquée.",
+      "flatDetail": "L'affluence reste du même ordre tout au long des 24 h."
+    },
+    "slot": {
+      "leadAverage": "<b>{time}</b> · <b>{count}</b> joueurs en moyenne",
+      "leadPeak": "<b>{time}</b> · <b>{count}</b> joueurs au plus haut",
+      "detailAverage": "Jusqu'à <b>{other}</b> au plus haut, sur {days, plural, one {# jour relevé} other {# jours relevés}}.",
+      "detailPeak": "<b>{other}</b> en moyenne, sur {days, plural, one {# jour relevé} other {# jours relevés}}.",
+      "emptyLead": "<b>{time}</b> · aucun relevé",
+      "emptyDetail": "Le serveur n'a répondu à aucun ping sur ce créneau."
+    },
+    "bracket": "Pleine affluence {from} – {to}",
+    "now": "maintenant",
+    "footnote": "{days, plural, one {# jour observé} other {# jours observés}} · créneaux de {minutes} min · {timezone}",
+    "stripAria": "Affluence par créneau. Flèches gauche et droite pour parcourir la journée.",
+    "table": {
+      "caption": "Affluence par créneau",
+      "slot": "Créneau",
+      "average": "Moyenne",
+      "peak": "Plus haut relevé"
+    },
+    "empty": {
+      "title": "Pas encore de journée type",
+      "description": "Il faut au moins {min} jours de relevés pour la dessiner. Ce serveur en a {count, plural, =0 {aucun} one {un} other {#}}."
+    },
+    "error": "La journée type n'a pas pu être chargée. Elle réapparaîtra au prochain rafraîchissement."
   }
 }
