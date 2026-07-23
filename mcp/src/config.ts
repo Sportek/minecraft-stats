@@ -73,6 +73,7 @@ export const PUBLIC_ENDPOINTS: ReadonlySet<string> = new Set([
   'get /api/v1/servers/{id}',
   'get /api/v1/servers/{server_id}/categories',
   'get /api/v1/servers/{server_id}/stats',
+  'get /api/v1/servers/{server_id}/stats/daily-rhythm',
   'get /api/v1/global-stats',
   'get /api/v1/website-stats',
   'get /api/v1/categories',

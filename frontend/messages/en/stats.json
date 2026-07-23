@@ -41,5 +41,55 @@
     "average": "Average",
     "peak": "Peak",
     "peakGlobal": "Peak (sum per server)"
+  },
+  "rhythm": {
+    "title": "Typical day",
+    "subtitle": "The history folded onto 24 hours, to see when this server is alive.",
+    "window": {
+      "ariaLabel": "Observation window"
+    },
+    "dayType": {
+      "ariaLabel": "Days included",
+      "all": "All days",
+      "weekday": "Weekdays",
+      "weekend": "Weekends",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday"
+    },
+    "summary": {
+      "lead": "The server is busiest from <b>{from}</b> to <b>{to}</b>.",
+      "detailAverage": "<b>{peak}</b> players on average around {peakAt}, against <b>{low}</b> at the {lowAt} lull.",
+      "detailPeak": "<b>{peak}</b> players at peak around {peakAt}, against <b>{low}</b> at the {lowAt} lull.",
+      "flatLead": "This server has no distinct rush hour.",
+      "flatDetail": "Its player count stays in the same range around the clock."
+    },
+    "slot": {
+      "leadAverage": "<b>{time}</b> · <b>{count}</b> players on average",
+      "leadPeak": "<b>{time}</b> · <b>{count}</b> players at peak",
+      "detailAverage": "Up to <b>{other}</b> at peak, across {days, plural, one {# recorded day} other {# recorded days}}.",
+      "detailPeak": "<b>{other}</b> on average, across {days, plural, one {# recorded day} other {# recorded days}}.",
+      "emptyLead": "<b>{time}</b> · nothing recorded",
+      "emptyDetail": "The server answered no ping in this slot."
+    },
+    "bracket": "Busiest {from} – {to}",
+    "now": "now",
+    "footnote": "{days, plural, one {# day observed} other {# days observed}} · {minutes}-minute slots · {timezone}",
+    "stripAria": "Player count by slot. Use the left and right arrows to move through the day.",
+    "table": {
+      "caption": "Player count by slot",
+      "slot": "Slot",
+      "average": "Average",
+      "peak": "Highest recorded"
+    },
+    "empty": {
+      "title": "No typical day yet",
+      "description": "It takes at least {min} days of records to draw one. This server has {count, plural, =0 {none} one {one} other {#}}."
+    },
+    "error": "The typical day could not load. It will come back on the next refresh."
   }
 }

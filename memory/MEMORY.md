@@ -8,3 +8,4 @@
 - [Pas de trailer Co-Authored-By](no-coauthor-trailer.md) — ne jamais ajouter d'attribution IA aux commits/PRs
 - [Architecture i18n](i18n-architecture.md) — FR/EN via next-intl (routing hybride domaine+préfixe, catalogue messages/<locale>/<feature>.json) + @adonisjs/i18n ; contenu BDD mono-langue
 - [Rollups stats & backfill](stats-rollups-backfill.md) — 3 paliers brut/horaire/journalier ; rejouer les backfills après toute migration de colonne, horaire AVANT journalier
+- [Base de dev locale](local-dev-database.md) — la commande docker de CLAUDE.md est fausse ; PostgreSQL natif déjà sur 5432, dump arrêté au 18/05/2026

@@ -13,6 +13,7 @@ import {
 import { AgCharts } from "ag-charts-react";
 
 import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
+import { DailyRhythm } from "@/components/stats/daily-rhythm";
 import { axisTimeFormat, DEFAULT_PERIOD, effectiveResolution, Period, toStatsQuery } from "@/components/stats/period";
 import { PeriodPicker } from "@/components/stats/period-picker";
 import { SeriesMode, SeriesModeToggle } from "@/components/stats/series-mode-toggle";
@@ -376,6 +377,11 @@ const ServerPage = () => {
             <AgCharts options={options} className="h-full w-full" />
           </div>
         </div>
+
+        {/* Même donnée, repliée sur une journée : la chronologie dit comment le serveur
+            évolue, la bande dit à quelle heure il se remplit. Sa fenêtre est réglée
+            indépendamment de la période du graphe ci-dessus. */}
+        <DailyRhythm serverId={Number(serverId)} seriesMode={seriesMode} />
       </section>
 
       <ImprovedCard
