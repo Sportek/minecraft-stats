@@ -52,6 +52,12 @@ export function periodRangeMs(period: Period): number | null {
   return period.preset === "all" ? null : PRESET_RANGE_MS[period.preset];
 }
 
+/** Durée couverte en jours entiers, ou `null` pour « Tout » — même réserve que ci-dessus. */
+export function periodRangeDays(period: Period): number | null {
+  const rangeMs = periodRangeMs(period);
+  return rangeMs === null ? null : Math.max(1, Math.round(rangeMs / DAY));
+}
+
 /**
  * Résolution automatique : la plus fine qui reste lisible sur la plage, et qui
  * ne fait pas basculer la requête sur la table brute pour rien (les buckets

@@ -2,6 +2,7 @@ import {
   AdminOwnershipClaim,
   Category,
   ClaimStatus,
+  DailyRhythm,
   DnsInstructions,
   MotdInstructions,
   Server,
@@ -87,6 +88,13 @@ export const getServerStats = (
   if (interval) params.set("interval", interval);
 
   return apiFetch<ServerStat[]>(`/servers/${serverId}/stats?${params}`);
+};
+
+/** Journée type : l'historique replié sur 24 h, découpé dans le fuseau du lecteur. */
+export const getServerDailyRhythm = (serverId: number, days: number, timezone: string) => {
+  const params = new URLSearchParams({ days: String(days), timezone });
+
+  return apiFetch<DailyRhythm>(`/servers/${serverId}/stats/daily-rhythm?${params}`);
 };
 
 export const deleteServer = async (serverId: number, token: string) => {

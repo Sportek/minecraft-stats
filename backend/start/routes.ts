@@ -104,6 +104,10 @@ router
       .use('*', throttleLight('servers.stats', 40))
 
     router
+      .get('servers/:server_id/stats/daily-rhythm', '#controllers/stats_controller.dailyRhythm')
+      .use([throttleLight('servers.stats.rhythm', 40), PUBLIC_STATS])
+
+    router
       .get('global-stats', '#controllers/stats_controller.globalStats')
       .use([throttleLight('global-stats', 40), PUBLIC_STATS])
 

@@ -105,6 +105,35 @@ export interface ServerStat {
   createdAt: Date;
 }
 
+export type DayType = "all" | "weekday" | "weekend";
+
+/**
+ * Un créneau de la journée type. `slot` est indexé depuis minuit dans le fuseau
+ * demandé ; sa largeur est portée par `slotMinutes` de la réponse, pas par le type.
+ */
+export interface DailyRhythmSlot {
+  slot: number;
+  minuteOfDay: number;
+  /** Moyenne des relevés tombés sur ce créneau, tous jours confondus. */
+  playerCount: number;
+  peakPlayerCount: number;
+  minPlayerCount: number;
+  samplesCount: number;
+  /** Nombre de jours distincts ayant alimenté ce créneau. */
+  daysCount: number;
+}
+
+export interface DailyRhythm {
+  timezone: string;
+  /** 30 sur les fenêtres courtes (données brutes), 60 au-delà (rollup horaire). */
+  slotMinutes: number;
+  from: string;
+  to: string;
+  daysObserved: Record<DayType, number>;
+  /** Les créneaux sans aucun relevé sont absents — ce n'est pas « zéro joueur ». */
+  series: Record<DayType, DailyRhythmSlot[]>;
+}
+
 export interface ServerGrowthStat {
   serverId: number;
   weeklyGrowth: number | null;
