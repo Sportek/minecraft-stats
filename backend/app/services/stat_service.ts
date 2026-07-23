@@ -40,7 +40,15 @@ type StatsSource = RollupTier | 'raw'
  */
 const RHYTHM_RAW_MAX_DAYS = 31
 
-type DayType = 'weekday' | 'weekend'
+/**
+ * Journée type déclinée par jour de semaine. On expose les sept jours pris un à un
+ * (pour lire un évènement récurrent — le raid du samedi soir, la maintenance du
+ * mardi) et les trois regroupements usuels, tous dérivés d'une même requête groupée
+ * par `isodow`. Les clés `mon`…`sun` suivent l'ISO (lundi = 1).
+ */
+const ISO_WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
+type IsoWeekday = (typeof ISO_WEEKDAYS)[number]
+type RhythmView = 'all' | 'weekday' | 'weekend' | IsoWeekday
 
 interface RhythmSlot {
   slot: number
@@ -309,7 +317,9 @@ export default class StatsService {
   }
 
   /**
-   * Agrège les relevés par créneau horaire **local** et par type de jour.
+   * Agrège les relevés par créneau horaire **local** et par jour de semaine (`isodow`,
+   * lundi = 1). Les regroupements semaine/week-end/tous se font ensuite côté Node, à
+   * partir de ces sept séries, sans repayer la requête.
    *
    * Le brut est normalisé sur les colonnes du rollup (un relevé = un sample) pour
    * qu'une seule expression d'agrégat serve les deux sources. La sous-requête
@@ -353,7 +363,7 @@ export default class StatsService {
 
     const query = `
       SELECT
-        CASE WHEN EXTRACT(isodow FROM local) >= 6 THEN 'weekend' ELSE 'weekday' END AS day_type,
+        EXTRACT(isodow FROM local)::int AS iso_dow,
         ${slotExpr} AS slot,
         ROUND(
           SUM(avg_player_count::bigint * samples_count)::numeric /
@@ -375,7 +385,7 @@ export default class StatsService {
       timezone: params.timezone,
     })
     return result.rows as Array<{
-      day_type: DayType
+      iso_dow: number
       slot: number
       player_count: number
       peak_player_count: number
@@ -386,9 +396,10 @@ export default class StatsService {
   }
 
   /**
-   * Fusionne semaine et week-end en une série « tous les jours ». Les deux portent
-   * des dates disjointes, donc sommer `daysCount` est exact ; la moyenne, elle,
-   * doit être repondérée par `samplesCount` — un week-end pèse deux jours sur sept.
+   * Fusionne plusieurs séries par jour en une seule. Les jours portent des dates
+   * disjointes, donc sommer `daysCount` est exact ; la moyenne, elle, doit être
+   * repondérée par `samplesCount` — un samedi peu suivi ne doit pas peser autant
+   * qu'un vendredi plein dans la moyenne « semaine ».
    */
   private static mergeRhythmSeries(series: RhythmSlot[][]): RhythmSlot[] {
     const bySlot = new Map<number, RhythmSlot>()
@@ -458,26 +469,37 @@ export default class StatsService {
       daysCount: row.days_count,
     })
 
-    const weekday = rows.filter((row) => row.day_type === 'weekday').map(toSlot)
-    const weekend = rows.filter((row) => row.day_type === 'weekend').map(toSlot)
-    const all = this.mergeRhythmSeries([weekday, weekend])
+    // Une série par jour ISO (lundi = 1). Les regroupements ne sont que des fusions.
+    const byWeekday = ISO_WEEKDAYS.map((_, index) =>
+      rows.filter((row) => row.iso_dow === index + 1).map(toSlot)
+    )
+    const perDay = Object.fromEntries(
+      ISO_WEEKDAYS.map((day, index) => [day, byWeekday[index]])
+    ) as Record<IsoWeekday, RhythmSlot[]>
+
+    const series: Record<RhythmView, RhythmSlot[]> = {
+      ...perDay,
+      weekday: this.mergeRhythmSeries(byWeekday.slice(0, 5)),
+      weekend: this.mergeRhythmSeries(byWeekday.slice(5)),
+      all: this.mergeRhythmSeries(byWeekday),
+    }
 
     // Un serveur qui ne répond que le soir n'a de relevés que sur ses créneaux du
     // soir : le maximum, et non la moyenne, donne le nombre de jours réellement vus.
-    const daysObserved = (series: RhythmSlot[]) =>
-      series.reduce((max, slot) => Math.max(max, slot.daysCount), 0)
+    const daysObserved = Object.fromEntries(
+      Object.entries(series).map(([view, slots]) => [
+        view,
+        slots.reduce((max, slot) => Math.max(max, slot.daysCount), 0),
+      ])
+    ) as Record<RhythmView, number>
 
     return {
       timezone: params.timezone,
       slotMinutes,
       from: DateTime.fromMillis(fromMs).toISO(),
       to: DateTime.fromMillis(toMs).toISO(),
-      daysObserved: {
-        all: daysObserved(all),
-        weekday: daysObserved(weekday),
-        weekend: daysObserved(weekend),
-      },
-      series: { all, weekday, weekend },
+      daysObserved,
+      series,
     }
   }
 

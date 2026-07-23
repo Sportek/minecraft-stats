@@ -45,11 +45,21 @@
   "rhythm": {
     "title": "Journée type",
     "subtitle": "L'historique replié sur 24 h, pour voir quand ce serveur est vivant.",
+    "window": {
+      "ariaLabel": "Fenêtre d'observation"
+    },
     "dayType": {
       "ariaLabel": "Jours pris en compte",
       "all": "Tous les jours",
       "weekday": "Semaine",
-      "weekend": "Week-end"
+      "weekend": "Week-end",
+      "mon": "Lundi",
+      "tue": "Mardi",
+      "wed": "Mercredi",
+      "thu": "Jeudi",
+      "fri": "Vendredi",
+      "sat": "Samedi",
+      "sun": "Dimanche"
     },
     "summary": {
       "lead": "Le serveur est au plus haut de <b>{from}</b> à <b>{to}</b>.",

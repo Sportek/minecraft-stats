@@ -104,6 +104,33 @@ test.group('Daily rhythm', (group) => {
     assert.equal(rhythm.series.weekend.length, 48)
   })
 
+  test('décline la journée type par jour de semaine', async ({ assert }) => {
+    const server = await createServer()
+    // 21 jours pleins = 3 occurrences de chaque jour de semaine, où qu’on démarre.
+    await seedStats(server.id, 21, DateTime.now().setZone(PARIS).startOf('day'))
+
+    const rhythm = await StatsService.getDailyRhythm({
+      server_id: server.id,
+      days: 23,
+      timezone: PARIS,
+    })
+
+    const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
+    for (const day of days) {
+      assert.equal(rhythm.series[day].length, 48, `${day} devrait couvrir 48 créneaux`)
+      assert.equal(rhythm.daysObserved[day], 3, `${day} devrait compter 3 occurrences`)
+    }
+
+    // Les sept jours cumulés retombent sur le total « tous les jours ».
+    const summed = days.reduce((total, day) => total + rhythm.daysObserved[day], 0)
+    assert.equal(summed, rhythm.daysObserved.all)
+
+    // Le profil d’un jour isolé garde le même pic que la vue « semaine ».
+    const mondayPeak = Math.max(...rhythm.series.mon.map((slot) => slot.playerCount))
+    const weekdayPeak = Math.max(...rhythm.series.weekday.map((slot) => slot.playerCount))
+    assert.equal(mondayPeak, weekdayPeak)
+  })
+
   test('décale les créneaux quand le fuseau change', async ({ assert }) => {
     const server = await createServer()
     await seedStats(server.id, 10, DateTime.now().setZone(PARIS).startOf('day'))

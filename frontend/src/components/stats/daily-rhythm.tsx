@@ -1,28 +1,42 @@
 "use client";
 
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getServerDailyRhythm } from "@/http/server";
 import { cn } from "@/lib/utils";
-import { DayType } from "@/types/server";
-import { useFormatter, useTranslations } from "next-intl";
+import { DayType, ISO_WEEKDAYS } from "@/types/server";
+import { DateTimeFormatOptions, useFormatter, useTranslations } from "next-intl";
 import { KeyboardEvent, ReactNode, useState, useSyncExternalStore } from "react";
 import useSWR from "swr";
-import { Period, periodRangeDays } from "./period";
-import {
-  densify,
-  extremes,
-  MAX_RHYTHM_DAYS,
-  MIN_RHYTHM_DAYS,
-  primeSegments,
-  primeWindow,
-} from "./rhythm";
-import { Segmented } from "./segmented";
+import { extremes, MIN_RHYTHM_DAYS, primeSegments, primeWindow, densify } from "./rhythm";
 import { SeriesMode } from "./series-mode-toggle";
 
-const DAY_TYPES: readonly DayType[] = ["all", "weekday", "weekend"];
 const MINUTES_PER_DAY = 24 * 60;
 const RULER_HOURS = [0, 6, 12, 18, 24];
 const CURSOR_STEPS: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1 };
+
+/**
+ * Fenêtres d'observation, indépendantes de la période du graphe chronologique.
+ * Les étiquettes reprennent le vocabulaire des raccourcis de période, mais une
+ * fenêtre courte convient mal à un jour de semaine isolé (peu d'occurrences) :
+ * l'un se règle donc sans l'autre. Le pas de créneau (30 ou 60 min) en découle
+ * côté backend, on ne le choisit pas ici.
+ */
+const WINDOWS = [
+  { days: 7, preset: "7d" },
+  { days: 30, preset: "30d" },
+  { days: 90, preset: "3mo" },
+  { days: 365, preset: "1y" },
+] as const;
+
+const DEFAULT_WINDOW_DAYS = 30;
 
 /** Les bornes du cadran tombent sur les bords de la bande : elles s'alignent dessus. */
 const TICK_OFFSET: Record<number, string> = { 0: "", 24: "-translate-x-full" };
@@ -50,7 +64,6 @@ const readNowMinutes = () => {
 
 interface DailyRhythmProps {
   serverId: number;
-  period: Period;
   seriesMode: SeriesMode;
 }
 
@@ -59,19 +72,21 @@ interface DailyRhythmProps {
  * relevés tombés à cette heure-là. La chronologie du dessus dit comment le serveur
  * évolue ; cette bande dit *quand* il est vivant.
  *
- * Le survol — ou les flèches — réécrit la ligne de lecture au-dessus de la bande
- * plutôt que d'ouvrir une infobulle : ça se place toujours bien, ça marche au
- * doigt, et la phrase par défaut répond déjà à la question qu'on vient poser.
+ * Sa fenêtre et son jour de semaine se règlent ici, pas depuis le graphe du dessus :
+ * lire « les samedis des 90 derniers jours » n'a pas à changer la période de la
+ * chronologie. Le survol — ou les flèches — réécrit la ligne de lecture au-dessus de
+ * la bande plutôt que d'ouvrir une infobulle : ça se place toujours bien, ça marche
+ * au doigt, et la phrase par défaut répond déjà à la question qu'on vient poser.
  */
-export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) => {
+export const DailyRhythm = ({ serverId, seriesMode }: DailyRhythmProps) => {
   const t = useTranslations("Stats");
   const format = useFormatter();
+  const [days, setDays] = useState<number>(DEFAULT_WINDOW_DAYS);
   const [dayType, setDayType] = useState<DayType>("all");
   const [rawCursor, setCursor] = useState<number | null>(null);
   const timezone = useSyncExternalStore(subscribeNever, readTimezone, readNothing);
   const nowMinutes = useSyncExternalStore(subscribeToMinute, readNowMinutes, readNothing);
 
-  const days = periodRangeDays(period) ?? MAX_RHYTHM_DAYS;
   const { data, error, isLoading } = useSWR(
     timezone ? (["server-rhythm", serverId, days, timezone] as const) : null,
     ([, id, rangeDays, zone]) => getServerDailyRhythm(id, rangeDays, zone),
@@ -80,7 +95,7 @@ export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) 
 
   const slotMinutes = data?.slotMinutes ?? 30;
   const slotCount = MINUTES_PER_DAY / slotMinutes;
-  // Changer de période peut faire passer la bande de 48 à 24 créneaux : un curseur
+  // Changer de fenêtre peut faire passer la bande de 48 à 24 créneaux : un curseur
   // hérité de la granularité précédente ne désigne alors plus rien.
   const cursor = rawCursor !== null && rawCursor < slotCount ? rawCursor : null;
 
@@ -93,16 +108,16 @@ export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) 
   const observed = data?.daysObserved[dayType] ?? 0;
 
   const bold = { b: (chunks: ReactNode) => <b className="font-semibold text-foreground">{chunks}</b> };
-  // Les bornes d'une plage tombent une fois sur deux sur la demi-heure : les afficher
-  // à l'heure pleine décalerait l'étiquette de 30 min par rapport au crochet tracé.
-  const timeLabel = (minute: number) =>
-    format.dateTime(new Date(2000, 0, 1, Math.floor(minute / 60) % 24, minute % 60), {
-      hour: "numeric",
-      minute: "2-digit",
+  // Les libellés d'heure sont des heures d'horloge — l'API a déjà converti dans le
+  // fuseau du lecteur. On les construit et les formate en UTC pour que le fuseau
+  // configuré côté next-intl ne les redécale pas (sinon minuit s'affiche « 5 h »).
+  const clockLabel = (minute: number, options: DateTimeFormatOptions) =>
+    format.dateTime(new Date(Date.UTC(2000, 0, 1, Math.floor(minute / 60) % 24, minute % 60)), {
+      ...options,
+      timeZone: "UTC",
     });
-  /** Réservé aux graduations, qui tombent toujours sur une heure pleine. */
-  const hourLabel = (hour: number) =>
-    format.dateTime(new Date(2000, 0, 1, hour % 24), { hour: "numeric" });
+  const timeLabel = (minute: number) => clockLabel(minute, { hour: "numeric", minute: "2-digit" });
+  const hourLabel = (hour: number) => clockLabel(hour * 60, { hour: "numeric" });
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const step = CURSOR_STEPS[event.key];
@@ -122,6 +137,40 @@ export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) 
     if (event.key === "Escape") setCursor(null);
   };
 
+  const controls = (
+    <div className="flex flex-wrap gap-2">
+      <Select value={String(days)} onValueChange={(value) => setDays(Number(value))}>
+        <SelectTrigger className="h-9 w-auto gap-1.5 text-xs font-medium" aria-label={t("rhythm.window.ariaLabel")}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {WINDOWS.map((window) => (
+            <SelectItem key={window.days} value={String(window.days)}>
+              {t(`period.presets.${window.preset}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select value={dayType} onValueChange={(value) => setDayType(value as DayType)}>
+        <SelectTrigger className="h-9 w-auto gap-1.5 text-xs font-medium" aria-label={t("rhythm.dayType.ariaLabel")}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t("rhythm.dayType.all")}</SelectItem>
+          <SelectSeparator />
+          <SelectItem value="weekday">{t("rhythm.dayType.weekday")}</SelectItem>
+          <SelectItem value="weekend">{t("rhythm.dayType.weekend")}</SelectItem>
+          <SelectSeparator />
+          {ISO_WEEKDAYS.map((day) => (
+            <SelectItem key={day} value={day}>
+              {t(`rhythm.dayType.${day}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
   const header = (
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div>
@@ -130,12 +179,7 @@ export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) 
         </h3>
         <p className="mt-1 text-xs text-muted-foreground">{t("rhythm.subtitle")}</p>
       </div>
-      <Segmented
-        value={dayType}
-        onChange={setDayType}
-        ariaLabel={t("rhythm.dayType.ariaLabel")}
-        options={DAY_TYPES.map((value) => ({ value, label: t(`rhythm.dayType.${value}`) }))}
-      />
+      {controls}
     </div>
   );
 
@@ -271,7 +315,7 @@ export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) 
               onPointerEnter={() => setCursor(index)}
             >
               {value === null ? (
-                <div className="h-[3px] w-full rounded-xs bg-muted-foreground/25" />
+                <div className="h-0.75 w-full rounded-xs bg-muted-foreground/25" />
               ) : (
                 <div
                   className={cn(
@@ -330,25 +374,27 @@ export const DailyRhythm = ({ serverId, period, seriesMode }: DailyRhythmProps) 
         })}
       </p>
 
-      <table className="sr-only">
-        <caption>{t("rhythm.table.caption")}</caption>
-        <thead>
-          <tr>
-            <th>{t("rhythm.table.slot")}</th>
-            <th>{t("rhythm.table.average")}</th>
-            <th>{t("rhythm.table.peak")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {slots.map((slot, index) => (
-            <tr key={index}>
-              <td>{timeLabel(index * slotMinutes)}</td>
-              <td>{slot ? format.number(slot.playerCount) : "—"}</td>
-              <td>{slot ? format.number(slot.peakPlayerCount) : "—"}</td>
+      <div className="sr-only">
+        <table>
+          <caption>{t("rhythm.table.caption")}</caption>
+          <thead>
+            <tr>
+              <th>{t("rhythm.table.slot")}</th>
+              <th>{t("rhythm.table.average")}</th>
+              <th>{t("rhythm.table.peak")}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {slots.map((slot, index) => (
+              <tr key={index}>
+                <td>{timeLabel(index * slotMinutes)}</td>
+                <td>{slot ? format.number(slot.playerCount) : "—"}</td>
+                <td>{slot ? format.number(slot.peakPlayerCount) : "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };

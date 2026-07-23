@@ -45,11 +45,21 @@
   "rhythm": {
     "title": "Typical day",
     "subtitle": "The history folded onto 24 hours, to see when this server is alive.",
+    "window": {
+      "ariaLabel": "Observation window"
+    },
     "dayType": {
       "ariaLabel": "Days included",
       "all": "All days",
       "weekday": "Weekdays",
-      "weekend": "Weekends"
+      "weekend": "Weekends",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday"
     },
     "summary": {
       "lead": "The server is busiest from <b>{from}</b> to <b>{to}</b>.",

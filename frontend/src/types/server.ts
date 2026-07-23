@@ -105,7 +105,12 @@ export interface ServerStat {
   createdAt: Date;
 }
 
-export type DayType = "all" | "weekday" | "weekend";
+/** Jours ISO (lundi = premier), alignés sur les clés renvoyées par l'API. */
+export const ISO_WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+export type IsoWeekday = (typeof ISO_WEEKDAYS)[number];
+
+/** Vue de la journée type : un regroupement usuel, ou un jour de semaine isolé. */
+export type DayType = "all" | "weekday" | "weekend" | IsoWeekday;
 
 /**
  * Un créneau de la journée type. `slot` est indexé depuis minuit dans le fuseau

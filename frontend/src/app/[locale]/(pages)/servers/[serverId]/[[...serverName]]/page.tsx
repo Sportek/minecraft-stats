@@ -378,9 +378,10 @@ const ServerPage = () => {
           </div>
         </div>
 
-        {/* Même donnée, même période, repliée sur une journée : la chronologie dit
-            comment le serveur évolue, la bande dit à quelle heure il se remplit. */}
-        <DailyRhythm serverId={Number(serverId)} period={period} seriesMode={seriesMode} />
+        {/* Même donnée, repliée sur une journée : la chronologie dit comment le serveur
+            évolue, la bande dit à quelle heure il se remplit. Sa fenêtre est réglée
+            indépendamment de la période du graphe ci-dessus. */}
+        <DailyRhythm serverId={Number(serverId)} seriesMode={seriesMode} />
       </section>
 
       <ImprovedCard
