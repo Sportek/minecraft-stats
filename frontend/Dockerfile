@@ -1,6 +1,10 @@
 # syntax=docker.io/docker/dockerfile:1
 
 FROM node:26-alpine AS base
+# node:26 ne fournit plus yarn ni corepack : on installe corepack via npm puis
+# on l'active pour obtenir le yarn épinglé (packageManager). Fait dans `base`
+# pour que les étapes `deps` et `builder` en héritent.
+RUN npm install -g corepack@latest && corepack enable
 
 # Install dependencies only when needed
 FROM base AS deps
