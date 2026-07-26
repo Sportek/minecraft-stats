@@ -7,7 +7,8 @@ FROM node:26-alpine AS builder
 
 WORKDIR /app
 
-RUN corepack enable
+# node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer.
+RUN npm install -g corepack@latest && corepack enable
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
@@ -24,7 +25,8 @@ FROM node:26-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 
-RUN corepack enable
+# node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer.
+RUN npm install -g corepack@latest && corepack enable
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production && yarn cache clean

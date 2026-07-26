@@ -2,6 +2,10 @@ FROM node:26
 
 WORKDIR /home/node/app
 
+# Les images node:26 ne fournissent plus yarn ni corepack : on installe
+# corepack via npm puis on l'active pour obtenir le yarn épinglé (packageManager).
+RUN npm install -g corepack@latest && corepack enable
+
 # On copie le package.json et on installe les dépendances
 COPY package.json ./
 COPY yarn.lock ./
