@@ -41,7 +41,7 @@
     "isomorphic-dompurify": "^3.17.0",
     "lucide-react": "^1.21.0",
     "markdown-it": "^14.2.0",
-    "next": "^16.2.10",
+    "next": "^16.2.12",
     "next-intl": "^4.13.3",
     "next-themes": "^0.4.6",
     "react": "19.2.8",
@@ -64,7 +64,7 @@
     "@types/react-simple-maps": "^3.0.6",
     "critters": "^0.0.25",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.10",
+    "eslint-config-next": "^16.2.12",
     "postcss": "^8",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
@@ -77,7 +77,8 @@
     "@types/react-dom": "19.2.3",
     "markdown-it": "^14.2.0",
     "d3-color": "3.1.0",
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.23",
+    "sharp": "^0.35.3"
   },
   "resolutions": {
     "markdown-it": "^14.2.0",
@@ -85,6 +86,7 @@
     "@types/react-dom": "19.2.3",
     "eslint-plugin-react-hooks": "7.0.1",
     "d3-color": "3.1.0",
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.23",
+    "sharp": "^0.35.3"
   }
 }
