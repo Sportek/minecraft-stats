@@ -80,11 +80,22 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: '26'
-          cache: 'yarn'
-          cache-dependency-path: backend/yarn.lock
+
+      # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer,
+      # ce qui fournit le yarn épinglé (packageManager: yarn@4).
+      - name: Enable Corepack
+        run: npm install -g corepack@latest && corepack enable
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn/berry/cache
+          key: yarn-berry-${{ runner.os }}-backend-${{ hashFiles('backend/yarn.lock') }}
+          restore-keys: |
+            yarn-berry-${{ runner.os }}-backend-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Type check
         run: yarn typecheck
@@ -117,11 +128,22 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: '26'
-          cache: 'yarn'
-          cache-dependency-path: frontend/yarn.lock
+
+      # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer,
+      # ce qui fournit le yarn épinglé (packageManager: yarn@4).
+      - name: Enable Corepack
+        run: npm install -g corepack@latest && corepack enable
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn/berry/cache
+          key: yarn-berry-${{ runner.os }}-frontend-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            yarn-berry-${{ runner.os }}-frontend-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Lint
         run: yarn lint

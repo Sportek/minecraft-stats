@@ -9,7 +9,8 @@ RUN npm install -g corepack@latest && corepack enable
 # On copie le package.json et on installe les dépendances
 COPY package.json ./
 COPY yarn.lock ./
-RUN yarn install
+COPY .yarnrc.yml ./
+RUN yarn install --immutable
 
 # On copie le reste du code
 COPY . .

@@ -64,7 +64,9 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
 
 ## Commands
 
-Both apps use **Yarn 1.22.22**. Standard scripts: `yarn dev | build | start | lint`.
+All three apps use **Yarn 4 (Berry)** via Corepack (`packageManager` field), with
+`nodeLinker: node-modules`. Standard scripts: `yarn dev | build | start | lint`. Run
+`corepack enable` once so `yarn` resolves to the pinned version.
 
 - Backend extras: `yarn test` (Japa), `yarn typecheck`, `node ace migration:run|rollback`,
   `node ace make:migration <name>`, `node ace docs:generate`, `node ace scheduler:run`.

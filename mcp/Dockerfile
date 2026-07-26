@@ -10,8 +10,8 @@ WORKDIR /app
 # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer.
 RUN npm install -g corepack@latest && corepack enable
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json yarn.lock .yarnrc.yml ./
+RUN yarn install --immutable
 
 COPY tsconfig.json ./
 COPY src ./src
@@ -28,8 +28,10 @@ WORKDIR /app
 # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer.
 RUN npm install -g corepack@latest && corepack enable
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production && yarn cache clean
+COPY package.json yarn.lock .yarnrc.yml ./
+# Yarn 4 a retiré `--production` : on utilise `workspaces focus --production`
+# (plugin workspace-tools intégré) pour n'installer que les deps de prod.
+RUN yarn workspaces focus --production && yarn cache clean
 
 COPY --from=builder /app/build ./build
 
