@@ -2170,38 +2170,38 @@ acorn@^8.15.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.17.0.tgz#1785adb84faf8d8add10369b93826fc2bd08f1fe"
   integrity sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==
 
-ag-charts-community@14.0.1, ag-charts-community@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-14.0.1.tgz#dfbdb9fb5083910d96c832086b3174eb99431284"
-  integrity sha512-XHYdDRtEz4OYyZZuut9BiHSDy6KjXoVXNom2Zvq8EEO6HN67x73xLZNlo/9Vxwoch/3mNGkQkVTzi0zqdKFQ4w==
+ag-charts-community@14.0.2, ag-charts-community@^14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-14.0.2.tgz#ba785deb9d40c0542914239fc978d2484c973084"
+  integrity sha512-a0iQAd85HdYUeCdo90vNcgV1zYVwr9muulhcmpdAdKOJjj0I9CtS+x9v6yMx8QDcSQkBWa8E8xJDIW6tbVfESg==
   dependencies:
-    ag-charts-core "14.0.1"
-    ag-charts-locale "14.0.1"
-    ag-charts-types "14.0.1"
+    ag-charts-core "14.0.2"
+    ag-charts-locale "14.0.2"
+    ag-charts-types "14.0.2"
 
-ag-charts-core@14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-core/-/ag-charts-core-14.0.1.tgz#c3d99132949aa9aeffd53eb29dfd2489e612ef24"
-  integrity sha512-8fjv8XnqokFTYXWTsJ6LDH1GdPFpZtDRDv5G4j3MbDk3uGjD2p65hM2z1f60DzL8C0Ii7gD6q4O26TxhIIAtBA==
+ag-charts-core@14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/ag-charts-core/-/ag-charts-core-14.0.2.tgz#a41282fdf75b8f6727333b52fb3a6fcfb365ba8e"
+  integrity sha512-tfvAwdE9ZRsOXqB8xPeYDy9O47Cy9ewSNH87yRONvTgMPHzsiJxJSXfQDQSG272zq9IJvfXxh0+SyPlMsTAkHg==
   dependencies:
-    ag-charts-types "14.0.1"
+    ag-charts-types "14.0.2"
 
-ag-charts-locale@14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-locale/-/ag-charts-locale-14.0.1.tgz#56e3276546cf16d8e5514b843fb92787088005da"
-  integrity sha512-GjeoU/0nRcEALK3K2VkVgeAkwtuH958XQlMawiN5XUt95Hj/IC1drwF7JJMkcV8U8GFHzNsXhsY1gFJfLY2L4g==
+ag-charts-locale@14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/ag-charts-locale/-/ag-charts-locale-14.0.2.tgz#0ff030c0688505808f587fa274654b95e084917b"
+  integrity sha512-uuv4VS9AUc7bd0j6XNocD/3Aw9JsQiRme4ce2pW4AL/fqDQnL6HAVDhADJtS7NKkB3BKpeUxDGLOdBPXOLQWEA==
 
-ag-charts-react@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-react/-/ag-charts-react-14.0.1.tgz#137de0108399cb43bdbb10ea8c832ffacd33bf8d"
-  integrity sha512-pKGOIwat92aLf0dogDXABEcOUlR2MqbTxhztbMDjaURAP5lloqXP29FnQHftTJqSjvPjnefg4UpGqeqamf8b+A==
+ag-charts-react@^14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/ag-charts-react/-/ag-charts-react-14.0.2.tgz#be01c5e66ac1f2cb5148b267205fba03cdf72e17"
+  integrity sha512-OGGNUf2779NFfBtly7SBPDO+FdjoVCgXbOlRXqtbI1Ajq/Emx4y9bfZR8oZwNdb4F/qFbGK6YKzRmgJ5YFngTQ==
   dependencies:
-    ag-charts-community "14.0.1"
+    ag-charts-community "14.0.2"
 
-ag-charts-types@14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-14.0.1.tgz#5e226d253b9b954b38a1e79e91c2e1a0c0fb469b"
-  integrity sha512-fGNDptlNzaQDqDoZxAYeLtBrV8sIXE1iRXX9s5W+/drobP3Ig2fhdAOlKp3IIrHlbiKZUiuhraqT0D4IYVyM4w==
+ag-charts-types@14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-14.0.2.tgz#754de36cffcdebba9847318b169c002a8b8403a7"
+  integrity sha512-F7ZG0g8Y+iKhJi50AfZRwEyUM/TBsNyh2IoXB0JaDN97lnbemIK8GE5kF1eBtXtN4mcC+lPXK9oZUeVXwO9EWA==
 
 ajv@^6.14.0:
   version "6.15.0"
@@ -2781,9 +2781,9 @@ domhandler@^5.0.2, domhandler@^5.0.3:
     domelementtype "^2.3.0"
 
 dompurify@^3.4.11:
-  version "3.4.11"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.11.tgz#29c8ba496475f279ef4015784068452fb14a0680"
-  integrity sha512-zhlUV12GsaRzMsf9q5M254YhA4+VuF0fG+QFqu6aYpoGlKtz+w8//jBcGVYBgQkR5GHjUomejY84AV+/uPbWdw==
+  version "3.4.12"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.12.tgz#6fa2265e9bbdce882c4ace4107626051b448ffa8"
+  integrity sha512-zQvGet8Z2sWbQhCmfFz/T5QWH2oBmjnqK3qvOjaqaNLrLEF912WamU+ohnTp0TCep/MFVHpdJuCZEdFOdTnEFg==
   optionalDependencies:
     "@types/trusted-types" "^2.0.7"
 
@@ -3502,10 +3502,10 @@ htmlparser2@^8.0.2:
     domutils "^3.0.1"
     entities "^4.4.0"
 
-icu-minify@^4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/icu-minify/-/icu-minify-4.13.0.tgz#eba0eaafb7379cb8ec43572589d3da4fe446dd19"
-  integrity sha512-SIFMeUHZJjzS5RvIGvybKvWoHjDm9cGVEs2EpJ8PmywOdJLWyblPm7TdPLLoUtkJtwQD7iGhl2WMptZ+N0on+w==
+icu-minify@^4.13.4:
+  version "4.13.4"
+  resolved "https://registry.yarnpkg.com/icu-minify/-/icu-minify-4.13.4.tgz#2e67126c7774b302fc01571965737bcbb58a82c7"
+  integrity sha512-yK6HyPLGlQjqm8fTKtnBpM77z7vl7JdDBN2EXLvmgAu/b7XaOHWZb73M3ISl9ahBTehBv7RYeqqWSHfk1v2YcA==
   dependencies:
     "@formatjs/icu-messageformat-parser" "^3.4.0"
 
@@ -3797,9 +3797,9 @@ jiti@^2.7.0:
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
 js-yaml@^4.1.1:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.2.0.tgz#2bd9e85682dd91bd469afb809d816043b3d49524"
-  integrity sha512-ePWsvanv0DWuDRsW8dnt+R4jQ31SCRCQ7hhNcPXZPsoBZiemuZNYGf7adZdqX2D86j6rvKp3RpCxVTSb8WQlOw==
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.3.0.tgz#d1900572a7f7cf0b5f540c83673e60bad3436592"
+  integrity sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==
   dependencies:
     argparse "^2.0.1"
 
@@ -4048,9 +4048,9 @@ lightningcss@^1.32.0:
     lightningcss-win32-x64-msvc "1.33.0"
 
 linkify-it@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-5.0.1.tgz#10c4cecbb5c6828eabf81d3c801adc4a542dfb55"
-  integrity sha512-wVoTjP4Q6R0NW5hiZkVJaFZPWgtXfoGF+6LucL3/FtiNjmcHhYjEr5f1Kqjirc1nBW07J/ZuRFumqr2oqccEWg==
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-5.0.2.tgz#d3be0a693af3da9df3883f1e346a0e97461a8c19"
+  integrity sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==
   dependencies:
     uc.micro "^2.0.0"
 
@@ -4191,24 +4191,24 @@ negotiator@^1.0.0:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-1.0.0.tgz#b6c91bb47172d69f93cfd7c357bbb529019b5f6a"
   integrity sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==
 
-next-intl-swc-plugin-extractor@^4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/next-intl-swc-plugin-extractor/-/next-intl-swc-plugin-extractor-4.13.0.tgz#5247bd0fbc873711aaaf1aeef50c8981829ab562"
-  integrity sha512-6S/fJI0KXvLCL8nhBo9P8eGaJPzmwJBTCzX0NaUIj0VyU8U89d//T+vjMLdNIXl5MlLaYH7B9MbAjb8Mvu+tqQ==
+next-intl-swc-plugin-extractor@^4.13.4:
+  version "4.13.4"
+  resolved "https://registry.yarnpkg.com/next-intl-swc-plugin-extractor/-/next-intl-swc-plugin-extractor-4.13.4.tgz#04ff4b8097908c167fc40fe95307928c07cec5a6"
+  integrity sha512-uN1+NMUYbG6YkO3q+rjc2bvAPX9nQ23owemvHJAyW0pRbQjVDwvNhmrV5qaak0oQc/9okbK17KLT49AoMGhVEQ==
 
-next-intl@^4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/next-intl/-/next-intl-4.13.0.tgz#6ba698588e91f64e4e3a104e61a3c2ececfffaa4"
-  integrity sha512-OvNq2v5XLx4EkQOsAhVE9g+6zdb83XHusADCXXtIW4LILYnjEVaeINdr1lkVWKSjzwNUiMSlH5N4K0OQTRiv6A==
+next-intl@^4.13.3:
+  version "4.13.4"
+  resolved "https://registry.yarnpkg.com/next-intl/-/next-intl-4.13.4.tgz#49890fcf9e1b63b024f76b02f0f63c69a0beb3de"
+  integrity sha512-jhPAT0u0lahIK6E4gVdZAehugWCosBhLG8sV7xMzgSVoJpxHObP+Fiu+z2FfkEW0XPPtr7uEXoUlLEfhxhNMTg==
   dependencies:
     "@formatjs/intl-localematcher" "^0.8.1"
     "@parcel/watcher" "^2.4.1"
     "@swc/core" "^1.15.2"
-    icu-minify "^4.13.0"
+    icu-minify "^4.13.4"
     negotiator "^1.0.0"
-    next-intl-swc-plugin-extractor "^4.13.0"
+    next-intl-swc-plugin-extractor "^4.13.4"
     po-parser "^2.1.1"
-    use-intl "^4.13.0"
+    use-intl "^4.13.4"
 
 next-themes@^0.4.6:
   version "0.4.6"
@@ -4621,10 +4621,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-dom@19.2.7:
-  version "19.2.7"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.7.tgz#0450dc9ae9ddbff76ef196401cd8b8c7fb466ccc"
-  integrity sha512-t0BRVXvbiE/o20Hfw669rLbMCDWtYZLvmJigy2f0MxsXF+71pxhR3xOkspmsO8h3ZlNzyibAmtCa3l4lYKk6gQ==
+react-dom@19.2.8:
+  version "19.2.8"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.8.tgz#3b46b9eeda877cdff2cf13d2770fff4ae36c2ec2"
+  integrity sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==
   dependencies:
     scheduler "^0.27.0"
 
@@ -4675,10 +4675,10 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
 
-react@19.2.7:
-  version "19.2.7"
-  resolved "https://registry.yarnpkg.com/react/-/react-19.2.7.tgz#1f47a1bfc06f8ec885752c6f4af14369a9f8260b"
-  integrity sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==
+react@19.2.8:
+  version "19.2.8"
+  resolved "https://registry.yarnpkg.com/react/-/react-19.2.8.tgz#a80663dbb58d69c6fe3fd291d3cb324e8a7dff2d"
+  integrity sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==
 
 reflect.getprototypeof@^1.0.10, reflect.getprototypeof@^1.0.9:
   version "1.0.10"
@@ -5347,14 +5347,14 @@ use-callback-ref@^1.3.3:
   dependencies:
     tslib "^2.0.0"
 
-use-intl@^4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-4.13.0.tgz#bc60d5b71864a5adf906c901fc660b6c578885f9"
-  integrity sha512-fAFDrWaASxlhXOipcOyb5VDD+YONqj6+8O8EcG/J7RBoOUF3A8YahRWLN+mBxYMrlMQB8N6Voqk5X+YC+HSL0A==
+use-intl@^4.13.4:
+  version "4.13.4"
+  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-4.13.4.tgz#43c8d3dee65beb64b0b1ab5a61fa7131022911bd"
+  integrity sha512-wRhU5zyPNgu845++EJ8ckQsi89b22QUop7NlGxNXpsnKSwEJr7WErAkdAYeVQgFTmDWsa8e2NI1e14XbWz9Ecw==
   dependencies:
     "@formatjs/fast-memoize" "^3.1.0"
     "@schummar/icu-type-parser" "1.21.5"
-    icu-minify "^4.13.0"
+    icu-minify "^4.13.4"
     intl-messageformat "^11.1.0"
 
 use-sidecar@^1.1.3:
