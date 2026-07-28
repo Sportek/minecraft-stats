@@ -14,9 +14,10 @@ export default class ServerCategoriesController {
    * @responseBody 200 - <Category[]>
    * @responseBody 404 - {"message": "Row not found"}
    */
-  async index({ request, response }: HttpContext) {
-    const { serverId } = request.params()
-    const server = await Server.findOrFail(serverId)
+  async index({ params, response }: HttpContext) {
+    // Le paramètre de la resource imbriquée `servers.categories` est `server_id`
+    // (snake_case), pas `serverId` — sinon `findOrFail` reçoit `undefined` (500).
+    const server = await Server.findOrFail(params.server_id)
     await server.load('categories')
     return response.ok(server.categories)
   }
