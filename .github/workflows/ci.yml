@@ -87,7 +87,7 @@ jobs:
         run: npm install -g corepack@latest && corepack enable
 
       - name: Cache Yarn
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.yarn/berry/cache
           key: yarn-berry-${{ runner.os }}-backend-${{ hashFiles('backend/yarn.lock') }}
@@ -135,7 +135,7 @@ jobs:
         run: npm install -g corepack@latest && corepack enable
 
       - name: Cache Yarn
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.yarn/berry/cache
           key: yarn-berry-${{ runner.os }}-frontend-${{ hashFiles('frontend/yarn.lock') }}
