@@ -54,7 +54,7 @@
     "@types/leb128": "^0.0.0",
     "@types/luxon": "^3.7.1",
     "@types/mcping-js": "^1.5.4",
-    "@types/node": "^20.12.10",
+    "@types/node": "^26.0.0",
     "adonis-sail": "^1.0.0",
     "eslint": "^10.5.0",
     "hot-hook": "^0.4.0",
@@ -76,8 +76,8 @@
     "@adonisjs/mail": "^10.2.0",
     "@adonisjs/redis": "^10.0.0",
     "@adonisjs/static": "^2.0.1",
-    "@aws-sdk/client-s3": "^3.1073.0",
-    "@aws-sdk/s3-request-presigner": "^3.1073.0",
+    "@aws-sdk/client-s3": "^3.1093.0",
+    "@aws-sdk/s3-request-presigner": "^3.1093.0",
     "@julr/adonisjs-prometheus": "^2.1.0",
     "@minescope/mineping": "^2.0.0",
     "@swc/wasm": "^1.5.24",
@@ -90,10 +90,10 @@
     "leb128": "^0.0.5",
     "luxon": "^3.7.2",
     "mcping-js": "^1.5.0",
-    "mjml": "^5.3.0",
+    "mjml": "^5.4.0",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.2",
-    "sharp": "^0.35.2"
+    "sharp": "^0.35.3"
   },
   "hotHook": {
     "boundaries": [
@@ -102,8 +102,9 @@
     ]
   },
   "prettier": "@adonisjs/prettier-config",
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "packageManager": "yarn@4.17.1+sha512.ccbfabf7d7b6b32075088be9386fb9a2e00bb6887ef07fa56effabc890a56d53da1ccc4128d62db245fcbd3961b236d75335bdf7d5320ed6eafb7588b7ad4697",
   "resolutions": {
-    "uuid": "^11.1.1"
+    "uuid": "^11.1.1",
+    "postcss": "^8.5.23"
   }
 }

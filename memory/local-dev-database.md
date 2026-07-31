@@ -21,6 +21,11 @@ natif. Le `docker run -p 5432:5432` réussit sans que rien ne l'utilise.
 Redis n'est pas lancé en local. `CacheService` dégrade proprement (log `CACHE: read failed, fallback
 to fetcher`) et les tests passent — voir [[stats-rollups-backfill]] pour les paliers d'agrégation.
 
+⚠️ **`node ace test` ne rend jamais la main en local** : à l'arrêt, `RedisProvider.shutdown` boucle sur
+`connect ECONNREFUSED 127.0.0.1:6379` (FATAL toutes les ~1 s) et le récapitulatif final n'est jamais
+imprimé. Les tests ont pourtant tourné : lire les `√` / `✖` dans la sortie, puis tuer le process. Ne
+jamais piper dans `tail`, qui attend l'EOF et n'affiche donc rien du tout.
+
 **Le dump local est daté** : `server_stats` s'arrête au **18/05/2026**, avec un gros trou après
 juillet 2025 (4 relevés/serveur sur les 30 derniers jours du dump). Toute sonde ancrée sur `now()`
 tombe donc dans le vide — viser une fenêtre dense comme juin 2025 (~4 400 relevés/serveur).

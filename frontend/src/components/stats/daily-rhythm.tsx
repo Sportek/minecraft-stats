@@ -9,6 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { LockIcon, UpsellNote, useUnlock } from "@/components/upsell/unlock";
+import { useAuth } from "@/contexts/auth";
+import { useEntitlements } from "@/hooks/use-entitlements";
 import { getServerDailyRhythm } from "@/http/server";
 import { cn } from "@/lib/utils";
 import { DayType, ISO_WEEKDAYS } from "@/types/server";
@@ -34,6 +37,7 @@ const WINDOWS = [
   { days: 30, preset: "30d" },
   { days: 90, preset: "3mo" },
   { days: 365, preset: "1y" },
+  { days: 730, preset: "2y" },
 ] as const;
 
 const DEFAULT_WINDOW_DAYS = 30;
@@ -81,15 +85,23 @@ interface DailyRhythmProps {
 export const DailyRhythm = ({ serverId, seriesMode }: DailyRhythmProps) => {
   const t = useTranslations("Stats");
   const format = useFormatter();
-  const [days, setDays] = useState<number>(DEFAULT_WINDOW_DAYS);
+  const [selectedDays, setDays] = useState<number>(DEFAULT_WINDOW_DAYS);
   const [dayType, setDayType] = useState<DayType>("all");
   const [rawCursor, setCursor] = useState<number | null>(null);
   const timezone = useSyncExternalStore(subscribeNever, readTimezone, readNothing);
   const nowMinutes = useSyncExternalStore(subscribeToMinute, readNowMinutes, readNothing);
+  const { getToken } = useAuth();
+  const { maxRhythmDays, upgrade } = useEntitlements();
+  const unlock = useUnlock();
+  const tUpsell = useTranslations("Upsell");
+
+  // Dérivée : une déconnexion resserre la fenêtre maximale, et la sélection doit
+  // y revenir d'elle-même plutôt que de partir en erreur au prochain chargement.
+  const days = Math.min(selectedDays, maxRhythmDays);
 
   const { data, error, isLoading } = useSWR(
     timezone ? (["server-rhythm", serverId, days, timezone] as const) : null,
-    ([, id, rangeDays, zone]) => getServerDailyRhythm(id, rangeDays, zone),
+    ([, id, rangeDays, zone]) => getServerDailyRhythm(id, rangeDays, zone, getToken()),
     { refreshInterval: 1000 * 60 * 10 }
   );
 
@@ -137,16 +149,30 @@ export const DailyRhythm = ({ serverId, seriesMode }: DailyRhythmProps) => {
     if (event.key === "Escape") setCursor(null);
   };
 
+  // Une fenêtre hors palier reste proposée, mais mène à l'inscription plutôt que
+  // d'être grisée : c'est le seul endroit où l'on peut dire qu'elle existe.
+  const chooseWindow = (value: string) => {
+    const next = Number(value);
+    if (next > maxRhythmDays) {
+      unlock("rhythmWindow");
+      return;
+    }
+    setDays(next);
+  };
+
   const controls = (
     <div className="flex flex-wrap gap-2">
-      <Select value={String(days)} onValueChange={(value) => setDays(Number(value))}>
+      <Select value={String(days)} onValueChange={chooseWindow}>
         <SelectTrigger className="h-9 w-auto gap-1.5 text-xs font-medium" aria-label={t("rhythm.window.ariaLabel")}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {WINDOWS.map((window) => (
             <SelectItem key={window.days} value={String(window.days)}>
-              {t(`period.presets.${window.preset}`)}
+              <span className="flex items-center gap-1.5">
+                {window.days > maxRhythmDays && <LockIcon />}
+                {t(`period.presets.${window.preset}`)}
+              </span>
             </SelectItem>
           ))}
         </SelectContent>
@@ -183,9 +209,19 @@ export const DailyRhythm = ({ serverId, seriesMode }: DailyRhythmProps) => {
     </div>
   );
 
+  // Annoncé seulement quand le lecteur bute contre son plafond — proposer un
+  // compte à qui regarde 7 jours, c'est du bruit ; à qui vient de choisir la plus
+  // large fenêtre qu'il a le droit de demander, c'est une réponse.
+  const upsell = upgrade !== null && days >= maxRhythmDays && (
+    <UpsellNote feature="rhythmWindow" className="mt-3">
+      {tUpsell("note.rhythmWindow", { days: upgrade.maxRhythmDays })}
+    </UpsellNote>
+  );
+
   const frame = (children: ReactNode) => (
     <section className="border-t border-border px-6 py-5">
       {header}
+      {upsell}
       {children}
     </section>
   );

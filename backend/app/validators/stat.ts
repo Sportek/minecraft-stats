@@ -13,6 +13,22 @@ export const StatValidator = vine.compile(
   })
 )
 
+export const STAT_EXPORT_FORMATS = ['csv', 'json'] as const
+
+/**
+ * Export d'une plage : mêmes bornes que la lecture, sans `exactTime` (un point
+ * unique n'a pas de fichier à télécharger) et avec le format de sortie.
+ */
+export const StatExportValidator = vine.compile(
+  vine.object({
+    server_id: vine.number(),
+    fromDate: epochMsField().optional(),
+    toDate: epochMsField().optional(),
+    interval: vine.enum(STAT_INTERVALS).optional(),
+    format: vine.enum(STAT_EXPORT_FORMATS).parse((value) => value ?? 'csv'),
+  })
+)
+
 /**
  * Le fuseau part directement dans `AT TIME ZONE` et entre dans la clé de cache :
  * un identifiant inconnu ferait remonter une erreur Postgres en 500. On tranche

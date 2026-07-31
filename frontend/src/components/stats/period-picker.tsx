@@ -2,14 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { LockIcon, UpsellNote, useUnlock } from "@/components/upsell/unlock";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import {
+  Allowance,
+  Availability,
   bucketCount,
+  earliestSelectable,
   effectiveResolution,
   Period,
+  presetAvailability,
   PRESETS,
   RESOLUTIONS,
   Resolution,
@@ -21,6 +26,7 @@ interface PeriodPickerProps {
   value: Period;
   onChange: (period: Period) => void;
   disabled: boolean;
+  allowance: Allowance;
 }
 
 /** `YYYY-MM-DD` en heure locale, format attendu par `<input type="date">`. */
@@ -35,8 +41,13 @@ const fromDateInputValue = (value: string, endOfDay: boolean) => {
   return date.getTime();
 };
 
-export const PeriodPicker = ({ value, onChange, disabled }: PeriodPickerProps) => {
+/** Indisponible *à ce palier-ci* — par opposition à hors de portée pour tout le monde. */
+const isLocked = (availability: Availability) =>
+  !availability.available && availability.reason === "needsAccount";
+
+export const PeriodPicker = ({ value, onChange, disabled, allowance }: PeriodPickerProps) => {
   const t = useTranslations("Stats");
+  const tUpsell = useTranslations("Upsell");
   const format = useFormatter();
   const [open, setOpen] = useState(false);
   // « Maintenant » est figé à l'ouverture du panneau : le lire pendant le rendu
@@ -45,6 +56,13 @@ export const PeriodPicker = ({ value, onChange, disabled }: PeriodPickerProps) =
 
   const resolution = effectiveResolution(value);
   const points = bucketCount(value, resolution);
+
+  // On n'annonce le palier supérieur que s'il change quelque chose ici et
+  // maintenant : promettre un compte à qui ne bute sur rien, c'est du bruit.
+  const upgrade = allowance.upgrade;
+  const hasLockedOption =
+    PRESETS.some((preset) => isLocked(presetAvailability(preset, allowance))) ||
+    RESOLUTIONS.some((option) => isLocked(resolutionAvailability(value, option, allowance)));
 
   const rangeLabel =
     value.kind === "preset"
@@ -107,43 +125,61 @@ export const PeriodPicker = ({ value, onChange, disabled }: PeriodPickerProps) =
           {value.kind === "preset" ? (
             <div className="grid grid-cols-4 gap-1.5">
               {PRESETS.map((preset) => (
-                <Chip key={preset} active={value.preset === preset} onClick={() => selectPreset(preset)}>
+                <GuardedChip
+                  key={preset}
+                  active={value.preset === preset}
+                  availability={presetAvailability(preset, allowance)}
+                  feature="statsHistory"
+                  onSelect={() => selectPreset(preset)}
+                >
                   {t(`period.presets.${preset}`)}
-                </Chip>
+                </GuardedChip>
               ))}
             </div>
           ) : (
-            <CustomRangeFields period={value} onChange={onChange} now={now} />
+            <CustomRangeFields period={value} onChange={onChange} now={now} allowance={allowance} />
           )}
         </div>
 
         <div className="border-t border-border p-3">
           <div className="mb-2 flex items-baseline justify-between">
             <span className="text-xs font-medium text-foreground">{t("period.resolution")}</span>
+            {/* Le plafond est affiché à côté du compte : savoir qu'on est à
+                « 720 / 1 500 » rend la limite concrète avant de buter dessus. */}
             <span className="text-xs text-muted-foreground">
-              {points === null ? t("period.wholeHistory") : t("period.points", { count: points })}
+              {points === null
+                ? t("period.wholeHistory")
+                : t("period.pointsOfMax", {
+                    count: points,
+                    max: format.number(allowance.limits.maxStatBuckets),
+                  })}
             </span>
           </div>
           <div className="grid grid-cols-3 gap-1.5">
             <Chip active={value.resolution === "auto"} onClick={() => setResolution("auto")}>
               {t("period.auto", { resolution: t(`period.resolutions.${resolution}`) })}
             </Chip>
-            {RESOLUTIONS.map((option) => {
-              const availability = resolutionAvailability(value, option);
-              return (
-                <Chip
-                  key={option}
-                  active={value.resolution === option}
-                  disabled={!availability.available}
-                  title={availability.available ? undefined : t(`period.unavailable.${availability.reason}`)}
-                  onClick={() => setResolution(option)}
-                >
-                  {t(`period.resolutions.${option}`)}
-                </Chip>
-              );
-            })}
+            {RESOLUTIONS.map((option) => (
+              <GuardedChip
+                key={option}
+                active={value.resolution === option}
+                availability={resolutionAvailability(value, option, allowance)}
+                feature="statsResolution"
+                onSelect={() => setResolution(option)}
+              >
+                {t(`period.resolutions.${option}`)}
+              </GuardedChip>
+            ))}
           </div>
         </div>
+
+        {upgrade && hasLockedOption && (
+          <div className="border-t border-border p-3">
+            <UpsellNote feature="statsPeriod">
+              {tUpsell("note.statsPeriod", { points: format.number(upgrade.maxStatBuckets) })}
+            </UpsellNote>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
@@ -175,12 +211,14 @@ const TabButton = ({
 const Chip = ({
   active,
   disabled,
+  locked,
   title,
   onClick,
   children,
 }: {
   active: boolean;
   disabled?: boolean;
+  locked?: boolean;
   title?: string;
   onClick: () => void;
   children: React.ReactNode;
@@ -192,29 +230,71 @@ const Chip = ({
     title={title}
     aria-pressed={active}
     className={cn(
-      "rounded-md border px-2 py-1.5 text-xs transition-colors",
+      "inline-flex items-center justify-center gap-1 rounded-md border px-2 py-1.5 text-xs transition-colors",
       "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
       "disabled:cursor-not-allowed disabled:opacity-40",
       active
         ? "border-accent bg-accent text-accent-foreground"
-        : "border-border bg-background text-muted-foreground hover:border-input hover:text-foreground"
+        : "border-border bg-background text-muted-foreground hover:border-input hover:text-foreground",
+      locked && "border-dashed hover:border-accent hover:text-accent"
     )}
   >
+    {locked && <LockIcon />}
     {children}
   </button>
 );
+
+/**
+ * Pastille dont l'état découle de la disponibilité : proposable, hors de portée
+ * (grisée et inerte), ou réservée aux membres — auquel cas elle reste cliquable
+ * et emmène vers l'inscription. Un choix qu'on ne peut pas faire doit dire
+ * pourquoi ; une pastille grise muette, elle, ne dit rien à personne.
+ */
+const GuardedChip = ({
+  active,
+  availability,
+  feature,
+  onSelect,
+  children,
+}: {
+  active: boolean;
+  availability: Availability;
+  feature: string;
+  onSelect: () => void;
+  children: React.ReactNode;
+}) => {
+  const t = useTranslations("Stats");
+  const unlock = useUnlock();
+  const locked = !availability.available && availability.reason === "needsAccount";
+
+  return (
+    <Chip
+      active={active}
+      disabled={!availability.available && !locked}
+      locked={locked}
+      title={availability.available ? undefined : t(`period.unavailable.${availability.reason}`)}
+      onClick={locked ? () => unlock(feature) : onSelect}
+    >
+      {children}
+    </Chip>
+  );
+};
 
 const CustomRangeFields = ({
   period,
   onChange,
   now,
+  allowance,
 }: {
   period: Extract<Period, { kind: "custom" }>;
   onChange: (period: Period) => void;
   now: number;
+  allowance: Allowance;
 }) => {
   const t = useTranslations("Stats");
   const today = toDateInputValue(now);
+  // Borner le champ vaut mieux que laisser choisir une date que l'API refusera.
+  const earliest = earliestSelectable(allowance, now);
 
   return (
     <div className="space-y-2">
@@ -222,6 +302,7 @@ const CustomRangeFields = ({
         {t("period.from")}
         <input
           type="date"
+          min={earliest === null ? undefined : toDateInputValue(earliest)}
           max={toDateInputValue(period.to)}
           value={toDateInputValue(period.from)}
           onChange={(event) => onChange({ ...period, from: fromDateInputValue(event.target.value, false) })}

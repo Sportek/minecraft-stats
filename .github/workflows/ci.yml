@@ -79,12 +79,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: backend/yarn.lock
+          node-version: '26'
+
+      # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer,
+      # ce qui fournit le yarn épinglé (packageManager: yarn@4).
+      - name: Enable Corepack
+        run: npm install -g corepack@latest && corepack enable
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn/berry/cache
+          key: yarn-berry-${{ runner.os }}-backend-${{ hashFiles('backend/yarn.lock') }}
+          restore-keys: |
+            yarn-berry-${{ runner.os }}-backend-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Type check
         run: yarn typecheck
@@ -94,6 +105,12 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      # Le Dockerfile lance `docs:generate` : une annotation Swagger invalide y fait
+      # échouer le build de l'image, donc le déploiement, sans que rien ne l'ait
+      # signalé avant. On la génère ici pour que l'erreur tombe sur la PR.
+      - name: Generate API docs
+        run: node ace docs:generate
 
       - name: Run migrations
         run: node ace migration:run --force
@@ -116,12 +133,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
-          cache: 'yarn'
-          cache-dependency-path: frontend/yarn.lock
+          node-version: '26'
+
+      # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer,
+      # ce qui fournit le yarn épinglé (packageManager: yarn@4).
+      - name: Enable Corepack
+        run: npm install -g corepack@latest && corepack enable
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn/berry/cache
+          key: yarn-berry-${{ runner.os }}-frontend-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            yarn-berry-${{ runner.os }}-frontend-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Lint
         run: yarn lint

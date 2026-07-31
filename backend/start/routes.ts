@@ -97,19 +97,30 @@ router
       .middleware('index', PUBLIC_LONG)
       .use('*', throttleLight('categories', 8))
 
+    // Lectures de stats : publiques, mais plus généreuses pour un membre. D'où
+    // `silentAuth` — reconnaître l'appelant sans jamais l'obliger à se connecter.
     router
       .resource('servers.stats', '#controllers/stats_controller')
       .only(['index'])
+      .middleware('index', middleware.silentAuth())
       .middleware('index', PUBLIC_STATS)
       .use('*', throttleLight('servers.stats', 40))
 
     router
+      .get('servers/:server_id/stats/export', '#controllers/stats_controller.export')
+      .use([middleware.silentAuth(), throttleLight('servers.stats.export', 10), NO_STORE])
+
+    router
       .get('servers/:server_id/stats/daily-rhythm', '#controllers/stats_controller.dailyRhythm')
-      .use([throttleLight('servers.stats.rhythm', 40), PUBLIC_STATS])
+      .use([middleware.silentAuth(), throttleLight('servers.stats.rhythm', 40), PUBLIC_STATS])
 
     router
       .get('global-stats', '#controllers/stats_controller.globalStats')
-      .use([throttleLight('global-stats', 40), PUBLIC_STATS])
+      .use([middleware.silentAuth(), throttleLight('global-stats', 40), PUBLIC_STATS])
+
+    router
+      .get('entitlements', '#controllers/entitlements_controller.index')
+      .use([middleware.silentAuth(), throttleLight('entitlements', 30), NO_STORE])
 
     router
       .resource('users', '#controllers/users_controller')

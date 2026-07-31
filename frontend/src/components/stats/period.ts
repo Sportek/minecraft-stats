@@ -7,6 +7,8 @@
  * dérive de la durée couverte, et l'utilisateur ne la fixe que s'il le veut.
  */
 
+import { Entitlements, TierLimits } from "@/types/entitlements";
+
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
@@ -43,8 +45,20 @@ export type Period =
 
 export const DEFAULT_PERIOD: Period = { kind: "preset", preset: "7d", resolution: "auto" };
 
-/** Doit rester aligné sur `MAX_BUCKETS` dans `backend/app/services/stat_service.ts`. */
-export const MAX_BUCKETS = 1500;
+/**
+ * Ce que le palier de l'utilisateur autorise, et ce qu'un compte débloquerait.
+ * Les plafonds ne sont pas écrits ici : ils viennent de `GET /entitlements`, pour
+ * qu'ils ne puissent pas dériver d'avec ceux que le backend applique réellement.
+ */
+export interface Allowance {
+  limits: Pick<TierLimits, "maxStatBuckets" | "maxHistoryDays">;
+  upgrade: Pick<TierLimits, "maxStatBuckets" | "maxHistoryDays"> | null;
+}
+
+export const toAllowance = (entitlements: Entitlements): Allowance => ({
+  limits: entitlements,
+  upgrade: entitlements.upgrade,
+});
 
 /** Durée couverte en ms, ou `null` pour « Tout » — seul le backend connaît la borne basse. */
 export function periodRangeMs(period: Period): number | null {
@@ -87,24 +101,80 @@ export function bucketCount(period: Period, resolution: Resolution): number | nu
   return Math.ceil(rangeMs / RESOLUTION_MS[resolution]);
 }
 
-export type ResolutionAvailability =
+export type Availability =
   | { available: true }
-  | { available: false; reason: "tooManyPoints" | "rangeTooShort" };
+  | { available: false; reason: "tooManyPoints" | "rangeTooShort" | "beyondHistory" | "needsAccount" };
+
+const UNAVAILABLE = {
+  tooManyPoints: { available: false, reason: "tooManyPoints" },
+  rangeTooShort: { available: false, reason: "rangeTooShort" },
+  beyondHistory: { available: false, reason: "beyondHistory" },
+  needsAccount: { available: false, reason: "needsAccount" },
+} as const satisfies Record<string, Availability>;
 
 /**
  * Une résolution est proposable si elle produit assez de points pour dessiner une
- * courbe, et pas plus que ce que le backend accepte. Pour « Tout », la plage est
+ * courbe, et pas plus que le palier n'en accorde. Pour « Tout », la plage est
  * ouverte : on ne garde que les buckets d'au moins un jour.
+ *
+ * `needsAccount` distingue « hors de portée » de « hors de *ton* palier » : c'est
+ * ce qui permet d'afficher un cadenas plutôt qu'une pastille grise muette.
  */
-export function resolutionAvailability(period: Period, resolution: Resolution): ResolutionAvailability {
+export function resolutionAvailability(
+  period: Period,
+  resolution: Resolution,
+  allowance: Allowance
+): Availability {
   const count = bucketCount(period, resolution);
   if (count === null) {
-    if (RESOLUTION_MS[resolution] < DAY) return { available: false, reason: "tooManyPoints" };
-    return { available: true };
+    return RESOLUTION_MS[resolution] < DAY ? UNAVAILABLE.tooManyPoints : { available: true };
   }
-  if (count > MAX_BUCKETS) return { available: false, reason: "tooManyPoints" };
-  if (count < 2) return { available: false, reason: "rangeTooShort" };
-  return { available: true };
+
+  if (count < 2) return UNAVAILABLE.rangeTooShort;
+  if (count <= allowance.limits.maxStatBuckets) return { available: true };
+  if (allowance.upgrade && count <= allowance.upgrade.maxStatBuckets) return UNAVAILABLE.needsAccount;
+  return UNAVAILABLE.tooManyPoints;
+}
+
+const withinHistory = (preset: PresetId, limits: Allowance["limits"]) => {
+  if (limits.maxHistoryDays === null) return true;
+  // « Tout » remonte à la première donnée connue : profondeur inconnue du client,
+  // on ne la propose donc qu'aux paliers sans plafond d'historique.
+  if (preset === "all") return false;
+  return PRESET_RANGE_MS[preset] / DAY <= limits.maxHistoryDays;
+};
+
+/** Un raccourci est proposable si le palier ouvre un historique assez profond. */
+export function presetAvailability(preset: PresetId, allowance: Allowance): Availability {
+  if (withinHistory(preset, allowance.limits)) return { available: true };
+  if (allowance.upgrade && withinHistory(preset, allowance.upgrade)) return UNAVAILABLE.needsAccount;
+  return UNAVAILABLE.beyondHistory;
+}
+
+/**
+ * Ramène une période dans les clous du palier courant. Sans ça, une déconnexion
+ * (ou un palier qui se resserre) laisserait l'interface sur un choix que le
+ * backend refuse, et le graphique afficherait une erreur au lieu d'une courbe.
+ */
+export function clampPeriod(period: Period, allowance: Allowance): Period {
+  const resolution =
+    period.resolution !== "auto" &&
+    !resolutionAvailability(period, period.resolution, allowance).available
+      ? "auto"
+      : period.resolution;
+
+  if (period.kind === "custom" || presetAvailability(period.preset, allowance).available) {
+    return resolution === period.resolution ? period : { ...period, resolution };
+  }
+
+  const fallback = [...PRESETS].reverse().find((preset) => presetAvailability(preset, allowance).available);
+  return { ...period, resolution, preset: fallback ?? "24h" };
+}
+
+/** Borne basse d'une plage personnalisée, ou `null` si le palier n'en impose pas. */
+export function earliestSelectable(allowance: Allowance, now: number): number | null {
+  const maxDays = allowance.limits.maxHistoryDays;
+  return maxDays === null ? null : now - maxDays * DAY;
 }
 
 /**

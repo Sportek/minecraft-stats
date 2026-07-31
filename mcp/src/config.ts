@@ -76,6 +76,9 @@ export const PUBLIC_ENDPOINTS: ReadonlySet<string> = new Set([
   'get /api/v1/servers/{server_id}/stats/daily-rhythm',
   'get /api/v1/global-stats',
   'get /api/v1/website-stats',
+  // Le proxy appelle le backend sans jeton : un agent est donc au palier invité.
+  // Exposer ses limites lui évite de buter à l'aveugle sur un `E_TIER_LIMIT`.
+  'get /api/v1/entitlements',
   'get /api/v1/categories',
   'get /api/v1/categories/{id}',
   'get /api/v1/languages',
