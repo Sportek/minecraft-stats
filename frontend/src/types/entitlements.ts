@@ -19,8 +19,11 @@ export interface Entitlements extends TierLimits {
 /**
  * Repli le temps que `GET /entitlements` réponde (et pendant le rendu serveur).
  * Volontairement le palier le plus bas : afficher un verrou qu'on retire ensuite
- * est plus honnête que promettre une résolution que le backend refusera. Les
- * valeurs faisant autorité restent celles de l'API.
+ * est plus honnête que promettre une résolution que le backend refusera.
+ *
+ * `upgrade` est renseigné pour que les verrous et leur explication soient déjà
+ * corrects au premier rendu, sans saut de mise en page. Ces valeurs ne font pas
+ * autorité — l'API les écrase dès qu'elle répond, et c'est elle qui arbitre.
  */
 export const GUEST_FALLBACK: Entitlements = {
   tier: "guest",
@@ -29,5 +32,12 @@ export const GUEST_FALLBACK: Entitlements = {
   maxHistoryDays: 365,
   maxRhythmDays: 90,
   canExportStats: false,
-  upgrade: null,
+  upgrade: {
+    tier: "member",
+    maxStatBuckets: 6000,
+    maxExportRows: 50_000,
+    maxHistoryDays: null,
+    maxRhythmDays: 730,
+    canExportStats: true,
+  },
 };

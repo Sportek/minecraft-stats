@@ -36,7 +36,8 @@
     "from": "Desde",
     "to": "Hasta",
     "previous": "Periodo anterior",
-    "next": "Periodo siguiente"
+    "next": "Periodo siguiente",
+    "pointsOfMax": "{count} / {max} puntos"
   },
   "seriesMode": {
     "ariaLabel": "Valor destacado",

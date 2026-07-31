@@ -1,0 +1,8 @@
+{
+  "cta": "Crear una cuenta",
+  "note": {
+    "statsPeriod": "Una cuenta gratuita eleva el límite a {points} puntos por gráfico y abre todo el historial.",
+    "rhythmWindow": "Una cuenta gratuita amplía la ventana de observación hasta {days} días.",
+    "statsExport": "La exportación CSV de tus datos es para miembros."
+  }
+}

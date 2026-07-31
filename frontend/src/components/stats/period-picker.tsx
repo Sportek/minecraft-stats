@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LockIcon, useUnlock } from "@/components/upsell/unlock";
+import { LockIcon, UpsellNote, useUnlock } from "@/components/upsell/unlock";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useFormatter, useTranslations } from "next-intl";
@@ -41,8 +41,13 @@ const fromDateInputValue = (value: string, endOfDay: boolean) => {
   return date.getTime();
 };
 
+/** Indisponible *à ce palier-ci* — par opposition à hors de portée pour tout le monde. */
+const isLocked = (availability: Availability) =>
+  !availability.available && availability.reason === "needsAccount";
+
 export const PeriodPicker = ({ value, onChange, disabled, allowance }: PeriodPickerProps) => {
   const t = useTranslations("Stats");
+  const tUpsell = useTranslations("Upsell");
   const format = useFormatter();
   const [open, setOpen] = useState(false);
   // « Maintenant » est figé à l'ouverture du panneau : le lire pendant le rendu
@@ -51,6 +56,13 @@ export const PeriodPicker = ({ value, onChange, disabled, allowance }: PeriodPic
 
   const resolution = effectiveResolution(value);
   const points = bucketCount(value, resolution);
+
+  // On n'annonce le palier supérieur que s'il change quelque chose ici et
+  // maintenant : promettre un compte à qui ne bute sur rien, c'est du bruit.
+  const upgrade = allowance.upgrade;
+  const hasLockedOption =
+    PRESETS.some((preset) => isLocked(presetAvailability(preset, allowance))) ||
+    RESOLUTIONS.some((option) => isLocked(resolutionAvailability(value, option, allowance)));
 
   const rangeLabel =
     value.kind === "preset"
@@ -132,8 +144,15 @@ export const PeriodPicker = ({ value, onChange, disabled, allowance }: PeriodPic
         <div className="border-t border-border p-3">
           <div className="mb-2 flex items-baseline justify-between">
             <span className="text-xs font-medium text-foreground">{t("period.resolution")}</span>
+            {/* Le plafond est affiché à côté du compte : savoir qu'on est à
+                « 720 / 1 500 » rend la limite concrète avant de buter dessus. */}
             <span className="text-xs text-muted-foreground">
-              {points === null ? t("period.wholeHistory") : t("period.points", { count: points })}
+              {points === null
+                ? t("period.wholeHistory")
+                : t("period.pointsOfMax", {
+                    count: points,
+                    max: format.number(allowance.limits.maxStatBuckets),
+                  })}
             </span>
           </div>
           <div className="grid grid-cols-3 gap-1.5">
@@ -153,6 +172,14 @@ export const PeriodPicker = ({ value, onChange, disabled, allowance }: PeriodPic
             ))}
           </div>
         </div>
+
+        {upgrade && hasLockedOption && (
+          <div className="border-t border-border p-3">
+            <UpsellNote feature="statsPeriod">
+              {tUpsell("note.statsPeriod", { points: format.number(upgrade.maxStatBuckets) })}
+            </UpsellNote>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

@@ -17,6 +17,11 @@ export function useEntitlements(): Entitlements {
   const { getToken, isLoggedIn } = useAuth();
 
   const { data } = useSWR(["entitlements", isLoggedIn] as const, () => getEntitlements(getToken()));
+  if (data) return data;
 
-  return data ?? GUEST_FALLBACK;
+  // Repli dégradé (appel en échec, backend en retard sur le front) : on garde les
+  // plafonds les plus bas, mais on coupe `upgrade` pour un utilisateur déjà
+  // connecté. Toute l'invitation à créer un compte est branchée sur `upgrade` —
+  // sans ça, un membre se ferait proposer de s'inscrire, ce qui n'a aucun sens.
+  return isLoggedIn ? { ...GUEST_FALLBACK, upgrade: null } : GUEST_FALLBACK;
 }

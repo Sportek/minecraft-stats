@@ -36,7 +36,8 @@
     "from": "Du",
     "to": "Au",
     "previous": "Période précédente",
-    "next": "Période suivante"
+    "next": "Période suivante",
+    "pointsOfMax": "{count} / {max} points"
   },
   "seriesMode": {
     "ariaLabel": "Valeur mise en avant",

@@ -1,0 +1,8 @@
+{
+  "cta": "Create an account",
+  "note": {
+    "statsPeriod": "A free account raises the ceiling to {points} points per chart and opens the full history.",
+    "rhythmWindow": "A free account extends the observation window to {days} days.",
+    "statsExport": "Exporting your stats to CSV is for members."
+  }
+}

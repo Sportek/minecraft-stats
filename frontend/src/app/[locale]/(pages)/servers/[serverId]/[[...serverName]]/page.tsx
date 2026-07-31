@@ -389,7 +389,7 @@ const ServerPage = () => {
             <StatsExportButton
               serverId={Number(serverId)}
               period={period}
-              canExport={entitlements.canExportStats}
+              entitlements={entitlements}
             />
           </div>
         </div>

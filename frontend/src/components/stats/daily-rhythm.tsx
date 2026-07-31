@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LockIcon, useUnlock } from "@/components/upsell/unlock";
+import { LockIcon, UpsellNote, useUnlock } from "@/components/upsell/unlock";
 import { useAuth } from "@/contexts/auth";
 import { useEntitlements } from "@/hooks/use-entitlements";
 import { getServerDailyRhythm } from "@/http/server";
@@ -91,8 +91,9 @@ export const DailyRhythm = ({ serverId, seriesMode }: DailyRhythmProps) => {
   const timezone = useSyncExternalStore(subscribeNever, readTimezone, readNothing);
   const nowMinutes = useSyncExternalStore(subscribeToMinute, readNowMinutes, readNothing);
   const { getToken } = useAuth();
-  const { maxRhythmDays } = useEntitlements();
+  const { maxRhythmDays, upgrade } = useEntitlements();
   const unlock = useUnlock();
+  const tUpsell = useTranslations("Upsell");
 
   // Dérivée : une déconnexion resserre la fenêtre maximale, et la sélection doit
   // y revenir d'elle-même plutôt que de partir en erreur au prochain chargement.
@@ -208,9 +209,19 @@ export const DailyRhythm = ({ serverId, seriesMode }: DailyRhythmProps) => {
     </div>
   );
 
+  // Annoncé seulement quand le lecteur bute contre son plafond — proposer un
+  // compte à qui regarde 7 jours, c'est du bruit ; à qui vient de choisir la plus
+  // large fenêtre qu'il a le droit de demander, c'est une réponse.
+  const upsell = upgrade !== null && days >= maxRhythmDays && (
+    <UpsellNote feature="rhythmWindow" className="mt-3">
+      {tUpsell("note.rhythmWindow", { days: upgrade.maxRhythmDays })}
+    </UpsellNote>
+  );
+
   const frame = (children: ReactNode) => (
     <section className="border-t border-border px-6 py-5">
       {header}
+      {upsell}
       {children}
     </section>
   );

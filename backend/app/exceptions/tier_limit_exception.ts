@@ -26,7 +26,7 @@ export default class TierLimitException extends Exception {
 
   constructor(
     message: string,
-    private payload: TierLimitPayload
+    private readonly payload: TierLimitPayload
   ) {
     super(message)
   }
