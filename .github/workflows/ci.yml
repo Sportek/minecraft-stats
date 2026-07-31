@@ -106,6 +106,12 @@ jobs:
       - name: Build
         run: yarn build
 
+      # Le Dockerfile lance `docs:generate` : une annotation Swagger invalide y fait
+      # échouer le build de l'image, donc le déploiement, sans que rien ne l'ait
+      # signalé avant. On la génère ici pour que l'erreur tombe sur la PR.
+      - name: Generate API docs
+        run: node ace docs:generate
+
       - name: Run migrations
         run: node ace migration:run --force
 

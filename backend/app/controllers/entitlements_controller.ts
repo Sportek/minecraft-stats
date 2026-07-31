@@ -9,8 +9,13 @@ export default class EntitlementsController {
    * @tag ENTITLEMENTS
    * @summary Get the caller's tier and its limits
    * @description Returns what the caller is allowed to ask of the stats endpoints. Answers anonymous callers too, with the `guest` tier. Clients should read their limits here rather than hard-coding them: the values move without an API version bump. `maxHistoryDays` is `null` when the history depth is unlimited. `upgrade` carries the limits the caller would get by signing in, and is `null` when there is nothing left to unlock.
-   * @responseBody 200 - {"tier": "guest", "maxStatBuckets": 1500, "maxExportRows": 0, "maxHistoryDays": 365, "maxRhythmDays": 90, "canExportStats": false, "upgrade": {"tier": "member", "maxStatBuckets": 6000, "maxExportRows": 50000, "maxHistoryDays": null, "maxRhythmDays": 730, "canExportStats": true}}
+   * @responseBody 200 - {"tier": "guest", "maxStatBuckets": 1500, "maxExportRows": 0, "maxHistoryDays": 365, "maxRhythmDays": 90, "canExportStats": false, "upgrade": {"tier": "member", "maxStatBuckets": 6000, "maxExportRows": 50000, "maxRhythmDays": 730, "canExportStats": true}}
    */
+  // ⚠️ Aucun `null` dans les exemples `@responseBody` ci-dessus : `adonis-autoswagger`
+  // fait `Object.keys(value)` sur toute valeur de `typeof === 'object'` et casse sur
+  // `null`. Le Dockerfile lance `node ace docs:generate`, donc l'erreur ne se voit
+  // pas en dev — elle fait échouer le build de l'image. Le `null` de `maxHistoryDays`
+  // et celui d'`upgrade` sont donc décrits en prose, pas montrés dans l'exemple.
   async index(ctx: HttpContext) {
     const entitlements = EntitlementsService.resolve(ctx)
 

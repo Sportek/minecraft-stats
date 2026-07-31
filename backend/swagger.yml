@@ -78,7 +78,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 354
+          example: 219
         name:
           type: "string"
           example: "John Doe"
@@ -93,7 +93,7 @@ components:
           example: true
         weight:
           type: "number"
-          example: 898
+          example: 804
         show_on_home:
           type: "boolean"
           example: true
@@ -133,10 +133,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 928
+          example: 538
         advertisement_id:
           type: "number"
-          example: 999
+          example: 644
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
@@ -145,7 +145,7 @@ components:
           example: "Lorem Ipsum"
         server_id:
           type: "number"
-          example: 435
+          example: 409
         target_url:
           type: "string"
           example: "Lorem Ipsum"
@@ -163,7 +163,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 461
+          example: 872
         name:
           type: "string"
           example: "John Doe"
@@ -182,7 +182,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 30
+          example: 805
         code:
           $ref: "#/components/schemas/LanguageCode"
           example: null
@@ -207,7 +207,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 973
+          example: 555
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -239,13 +239,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 62
+          example: 118
         visitor_id:
           type: "number"
-          example: 971
+          example: 794
         user_id:
           type: "number"
-          example: 474
+          example: 76
         path:
           type: "string"
           example: "Lorem Ipsum"
@@ -257,7 +257,7 @@ components:
           example: "Lorem Ipsum"
         duration_ms:
           type: "number"
-          example: 169
+          example: 262
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -275,7 +275,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 515
+          example: 263
         cover_image:
           type: "string"
           example: "Lorem Ipsum"
@@ -284,7 +284,7 @@ components:
           example: true
         view_count:
           type: "number"
-          example: 892
+          example: 565
         default_locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -294,7 +294,7 @@ components:
           format: "date-time"
         user_id:
           type: "number"
-          example: 323
+          example: 660
         author:
           $ref: "#/components/schemas/User"
           example: null
@@ -318,13 +318,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 633
+          example: 808
         post_id:
           type: "number"
-          example: 739
+          example: 202
         user_id:
           type: "number"
-          example: 465
+          example: 72
         visitor_id:
           type: "string"
           example: "Lorem Ipsum"
@@ -352,10 +352,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 816
+          example: 39
         post_id:
           type: "number"
-          example: 935
+          example: 959
         locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -389,7 +389,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 410
+          example: 930
         name:
           type: "string"
           example: "John Doe"
@@ -398,7 +398,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 533
+          example: 407
         type:
           $ref: "#/components/schemas/ServerType"
           example: null
@@ -428,10 +428,22 @@ components:
           example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 248
+          example: 677
         user:
           $ref: "#/components/schemas/User"
           example: null
+        owner_verified_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        owner_verified_method:
+          $ref: "#/components/schemas/OwnershipMethod"
+          example: null
+        ownership_claims:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ServerOwnershipClaim"
+            example: null
         growth_stat:
           $ref: "#/components/schemas/ServerGrowthStat"
           example: null
@@ -442,7 +454,7 @@ components:
             example: null
         vote_count:
           type: "number"
-          example: 95
+          example: 990
         categories:
           type: "array"
           items:
@@ -459,17 +471,17 @@ components:
           format: "date-time"
         last_player_count:
           type: "number"
-          example: 104
+          example: 763
         last_max_count:
           type: "number"
-          example: 157
+          example: 951
         last_stats_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
         peak_player_count:
           type: "number"
-          example: 215
+          example: 622
         peak_player_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -493,46 +505,103 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 264
+          example: 460
         weekly_growth:
           type: "number"
-          example: 528
+          example: 977
         monthly_growth:
           type: "number"
-          example: 0
+          example: 288
         last_week_average:
           type: "number"
-          example: 590
+          example: 236
         previous_week_average:
           type: "number"
-          example: 188
+          example: 795
         last_month_average:
           type: "number"
-          example: 171
+          example: 881
         last_updated:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "ServerGrowthStat (Model)"
+    ServerOwnershipClaim:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 996
+        server_id:
+          type: "number"
+          example: 516
+        server:
+          $ref: "#/components/schemas/Server"
+          example: null
+        user_id:
+          type: "number"
+          example: 785
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+        method:
+          $ref: "#/components/schemas/OwnershipMethod"
+          example: null
+        status:
+          $ref: "#/components/schemas/OwnershipClaimStatus"
+          example: null
+        evidence:
+          type: "string"
+          example: "Lorem Ipsum"
+        evidence_url:
+          type: "string"
+          example: "Lorem Ipsum"
+        expires_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        verified_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        reviewed_by:
+          type: "number"
+          example: 432
+        reviewer:
+          $ref: "#/components/schemas/User"
+          example: null
+        review_note:
+          type: "string"
+          example: "Lorem Ipsum"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerOwnershipClaim (Model)"
     ServerStat:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 62
+          example: 321
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 171
+          example: 816
         player_count:
           type: "number"
-          example: 133
+          example: 203
         max_count:
           type: "number"
-          example: 586
+          example: 725
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -544,22 +613,22 @@ components:
       properties:
         id:
           type: "number"
-          example: 207
+          example: 340
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 624
+          example: 492
         visitor_id:
           type: "number"
-          example: 736
+          example: 365
         user:
           $ref: "#/components/schemas/User"
           example: null
         user_id:
           type: "number"
-          example: 669
+          example: 540
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -587,20 +656,20 @@ components:
       properties:
         id:
           type: "number"
-          example: 646
+          example: 623
         date:
           type: "string"
           example: "2021-03-23"
           format: "date-time"
         http_requests:
           type: "number"
-          example: 197
+          example: 600
         http_errors:
           type: "number"
-          example: 604
+          example: 348
         unique_visitors:
           type: "number"
-          example: 63
+          example: 569
         countries:
           $ref: "#/components/schemas/Record<string, number>"
           example: null
@@ -619,7 +688,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 670
+          example: 122
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -664,13 +733,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 507
+          example: 321
         user:
           $ref: "#/components/schemas/User"
           example: null
         user_id:
           type: "number"
-          example: 973
+          example: 605
         provider:
           $ref: "#/components/schemas/'google'"
           example: null
@@ -696,7 +765,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 878
+          example: 593
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -734,13 +803,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 972
+          example: 684
         visitor_id:
           type: "number"
-          example: 935
+          example: 710
         user_id:
           type: "number"
-          example: 30
+          example: 948
         linked_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -767,7 +836,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 447
+          example: 42
           choices:
             - "custom"
             - "network"
@@ -801,10 +870,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 984
+            example: 166
       example:
         name: "Lorem Ipsum"
-        type: 447
+        type: 42
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -813,7 +882,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 984
+          - 166
       description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
       type: "object"
@@ -825,7 +894,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 638
+          example: 566
           choices:
             - "custom"
             - "network"
@@ -858,10 +927,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 572
+            example: 20
       example:
         name: "Lorem Ipsum"
-        type: 638
+        type: 566
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -870,7 +939,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 572
+          - 20
       description: "UpdateAdvertisementValidator (Validator)"
     IdentifyVisitorValidator:
       type: "object"
@@ -905,14 +974,14 @@ components:
           maxLength: 512
         durationMs:
           type: "number"
-          example: 354
+          example: 361
           maximum: 86400000
       example:
         visitorId: "Lorem Ipsum"
         path: "Lorem Ipsum"
         referrer: "Lorem Ipsum"
         title: "Lorem Ipsum"
-        durationMs: 354
+        durationMs: 361
       description: "TrackPageViewValidator (Validator)"
     CreateApiTokenValidator:
       type: "object"
@@ -925,21 +994,21 @@ components:
           maxLength: 100
         expiresInDays:
           type: "number"
-          example: 319
+          example: 320
           maximum: 3650
       example:
         name: "Lorem Ipsum"
-        expiresInDays: 319
+        expiresInDays: 320
       description: "CreateApiTokenValidator (Validator)"
     CategoryIdValidator:
       type: "object"
       properties:
         id:
           type: "number"
-          example: 629
+          example: 308
           required: true
       example:
-        id: 629
+        id: 308
       description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
       type: "object"
@@ -956,14 +1025,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 232
+          example: 616
           required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
           required: true
       example:
-        id: 232
+        id: 616
         name: "Lorem Ipsum"
       description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
@@ -971,13 +1040,13 @@ components:
       properties:
         fromDate:
           type: "number"
-          example: 698
+          example: 111
         toDate:
           type: "number"
-          example: 589
+          example: 974
         interval:
           type: "number"
-          example: 581
+          example: 385
           choices:
             - "30 minutes"
             - "1 hour"
@@ -987,23 +1056,23 @@ components:
             - "1 week"
         categoryId:
           type: "number"
-          example: 894
+          example: 92
         languageId:
           type: "number"
-          example: 66
+          example: 393
       example:
-        fromDate: 698
-        toDate: 589
-        interval: 581
-        categoryId: 894
-        languageId: 66
+        fromDate: 111
+        toDate: 974
+        interval: 385
+        categoryId: 92
+        languageId: 393
       description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
       type: "object"
       properties:
         defaultLocale:
           type: "number"
-          example: 320
+          example: 316
           choices:
             - "fr"
             - "en"
@@ -1020,7 +1089,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 352
+                example: 934
                 choices:
                   - "fr"
                   - "en"
@@ -1044,7 +1113,7 @@ components:
                 required: true
               excerpt:
                 type: "number"
-                example: 601
+                example: 565
                 maximum: 500
           required: true
           properties:
@@ -1062,10 +1131,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 320
+        defaultLocale: 316
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 352
+          - locale: 934
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1080,11 +1149,11 @@ components:
           required: true
         serverId:
           type: "number"
-          example: 473
+          example: 674
           required: true
       example:
         placeholderName: "Lorem Ipsum"
-        serverId: 473
+        serverId: 674
       description: "PreviewPlaceholderValidator (Validator)"
     ResolvePlaceholdersValidator:
       type: "object"
@@ -1127,7 +1196,7 @@ components:
       properties:
         defaultLocale:
           type: "number"
-          example: 332
+          example: 407
           choices:
             - "fr"
             - "en"
@@ -1143,7 +1212,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 713
+                example: 73
                 choices:
                   - "fr"
                   - "en"
@@ -1165,7 +1234,7 @@ components:
                 minimum: 10
               excerpt:
                 type: "number"
-                example: 694
+                example: 618
                 maximum: 500
           properties:
             items:
@@ -1182,10 +1251,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 332
+        defaultLocale: 407
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 713
+          - locale: 73
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1210,7 +1279,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 245
+          example: 812
           choices:
             - "java"
             - "bedrock"
@@ -1221,7 +1290,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 865
+            example: 650
           required: true
           properties:
             items:
@@ -1240,13 +1309,13 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 371
+            example: 751
           required: true
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 245
+        type: 812
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -1254,7 +1323,7 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 371
+          - 751
       description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
       type: "object"
@@ -1272,7 +1341,7 @@ components:
           minimum: 1
         type:
           type: "number"
-          example: 366
+          example: 453
           choices:
             - "java"
             - "bedrock"
@@ -1283,7 +1352,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 55
+            example: 56
           properties:
             items:
               type: "string"
@@ -1301,12 +1370,12 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 912
+            example: 264
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 366
+        type: 453
         imageUrl: "Lorem Ipsum"
         categories:
           - "Lorem Ipsum"
@@ -1314,23 +1383,50 @@ components:
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 912
+          - 264
       description: "UpdateServerValidator (Validator)"
     attachServerCategoryValidator:
       type: "object"
       properties:
         serverId:
           type: "number"
-          example: 870
+          example: 658
           required: true
         categoryId:
           type: "number"
-          example: 998
+          example: 150
           required: true
       example:
-        serverId: 870
-        categoryId: 998
+        serverId: 658
+        categoryId: 150
       description: "attachServerCategoryValidator (Validator)"
+    CreateManualClaimValidator:
+      type: "object"
+      properties:
+        evidence:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 10
+          maxLength: 2000
+        evidenceUrl:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 2048
+      example:
+        evidence: "Lorem Ipsum"
+        evidenceUrl: "Lorem Ipsum"
+      description: "CreateManualClaimValidator (Validator)"
+    ReviewClaimValidator:
+      type: "object"
+      properties:
+        note:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 2000
+      example:
+        note: "Lorem Ipsum"
+      description: "ReviewClaimValidator (Validator)"
     CreateServerVoteValidator:
       type: "object"
       properties:
@@ -1365,25 +1461,85 @@ components:
       example:
         visitorId: "Lorem Ipsum"
       description: "ServerVoteStatusValidator (Validator)"
+    DailyRhythmValidator:
+      type: "object"
+      properties:
+        server_id:
+          type: "number"
+          example: 857
+          required: true
+        days:
+          type: "number"
+          example: 1
+          minimum: 1
+          maximum: 730
+          required: true
+        timezone:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          maxLength: 64
+      example:
+        server_id: 857
+        days: 1
+        timezone: "Lorem Ipsum"
+      description: "DailyRhythmValidator (Validator)"
+    StatExportValidator:
+      type: "object"
+      properties:
+        server_id:
+          type: "number"
+          example: 22
+          required: true
+        fromDate:
+          type: "number"
+          example: 979
+        toDate:
+          type: "number"
+          example: 612
+        interval:
+          type: "number"
+          example: 771
+          choices:
+            - "30 minutes"
+            - "1 hour"
+            - "2 hours"
+            - "6 hours"
+            - "1 day"
+            - "1 week"
+        format:
+          type: "number"
+          example: 829
+          choices:
+            - "csv"
+            - "json"
+          required: true
+      example:
+        server_id: 22
+        fromDate: 979
+        toDate: 612
+        interval: 771
+        format: 829
+      description: "StatExportValidator (Validator)"
     StatValidator:
       type: "object"
       properties:
         server_id:
           type: "number"
-          example: 417
+          example: 619
           required: true
         exactTime:
           type: "number"
-          example: 642
+          example: 616
         fromDate:
           type: "number"
-          example: 913
+          example: 723
         toDate:
           type: "number"
-          example: 144
+          example: 245
         interval:
           type: "number"
-          example: 157
+          example: 25
           choices:
             - "30 minutes"
             - "1 hour"
@@ -1392,11 +1548,11 @@ components:
             - "1 day"
             - "1 week"
       example:
-        server_id: 417
-        exactTime: 642
-        fromDate: 913
-        toDate: 144
-        interval: 157
+        server_id: 619
+        exactTime: 616
+        fromDate: 723
+        toDate: 245
+        interval: 25
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -1587,10 +1743,10 @@ paths:
                   type: "object"
               example:
                 - server:
-                    id: 410
+                    id: 930
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 533
+                    port: 407
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
@@ -1600,13 +1756,15 @@ paths:
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
                     host_domain: "Lorem Ipsum"
-                    user_id: 248
-                    vote_count: 95
+                    user_id: 677
+                    owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                    owner_verified_method: {}
+                    vote_count: 990
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 104
-                    last_max_count: 157
+                    last_player_count: 763
+                    last_max_count: 951
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 215
+                    peak_player_count: 622
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
@@ -1614,12 +1772,12 @@ paths:
                   categories:
                     - "<Category>"
                   growthStat:
-                    server_id: 264
-                    weekly_growth: 528
-                    monthly_growth: 0
-                    last_week_average: 590
-                    previous_week_average: 188
-                    last_month_average: 171
+                    server_id: 460
+                    weekly_growth: 977
+                    monthly_growth: 288
+                    last_week_average: 236
+                    previous_week_average: 795
+                    last_month_average: 881
                     last_updated: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
         401:
@@ -1901,6 +2059,462 @@ paths:
                     rule: "uuid"
           description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security: []
+  /api/v1/servers/{id}/claim:
+    get:
+      summary: " (status)"
+      description: "\n\n _app/controllers/server_ownership_controller.ts_ - **status**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{id}/claim/motd:
+    post:
+      summary: "Start a MOTD ownership verification (startMotd)"
+      description: "Issues (or re-uses) a verification token and returns the string to place in the server's MOTD. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **startMotd**"
+      operationId: "startServerMotdClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  claim:
+                    type: "object"
+                    properties:
+                      method: "motd"
+                      status: "pending"
+                  motd:
+                    type: "object"
+                    properties:
+                      value: "minecraft-stats-verify=abc123"
+              example:
+                claim:
+                  method: "motd"
+                  status: "pending"
+                motd:
+                  value: "minecraft-stats-verify=abc123"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Unauthorized"
+              example:
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        409:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server is already verified."
+                  reason: "already_verified"
+              example:
+                message: "This server is already verified."
+                reason: "already_verified"
+          description: "Returns **409** (Conflict) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{id}/claim/motd/verify:
+    post:
+      summary: "Verify a MOTD ownership claim (verifyMotd)"
+      description: "Pings the server, reads its MOTD, and transfers ownership to the authenticated user if the verification token is present. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **verifyMotd**"
+      operationId: "verifyServerMotdClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  verified: true
+                  server:
+                    $ref: "#/components/schemas/Server"
+              example:
+                verified: true
+                server:
+                  id: 930
+                  name: "John Doe"
+                  address: "1028 Farland Street"
+                  port: 407
+                  type: {}
+                  version: "Lorem Ipsum"
+                  website: "Lorem Ipsum"
+                  motd: "Lorem Ipsum"
+                  image_url: "Lorem Ipsum"
+                  favicon_hash: "Lorem Ipsum"
+                  resolved_endpoint: "Lorem Ipsum"
+                  motd_hash: "Lorem Ipsum"
+                  host_domain: "Lorem Ipsum"
+                  user_id: 677
+                  owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                  owner_verified_method: {}
+                  vote_count: 990
+                  last_online_at: "2021-03-23T16:13:08.489+01:00"
+                  last_player_count: 763
+                  last_max_count: 951
+                  last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                  peak_player_count: 622
+                  peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                  next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Token not found in the MOTD yet."
+                  reason: "not_found_record"
+              example:
+                message: "Token not found in the MOTD yet."
+                reason: "not_found_record"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Unauthorized"
+              example:
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{id}/claim/dns:
+    post:
+      summary: "Start a DNS ownership verification (startDns)"
+      description: "Issues (or re-uses) a DNS verification token and returns the TXT record to publish. Rejected if the server has no resolvable domain (409 dns_unavailable) or is already verified. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **startDns**"
+      operationId: "startServerDnsClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  claim:
+                    type: "object"
+                    properties:
+                      method: "dns"
+                      status: "pending"
+                  dns:
+                    type: "object"
+                    properties:
+                      recordType: "TXT"
+                      recordName: "example.com"
+                      recordValue: "minecraft-stats-verify=abc123"
+              example:
+                claim:
+                  method: "dns"
+                  status: "pending"
+                dns:
+                  recordType: "TXT"
+                  recordName: "example.com"
+                  recordValue: "minecraft-stats-verify=abc123"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Unauthorized"
+              example:
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        409:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server is already verified."
+                  reason: "already_verified"
+              example:
+                message: "This server is already verified."
+                reason: "already_verified"
+          description: "Returns **409** (Conflict) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{id}/claim/dns/verify:
+    post:
+      summary: "Verify a DNS ownership claim (verifyDns)"
+      description: "Resolves the server's TXT records and transfers ownership to the authenticated user if the verification token is found. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **verifyDns**"
+      operationId: "verifyServerDnsClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  verified: true
+                  server:
+                    $ref: "#/components/schemas/Server"
+              example:
+                verified: true
+                server:
+                  id: 930
+                  name: "John Doe"
+                  address: "1028 Farland Street"
+                  port: 407
+                  type: {}
+                  version: "Lorem Ipsum"
+                  website: "Lorem Ipsum"
+                  motd: "Lorem Ipsum"
+                  image_url: "Lorem Ipsum"
+                  favicon_hash: "Lorem Ipsum"
+                  resolved_endpoint: "Lorem Ipsum"
+                  motd_hash: "Lorem Ipsum"
+                  host_domain: "Lorem Ipsum"
+                  user_id: 677
+                  owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                  owner_verified_method: {}
+                  vote_count: 990
+                  last_online_at: "2021-03-23T16:13:08.489+01:00"
+                  last_player_count: 763
+                  last_max_count: 951
+                  last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                  peak_player_count: 622
+                  peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                  next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "TXT record not found yet."
+                  reason: "not_found_record"
+              example:
+                message: "TXT record not found yet."
+                reason: "not_found_record"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Unauthorized"
+              example:
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{id}/claim/manual:
+    post:
+      summary: "Submit a manual ownership claim (submitManual)"
+      description: "Files a manual ownership request (evidence text + optional proof URL) for admin review. Used when neither MOTD nor DNS verification is possible. Rejected if the server is already verified. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **submitManual**"
+      operationId: "submitServerManualClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  claim:
+                    type: "object"
+                    properties:
+                      method: "manual"
+                      status: "pending"
+                  message: "Your request was submitted for review."
+              example:
+                claim:
+                  method: "manual"
+                  status: "pending"
+                message: "Your request was submitted for review."
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Unauthorized"
+              example:
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        409:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server is already verified."
+                  reason: "already_verified"
+              example:
+                message: "This server is already verified."
+                reason: "already_verified"
+          description: "Returns **409** (Conflict) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Validation failed"
+                          field: "evidence"
+              example:
+                errors:
+                  - message: "Validation failed"
+                    field: "evidence"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateManualClaimValidator"
+            example:
+              evidence: "Lorem Ipsum"
+              evidenceUrl: "Lorem Ipsum"
   /api/v1/servers/{server_id}/categories:
     get:
       summary: "Get a list of servers (index)"
@@ -2086,21 +2700,21 @@ paths:
           required: false
         - in: "query"
           name: "fromDate"
-          description: "Start of range as epoch milliseconds (or the literal string `now`). Required if neither interval nor exactTime is provided."
+          description: "Start of range as epoch milliseconds (or the literal string `now`). Omit it alongside `interval` to go back to the server's first recorded day. Required if neither interval nor exactTime is provided."
           schema:
             example: "1716854400000"
             type: "number"
           required: false
         - in: "query"
           name: "toDate"
-          description: "End of range as epoch milliseconds (or the literal string `now`)."
+          description: "End of range as epoch milliseconds (or the literal string `now`). Defaults to now."
           schema:
             example: "1717459200000"
             type: "number"
           required: false
         - in: "query"
           name: "interval"
-          description: "Bucket size for aggregation. When provided, stats are grouped per bucket. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`)."
+          description: "Bucket size for aggregation. When provided, stats are grouped per bucket. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`). A range/interval pair producing more buckets than your tier allows is rejected."
           schema:
             example: "1 hour"
             type: "string"
@@ -2119,6 +2733,8 @@ paths:
                 - serverId: 134
                   createdAt: "2026-05-28T12:00:00.000Z"
                   playerCount: 1250
+                  peakPlayerCount: 1840
+                  minPlayerCount: 910
                   maxCount: 2000
           description: "Returns **200** (OK) as **application/json**"
         400:
@@ -2127,10 +2743,271 @@ paths:
               schema:
                 type: "object"
                 properties:
-                  error: "fromDate (or interval) is required when fetching raw stats — refusing to scan the full table"
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "This range would produce 26280 points (limit is 1500) — request a wider interval"
+                          code: "E_TIER_LIMIT"
+                  limit: "statBuckets"
+                  allowed: 1500
+                  requested: 26280
+                  tier: "guest"
+                  unlockedBy: "login"
               example:
-                error: "fromDate (or interval) is required when fetching raw stats — refusing to scan the full table"
+                errors:
+                  - message: "This range would produce 26280 points (limit is 1500) — request a wider interval"
+                    code: "E_TIER_LIMIT"
+                limit: "statBuckets"
+                allowed: 1500
+                requested: 26280
+                tier: "guest"
+                unlockedBy: "login"
           description: "Returns **400** (Bad Request) as **application/json**"
+        500:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Internal server error"
+              example:
+                error: "Internal server error"
+          description: "Returns **500** (Internal Server Error) as **application/json**"
+      security: []
+  /api/v1/servers/{server_id}/stats/export:
+    get:
+      summary: "Download a server's stats as CSV or JSON (export)"
+      description: "Returns **200** (OK) as **text/plain**\n\n _app/controllers/stats_controller.ts_ - **export**"
+      operationId: "exportServerStats"
+      parameters:
+        - in: "path"
+          name: "server_id"
+          description: "Server id"
+          schema:
+            example: "125"
+            type: "number"
+          required: true
+        - in: "query"
+          name: "fromDate"
+          description: "Start of range as epoch milliseconds (or the literal string `now`). Omit it to go back to the server's first recorded day."
+          schema:
+            example: "1716854400000"
+            type: "number"
+          required: false
+        - in: "query"
+          name: "toDate"
+          description: "End of range as epoch milliseconds (or the literal string `now`). Defaults to now."
+          schema:
+            example: "1717459200000"
+            type: "number"
+          required: false
+        - in: "query"
+          name: "interval"
+          description: "Bucket size for aggregation. Same values as the stats endpoint. Omit it to export raw samples."
+          schema:
+            example: "1 hour"
+            type: "string"
+          required: false
+        - in: "query"
+          name: "format"
+          description: "Output format, `csv` (default) or `json`."
+          schema:
+            example: "csv"
+            type: "string"
+          required: false
+      tags:
+        - "STATS"
+      responses:
+        200:
+          content:
+            text/plain:
+              example: "createdAt,playerCount,peakPlayerCount,minPlayerCount,maxCount"
+          description: "Returns **200** (OK) as **text/plain**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Exporting stats requires an account"
+                          code: "E_TIER_LIMIT"
+                  limit: "statsExport"
+                  allowed: 0
+                  requested: 1
+                  tier: "guest"
+                  unlockedBy: "login"
+              example:
+                errors:
+                  - message: "Exporting stats requires an account"
+                    code: "E_TIER_LIMIT"
+                limit: "statsExport"
+                allowed: 0
+                requested: 1
+                tier: "guest"
+                unlockedBy: "login"
+          description: "Returns **400** (Bad Request) as **application/json**"
+      security: []
+  /api/v1/servers/{server_id}/stats/daily-rhythm:
+    get:
+      summary: "Get the typical day of a server (dailyRhythm)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/stats_controller.ts_ - **dailyRhythm**"
+      operationId: "getServerDailyRhythm"
+      parameters:
+        - in: "path"
+          name: "server_id"
+          description: "Server id"
+          schema:
+            example: "125"
+            type: "number"
+          required: true
+        - in: "query"
+          name: "days"
+          description: "Size of the observation window, in days back from now. Defaults to 30, capped at 730 — and further capped by your tier (`maxRhythmDays` in `GET /entitlements`)."
+          schema:
+            example: "30"
+            type: "number"
+          required: false
+        - in: "query"
+          name: "timezone"
+          description: "IANA time zone used to bucket slots and resolve the day of week. Defaults to UTC."
+          schema:
+            example: "Europe/Paris"
+            type: "string"
+          required: false
+      tags:
+        - "STATS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  timezone: "Europe/Paris"
+                  slotMinutes: 30
+                  from: "2026-06-23T00:00:00.000+02:00"
+                  to: "2026-07-23T00:00:00.000+02:00"
+                  daysObserved:
+                    type: "object"
+                    properties:
+                      all: 30
+                      weekday: 22
+                      weekend: 8
+                      mon: 4
+                      tue: 5
+                      wed: 4
+                      thu: 5
+                      fri: 4
+                      sat: 4
+                      sun: 4
+                  series:
+                    type: "object"
+                    properties:
+                      all:
+                        type: "object"
+                        properties:
+                          0:
+                            type: "object"
+                            properties:
+                              slot: 43
+                              minuteOfDay: 1290
+                              playerCount: 502
+                              peakPlayerCount: 806
+                              minPlayerCount: 341
+                              samplesCount: 90
+                              daysCount: 30
+                      weekday:
+                        type: "object"
+                        properties: {}
+                      weekend:
+                        type: "object"
+                        properties: {}
+                      mon:
+                        type: "object"
+                        properties: {}
+                      tue:
+                        type: "object"
+                        properties: {}
+                      wed:
+                        type: "object"
+                        properties: {}
+                      thu:
+                        type: "object"
+                        properties: {}
+                      fri:
+                        type: "object"
+                        properties: {}
+                      sat:
+                        type: "object"
+                        properties: {}
+                      sun:
+                        type: "object"
+                        properties: {}
+              example:
+                timezone: "Europe/Paris"
+                slotMinutes: 30
+                from: "2026-06-23T00:00:00.000+02:00"
+                to: "2026-07-23T00:00:00.000+02:00"
+                daysObserved:
+                  all: 30
+                  weekday: 22
+                  weekend: 8
+                  mon: 4
+                  tue: 5
+                  wed: 4
+                  thu: 5
+                  fri: 4
+                  sat: 4
+                  sun: 4
+                series:
+                  all:
+                    - slot: 43
+                      minuteOfDay: 1290
+                      playerCount: 502
+                      peakPlayerCount: 806
+                      minPlayerCount: 341
+                      samplesCount: 90
+                      daysCount: 30
+                  weekday: []
+                  weekend: []
+                  mon: []
+                  tue: []
+                  wed: []
+                  thu: []
+                  fri: []
+                  sat: []
+                  sun: []
+          description: "Returns **200** (OK) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "The timezone field must be a valid IANA time zone"
+                          rule: "ianaTimezone"
+                          field: "timezone"
+              example:
+                errors:
+                  - message: "The timezone field must be a valid IANA time zone"
+                    rule: "ianaTimezone"
+                    field: "timezone"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
         500:
           content:
             application/json:
@@ -2150,21 +3027,21 @@ paths:
       parameters:
         - in: "query"
           name: "fromDate"
-          description: "Start of range as epoch milliseconds (or the literal string `now`)."
+          description: "Start of range as epoch milliseconds (or the literal string `now`). Omit it to go back to the platform's first recorded day."
           schema:
             example: "1716854400000"
             type: "number"
           required: false
         - in: "query"
           name: "toDate"
-          description: "End of range as epoch milliseconds (or the literal string `now`)."
+          description: "End of range as epoch milliseconds (or the literal string `now`). Defaults to now."
           schema:
             example: "1717459200000"
             type: "number"
           required: false
         - in: "query"
           name: "interval"
-          description: "Bucket size for aggregation. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`)."
+          description: "Bucket size for aggregation. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`). A range/interval pair producing more buckets than your tier allows is rejected."
           schema:
             example: "1 hour"
             type: "string"
@@ -2196,6 +3073,8 @@ paths:
               example:
                 - createdAt: "2026-05-28T12:00:00.000Z"
                   playerCount: 48230
+                  peakPlayerCount: 71400
+                  minPlayerCount: 29800
                   maxCount: 120000
           description: "Returns **200** (OK) as **application/json**"
         400:
@@ -2204,9 +3083,28 @@ paths:
               schema:
                 type: "object"
                 properties:
-                  error: "Invalid fromDate format"
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "This range would produce 26280 points (limit is 1500) — request a wider interval"
+                          code: "E_TIER_LIMIT"
+                  limit: "statBuckets"
+                  allowed: 1500
+                  requested: 26280
+                  tier: "guest"
+                  unlockedBy: "login"
               example:
-                error: "Invalid fromDate format"
+                errors:
+                  - message: "This range would produce 26280 points (limit is 1500) — request a wider interval"
+                    code: "E_TIER_LIMIT"
+                limit: "statBuckets"
+                allowed: 1500
+                requested: 26280
+                tier: "guest"
+                unlockedBy: "login"
           description: "Returns **400** (Bad Request) as **application/json**"
         500:
           content:
@@ -2218,6 +3116,50 @@ paths:
               example:
                 error: "Internal server error"
           description: "Returns **500** (Internal Server Error) as **application/json**"
+      security: []
+  /api/v1/entitlements:
+    get:
+      summary: "Get the caller's tier and its limits (index)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/entitlements_controller.ts_ - **index**"
+      operationId: "getEntitlements"
+      parameters: []
+      tags:
+        - "ENTITLEMENTS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  tier: "guest"
+                  maxStatBuckets: 1500
+                  maxExportRows: 0
+                  maxHistoryDays: 365
+                  maxRhythmDays: 90
+                  canExportStats: false
+                  upgrade:
+                    type: "object"
+                    properties:
+                      tier: "member"
+                      maxStatBuckets: 6000
+                      maxExportRows: 50000
+                      maxRhythmDays: 730
+                      canExportStats: true
+              example:
+                tier: "guest"
+                maxStatBuckets: 1500
+                maxExportRows: 0
+                maxHistoryDays: 365
+                maxRhythmDays: 90
+                canExportStats: false
+                upgrade:
+                  tier: "member"
+                  maxStatBuckets: 6000
+                  maxExportRows: 50000
+                  maxRhythmDays: 730
+                  canExportStats: true
+          description: "Returns **200** (OK) as **application/json**"
       security: []
   /api/v1/users:
     get:
@@ -3250,7 +4192,7 @@ paths:
               $ref: "#/components/schemas/CreateApiTokenValidator"
             example:
               name: "Lorem Ipsum"
-              expiresInDays: 319
+              expiresInDays: 320
   /api/v1/account/api-tokens/{id}:
     delete:
       summary: "Revoke an API token (destroy)"
@@ -4193,6 +5135,221 @@ paths:
       security:
         - BearerAuth:
             - "access"
+  /api/v1/admin/ownership-claims:
+    get:
+      summary: "List pending manual ownership claims (admin) (adminIndex)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/server_ownership_controller.ts_ - **adminIndex**"
+      operationId: "adminListOwnershipClaims"
+      parameters: []
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - id: 1
+                  method: "manual"
+                  status: "pending"
+                  evidence: "Discord: owner#1234"
+                  server:
+                    id: 930
+                    name: "John Doe"
+                    address: "1028 Farland Street"
+                    port: 407
+                    type: {}
+                    version: "Lorem Ipsum"
+                    website: "Lorem Ipsum"
+                    motd: "Lorem Ipsum"
+                    image_url: "Lorem Ipsum"
+                    favicon_hash: "Lorem Ipsum"
+                    resolved_endpoint: "Lorem Ipsum"
+                    motd_hash: "Lorem Ipsum"
+                    host_domain: "Lorem Ipsum"
+                    user_id: 677
+                    owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                    owner_verified_method: {}
+                    vote_count: 990
+                    last_online_at: "2021-03-23T16:13:08.489+01:00"
+                    last_player_count: 763
+                    last_max_count: 951
+                    last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                    peak_player_count: 622
+                    peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                    next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
+                  user:
+                    id: 122
+                    username: "Lorem Ipsum"
+                    verified: true
+                    provider: {}
+                    role: {}
+                    avatar_url: "Lorem Ipsum"
+                    verification_token_expires: "2021-03-23T16:13:08.489+01:00"
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Access denied. Admin privileges required."
+              example:
+                error: "Access denied. Admin privileges required."
+          description: "Returns **403** (Forbidden) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/admin/ownership-claims/{id}/approve:
+    post:
+      summary: "Approve a manual ownership claim (admin) (approve)"
+      description: "Approves a pending manual claim and transfers server ownership to the requester. Returns 409 if the server was verified by someone else in the meantime. Admin only.\n\n _app/controllers/server_ownership_controller.ts_ - **approve**"
+      operationId: "adminApproveOwnershipClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The claim id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Claim approved."
+                  server:
+                    $ref: "#/components/schemas/Server"
+              example:
+                message: "Claim approved."
+                server:
+                  id: 930
+                  name: "John Doe"
+                  address: "1028 Farland Street"
+                  port: 407
+                  type: {}
+                  version: "Lorem Ipsum"
+                  website: "Lorem Ipsum"
+                  motd: "Lorem Ipsum"
+                  image_url: "Lorem Ipsum"
+                  favicon_hash: "Lorem Ipsum"
+                  resolved_endpoint: "Lorem Ipsum"
+                  motd_hash: "Lorem Ipsum"
+                  host_domain: "Lorem Ipsum"
+                  user_id: 677
+                  owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                  owner_verified_method: {}
+                  vote_count: 990
+                  last_online_at: "2021-03-23T16:13:08.489+01:00"
+                  last_player_count: 763
+                  last_max_count: 951
+                  last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                  peak_player_count: 622
+                  peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                  next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Claim not found"
+              example:
+                message: "Claim not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        409:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server is already verified."
+                  reason: "already_verified"
+              example:
+                message: "This server is already verified."
+                reason: "already_verified"
+          description: "Returns **409** (Conflict) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewClaimValidator"
+            example:
+              note: "Lorem Ipsum"
+  /api/v1/admin/ownership-claims/{id}/reject:
+    post:
+      summary: "Reject a manual ownership claim (admin) (reject)"
+      description: "Rejects a pending manual claim with an optional note. Admin only.\n\n _app/controllers/server_ownership_controller.ts_ - **reject**"
+      operationId: "adminRejectOwnershipClaim"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The claim id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER OWNERSHIP"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Claim rejected."
+              example:
+                message: "Claim rejected."
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Claim not found"
+              example:
+                message: "Claim not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewClaimValidator"
+            example:
+              note: "Lorem Ipsum"
   /api/v1/admin/users:
     get:
       summary: " (adminIndex)"
@@ -4448,6 +5605,16 @@ tags:
     description: "Everything related to SERVERS"
   - name: "SERVERS"
     description: "Everything related to SERVERS"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
   - name: "LANGUAGES"
     description: "Everything related to LANGUAGES"
   - name: "CATEGORIES"
@@ -4456,6 +5623,14 @@ tags:
     description: "Everything related to STATS"
   - name: "STATS"
     description: "Everything related to STATS"
+  - name: "STATS"
+    description: "Everything related to STATS"
+  - name: "STATS"
+    description: "Everything related to STATS"
+  - name: "ENTITLEMENTS"
+    description: "Everything related to ENTITLEMENTS"
+  - name: "ENTITLEMENTS"
+    description: "Everything related to ENTITLEMENTS"
   - name: "USERS"
     description: "Everything related to USERS"
   - name: "WEBSITE-STATS"
@@ -4512,6 +5687,12 @@ tags:
     description: "Everything related to ADMIN"
   - name: "POSTS_ADMIN"
     description: "Everything related to POSTS_ADMIN"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
+  - name: "SERVER OWNERSHIP"
+    description: "Everything related to SERVER OWNERSHIP"
   - name: "UPLOADS"
     description: "Everything related to UPLOADS"
   - name: "UPLOADS"
