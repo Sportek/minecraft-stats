@@ -9,6 +9,7 @@ export const controllers = {
   ApiTokens: () => import('#controllers/api_tokens_controller'),
   Auth: () => import('#controllers/auth_controller'),
   Categories: () => import('#controllers/categories_controller'),
+  Entitlements: () => import('#controllers/entitlements_controller'),
   Languages: () => import('#controllers/languages_controller'),
   Posts: () => import('#controllers/posts_controller'),
   ServerCategories: () => import('#controllers/server_categories_controller'),

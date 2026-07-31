@@ -76,25 +76,51 @@ export const getMyServers = (token: string) =>
 export const getServer = (serverId: number) =>
   apiFetch<{ server: Server; stats: ServerStat[]; categories: Category[] }>(`/servers/${serverId}`);
 
-/** `fromDate` omis = depuis la première donnée connue du serveur (vue « Tout »). */
+/**
+ * `fromDate` omis = depuis la première donnée connue du serveur (vue « Tout »).
+ * Le jeton est facultatif : l'endpoint est public, mais un membre y a droit à plus
+ * de points et à un historique plus profond (cf. `GET /entitlements`).
+ */
 export const getServerStats = (
   serverId: number,
   fromDate: EpochTimeStamp | undefined,
   toDate: EpochTimeStamp,
-  interval?: string
+  interval?: string,
+  token?: string | null
 ) => {
   const params = new URLSearchParams({ toDate: String(toDate) });
   if (fromDate !== undefined) params.set("fromDate", String(fromDate));
   if (interval) params.set("interval", interval);
 
-  return apiFetch<ServerStat[]>(`/servers/${serverId}/stats?${params}`);
+  return apiFetch<ServerStat[]>(`/servers/${serverId}/stats?${params}`, {
+    token: token ?? undefined,
+  });
 };
 
 /** Journée type : l'historique replié sur 24 h, découpé dans le fuseau du lecteur. */
-export const getServerDailyRhythm = (serverId: number, days: number, timezone: string) => {
+export const getServerDailyRhythm = (
+  serverId: number,
+  days: number,
+  timezone: string,
+  token?: string | null
+) => {
   const params = new URLSearchParams({ days: String(days), timezone });
 
-  return apiFetch<DailyRhythm>(`/servers/${serverId}/stats/daily-rhythm?${params}`);
+  return apiFetch<DailyRhythm>(`/servers/${serverId}/stats/daily-rhythm?${params}`, {
+    token: token ?? undefined,
+  });
+};
+
+/** URL de téléchargement de l'export — le jeton part en en-tête, pas dans l'URL. */
+export const serverStatsExportPath = (
+  serverId: number,
+  query: { fromDate?: EpochTimeStamp; toDate: EpochTimeStamp; interval?: string; format: "csv" | "json" }
+) => {
+  const params = new URLSearchParams({ toDate: String(query.toDate), format: query.format });
+  if (query.fromDate !== undefined) params.set("fromDate", String(query.fromDate));
+  if (query.interval) params.set("interval", query.interval);
+
+  return `/servers/${serverId}/stats/export?${params}`;
 };
 
 export const deleteServer = async (serverId: number, token: string) => {

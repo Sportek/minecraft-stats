@@ -28,11 +28,19 @@ function buildDirective(config: CacheHeaderConfig): string {
  *   .use(cacheHeaders({ noStore: true }))
  */
 export const cacheHeaders = (config: CacheHeaderConfig) => {
-  const directive = buildDirective(config)
+  const shared = buildDirective(config)
+  const perUser = buildDirective({ ...config, scope: 'private' })
+
   return async (ctx: HttpContext, next: NextFn) => {
     await next()
-    if (!ctx.response.getHeader('cache-control')) {
-      ctx.response.header('cache-control', directive)
-    }
+    if (ctx.response.getHeader('cache-control')) return
+
+    // Une requête authentifiée peut recevoir une réponse différente de celle d'un
+    // anonyme sur la même URL (cf. paliers d'`EntitlementsService`). `Vary:
+    // Authorization` serait la réponse canonique, mais Cloudflare — par où passe
+    // tout le trafic — ignore `Vary` hors `Accept-Encoding` : le CDN servirait la
+    // réponse d'un palier à l'autre. On sort donc ces réponses du cache partagé.
+    const authenticated = ctx.request.header('authorization') !== undefined
+    ctx.response.header('cache-control', authenticated ? perUser : shared)
   }
 }

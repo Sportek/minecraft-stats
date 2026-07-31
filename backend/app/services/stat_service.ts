@@ -1,7 +1,9 @@
+import EntitlementsService from '#services/entitlements_service'
 import { Exception } from '@adonisjs/core/exceptions'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
+import type { Entitlements } from '../constants/tiers.js'
 
 const HOUR_SECONDS = 60 * 60
 const DAY_SECONDS = 24 * HOUR_SECONDS
@@ -14,12 +16,12 @@ const WEEK_SECONDS = 7 * DAY_SECONDS
 const DAILY_ROLLUP_THRESHOLD_MS = 90 * DAY_SECONDS * 1000
 
 /**
- * Plafond de points qu'une requête peut produire. L'interface ne propose jamais
- * de combinaison au-delà (les résolutions trop fines y sont grisées) ; ce garde-fou
- * protège la base des appels directs à l'API — sans lui, « 5 ans » × « 30 minutes »
+ * Le plafond de points et la profondeur d'historique dépendent désormais du palier
+ * de l'appelant (cf. `app/constants/tiers.ts`) : ils arrivent par `entitlements`.
+ * L'interface ne propose jamais de combinaison hors palier ; ces garde-fous
+ * protègent la base des appels directs à l'API — sans eux, « 5 ans » × « 30 minutes »
  * demande 87 600 buckets.
  */
-const MAX_BUCKETS = 1500
 
 /**
  * Les deux rollups partagent leurs noms de colonnes ; seule la colonne temporelle
@@ -196,16 +198,41 @@ export default class StatsService {
   }
 
   /**
-   * Refuse les combinaisons plage × intervalle qui produiraient plus de points
-   * que le graphique ne peut en dire quoi que ce soit — et que la base paierait cher.
+   * Refuse ce que le palier de l'appelant n'ouvre pas : une combinaison
+   * plage × intervalle qui produirait plus de points que le graphique ne peut en
+   * dire quoi que ce soit — et que la base paierait cher —, ou un historique plus
+   * profond que ce à quoi le palier donne droit.
    */
-  private static assertBucketBudget(intervalSeconds: number, fromMs: number, toMs: number) {
-    const buckets = Math.ceil((toMs - fromMs) / (intervalSeconds * 1000))
-    if (buckets > MAX_BUCKETS) {
-      throw new Exception(
-        `This range would produce ${buckets} points (limit is ${MAX_BUCKETS}) — request a wider interval`,
-        { status: 400, code: 'E_STATS_TOO_MANY_BUCKETS' }
-      )
+  private static assertRangeAllowed(params: {
+    fromMs: number
+    toMs: number
+    intervalSeconds: number | null
+    entitlements: Entitlements
+  }) {
+    const { entitlements, fromMs, toMs, intervalSeconds } = params
+
+    if (intervalSeconds) {
+      const buckets = Math.ceil((toMs - fromMs) / (intervalSeconds * 1000))
+      EntitlementsService.assertWithinLimit({
+        limit: 'statBuckets',
+        requested: buckets,
+        allowed: entitlements.maxStatBuckets,
+        entitlements,
+        message: `This range would produce ${buckets} points (limit is ${entitlements.maxStatBuckets}) — request a wider interval`,
+      })
+    }
+
+    if (entitlements.maxHistoryDays !== null) {
+      // Arrondi au jour inférieur : les bornes sont snappées sur la grille de cache
+      // (5 min), un preset « 1 an » ne doit pas sortir du palier pour trois minutes.
+      const depthDays = Math.floor((Date.now() - fromMs) / (DAY_SECONDS * 1000))
+      EntitlementsService.assertWithinLimit({
+        limit: 'historyDays',
+        requested: depthDays,
+        allowed: entitlements.maxHistoryDays,
+        entitlements,
+        message: `This range reaches ${depthDays} days back (limit is ${entitlements.maxHistoryDays}) — request a shorter range`,
+      })
     }
   }
 
@@ -674,13 +701,16 @@ export default class StatsService {
     logger.info(`SCHEDULER: growth_stats — upserted ${growthRows.length} rows`)
   }
 
-  static async getStats(params: {
-    server_id: number
-    exactTime?: number
-    fromDate?: number
-    toDate?: number
-    interval?: string
-  }) {
+  static async getStats(
+    params: {
+      server_id: number
+      exactTime?: number
+      fromDate?: number
+      toDate?: number
+      interval?: string
+    },
+    entitlements: Entitlements
+  ) {
     const serverId = params.server_id
     if (!serverId) {
       throw new Exception('Server id is required', { status: 400 })
@@ -713,7 +743,7 @@ export default class StatsService {
       // `fromDate` absent = « depuis le début » : on résout la borne réelle pour que
       // le choix de la source et le garde-fou raisonnent sur la vraie plage.
       const fromMs = params.fromDate ?? (await this.resolveRangeStart(serverId))
-      this.assertBucketBudget(intervalSeconds, fromMs, toMs)
+      this.assertRangeAllowed({ fromMs, toMs, intervalSeconds, entitlements })
 
       const rows = await this.getStatsWithInterval(serverId, intervalSeconds, fromMs, toMs)
       return rows.map(this.convertToCamelCase)
@@ -722,6 +752,15 @@ export default class StatsService {
     // ---------------------------------------
     // Sinon => stats brutes
     // ---------------------------------------
+    if (params.fromDate) {
+      this.assertRangeAllowed({
+        fromMs: params.fromDate,
+        toMs: params.toDate ?? Date.now(),
+        intervalSeconds: null,
+        entitlements,
+      })
+    }
+
     const results = await this.getRawStats(serverId, fromDateSql, toDateSql)
     return results.map(this.convertToCamelCase)
   }
@@ -825,13 +864,16 @@ export default class StatsService {
     }
   }
 
-  static async getGlobalStats(params: {
-    fromDate?: number
-    toDate?: number
-    interval?: string
-    categoryId?: number
-    languageId?: number
-  }) {
+  static async getGlobalStats(
+    params: {
+      fromDate?: number
+      toDate?: number
+      interval?: string
+      categoryId?: number
+      languageId?: number
+    },
+    entitlements: Entitlements
+  ) {
     logger.info('Fetching global stats with params:', params)
 
     const intervalSeconds = params.interval ? this.intervalToSeconds(params.interval) : null
@@ -842,7 +884,7 @@ export default class StatsService {
 
     if (params.fromDate) this.toSqlOrFail(params.fromDate, 'fromDate')
     if (params.toDate) this.toSqlOrFail(params.toDate, 'toDate')
-    if (intervalSeconds) this.assertBucketBudget(intervalSeconds, fromMs, toMs)
+    this.assertRangeAllowed({ fromMs, toMs, intervalSeconds, entitlements })
 
     const fromDateSql = DateTime.fromMillis(fromMs).toSQL()!
     const toDateSql = DateTime.fromMillis(toMs).toSQL()!

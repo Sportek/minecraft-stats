@@ -1,8 +1,10 @@
 "use client";
 
+import { useAuth } from "@/contexts/auth";
 import { useFavorite } from "@/contexts/favorite";
+import { useEntitlements } from "@/hooks/use-entitlements";
 import { getClientApiUrl } from "@/lib/domain";
-import { DEFAULT_PERIOD, Period, toStatsQuery } from "@/components/stats/period";
+import { clampPeriod, DEFAULT_PERIOD, Period, toAllowance, toStatsQuery } from "@/components/stats/period";
 import { SeriesMode } from "@/components/stats/series-mode-toggle";
 import { ServerStat } from "@/types/server";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -15,6 +17,9 @@ const periodQueryString = (period: Period) => {
   if (fromDate !== undefined) params.set("fromDate", String(fromDate));
   return params.toString();
 };
+
+/** Les lectures de stats sont publiques : le jeton n'y sert qu'à relever le palier. */
+const bearer = (token: string | null) => (token ? { Authorization: `Bearer ${token}` } : undefined);
 
 export type ServerSeries = { server: Server; stats: ServerStat[] };
 
@@ -43,8 +48,16 @@ export function useGlobalInsight() {
   const [mounted, setMounted] = useState(false);
   const apiUrl = getClientApiUrl();
 
-  const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
+  const [selectedPeriod, setPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [seriesMode, setSeriesMode] = useState<SeriesMode>("average");
+  const { getToken } = useAuth();
+  const entitlements = useEntitlements();
+  const allowance = toAllowance(entitlements);
+  // Dérivée : quand le palier se resserre (déconnexion), la période revient d'elle-même
+  // dans les clous. `clampPeriod` rend l'objet inchangé quand il n'y a rien à corriger,
+  // ce dont dépendent les effets ci-dessous pour ne pas boucler.
+  const period = clampPeriod(selectedPeriod, allowance);
+  const tier = entitlements.tier;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -94,7 +107,7 @@ export function useGlobalInsight() {
     if (selectedCategory) url += `&categoryId=${selectedCategory}`;
     if (selectedLanguage) url += `&languageId=${selectedLanguage}`;
 
-    fetch(url, { signal: controller.signal })
+    fetch(url, { signal: controller.signal, headers: bearer(getToken()) })
       .then((r) => {
         if (!r.ok) throw new Error("Failed to fetch global stats");
         return r.json();
@@ -111,7 +124,7 @@ export function useGlobalInsight() {
       });
 
     return () => controller.abort();
-  }, [selectedServers.length, period, selectedCategory, selectedLanguage, apiUrl]);
+  }, [selectedServers.length, period, selectedCategory, selectedLanguage, apiUrl, tier, getToken]);
 
   // Branche par-serveur : fetch incrémental, seulement ce qui manque au cache.
   useEffect(() => {
@@ -131,7 +144,10 @@ export function useGlobalInsight() {
     Promise.all(
       missing.map(async (serverId) => {
         const [statsRes, serverRes] = await Promise.all([
-          fetch(`${apiUrl}/servers/${serverId}/stats?${query}`, { signal: controller.signal }),
+          fetch(`${apiUrl}/servers/${serverId}/stats?${query}`, {
+            signal: controller.signal,
+            headers: bearer(getToken()),
+          }),
           fetch(`${apiUrl}/servers/${serverId}`, { signal: controller.signal }),
         ]);
         if (!statsRes.ok) throw new Error(`Failed to fetch stats for server ${serverId}`);
@@ -157,7 +173,7 @@ export function useGlobalInsight() {
       });
 
     return () => controller.abort();
-  }, [selectedServers, statsCache, period, apiUrl]);
+  }, [selectedServers, statsCache, period, apiUrl, tier, getToken]);
 
   // Vue projetée pour le chart : on lit le cache dans l'ordre de selectedServers.
   // Les entrées encore en vol sont juste absentes — le chart affiche les autres
@@ -179,6 +195,7 @@ export function useGlobalInsight() {
     setSelectedLanguage,
     period,
     setPeriod,
+    allowance,
     seriesMode,
     setSeriesMode,
     selectedServers,

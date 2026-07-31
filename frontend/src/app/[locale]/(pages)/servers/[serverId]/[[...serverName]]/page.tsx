@@ -14,8 +14,19 @@ import { AgCharts } from "ag-charts-react";
 
 import { ServerData } from "@/app/[locale]/(pages)/(index)/page";
 import { DailyRhythm } from "@/components/stats/daily-rhythm";
-import { axisTimeFormat, DEFAULT_PERIOD, effectiveResolution, Period, toStatsQuery } from "@/components/stats/period";
+import {
+  axisTimeFormat,
+  clampPeriod,
+  DEFAULT_PERIOD,
+  effectiveResolution,
+  Period,
+  toAllowance,
+  toStatsQuery,
+} from "@/components/stats/period";
 import { PeriodPicker } from "@/components/stats/period-picker";
+import { StatsExportButton } from "@/components/stats/stats-export-button";
+import { useEntitlements } from "@/hooks/use-entitlements";
+import { useAuth } from "@/contexts/auth";
 import { SeriesMode, SeriesModeToggle } from "@/components/stats/series-mode-toggle";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
 import ServerDetailHeader from "@/components/serveur/server-detail-header";
@@ -215,15 +226,22 @@ const ServerPage = () => {
     refreshInterval: 1000 * 60 * 5,
   });
 
-  const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
+  const [selectedPeriod, setPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [seriesMode, setSeriesMode] = useState<SeriesMode>("average");
   const { resolvedTheme } = useTheme();
+  const { getToken } = useAuth();
+  const entitlements = useEntitlements();
+  const allowance = toAllowance(entitlements);
+
+  // Dérivée plutôt que stockée : une déconnexion resserre le palier, et la période
+  // choisie doit y revenir d'elle-même — sinon le graphe part en erreur 400.
+  const period = clampPeriod(selectedPeriod, allowance);
 
   const { data: statsData, isLoading: isStatsLoading } = useSWR<ServerStat[], Error>(
-    ["server-stats", serverId, period],
+    ["server-stats", serverId, period, entitlements.tier],
     () => {
       const { fromDate, toDate, interval } = toStatsQuery(period, Date.now());
-      return getServerStats(Number(serverId), fromDate, toDate, interval);
+      return getServerStats(Number(serverId), fromDate, toDate, interval, getToken());
     },
     { refreshInterval: 1000 * 60 * 2 }
   );
@@ -361,8 +379,18 @@ const ServerPage = () => {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <PeriodPicker value={period} onChange={setPeriod} disabled={isStatsLoading} />
+            <PeriodPicker
+              value={period}
+              onChange={setPeriod}
+              disabled={isStatsLoading}
+              allowance={allowance}
+            />
             <SeriesModeToggle value={seriesMode} onChange={setSeriesMode} />
+            <StatsExportButton
+              serverId={Number(serverId)}
+              period={period}
+              canExport={entitlements.canExportStats}
+            />
           </div>
         </div>
 

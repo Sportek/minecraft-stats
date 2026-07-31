@@ -29,7 +29,9 @@
     "wholeHistory": "Tout l'historique",
     "unavailable": {
       "tooManyPoints": "Trop de points pour cette plage",
-      "rangeTooShort": "Plage trop courte pour ce pas"
+      "rangeTooShort": "Plage trop courte pour ce pas",
+      "beyondHistory": "Historique hors de portée sur cette plage",
+      "needsAccount": "Réservé aux membres — clique pour créer un compte"
     },
     "from": "Du",
     "to": "Au",
@@ -91,5 +93,9 @@
       "description": "Il faut au moins {min} jours de relevés pour la dessiner. Ce serveur en a {count, plural, =0 {aucun} one {un} other {#}}."
     },
     "error": "La journée type n'a pas pu être chargée. Elle réapparaîtra au prochain rafraîchissement."
+  },
+  "export": {
+    "label": "Exporter",
+    "failed": "L'export n'a pas pu être téléchargé. Réessaie dans un instant."
   }
 }

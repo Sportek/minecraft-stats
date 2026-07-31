@@ -40,7 +40,12 @@ const GlobalInsightSection = () => {
         <div className="flex flex-wrap gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
           <CategorySelect value={insight.selectedCategory} onChange={insight.setSelectedCategory} disabled={insight.filtersDisabled} />
           <LanguageSelect value={insight.selectedLanguage} onChange={insight.setSelectedLanguage} disabled={insight.filtersDisabled} />
-          <PeriodPicker value={insight.period} onChange={insight.setPeriod} disabled={insight.controlsDisabled} />
+          <PeriodPicker
+            value={insight.period}
+            onChange={insight.setPeriod}
+            disabled={insight.controlsDisabled}
+            allowance={insight.allowance}
+          />
         </div>
         <ServerSelect selectedServers={insight.selectedServers} onChange={insight.handleSelectionChange} disabled={insight.controlsDisabled} />
         {insight.hasFavorites && (

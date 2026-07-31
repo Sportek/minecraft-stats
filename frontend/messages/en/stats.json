@@ -29,7 +29,9 @@
     "wholeHistory": "Whole history",
     "unavailable": {
       "tooManyPoints": "Too many points for this range",
-      "rangeTooShort": "Range too short for this step"
+      "rangeTooShort": "Range too short for this step",
+      "beyondHistory": "History out of reach for this range",
+      "needsAccount": "Members only — click to create an account"
     },
     "from": "From",
     "to": "To",
@@ -91,5 +93,9 @@
       "description": "It takes at least {min} days of records to draw one. This server has {count, plural, =0 {none} one {one} other {#}}."
     },
     "error": "The typical day could not load. It will come back on the next refresh."
+  },
+  "export": {
+    "label": "Export",
+    "failed": "The export could not be downloaded. Try again in a moment."
   }
 }

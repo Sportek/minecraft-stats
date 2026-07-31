@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  Allowance,
   autoResolution,
   axisTimeFormat,
   bucketCount,
+  clampPeriod,
+  earliestSelectable,
   effectiveResolution,
-  MAX_BUCKETS,
   Period,
+  presetAvailability,
   PresetId,
   resolutionAvailability,
   shiftPeriod,
@@ -18,6 +21,16 @@ const DAY = 24 * HOUR;
 
 const preset = (id: PresetId): Period => ({ kind: "preset", preset: id, resolution: "auto" });
 const custom = (from: number, to: number): Period => ({ kind: "custom", from, to, resolution: "auto" });
+
+/** Les paliers du backend, tels que le client les reçoit de `GET /entitlements`. */
+const GUEST: Allowance = {
+  limits: { maxStatBuckets: 1500, maxHistoryDays: 365 },
+  upgrade: { maxStatBuckets: 6000, maxHistoryDays: null },
+};
+const MEMBER: Allowance = {
+  limits: { maxStatBuckets: 6000, maxHistoryDays: null },
+  upgrade: null,
+};
 
 describe("autoResolution", () => {
   it("picks the finest step that stays readable on the range", () => {
@@ -60,30 +73,87 @@ describe("bucketCount", () => {
 });
 
 describe("resolutionAvailability", () => {
-  it("rejects a step that would blow the backend budget", () => {
-    const availability = resolutionAvailability(preset("2y"), "30 minutes");
+  it("rejects a step no tier could serve", () => {
+    const availability = resolutionAvailability(preset("2y"), "30 minutes", GUEST);
     expect(availability).toEqual({ available: false, reason: "tooManyPoints" });
-    expect(bucketCount(preset("2y"), "30 minutes")!).toBeGreaterThan(MAX_BUCKETS);
+    expect(bucketCount(preset("2y"), "30 minutes")!).toBeGreaterThan(GUEST.upgrade!.maxStatBuckets);
+  });
+
+  it("flags a step an account would unlock rather than calling it impossible", () => {
+    // 3 mois au pas horaire : au-delà des 1 500 points invités, dans les 6 000 membres.
+    expect(resolutionAvailability(preset("3mo"), "1 hour", GUEST)).toEqual({
+      available: false,
+      reason: "needsAccount",
+    });
+    expect(resolutionAvailability(preset("3mo"), "1 hour", MEMBER)).toEqual({ available: true });
   });
 
   it("rejects a step too wide to draw a curve", () => {
-    expect(resolutionAvailability(preset("7d"), "1 week")).toEqual({
+    expect(resolutionAvailability(preset("7d"), "1 week", GUEST)).toEqual({
       available: false,
       reason: "rangeTooShort",
     });
   });
 
   it("keeps only day-or-wider steps for the open-ended range", () => {
-    expect(resolutionAvailability(preset("all"), "6 hours").available).toBe(false);
-    expect(resolutionAvailability(preset("all"), "1 day").available).toBe(true);
-    expect(resolutionAvailability(preset("all"), "1 week").available).toBe(true);
+    expect(resolutionAvailability(preset("all"), "6 hours", MEMBER).available).toBe(false);
+    expect(resolutionAvailability(preset("all"), "1 day", MEMBER).available).toBe(true);
+    expect(resolutionAvailability(preset("all"), "1 week", MEMBER).available).toBe(true);
   });
 
-  it("accepts what the presets select by default", () => {
+  it("accepts what the presets select by default, at every tier", () => {
     for (const id of ["24h", "7d", "30d", "3mo", "6mo", "1y", "2y", "all"] as const) {
       const period = preset(id);
-      expect(resolutionAvailability(period, effectiveResolution(period))).toEqual({ available: true });
+      for (const allowance of [GUEST, MEMBER]) {
+        expect(resolutionAvailability(period, effectiveResolution(period), allowance)).toEqual({
+          available: true,
+        });
+      }
     }
+  });
+});
+
+describe("presetAvailability", () => {
+  it("opens every preset to a tier without a history cap", () => {
+    for (const id of ["24h", "7d", "30d", "3mo", "6mo", "1y", "2y", "all"] as const) {
+      expect(presetAvailability(id, MEMBER)).toEqual({ available: true });
+    }
+  });
+
+  it("stops a guest at its history depth, and says an account lifts it", () => {
+    expect(presetAvailability("1y", GUEST)).toEqual({ available: true });
+    expect(presetAvailability("2y", GUEST)).toEqual({ available: false, reason: "needsAccount" });
+    // « Tout » remonte à une profondeur inconnue du client : capé = pas proposé.
+    expect(presetAvailability("all", GUEST)).toEqual({ available: false, reason: "needsAccount" });
+  });
+});
+
+describe("clampPeriod", () => {
+  it("leaves an allowed period untouched, reference included", () => {
+    const period = preset("30d");
+    expect(clampPeriod(period, GUEST)).toBe(period);
+  });
+
+  it("falls back to the longest preset the tier allows", () => {
+    expect(clampPeriod(preset("all"), GUEST)).toMatchObject({ preset: "1y" });
+  });
+
+  it("drops an explicit resolution the tier no longer serves", () => {
+    const period: Period = { kind: "preset", preset: "3mo", resolution: "1 hour" };
+    expect(clampPeriod(period, GUEST)).toMatchObject({ preset: "3mo", resolution: "auto" });
+    expect(clampPeriod(period, MEMBER)).toBe(period);
+  });
+});
+
+describe("earliestSelectable", () => {
+  const now = 1_700_000_000_000;
+
+  it("bounds a custom range to the tier's history depth", () => {
+    expect(earliestSelectable(GUEST, now)).toBe(now - 365 * DAY);
+  });
+
+  it("leaves it open when the tier has no cap", () => {
+    expect(earliestSelectable(MEMBER, now)).toBeNull();
   });
 });
 

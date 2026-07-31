@@ -29,7 +29,9 @@
     "wholeHistory": "Todo el historial",
     "unavailable": {
       "tooManyPoints": "Demasiados puntos para este intervalo",
-      "rangeTooShort": "Intervalo demasiado corto para este paso"
+      "rangeTooShort": "Intervalo demasiado corto para este paso",
+      "beyondHistory": "Historial fuera de alcance para este intervalo",
+      "needsAccount": "Solo para miembros — haz clic para crear una cuenta"
     },
     "from": "Desde",
     "to": "Hasta",
@@ -41,5 +43,9 @@
     "average": "Media",
     "peak": "Pico",
     "peakGlobal": "Pico (suma por servidor)"
+  },
+  "export": {
+    "label": "Exportar",
+    "failed": "No se pudo descargar la exportación. Inténtalo de nuevo en un momento."
   }
 }
