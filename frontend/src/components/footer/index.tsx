@@ -16,6 +16,9 @@ const Footer = () => {
   const t = useTranslations("Footer");
   const isMinecraftStatsDomain =
     typeof window !== "undefined" && window.location.hostname.endsWith("minecraft-stats.com");
+  const statusUrl = isMinecraftStatsDomain
+    ? "https://status.minecraft-stats.com"
+    : "https://status.minecraft-stats.fr";
   const backendUrl = getClientBackendUrl();
   const currentYear = new Date().getFullYear();
 
@@ -103,6 +106,11 @@ const Footer = () => {
                   className={linkClass}
                 >
                   {t("links.community")}
+                </Link>
+              </li>
+              <li>
+                <Link href={statusUrl} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  {t("links.status")}
                 </Link>
               </li>
             </ul>
