@@ -322,6 +322,9 @@ router
         router
           .patch('users/:id/role', '#controllers/users_controller.updateRole')
           .use(throttleLight('admin.users.updateRole', 10))
+        router
+          .patch('users/:id/blacklist', '#controllers/users_controller.updateBlacklist')
+          .use(throttleLight('admin.users.updateBlacklist', 10))
 
         // Advertisements management (admin only via policy)
         router

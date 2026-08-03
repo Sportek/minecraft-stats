@@ -36,4 +36,18 @@ export default class UserPolicy extends BasePolicy {
     }
     return true
   }
+
+  /**
+   * Only admins can blacklist users
+   * Admins cannot blacklist themselves (to prevent locking themselves out)
+   */
+  blacklist(user: User, targetUser: User): AuthorizerResponse {
+    if (user.role !== 'admin') {
+      return false
+    }
+    if (user.id === targetUser.id) {
+      return false
+    }
+    return true
+  }
 }

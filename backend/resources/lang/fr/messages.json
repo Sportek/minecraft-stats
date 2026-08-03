@@ -28,7 +28,8 @@
     "invalidProviderLinkToken": "Ce lien de confirmation est invalide ou a expiré.",
     "providerNotLinked": "Ce fournisseur n'est pas lié à votre compte",
     "cannotUnlinkLastMethod": "Vous ne pouvez pas supprimer votre seule méthode de connexion",
-    "providerUnlinked": "Méthode de connexion supprimée"
+    "providerUnlinked": "Méthode de connexion supprimée",
+    "accountBlacklisted": "Votre compte a été suspendu. Contactez le support si vous pensez qu'il s'agit d'une erreur."
   },
   "servers": {
     "unauthorized": "Non autorisé",
@@ -69,7 +70,8 @@
     "notFound": "Utilisateur introuvable",
     "adminRequired": "Accès refusé. Privilèges d'administrateur requis.",
     "cannotChangeRole": "Accès refusé. Impossible de modifier le rôle de cet utilisateur.",
-    "invalidRole": "Rôle invalide. Doit être admin, writer ou user."
+    "invalidRole": "Rôle invalide. Doit être admin, writer ou user.",
+    "cannotBlacklistSelf": "Accès refusé. Impossible de bannir cet utilisateur."
   },
   "advertisements": {
     "invalidPlacement": "Emplacement invalide ou manquant",

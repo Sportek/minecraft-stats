@@ -65,3 +65,15 @@ export const updateUserRole = (
   role: 'admin' | 'writer' | 'user',
   token: string
 ) => apiFetch<User>(`/admin/users/${userId}/role`, { method: 'PATCH', token, body: { role } })
+
+export const updateUserBlacklist = (
+  userId: number,
+  blacklisted: boolean,
+  reason: string | undefined,
+  token: string
+) =>
+  apiFetch<User>(`/admin/users/${userId}/blacklist`, {
+    method: 'PATCH',
+    token,
+    body: { blacklisted, reason },
+  })

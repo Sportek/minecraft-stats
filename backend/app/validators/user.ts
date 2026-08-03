@@ -60,3 +60,10 @@ export const LinkProviderValidator = vine.compile(
     token: vine.string().trim(),
   })
 )
+
+export const UpdateUserBlacklistValidator = vine.compile(
+  vine.object({
+    blacklisted: vine.boolean(),
+    reason: vine.string().trim().maxLength(500).optional(),
+  })
+)

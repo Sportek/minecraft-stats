@@ -7,6 +7,7 @@ import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import { Badge, BadgeProps } from "@/components/ui/badge";
 import { AvatarTile } from "@/components/ui/avatar-tile";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -17,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/contexts/auth";
-import { getAdminUsers, updateUserRole } from "@/http/user";
+import { getAdminUsers, updateUserBlacklist, updateUserRole } from "@/http/user";
 import { User } from "@/types/auth";
 import { Search } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -50,6 +51,7 @@ const AdminUsersPage = () => {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "writer" | "user">("all");
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+  const [blacklistingUserId, setBlacklistingUserId] = useState<number | null>(null);
   // Bumped after a role change to refresh both the current page and the counts.
   const [refresh, setRefresh] = useState(0);
 
@@ -161,6 +163,41 @@ const AdminUsersPage = () => {
     }
   };
 
+  const handleBlacklistToggle = async (userId: number) => {
+    if (!token) return;
+
+    const targetUser = users.find((u) => u.id === userId);
+    if (!targetUser) return;
+
+    if (targetUser.id === user.id) {
+      alert(t("users.ownBlacklistError"));
+      return;
+    }
+
+    const willBlacklist = !targetUser.blacklistedAt;
+    const reason = willBlacklist
+      ? prompt(t("users.blacklistReasonPrompt")) ?? undefined
+      : undefined;
+
+    const confirmMessage = willBlacklist
+      ? t("users.confirmBlacklist", { username: targetUser.username })
+      : t("users.confirmUnblacklist", { username: targetUser.username });
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      setBlacklistingUserId(userId);
+      const updatedUser = await updateUserBlacklist(userId, willBlacklist, reason, token);
+      setUsers((current) => current.map((u) => (u.id === userId ? updatedUser : u)));
+      setRefresh((r) => r + 1);
+    } catch (error) {
+      console.error("Failed to update blacklist status:", error);
+      alert(t("users.updateBlacklistError"));
+    } finally {
+      setBlacklistingUserId(null);
+    }
+  };
+
   return (
     <DashboardLayout>
       <DashboardHero
@@ -244,26 +281,40 @@ const AdminUsersPage = () => {
                 </Link>
 
                 <div className="flex items-center justify-between gap-4 sm:justify-end">
+                  {u.blacklistedAt && (
+                    <Badge variant="destructive">{t("users.blacklisted")}</Badge>
+                  )}
                   <Badge variant={getRoleBadgeVariant(u.role)}>{t(`users.roles.${u.role}`)}</Badge>
                   {u.id === user.id ? (
                     <span className="text-xs text-muted-foreground">{t("users.cannotChangeOwn")}</span>
                   ) : (
-                    <Select
-                      value={u.role}
-                      onValueChange={(value) =>
-                        handleRoleChange(u.id, value as "admin" | "writer" | "user")
-                      }
-                      disabled={updatingUserId === u.id}
-                    >
-                      <SelectTrigger className="h-9 w-[130px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">{t("users.roles.user")}</SelectItem>
-                        <SelectItem value="writer">{t("users.roles.writer")}</SelectItem>
-                        <SelectItem value="admin">{t("users.roles.admin")}</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <>
+                      <Select
+                        value={u.role}
+                        onValueChange={(value) =>
+                          handleRoleChange(u.id, value as "admin" | "writer" | "user")
+                        }
+                        disabled={updatingUserId === u.id}
+                      >
+                        <SelectTrigger className="h-9 w-[130px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">{t("users.roles.user")}</SelectItem>
+                          <SelectItem value="writer">{t("users.roles.writer")}</SelectItem>
+                          <SelectItem value="admin">{t("users.roles.admin")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant={u.blacklistedAt ? "outline" : "destructive"}
+                        size="sm"
+                        className="h-9"
+                        disabled={blacklistingUserId === u.id}
+                        onClick={() => handleBlacklistToggle(u.id)}
+                      >
+                        {u.blacklistedAt ? t("users.unblacklistAction") : t("users.blacklistAction")}
+                      </Button>
+                    </>
                   )}
                 </div>
               </li>

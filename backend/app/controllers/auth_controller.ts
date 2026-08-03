@@ -3,6 +3,7 @@ import ResetPasswordNotification from '#mails/reset_password_notification'
 import VerifyENotification from '#mails/verify_e_notification'
 import User from '#models/user'
 import UserProvider from '#models/user_provider'
+import BlacklistService from '#services/blacklist_service'
 import ImageStorageService from '#services/image_storage_service'
 import TurnstileService from '#services/turnstile_service'
 import env from '#start/env'
@@ -47,6 +48,8 @@ export default class AuthController {
       return response.badRequest({ message: i18n.t('messages.auth.emailNotVerified') })
     if (user.provider)
       return response.badRequest({ message: i18n.t('messages.auth.usingThirdPartyProvider') })
+    if (user.blacklistedAt)
+      return response.forbidden({ message: i18n.t('messages.auth.accountBlacklisted') })
     return {
       user,
       accessToken: await User.accessTokens.create(user),
@@ -184,6 +187,12 @@ export default class AuthController {
     }
     const data = request.only(['username', 'email', 'password'])
     const validatedUserData = await CreateUserValidator.validate(data)
+
+    const ipHash = BlacklistService.ipHash(request)
+    if (await BlacklistService.isEmailOrIpBlacklisted({ email: validatedUserData.email, ipHash })) {
+      return response.forbidden({ message: i18n.t('messages.auth.accountBlacklisted') })
+    }
+
     const user = await User.findBy('email', validatedUserData.email)
     if (user)
       return response.badRequest({ message: i18n.t('messages.auth.emailAlreadyRegistered') })
@@ -429,7 +438,7 @@ export default class AuthController {
    *   via confirmProviderLink.
    */
   private async handleProviderCallback(
-    { ally, response, i18n }: HttpContext,
+    { ally, response, i18n, request }: HttpContext,
     provider: 'google' | 'discord'
   ) {
     const driverInstance = ally.use(provider)
@@ -452,7 +461,17 @@ export default class AuthController {
     // entrer en collision avec un username existant, donc on en dérive un unique
     // à la création pour ne pas violer l'index unique lower(username).
     let user = await User.findBy('email', oauthUser.email)
+
+    if (user?.blacklistedAt) {
+      return response.forbidden({ message: i18n.t('messages.auth.accountBlacklisted') })
+    }
+
     if (!user) {
+      const ipHash = BlacklistService.ipHash(request)
+      if (await BlacklistService.isEmailOrIpBlacklisted({ email: oauthUser.email, ipHash })) {
+        return response.forbidden({ message: i18n.t('messages.auth.accountBlacklisted') })
+      }
+
       user = await User.create({
         email: oauthUser.email,
         username: await User.generateUniqueUsername(
