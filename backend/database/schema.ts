@@ -127,6 +127,36 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class BlacklistedIdentifierUserSchema extends BaseModel {
+  static $columns = ['blacklistedIdentifierId', 'createdAt', 'id', 'userId'] as const
+  $columns = BlacklistedIdentifierUserSchema.$columns
+  @column()
+  declare blacklistedIdentifierId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare userId: number
+}
+
+export class BlacklistedIdentifierSchema extends BaseModel {
+  static $columns = ['blacklistedBy', 'createdAt', 'id', 'reason', 'type', 'value'] as const
+  $columns = BlacklistedIdentifierSchema.$columns
+  @column()
+  declare blacklistedBy: number | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare reason: string | null
+  @column()
+  declare type: string
+  @column()
+  declare value: string
+}
+
 export class CategorySchema extends BaseModel {
   static $columns = ['createdAt', 'id', 'name', 'updatedAt'] as const
   $columns = CategorySchema.$columns
@@ -699,6 +729,9 @@ export class UserProviderSchema extends BaseModel {
 export class UserSchema extends BaseModel {
   static $columns = [
     'avatarUrl',
+    'blacklistReason',
+    'blacklistedAt',
+    'blacklistedBy',
     'createdAt',
     'email',
     'id',
@@ -716,6 +749,12 @@ export class UserSchema extends BaseModel {
   $columns = UserSchema.$columns
   @column()
   declare avatarUrl: string | null
+  @column()
+  declare blacklistReason: string | null
+  @column.dateTime()
+  declare blacklistedAt: DateTime | null
+  @column()
+  declare blacklistedBy: number | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
   @column()

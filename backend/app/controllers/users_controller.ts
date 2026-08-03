@@ -1,8 +1,13 @@
 import Server from '#models/server'
 import User from '#models/user'
 import UserPolicy from '#policies/user_policy'
+import BlacklistService from '#services/blacklist_service'
 import DuplicateAccountService from '#services/duplicate_account_service'
-import { CreateUserValidator, UpdateUserValidator } from '#validators/user'
+import {
+  CreateUserValidator,
+  UpdateUserBlacklistValidator,
+  UpdateUserValidator,
+} from '#validators/user'
 import { requireAbility } from '#utils/require_ability'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -255,6 +260,47 @@ export default class UsersController {
 
     targetUser.role = newRole
     await targetUser.save()
+
+    return response.ok(targetUser)
+  }
+
+  /**
+   * @adminUpdateUserBlacklist
+   * @operationId adminUpdateUserBlacklist
+   * @tag USERS_ADMIN
+   * @summary Blacklist or unblacklist a user (admin only)
+   * @description Bans or unbans the target user. Banning revokes all their active sessions immediately and records their email (and any IP hashes linked to their account) in the blacklist so re-registration is also blocked. Authorization is enforced by `UserPolicy.blacklist` against the target user.
+   * @paramPath id - User ID of the user being updated - @type(number) @example(7) @required
+   * @requestBody <UpdateUserBlacklistValidator>
+   * @responseBody 200 - <User>
+   * @responseBody 401 - {"error": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Cannot blacklist this user."}
+   * @responseBody 404 - {"error": "User not found"}
+   */
+  async updateBlacklist({ params, request, response, auth, bouncer, i18n }: HttpContext) {
+    const currentUser = auth.user
+    if (!currentUser) {
+      return response.unauthorized({ error: i18n.t('messages.users.unauthorized') })
+    }
+
+    const targetUser = await User.find(params.id)
+    if (!targetUser) {
+      return response.notFound({ error: i18n.t('messages.users.notFound') })
+    }
+
+    if (await bouncer.with(UserPolicy).denies('blacklist', targetUser)) {
+      return response.forbidden({ error: i18n.t('messages.users.cannotBlacklistSelf') })
+    }
+
+    const data = await UpdateUserBlacklistValidator.validate(
+      request.only(['blacklisted', 'reason'])
+    )
+
+    if (data.blacklisted) {
+      await BlacklistService.blacklistUser(targetUser, currentUser, data.reason ?? null)
+    } else {
+      await BlacklistService.unblacklistUser(targetUser)
+    }
 
     return response.ok(targetUser)
   }

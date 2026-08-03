@@ -7,9 +7,10 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import ServerImage from "@/components/serveur/card/server-image";
 import { Badge, BadgeProps } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth";
-import { AdminUserDetailResponse, getAdminUserDetail } from "@/http/user";
+import { AdminUserDetailResponse, getAdminUserDetail, updateUserBlacklist } from "@/http/user";
 import { serverPath } from "@/lib/server-url";
 import { RegistrationProvider } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -67,6 +68,7 @@ const AdminUserDetailPage = () => {
   const [detail, setDetail] = useState<AdminUserDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [blacklisting, setBlacklisting] = useState(false);
 
   useEffect(() => {
     if (!token || !Number.isFinite(userId)) return;
@@ -108,6 +110,39 @@ const AdminUserDetailPage = () => {
     : null;
   const onlineCount = servers.filter((s) => isOnline(s.lastOnlineAt)).length;
   const playersTracked = servers.reduce((total, s) => total + (s.lastPlayerCount ?? 0), 0);
+
+  const handleBlacklistToggle = async () => {
+    if (!token || !profile) return;
+
+    if (profile.id === user.id) {
+      alert(t("users.ownBlacklistError"));
+      return;
+    }
+
+    const willBlacklist = !profile.blacklistedAt;
+    const reason = willBlacklist
+      ? prompt(t("users.blacklistReasonPrompt")) ?? undefined
+      : undefined;
+
+    const confirmMessage = willBlacklist
+      ? t("users.confirmBlacklist", { username: profile.username })
+      : t("users.confirmUnblacklist", { username: profile.username });
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      setBlacklisting(true);
+      const updatedUser = await updateUserBlacklist(profile.id, willBlacklist, reason, token);
+      setDetail((current) =>
+        current ? { ...current, user: { ...current.user, ...updatedUser } } : current
+      );
+    } catch (err) {
+      console.error("Failed to update blacklist status:", err);
+      alert(t("users.updateBlacklistError"));
+    } finally {
+      setBlacklisting(false);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -165,6 +200,30 @@ const AdminUserDetailPage = () => {
                   {t(`users.roles.${profile.role}`)}
                 </Badge>
               </InfoRow>
+              <InfoRow label={t("users.detail.blacklistStatus")}>
+                <span className="inline-flex items-center gap-3">
+                  <Badge variant={profile.blacklistedAt ? "destructive" : "success"}>
+                    {profile.blacklistedAt ? t("users.detail.banned") : t("users.detail.active")}
+                  </Badge>
+                  {profile.id !== user.id && (
+                    <Button
+                      variant={profile.blacklistedAt ? "outline" : "destructive"}
+                      size="sm"
+                      disabled={blacklisting}
+                      onClick={handleBlacklistToggle}
+                    >
+                      {profile.blacklistedAt
+                        ? t("users.unblacklistAction")
+                        : t("users.blacklistAction")}
+                    </Button>
+                  )}
+                </span>
+              </InfoRow>
+              {profile.blacklistedAt && (
+                <InfoRow label={t("users.detail.blacklistReason")}>
+                  {profile.blacklistReason ?? "—"}
+                </InfoRow>
+              )}
               <InfoRow label={t("users.detail.registration")}>
                 <span className="inline-flex items-center gap-2">
                   {registration && <Icon icon={registration.icon} className="h-4 w-4" />}

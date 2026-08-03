@@ -51,6 +51,15 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare password: string
 
+  @column.dateTime()
+  declare blacklistedAt: DateTime | null
+
+  @column()
+  declare blacklistedBy: number | null
+
+  @column()
+  declare blacklistReason: string | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

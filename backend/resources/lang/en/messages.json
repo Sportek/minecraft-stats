@@ -28,7 +28,8 @@
     "invalidProviderLinkToken": "This confirmation link is invalid or has expired.",
     "providerNotLinked": "This provider is not linked to your account",
     "cannotUnlinkLastMethod": "You cannot remove your only sign-in method",
-    "providerUnlinked": "Sign-in method removed"
+    "providerUnlinked": "Sign-in method removed",
+    "accountBlacklisted": "Your account has been suspended. Contact support if you believe this is a mistake."
   },
   "servers": {
     "unauthorized": "Unauthorized",
@@ -69,7 +70,8 @@
     "notFound": "User not found",
     "adminRequired": "Access denied. Admin privileges required.",
     "cannotChangeRole": "Access denied. Cannot change this user's role.",
-    "invalidRole": "Invalid role. Must be admin, writer, or user."
+    "invalidRole": "Invalid role. Must be admin, writer, or user.",
+    "cannotBlacklistSelf": "Access denied. Cannot blacklist this user."
   },
   "advertisements": {
     "invalidPlacement": "Invalid or missing placement",

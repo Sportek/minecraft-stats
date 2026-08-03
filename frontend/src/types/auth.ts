@@ -12,6 +12,8 @@ export type User = {
   provider: RegistrationProvider;
   verificationTokenExpires: Date;
   avatarUrl: string | null;
+  blacklistedAt: string | null;
+  blacklistReason: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
