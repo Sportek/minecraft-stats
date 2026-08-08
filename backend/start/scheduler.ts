@@ -9,7 +9,7 @@ import redis from '@adonisjs/redis/services/main'
 import scheduler from 'adonisjs-scheduler/services/main'
 import { DateTime } from 'luxon'
 import pLimit from 'p-limit'
-import { pingMinecraftServer } from '../minecraft-ping/minecraft_ping.js'
+import { DEFAULT_PING_TIMEOUT, pingMinecraftServer } from '../minecraft-ping/minecraft_ping.js'
 
 type ServerStatRow = {
   server_id: number
@@ -98,6 +98,34 @@ async function releasePingLock(serverId: number): Promise<void> {
 }
 
 /**
+ * Empreinte du favicon : sert à la fois à la détection de doublon et à décider
+ * s'il faut réécrire l'image. On ne réuploade sur le stockage (S3 en prod) que si
+ * le favicon a réellement changé — ou s'il n'existe pas encore. Réécrire des
+ * octets identiques à chaque ping ne ferait que générer des PUT S3 inutiles (les
+ * favicons ne changent quasi jamais), ce qui a dominé la facture AWS. Le hash
+ * suffit donc à détecter les vrais changements.
+ *
+ * Mute le serveur sans le sauvegarder — l'appelant persiste.
+ */
+async function storeFaviconIfChanged(server: Server, favicon?: string): Promise<void> {
+  if (!favicon) return
+
+  const faviconHash = DuplicateDetectionService.hashFavicon(favicon)
+  if (server.imageUrl && faviconHash === server.faviconHash) return
+
+  try {
+    server.imageUrl = await ImageStorageService.storeServerFavicon(server.id, favicon)
+    server.faviconHash = faviconHash
+  } catch (error) {
+    // On n'avance pas faviconHash : le prochain ping retentera l'upload.
+    logger.warn(
+      { serverId: server.id, err: (error as Error).message },
+      'SCHEDULER: image processing failed'
+    )
+  }
+}
+
+/**
  * Met à jour les informations du serveur et retourne la stat à insérer.
  * - 1 seule tentative (Niveau 1.2/1.3 — pas de retry sur les pings périodiques)
  * - Timeout court (DEFAULT_PING_TIMEOUT côté lib)
@@ -115,35 +143,24 @@ async function updateServerInfo(server: Server, overwriteImage = false): Promise
   const createdAt = new Date()
 
   try {
-    const data = await pingMinecraftServer(server.type, server.address, server.port)
+    // `overwriteImage` marque le balayage 6h : c'est là qu'on peut se permettre un
+    // appel API dédié par serveur chez un hébergeur mutualisé, seul moyen d'obtenir
+    // son favicon (l'instantané mutualisé du cycle 5 min ne l'expose pas).
+    const data = await pingMinecraftServer(
+      server.type,
+      server.address,
+      server.port,
+      DEFAULT_PING_TIMEOUT,
+      { detailed: overwriteImage }
+    )
     if (data) {
-      // Empreinte du favicon : sert à la fois à la détection de doublon et à
-      // décider s'il faut réécrire l'image. On ne réuploade sur le stockage
-      // (S3 en prod) que si le favicon a réellement changé — ou s'il n'existe
-      // pas encore. Réécrire des octets identiques à chaque ping ne ferait que
-      // générer des PUT S3 inutiles (les favicons ne changent quasi jamais),
-      // ce qui a dominé la facture AWS. `overwriteImage` ne force donc plus la
-      // réécriture : le hash suffit à détecter les vrais changements.
-      if (data.favicon) {
-        const faviconHash = DuplicateDetectionService.hashFavicon(data.favicon)
-        if (!server.imageUrl || faviconHash !== server.faviconHash) {
-          try {
-            server.imageUrl = await ImageStorageService.storeServerFavicon(server.id, data.favicon)
-            server.faviconHash = faviconHash
-          } catch (imgErr) {
-            // On n'avance pas faviconHash : le prochain ping retentera l'upload.
-            logger.warn(
-              { serverId: server.id, err: (imgErr as Error).message },
-              'SCHEDULER: image processing failed'
-            )
-          }
-        }
-      }
+      await storeFaviconIfChanged(server, data.favicon)
 
       playerOnline = data.players?.online ?? 0
       maxPlayer = data.players?.max ?? 0
 
-      server.version = data.version.name
+      // Absente quand les stats viennent d'une API d'hébergeur : on garde la connue.
+      if (data.version) server.version = data.version.name
       server.lastPlayerCount = playerOnline
       server.lastMaxCount = maxPlayer
       server.lastStatsAt = DateTime.fromJSDate(createdAt)
