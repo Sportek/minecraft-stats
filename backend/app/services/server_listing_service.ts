@@ -12,6 +12,15 @@ export default class ServerListingService {
   private static readonly TRENDING_MIN_PLAYERS = 75
 
   /**
+   * Rétrogradation des serveurs dont un admin a confirmé qu'ils gonflent leurs
+   * connectés (cf. BoostDetectionService). Ils sont relégués en fin de classement,
+   * pas retirés : ils restent trouvables par recherche et par lien direct, et un
+   * verdict se révise. Ne s'applique qu'aux tris fondés sur le nombre de joueurs —
+   * « nouveautés » et « votes » ne sont pas faussés par un compteur gonflé.
+   */
+  private static readonly BOOST_DEMOTION_SQL = `CASE WHEN servers.boost_status = 'boosting' THEN 1 ELSE 0 END ASC`
+
+  /**
    * Construit la requête paginée du classement des serveurs à partir de
    * paramètres déjà parsés par le contrôleur, puis transforme chaque ligne
    * en y attachant ses stats (buckets horaires sur 24 h + dernier snapshot live).
@@ -65,11 +74,14 @@ export default class ServerListingService {
         .whereNotNull('server_growth_stats.weekly_growth')
         .where('server_growth_stats.weekly_growth', '>', 0)
         .where('servers.last_player_count', '>=', ServerListingService.TRENDING_MIN_PLAYERS)
+        .orderByRaw(ServerListingService.BOOST_DEMOTION_SQL)
         .orderBy('server_growth_stats.weekly_growth', 'desc')
     } else if (sort === 'peak') {
       // Records all-time. Postgres trie NULLS-first en DESC → NULLS LAST explicite
       // pour reléguer les serveurs sans pic connu en bas.
-      query = query.orderByRaw('peak_player_count DESC NULLS LAST')
+      query = query
+        .orderByRaw(ServerListingService.BOOST_DEMOTION_SQL)
+        .orderByRaw('peak_player_count DESC NULLS LAST')
     } else if (sort === 'newest') {
       query = query.orderBy('created_at', 'desc')
     } else if (sort === 'votes') {
@@ -96,6 +108,7 @@ export default class ServerListingService {
         .orderByRaw('monthly_vote_count DESC')
     } else {
       query = query
+        .orderByRaw(ServerListingService.BOOST_DEMOTION_SQL)
         .orderByRaw(
           `CASE
             WHEN last_stats_at > now() - interval '30 minutes'

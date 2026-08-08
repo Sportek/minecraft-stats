@@ -35,6 +35,38 @@ export interface Server {
   // Preuve de propriété : non-null = un propriétaire a été confirmé (DNS ou revue admin).
   ownerVerifiedAt: Date | null;
   ownerVerifiedMethod: OwnershipMethod | null;
+  // Verdict admin sur le gonflage des connectés. null = jamais revu.
+  boostStatus: BoostStatus | null;
+  boostReviewedAt: Date | null;
+}
+
+/** Verdict d'un admin sur un serveur suspecté de gonfler ses connectés. */
+export type BoostStatus = "boosting" | "clean" | "inconclusive";
+
+/** Niveau de suspicion dérivé du score, avant toute décision humaine. */
+export type BoostLevel = "clean" | "watch" | "likely";
+
+/** Contribution d'un signal au score, avec la mesure qui l'a déclenchée. */
+export interface BoostSignal {
+  key: string;
+  points: number;
+  detail: string;
+}
+
+/** Une ligne de la file de revue admin (GET /admin/boost-reports). */
+export interface AdminBoostReport {
+  serverId: number;
+  score: number;
+  level: BoostLevel;
+  signals: BoostSignal[];
+  /** Multiplicateur détecté (4, 6, 16, 3.7…). null si la suspicion vient d'ailleurs. */
+  detectedFactor: number | null;
+  estimatedRealPlayers: number | null;
+  windowFrom: string;
+  windowTo: string;
+  samplesCount: number;
+  computedAt: string;
+  server: Server;
 }
 
 export type OwnershipMethod = "motd" | "dns" | "manual";

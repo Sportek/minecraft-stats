@@ -9,7 +9,8 @@
     "analytics": "Estadísticas de tráfico",
     "users": "Usuarios",
     "advertisements": "Anuncios",
-    "ownershipClaims": "Solicitudes de propiedad"
+    "ownershipClaims": "Solicitudes de propiedad",
+    "boostReports": "Conectados sospechosos"
   },
   "common": {
     "loading": "Cargando…",

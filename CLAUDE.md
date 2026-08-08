@@ -57,6 +57,12 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
 - **Stats aggregation** (`StatsService`): raw 10-min points; interval bucketing (30 min → 1 week)
   via PG `floor(extract(epoch...))`; exact-time lookups average nearest before/after points; growth
   % stored in `ServerGrowthStat`. Queries take `fromDate`/`toDate` (epoch ms) + `interval`.
+- **Boost detection** (`BoostDetectionService`): weighted signals scoring how likely a server is
+  inflating its player count, upserted nightly into `server_boost_scores`. Weights and thresholds live
+  in `app/constants/server_boost.ts`; `evaluate()` is pure (series in, score out) and is pinned by
+  real frozen series in `tests/unit/boost_detection_service.spec.ts` — recalibrate there. Admin
+  verdicts land in `server_boost_reviews` and set `servers.boost_status`, which drives the public
+  badge and demotes the server in player-count rankings.
 - **`Server.syncLanguages()`**: many-to-many language sync with manual transaction control for atomicity.
 - **Auth**: session-based (DB access tokens) + Google/Discord OAuth (Ally) + JWT email verification
   (MJML mail templates); passwords hashed with Argon2.

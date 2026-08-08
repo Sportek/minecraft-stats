@@ -1,5 +1,6 @@
 import Server from '#models/server'
 import { snapshotTrafficDay } from '#services/analytics_counters'
+import BoostDetectionService from '#services/boost_detection_service'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import ImageStorageService from '#services/image_storage_service'
 import StatsService from '#services/stat_service'
@@ -322,6 +323,19 @@ scheduler
     )
   })
   .everySixHours()
+
+// Détection du gonflage des connectés. Une fois par jour suffit : le score porte sur
+// une fenêtre de 7 jours, il ne bouge pas d'une heure à l'autre. Le balayage lit
+// ~1 000 relevés par serveur éligible, donc il tourne à une heure creuse.
+scheduler
+  .call(async () => {
+    const start = Date.now()
+    const { scored, skipped } = await BoostDetectionService.scanAll()
+    logger.info(
+      `SCHEDULER: boost detection completed in ${Date.now() - start}ms — ${scored} serveurs notés, ${skipped} sans données suffisantes`
+    )
+  })
+  .dailyAt('04:15')
 
 // Agrégation horaire des stats brutes vers server_stats_hourly (P.4.1).
 // Tourne toutes les heures et upsert l'heure qui vient juste de se terminer.

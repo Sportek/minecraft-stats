@@ -11,11 +11,13 @@ import * as relations from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Category from './category.js'
 import Language from './language.js'
+import ServerBoostScore from './server_boost_score.js'
 import ServerGrowthStat from './server_growth_stat.js'
 import ServerOwnershipClaim from './server_ownership_claim.js'
 import ServerVote from './server_vote.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
+import type { BoostStatus } from '../constants/server_boost.js'
 import type { OwnershipMethod } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
 import { normalizeWebsite } from '#utils/website'
@@ -93,6 +95,18 @@ export default class Server extends BaseModel {
 
   @hasOne(() => ServerGrowthStat)
   declare growthStat: relations.HasOne<typeof ServerGrowthStat>
+
+  @hasOne(() => ServerBoostScore)
+  declare boostScore: relations.HasOne<typeof ServerBoostScore>
+
+  // Verdict admin sur le gonflage des connectés (cf. BoostDetectionService).
+  // NULL = jamais revu. 'boosting' déclenche le badge public sur la fiche et la
+  // rétrogradation dans les classements basés sur le nombre de joueurs.
+  @column({ columnName: 'boost_status' })
+  declare boostStatus: BoostStatus | null
+
+  @column.dateTime({ columnName: 'boost_reviewed_at' })
+  declare boostReviewedAt: DateTime | null
 
   @hasMany(() => ServerVote)
   declare votes: relations.HasMany<typeof ServerVote>

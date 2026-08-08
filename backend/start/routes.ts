@@ -312,6 +312,14 @@ router
           .post('ownership-claims/:id/reject', '#controllers/server_ownership_controller.reject')
           .use([middleware.admin(), throttleLight('admin.ownership.reject', 20), NO_STORE])
 
+        // Connectés suspects — file de revue du gonflage de joueurs (admin only)
+        router
+          .get('boost-reports', '#controllers/server_boost_controller.adminIndex')
+          .use([middleware.admin(), throttleLight('admin.boost.index', 30), NO_STORE])
+        router
+          .post('boost-reports/:id/review', '#controllers/server_boost_controller.review')
+          .use([middleware.admin(), throttleLight('admin.boost.review', 20), NO_STORE])
+
         // User management (admin only via policy)
         router
           .get('users', '#controllers/users_controller.adminIndex')

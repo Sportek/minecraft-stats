@@ -54,6 +54,10 @@
     "approved": "Ownership claim approved.",
     "rejected": "Ownership claim rejected."
   },
+  "serverBoost": {
+    "notFound": "Server not found",
+    "reviewed": "Verdict recorded."
+  },
   "posts": {
     "unauthorized": "Unauthorized",
     "writerRequired": "Access denied. Writer privileges required.",

@@ -164,5 +164,8 @@
     "errors": {
       "generic": "Algo salió mal. Inténtalo de nuevo."
     }
+  },
+  "boost": {
+    "badge": "Conectados no fiables"
   }
 }

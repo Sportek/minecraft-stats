@@ -9,7 +9,8 @@
     "analytics": "Analytics",
     "users": "Users",
     "advertisements": "Advertisements",
-    "ownershipClaims": "Ownership claims"
+    "ownershipClaims": "Ownership claims",
+    "boostReports": "Suspicious player counts"
   },
   "common": {
     "loading": "Loading...",

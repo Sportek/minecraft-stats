@@ -12,6 +12,7 @@ export const controllers = {
   Entitlements: () => import('#controllers/entitlements_controller'),
   Languages: () => import('#controllers/languages_controller'),
   Posts: () => import('#controllers/posts_controller'),
+  ServerBoost: () => import('#controllers/server_boost_controller'),
   ServerCategories: () => import('#controllers/server_categories_controller'),
   ServerOwnership: () => import('#controllers/server_ownership_controller'),
   ServerVotes: () => import('#controllers/server_votes_controller'),

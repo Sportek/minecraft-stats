@@ -3,7 +3,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
 import { formatGrowth } from "@/lib/format";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, TriangleAlert } from "lucide-react";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
@@ -91,14 +91,25 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
           />
         </div>
 
-        {/* Badge de confiance : propriété vérifiée (le CTA de revendication vit dans
-            le bandeau sous l'en-tête, cf. ClaimServerBanner). */}
-        {server.ownerVerifiedAt !== null && (
-          <div className="flex justify-end">
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
-              <BadgeCheck className="h-3.5 w-3.5" />
-              {t("claim.verifiedBadge")}
-            </span>
+        {/* Badges de confiance : propriété vérifiée, et avertissement quand un admin a
+            confirmé que le serveur gonfle son nombre de connectés (cf.
+            BoostDetectionService côté API). L'avertissement passe en premier — il
+            qualifie le chiffre affiché juste au-dessus. Le CTA de revendication vit
+            dans le bandeau sous l'en-tête, cf. ClaimServerBanner. */}
+        {(server.boostStatus === "boosting" || server.ownerVerifiedAt !== null) && (
+          <div className="flex flex-wrap justify-end gap-2">
+            {server.boostStatus === "boosting" && (
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-xs font-medium text-destructive">
+                <TriangleAlert className="h-3.5 w-3.5" />
+                {t("boost.badge")}
+              </span>
+            )}
+            {server.ownerVerifiedAt !== null && (
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+                <BadgeCheck className="h-3.5 w-3.5" />
+                {t("claim.verifiedBadge")}
+              </span>
+            )}
           </div>
         )}
       </div>
