@@ -9,7 +9,8 @@
     "analytics": "Statistiques de fréquentation",
     "users": "Utilisateurs",
     "advertisements": "Publicités",
-    "ownershipClaims": "Demandes de propriété"
+    "ownershipClaims": "Demandes de propriété",
+    "boostReports": "Connectés suspects"
   },
   "common": {
     "loading": "Chargement…",

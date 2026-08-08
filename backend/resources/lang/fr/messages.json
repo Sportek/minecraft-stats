@@ -54,6 +54,10 @@
     "approved": "Demande de propriété approuvée.",
     "rejected": "Demande de propriété refusée."
   },
+  "serverBoost": {
+    "notFound": "Serveur introuvable",
+    "reviewed": "Verdict enregistré."
+  },
   "posts": {
     "unauthorized": "Non autorisé",
     "writerRequired": "Accès refusé. Privilèges de rédacteur requis.",

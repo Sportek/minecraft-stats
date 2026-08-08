@@ -366,6 +366,75 @@ export class RateLimitSchema extends BaseModel {
   declare points: number
 }
 
+export class ServerBoostReviewSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'id',
+    'note',
+    'reviewedBy',
+    'scoreAtReview',
+    'serverId',
+    'signalsAtReview',
+    'updatedAt',
+    'verdict',
+  ] as const
+  $columns = ServerBoostReviewSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare note: string | null
+  @column()
+  declare reviewedBy: number | null
+  @column()
+  declare scoreAtReview: number
+  @column()
+  declare serverId: number
+  @column()
+  declare signalsAtReview: any
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+  @column()
+  declare verdict: string
+}
+
+export class ServerBoostScoreSchema extends BaseModel {
+  static $columns = [
+    'computedAt',
+    'detectedFactor',
+    'estimatedRealPlayers',
+    'level',
+    'samplesCount',
+    'score',
+    'serverId',
+    'signals',
+    'windowFrom',
+    'windowTo',
+  ] as const
+  $columns = ServerBoostScoreSchema.$columns
+  @column.dateTime()
+  declare computedAt: DateTime
+  @column()
+  declare detectedFactor: string | null
+  @column()
+  declare estimatedRealPlayers: number | null
+  @column()
+  declare level: string
+  @column()
+  declare samplesCount: number
+  @column()
+  declare score: number
+  @column({ isPrimary: true })
+  declare serverId: number
+  @column()
+  declare signals: any
+  @column.dateTime()
+  declare windowFrom: DateTime
+  @column.dateTime()
+  declare windowTo: DateTime
+}
+
 export class ServerCategorySchema extends BaseModel {
   static $columns = ['categoryId', 'createdAt', 'id', 'serverId', 'updatedAt'] as const
   $columns = ServerCategorySchema.$columns
@@ -579,6 +648,8 @@ export class ServerVoteSchema extends BaseModel {
 export class ServerSchema extends BaseModel {
   static $columns = [
     'address',
+    'boostReviewedAt',
+    'boostStatus',
     'categoryId',
     'createdAt',
     'faviconHash',
@@ -609,6 +680,10 @@ export class ServerSchema extends BaseModel {
   $columns = ServerSchema.$columns
   @column()
   declare address: string
+  @column.dateTime()
+  declare boostReviewedAt: DateTime | null
+  @column()
+  declare boostStatus: string | null
   @column()
   declare categoryId: number | null
   @column.dateTime({ autoCreate: true })

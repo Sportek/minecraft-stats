@@ -1,5 +1,7 @@
 import {
+  AdminBoostReport,
   AdminOwnershipClaim,
+  BoostStatus,
   Category,
   ClaimStatus,
   DailyRhythm,
@@ -195,4 +197,21 @@ export const rejectOwnershipClaim = (claimId: number, token: string, note?: stri
     method: "POST",
     token,
     body: { note },
+  });
+
+/* --- Admin : file de revue des connectés suspects --- */
+
+export const getBoostReports = (token: string) =>
+  apiFetch<AdminBoostReport[]>("/admin/boost-reports", { token });
+
+export const reviewBoostReport = (
+  serverId: number,
+  verdict: BoostStatus,
+  token: string,
+  note?: string
+) =>
+  apiFetch<{ message: string; server: Server }>(`/admin/boost-reports/${serverId}/review`, {
+    method: "POST",
+    token,
+    body: { verdict, note },
   });

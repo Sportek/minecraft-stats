@@ -26,6 +26,18 @@ to fetcher`) et les tests passent — voir [[stats-rollups-backfill]] pour les p
 imprimé. Les tests ont pourtant tourné : lire les `√` / `✖` dans la sortie, puis tuer le process. Ne
 jamais piper dans `tail`, qui attend l'EOF et n'affiche donc rien du tout.
 
+**Contournement** : monter un Redis jetable rend la suite complète propre (elle sort toute seule, avec
+le récapitulatif, et on peut piper dans `tail`). Contrairement à Postgres, rien n'occupe le 6379, donc
+le conteneur est bien utilisé. Le mot de passe doit correspondre à `REDIS_PASSWORD` de `backend/.env`.
+
+```
+docker run -d --name ms-redis-test -p 6379:6379 redis:7-alpine redis-server --requirepass minecraft_stats
+node ace test          # 40 unit + 63 functional, ~4 s
+docker rm -f ms-redis-test
+```
+
+La suite `unit` seule (`node ace test unit`) n'a besoin ni de Redis ni de données : elle sort en ~70 ms.
+
 **Le dump local est daté** : `server_stats` s'arrête au **18/05/2026**, avec un gros trou après
 juillet 2025 (4 relevés/serveur sur les 30 derniers jours du dump). Toute sonde ancrée sur `now()`
 tombe donc dans le vide — viser une fenêtre dense comme juin 2025 (~4 400 relevés/serveur).

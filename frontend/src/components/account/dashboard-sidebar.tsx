@@ -32,6 +32,11 @@ const ADMIN_ITEMS: NavItem[] = [
     key: "ownershipClaims",
     icon: "material-symbols:verified-user-outline",
   },
+  {
+    href: "/admin/boost-reports",
+    key: "boostReports",
+    icon: "material-symbols:release-alert-outline",
+  },
   { href: "/admin/advertisements", key: "advertisements", icon: "material-symbols:ad-group-outline" },
 ];
 
