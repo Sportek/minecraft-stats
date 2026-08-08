@@ -137,9 +137,15 @@ export default class PostsController {
    * @operationId resolvePlaceholders
    * @tag POSTS
    * @summary Resolve content placeholders to their current values
-   * @description Resolves a batch of placeholder tokens to their live values. Returns a map of token → value. Publicly accessible.
+   * @description Resolves a batch of placeholder tokens to their live values. Returns a map of token → value, e.g. `{"%PLAYER_COUNT_REALTIME_125%": "42", "%SERVER_VERSION_125%": "1.21.4"}`. Publicly accessible.
    * @requestBody {"placeholders": ["%PLAYER_COUNT_REALTIME_125%", "%SERVER_VERSION_125%"]}
-   * @responseBody 200 - {"%PLAYER_COUNT_REALTIME_125%": "42", "%SERVER_VERSION_125%": "1.21.4"}
+   * @responseBody 200 - Map of each submitted token to its resolved string value
+   *
+   * NB : l'exemple de réponse vit dans `@description` et non dans `@responseBody`.
+   * Les clés de la map commencent par `%`, et adonis-autoswagger écrit les clés
+   * d'objet sans guillemets dans `swagger.yml` — or un scalaire YAML ne peut pas
+   * commencer par `%` (indicateur de directive). Le fichier généré devenait donc
+   * du YAML invalide. Dans une `description`, la valeur est entre guillemets : OK.
    * @responseBody 422 - {"errors": [{"message": "The placeholders field must be defined", "field": "placeholders", "rule": "required"}]}
    */
   async resolvePlaceholders({ request, response }: HttpContext) {

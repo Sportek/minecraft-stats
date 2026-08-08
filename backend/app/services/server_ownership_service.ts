@@ -71,18 +71,18 @@ export default class ServerOwnershipService {
   /**
    * Collaborateurs réseau isolés comme points d'injection : les tests les remplacent
    * par des stubs pour rester hermétiques (aucune requête DNS / aucun ping réel).
+   *
+   * NE PAS passer `readonly` (Sonar S1444 le suggère) : les tests fonctionnels les
+   * réassignent, et `readonly` casse le typecheck — ce qui a fait échouer la CI le
+   * 08/08/2026 sans qu'aucun test local ne bronche.
    */
-  static readonly resolveTxt: (host: string) => Promise<string[][]> = (host) =>
-    dns.promises.resolveTxt(host)
-  static readonly pingServer: (
-    type: ServerType,
-    address: string,
-    port: number
-  ) => Promise<NormalizedPing> = (type, address, port) =>
-    // `detailed` : chez un hébergeur mutualisé, l'appel dédié ramène la MOTD réelle
-    // du serveur — sans lui, on lirait celle du proxy et aucun jeton ne pourrait
-    // jamais être trouvé (cf. host_providers).
-    pingMinecraftServer(type, address, port, INTERACTIVE_PING_TIMEOUT, { detailed: true })
+  static resolveTxt: (host: string) => Promise<string[][]> = (host) => dns.promises.resolveTxt(host)
+  static pingServer: (type: ServerType, address: string, port: number) => Promise<NormalizedPing> =
+    (type, address, port) =>
+      // `detailed` : chez un hébergeur mutualisé, l'appel dédié ramène la MOTD réelle
+      // du serveur — sans lui, on lirait celle du proxy et aucun jeton ne pourrait
+      // jamais être trouvé (cf. host_providers).
+      pingMinecraftServer(type, address, port, INTERACTIVE_PING_TIMEOUT, { detailed: true })
 
   /** Hôtes sur lesquels on accepte l'enregistrement TXT : domaine racine + adresse exacte. */
   static dnsHostCandidates(server: Server): string[] {
