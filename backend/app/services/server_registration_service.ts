@@ -40,7 +40,18 @@ export default class ServerRegistrationService {
     // Ping interactif : test de joignabilité ET source des empreintes de doublon.
     let pingData: NormalizedPing | null = null
     try {
-      pingData = await pingMinecraftServer(type, data.address, data.port, INTERACTIVE_PING_TIMEOUT)
+      // `detailed` : un seul serveur à traiter, on peut dépenser l'appel dédié qui
+      // ramène le favicon d'un hébergeur mutualisé — c'est ici que l'icône et les
+      // empreintes de doublon sont établies (cf. host_providers).
+      pingData = await pingMinecraftServer(
+        type,
+        data.address,
+        data.port,
+        INTERACTIVE_PING_TIMEOUT,
+        {
+          detailed: true,
+        }
+      )
     } catch {
       pingData = null
     }

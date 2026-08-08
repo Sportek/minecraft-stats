@@ -1,4 +1,11 @@
-FROM node:26
+# Version épinglée volontairement. `node:26` est un tag flottant : le 08/08/2026 il
+# est passé à 26.7.0, où `node ace docs:generate` casse au boot d'Ace avec
+# « Invalid command exported from "archive_old_partitions.js". Invalid URL » (Node
+# 26.7 déprécie `module.register()`, utilisé par le loader TS d'AdonisJS). Le
+# déploiement s'est mis à échouer sans le moindre changement de code — vérifié en
+# rebuildant un commit antérieur, qui échoue aussi. 26.6.0 est la dernière version
+# saine. À relever après une mise à jour d'AdonisJS qui gère les nouveaux hooks.
+FROM node:26.6.0
 
 WORKDIR /home/node/app
 

@@ -1,21 +1,21 @@
-import dns from 'node:dns'
-import net from 'node:net'
-import { randomBytes } from 'node:crypto'
-import { DateTime } from 'luxon'
 import Server from '#models/server'
 import ServerOwnershipClaim from '#models/server_ownership_claim'
 import type User from '#models/user'
 import { flattenMotd } from '#utils/motd'
-import {
-  TOKEN_TTL_DAYS,
-  VERIFY_PREFIX,
-  type OwnershipMethod,
-} from '../constants/server_ownership.js'
+import { DateTime } from 'luxon'
+import { randomBytes } from 'node:crypto'
+import dns from 'node:dns'
+import net from 'node:net'
 import {
   INTERACTIVE_PING_TIMEOUT,
   pingMinecraftServer,
   type NormalizedPing,
 } from '../../minecraft-ping/minecraft_ping.js'
+import {
+  TOKEN_TTL_DAYS,
+  VERIFY_PREFIX,
+  type OwnershipMethod,
+} from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
 
 export type ClaimOutcome =
@@ -71,10 +71,18 @@ export default class ServerOwnershipService {
   /**
    * Collaborateurs réseau isolés comme points d'injection : les tests les remplacent
    * par des stubs pour rester hermétiques (aucune requête DNS / aucun ping réel).
+   *
+   * NE PAS passer `readonly` (Sonar S1444 le suggère) : les tests fonctionnels les
+   * réassignent, et `readonly` casse le typecheck — ce qui a fait échouer la CI le
+   * 08/08/2026 sans qu'aucun test local ne bronche.
    */
   static resolveTxt: (host: string) => Promise<string[][]> = (host) => dns.promises.resolveTxt(host)
   static pingServer: (type: ServerType, address: string, port: number) => Promise<NormalizedPing> =
-    (type, address, port) => pingMinecraftServer(type, address, port, INTERACTIVE_PING_TIMEOUT)
+    (type, address, port) =>
+      // `detailed` : chez un hébergeur mutualisé, l'appel dédié ramène la MOTD réelle
+      // du serveur — sans lui, on lirait celle du proxy et aucun jeton ne pourrait
+      // jamais être trouvé (cf. host_providers).
+      pingMinecraftServer(type, address, port, INTERACTIVE_PING_TIMEOUT, { detailed: true })
 
   /** Hôtes sur lesquels on accepte l'enregistrement TXT : domaine racine + adresse exacte. */
   static dnsHostCandidates(server: Server): string[] {
@@ -195,7 +203,7 @@ export default class ServerOwnershipService {
     if (server.ownerVerifiedAt && server.userId !== user.id) return { status: 'already_verified' }
 
     const claim = await this.findClaim(server.id, user.id)
-    if (!claim || claim.method !== method || claim.status !== 'pending' || !claim.token) {
+    if (claim?.method !== method || claim.status !== 'pending' || !claim.token) {
       return { status: 'no_claim' }
     }
     if (!claim.isTokenActive) {
