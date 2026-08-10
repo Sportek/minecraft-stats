@@ -2440,12 +2440,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tiptap/core@npm:^3.13.0, @tiptap/core@npm:^3.27.1":
+"@tiptap/core@npm:^3.27.1":
   version: 3.27.1
   resolution: "@tiptap/core@npm:3.27.1"
   peerDependencies:
     "@tiptap/pm": 3.27.1
   checksum: 10c0/222a3adbc31f5ea2d439e59b87aa108b886d8e4703d83e2f22c4df474869abeac84e7c02004881bc87f3317f656f830a85125aa35a3597d3b8dd3c68c427064c
+  languageName: node
+  linkType: hard
+
+"@tiptap/core@npm:^3.29.2":
+  version: 3.29.2
+  resolution: "@tiptap/core@npm:3.29.2"
+  peerDependencies:
+    "@tiptap/pm": 3.29.2
+  checksum: 10c0/048f010854c8ff37e02a4aebe61e2d675e3814933e924ec74127dd6a243217a8a4aaf277f3243dd2d409dc9a3587244bd47b91b2605520c3f9457c183b478c19
   languageName: node
   linkType: hard
 
@@ -4904,7 +4913,7 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.1.4"
     "@tailwindcss/postcss": "npm:^4.3.1"
     "@tailwindcss/typography": "npm:^0.5.19"
-    "@tiptap/core": "npm:^3.13.0"
+    "@tiptap/core": "npm:^3.29.2"
     "@tiptap/extension-color": "npm:^3.13.0"
     "@tiptap/extension-image": "npm:^3.13.0"
     "@tiptap/extension-link": "npm:^3.13.0"
