@@ -442,8 +442,10 @@ export default class AuthController {
     provider: 'google' | 'discord'
   ) {
     const driverInstance = ally.use(provider)
-    const oauthUser = await driverInstance.user()
 
+    // Ces trois contrôles doivent précéder `user()` : l'échange du code lève déjà
+    // E_OAUTH_STATE_MISMATCH / E_OAUTH_MISSING_CODE en interne, donc les tester
+    // après ne renvoyait jamais nos messages traduits.
     if (driverInstance.accessDenied())
       return response.badRequest({ message: i18n.t('messages.auth.oauthCancelled') })
 
@@ -456,6 +458,8 @@ export default class AuthController {
       return response.badRequest({
         message: i18n.t('messages.auth.oauthError'),
       })
+
+    const oauthUser = await driverInstance.user()
 
     // Find-or-create manuel (plutôt que firstOrCreate) : le pseudo fourni peut
     // entrer en collision avec un username existant, donc on en dérive un unique

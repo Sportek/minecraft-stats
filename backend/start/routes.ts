@@ -152,7 +152,7 @@ router
     router
       .get('/me', '#controllers/auth_controller.retrieveUser')
       .use(middleware.auth())
-      .use([throttleLight('me', 5), NO_STORE])
+      .use([throttleLight('me', 60), NO_STORE])
     router
       .post('/change-password', '#controllers/auth_controller.changePassword')
       .use(middleware.auth())

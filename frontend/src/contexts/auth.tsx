@@ -1,5 +1,5 @@
 "use client";
-import { getBaseUrl } from "@/app/_cheatcode";
+import { getBaseUrl, HttpError } from "@/app/_cheatcode";
 import {
   changeUsername as changeUsernameRequest,
   changeUserPassword,
@@ -65,7 +65,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: meUser,
     error: meError,
     mutate: mutateMe,
-  } = useSWR(token ? (["me", token] as const) : null, ([, t]) => getUser(t));
+  } = useSWR(token ? (["me", token] as const) : null, ([, t]) => getUser(t), {
+    errorRetryCount: 5,
+  });
 
   const getToken = useCallback(() => {
     if (typeof window === "undefined") return null;
@@ -84,28 +86,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
   }, []);
 
-  // A bad/expired token makes /me throw; clear the session like the old fetchUser did.
-  // Also drop any synchronous override so isLoggedIn falls back to the (now logged-out)
-  // derived value instead of staying stale-true after the token is cleared.
+  const isTokenRejected = meError instanceof HttpError && meError.status === 401;
+
   useEffect(() => {
-    if (meError) {
+    if (isTokenRejected) {
       removeToken();
       setLoggedInOverride(null);
     }
-  }, [meError, removeToken]);
+  }, [isTokenRejected, removeToken]);
 
   // `isLoggedIn` is derived from the /me read, but consumers (login/logout/OAuth
   // callback) flip it synchronously via setIsLoggedIn. The override lets those
   // synchronous updates win until the next /me read settles. null = use derived.
   const [loggedInOverride, setLoggedInOverride] = useState<boolean | null>(null);
 
-  const user = meError ? null : meUser ?? null;
-  const isLoggedIn = loggedInOverride ?? (!meError && Boolean(token) && Boolean(meUser));
+  const user = meUser ?? null;
+  const isLoggedIn = loggedInOverride ?? (Boolean(token) && Boolean(meUser));
 
-  // A token exists but /me hasn't settled yet (no data, no error): the session is
-  // still resolving. Guards must wait for this before treating the user as logged
+  // A token exists but /me hasn't settled yet (no user, no 401): the session is
+  // still resolving — y compris pendant les réessais qui suivent une erreur
+  // transitoire. Guards must wait for this before treating the user as logged
   // out, otherwise they redirect during the initial /me fetch.
-  const isAuthLoading = Boolean(token) && meUser === undefined && !meError;
+  const isAuthLoading = Boolean(token) && meUser === undefined && !isTokenRejected;
 
   // Compat shims for the previous useState setters exposed in the public API.
   const setUser = useCallback(
