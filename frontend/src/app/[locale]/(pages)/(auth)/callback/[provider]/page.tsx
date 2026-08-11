@@ -22,12 +22,13 @@ type CallbackResponse =
 const CallbackPage = () => {
   const t = useTranslations("Auth");
   const provider = useParams().provider;
-  const code = useSearchParams().get("code");
+  const callbackQuery = useSearchParams().toString();
   const providerName = provider === "google" ? "Google" : "Discord";
 
   const { data, isLoading } = useSWR<CallbackResponse>(
-    `${getBaseUrl()}/callback/${provider}?code=${code}`,
-    fetcher
+    `${getBaseUrl()}/callback/${provider}?${callbackQuery}`,
+    (url: string) => fetcher(url, { credentials: "include" }),
+    { shouldRetryOnError: false },
   );
   const { setUser, saveToken, setIsLoggedIn } = useAuth();
 
@@ -56,7 +57,7 @@ const CallbackPage = () => {
   if (isLinkEmailSent) {
     return (
       <AuthCard
-        icon={<Icon icon="lucide:mail-check" className="h-[18px] w-[18px]" />}
+        icon={<Icon icon="lucide:mail-check" className="h-4.5 w-4.5" />}
         title={t("callback.linkEmailSentTitle")}
         subtitle={t("callback.linkEmailSentSubtitle", { provider: providerName })}
       >
@@ -81,11 +82,7 @@ const CallbackPage = () => {
     );
   }
 
-  return (
-    <div>
-      {isLoading && <Loader message={t("callback.connecting", { provider: String(provider) })} />}
-    </div>
-  );
+  return <div>{isLoading && <Loader message={t("callback.connecting", { provider: String(provider) })} />}</div>;
 };
 
 export default CallbackPage;
