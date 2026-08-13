@@ -96,6 +96,20 @@
     "detailsTitle": "Server details",
     "detailsSubtitle": "Update your server's details, categories, and languages."
   },
+  "admin": {
+    "label": "Admin",
+    "edit": "Edit",
+    "delete": "Delete",
+    "dialogTitle": "Delete this server?",
+    "dialogDescription": "<b>{name}</b> will be permanently removed from Minecraft Stats, along with its whole tracking history. This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete server",
+    "deleting": "Deleting…",
+    "removedTitle": "Server deleted",
+    "removedDescription": "{name} is no longer listed on Minecraft Stats.",
+    "removeErrorTitle": "Could not delete server",
+    "removeErrorDescription": "An error occurred."
+  },
   "claim": {
     "verifiedBadge": "Verified ownership",
     "button": "Claim this server",

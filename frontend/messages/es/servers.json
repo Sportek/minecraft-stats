@@ -96,6 +96,20 @@
     "detailsTitle": "Detalles del servidor",
     "detailsSubtitle": "Actualiza los detalles, las categorías y los idiomas de tu servidor."
   },
+  "admin": {
+    "label": "Admin",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "dialogTitle": "¿Eliminar este servidor?",
+    "dialogDescription": "<b>{name}</b> se eliminará definitivamente de Minecraft Stats, junto con todo su historial de seguimiento. Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirmDelete": "Eliminar servidor",
+    "deleting": "Eliminando…",
+    "removedTitle": "Servidor eliminado",
+    "removedDescription": "{name} ya no aparece en Minecraft Stats.",
+    "removeErrorTitle": "No se pudo eliminar el servidor",
+    "removeErrorDescription": "Se produjo un error."
+  },
   "claim": {
     "verifiedBadge": "Propiedad verificada",
     "button": "Reclamar este servidor",
