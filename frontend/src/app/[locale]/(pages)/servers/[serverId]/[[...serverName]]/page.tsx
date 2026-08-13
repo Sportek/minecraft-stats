@@ -29,6 +29,7 @@ import { useEntitlements } from "@/hooks/use-entitlements";
 import { useAuth } from "@/contexts/auth";
 import { SeriesMode, SeriesModeToggle } from "@/components/stats/series-mode-toggle";
 import { ServerFAQStructuredData, ServerStructuredData } from "@/components/seo/structured-data";
+import ServerAdminActions from "@/components/serveur/server-admin-actions";
 import ServerDetailHeader from "@/components/serveur/server-detail-header";
 import ClaimServerBanner from "@/components/serveur/claim-server-banner";
 import ServerFAQ from "@/components/serveur/server-faq";
@@ -328,13 +329,18 @@ const ServerPage = () => {
 
   return (
     <main className="flex-1 space-y-6 py-6">
-      <nav aria-label={t("detail.breadcrumbAria")} className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link href="/" className="text-accent transition-colors hover:underline">
-          {t("detail.breadcrumb")}
-        </Link>
-        <span aria-hidden="true">/</span>
-        <span className="truncate font-medium text-foreground">{serverData.server.name}</span>
-      </nav>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <nav aria-label={t("detail.breadcrumbAria")} className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Link href="/" className="text-accent transition-colors hover:underline">
+            {t("detail.breadcrumb")}
+          </Link>
+          <span aria-hidden="true">/</span>
+          <span className="truncate font-medium text-foreground">{serverData.server.name}</span>
+        </nav>
+
+        {/* Ne s'affiche que pour les admins Minecraft Stats. */}
+        <ServerAdminActions serverId={serverData.server.id} serverName={serverData.server.name} />
+      </div>
 
       <ServerStructuredData
         server={serverData.server}

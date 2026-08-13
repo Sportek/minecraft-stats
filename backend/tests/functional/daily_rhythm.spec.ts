@@ -155,11 +155,16 @@ test.group('Daily rhythm', (group) => {
 
   test('bascule sur le rollup horaire au-delà d’un mois de fenêtre', async ({ assert }) => {
     const server = await createServer()
-    const endsAt = DateTime.now().setZone(PARIS).startOf('day')
+    // La fenêtre du service est glissante (`now − 40 j` → `now`), pas calée sur
+    // minuit : elle contient exactement 40 fois une heure locale donnée à condition
+    // que la donnée couvre ses deux bords. Semer jusqu'à minuit laissait le bord
+    // récent à découvert, et le créneau de 21 h tombait à 39 jours dès que la suite
+    // tournait après 21 h — heure de Paris.
+    const endsAt = DateTime.now().setZone(PARIS).startOf('hour')
     const rows: Record<string, unknown>[] = []
 
-    for (let hour = 0; hour < 40 * 24; hour++) {
-      const at = endsAt.minus({ hours: hour + 1 })
+    for (let hour = 0; hour < 41 * 24; hour++) {
+      const at = endsAt.minus({ hours: hour })
       rows.push({
         server_id: server.id,
         hour: at.toSQL(),
@@ -187,6 +192,14 @@ test.group('Daily rhythm', (group) => {
     assert.equal(evening?.peakPlayerCount, 1000)
     assert.equal(evening?.minuteOfDay, 1260)
     assert.equal(evening?.daysCount, 40)
+
+    // Toutes les heures locales, pas seulement celle du soir : c'est l'invariant qui
+    // lâche si la donnée cesse de déborder de la fenêtre, quelle que soit l'heure à
+    // laquelle la suite tourne.
+    assert.deepEqual(
+      rhythm.series.all.map((slot) => slot.daysCount),
+      Array.from({ length: 24 }, () => 40)
+    )
   })
 
   test('ne renvoie aucun créneau pour un serveur sans relevé', async ({ assert }) => {
