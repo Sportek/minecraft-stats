@@ -106,6 +106,47 @@ services:
       start_period: 10s
 
   ##########################################################################
+  # Frontend (Next.js)
+  ##########################################################################
+  # Les variables NEXT_PUBLIC_* sont figées dans le bundle client au moment du
+  # build (voir frontend/Dockerfile) : celles listées ici ne servent qu'au rendu
+  # côté serveur. Changer une URL d'API demande donc un rebuild de l'image, pas
+  # seulement un redéploiement.
+  frontend:
+    container_name: "stats-frontend-${APP_NAME}"
+    image: "sportek/minecraft-stats-front:${IMAGE_TAG:-latest}"
+    pull_policy: always
+    restart: "unless-stopped"
+    depends_on:
+      - adonis_app
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
+      - NEXT_PUBLIC_ASSETS_URL=${NEXT_PUBLIC_ASSETS_URL}
+      - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+      - NEXT_PUBLIC_GOOGLE_TAG_MANAGER=${NEXT_PUBLIC_GOOGLE_TAG_MANAGER}
+      - NEXT_PUBLIC_MICROSOFT_CLARITY=${NEXT_PUBLIC_MICROSOFT_CLARITY}
+    networks:
+      - sail
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      # 127.0.0.1 et non localhost : le serveur Next écoute en IPv4 (0.0.0.0),
+      # alors que localhost résout en IPv6 (::1) dans l'image Alpine.
+      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  ##########################################################################
   # Serveur MCP (Model Context Protocol) — expose les stats publiques aux IA
   ##########################################################################
   mcp:

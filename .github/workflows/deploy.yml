@@ -1,9 +1,10 @@
 name: Deploy
 
-# Un seul workflow pilote les trois services. Auparavant `deploy-backend.yml` et
-# `deploy-mcp.yml` couvraient le backend et le MCP, tandis que le frontend était
-# déployé par l'auto-deploy de Dokploy via le webhook de la GitHub App : deux
-# mécanismes distincts pour un même dépôt, sans vue d'ensemble.
+# Un seul workflow pilote les trois services, et un seul appel les déploie
+# ensemble : le frontend fait désormais partie du compose au lieu d'être une
+# application Dokploy à part, buildée sur le serveur via le webhook de la GitHub
+# App. Deux mécanismes distincts pour un même dépôt rendaient l'état réel des
+# déploiements impossible à lire d'un coup d'œil.
 #
 # Surtout, l'ancien déclencheur se contentait d'un `curl` sur `compose.deploy`,
 # qui répond 200 dès la *mise en file*. En août 2026 un build figé d'un autre
@@ -196,9 +197,72 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  build-frontend:
+    name: Build and push frontend image
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    # Nécessaire pour lire `vars.FRONTEND_BUILD_ARGS`, dont les valeurs diffèrent
+    # entre prod et staging (URL d'API, bucket S3, domaine de base).
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+
+    env:
+      IMAGE_NAME: sportek/minecraft-stats-front
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set image tag
+        id: set-tag
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "tag=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check build args are configured
+        env:
+          BUILD_ARGS: ${{ vars.FRONTEND_BUILD_ARGS }}
+        run: |
+          # Les NEXT_PUBLIC_* sont figées dans le bundle client au build. Une
+          # variable absente ne casse pas la construction : elle produit
+          # silencieusement un site avec des URLs d'API vides et un captcha mort.
+          missing=""
+          for key in NEXT_PUBLIC_API_URL NEXT_PUBLIC_BACKEND_URL \
+                     NEXT_PUBLIC_TURNSTILE_SITE_KEY NEXT_PUBLIC_ASSETS_URL; do
+            printf '%s\n' "$BUILD_ARGS" | grep -q "^${key}=" || missing="${missing} ${key}"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::FRONTEND_BUILD_ARGS incomplet pour '${{ github.ref_name == 'main' && 'production' || 'staging' }}' — manquant :${missing}"
+            exit 1
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: ./frontend
+          push: true
+          build-args: ${{ vars.FRONTEND_BUILD_ARGS }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.set-tag.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy-stack:
-    name: Deploy backend stack
-    needs: [changes, build-backend, build-mcp]
+    name: Deploy stack
+    needs: [changes, build-backend, build-mcp, build-frontend]
     # Les deux builds sont conditionnels. Le `success()` implicite de `needs:`
     # sauterait ce job dès que l'un des deux est `skipped` — c'est-à-dire dès
     # qu'un push ne touche qu'un seul des deux services. On exige seulement
@@ -208,11 +272,15 @@ jobs:
     if: >-
       !cancelled()
       && needs.changes.result == 'success'
-      && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.mcp == 'true')
+      && (needs.changes.outputs.backend == 'true'
+          || needs.changes.outputs.mcp == 'true'
+          || needs.changes.outputs.frontend == 'true')
       && needs.build-backend.result != 'failure'
       && needs.build-backend.result != 'cancelled'
       && needs.build-mcp.result != 'failure'
       && needs.build-mcp.result != 'cancelled'
+      && needs.build-frontend.result != 'failure'
+      && needs.build-frontend.result != 'cancelled'
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
 
@@ -233,26 +301,3 @@ jobs:
           fi
           chmod +x .github/scripts/dokploy-deploy.sh
           .github/scripts/dokploy-deploy.sh compose "${COMPOSE_ID}"
-
-  deploy-frontend:
-    name: Deploy frontend
-    needs: changes
-    if: needs.changes.outputs.frontend == 'true'
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-
-      - name: Deploy and wait
-        env:
-          DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
-          APP_ID: ${{ vars.DOKPLOY_FRONTEND_APP_ID }}
-        run: |
-          if [ -z "${APP_ID}" ]; then
-            echo "::error::DOKPLOY_FRONTEND_APP_ID absent de l'environnement '${{ github.ref_name == 'main' && 'production' || 'staging' }}'."
-            exit 1
-          fi
-          chmod +x .github/scripts/dokploy-deploy.sh
-          .github/scripts/dokploy-deploy.sh application "${APP_ID}"
