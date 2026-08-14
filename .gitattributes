@@ -1,0 +1,4 @@
+# Les scripts shell tournent sur des runners Linux : un checkout Windows avec
+# core.autocrlf=true les réécrirait en CRLF et le noyau rejetterait le shebang
+# (« bad interpreter: /usr/bin/env bash^M »).
+*.sh text eol=lf

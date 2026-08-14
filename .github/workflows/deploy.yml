@@ -1,0 +1,211 @@
+name: Deploy
+
+# Un seul workflow pilote les trois services. Auparavant `deploy-backend.yml` et
+# `deploy-mcp.yml` couvraient le backend et le MCP, tandis que le frontend était
+# déployé par l'auto-deploy de Dokploy via le webhook de la GitHub App : deux
+# mécanismes distincts pour un même dépôt, sans vue d'ensemble.
+#
+# Surtout, l'ancien déclencheur se contentait d'un `curl` sur `compose.deploy`,
+# qui répond 200 dès la *mise en file*. En août 2026 un build figé d'un autre
+# projet a bloqué la file partagée de Dokploy : plus rien n'est parti en
+# production pendant trois jours, backend comme frontend, avec des checks verts
+# sur chaque merge. `dokploy-deploy.sh` attend désormais l'issue réelle.
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+permissions:
+  contents: read
+
+# Deux pushes rapprochés lançaient deux déploiements concurrents sur la même
+# stack. On sérialise par branche, sans annuler : un déploiement en cours doit
+# aller au bout plutôt que de laisser la stack à moitié à jour.
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  DOKPLOY_URL: https://dokploy.gablandry.com
+
+jobs:
+  changes:
+    name: Detect changed workspaces
+    runs-on: ubuntu-latest
+
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      mcp: ${{ steps.filter.outputs.mcp }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Filter paths
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          # Le workflow et son script se trouvent dans les trois filtres : les
+          # modifier doit redéployer, sinon un correctif du pipeline reste
+          # invérifiable jusqu'au prochain changement applicatif.
+          filters: |
+            backend:
+              - 'backend/**'
+              - '.github/workflows/deploy.yml'
+              - '.github/scripts/dokploy-deploy.sh'
+            mcp:
+              - 'mcp/**'
+              - '.github/workflows/deploy.yml'
+              - '.github/scripts/dokploy-deploy.sh'
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/deploy.yml'
+              - '.github/scripts/dokploy-deploy.sh'
+
+  build-backend:
+    name: Build and push backend image
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: sportek/minecraft-stats-back
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set image tag
+        id: set-tag
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "tag=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.set-tag.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-mcp:
+    name: Build and push MCP image
+    needs: changes
+    if: needs.changes.outputs.mcp == 'true'
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: sportek/minecraft-stats-mcp
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set image tag
+        id: set-tag
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "tag=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: ./mcp
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.set-tag.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-stack:
+    name: Deploy backend stack
+    needs: [changes, build-backend, build-mcp]
+    # Les deux builds sont conditionnels. Le `success()` implicite de `needs:`
+    # sauterait ce job dès que l'un des deux est `skipped` — c'est-à-dire dès
+    # qu'un push ne touche qu'un seul des deux services. On exige seulement
+    # qu'aucun build *lancé* n'ait échoué, et que la détection ait réussi :
+    # si `changes` casse, les builds sont sautés à tort et on déploierait une
+    # image périmée.
+    if: >-
+      !cancelled()
+      && needs.changes.result == 'success'
+      && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.mcp == 'true')
+      && needs.build-backend.result != 'failure'
+      && needs.build-backend.result != 'cancelled'
+      && needs.build-mcp.result != 'failure'
+      && needs.build-mcp.result != 'cancelled'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Deploy and wait
+        env:
+          DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
+          COMPOSE_ID: ${{ vars.DOKPLOY_COMPOSE_ID }}
+        run: |
+          # Sans ce garde-fou, une variable absente enverrait `{"composeId": ""}`
+          # et le job resterait vert sans rien déployer.
+          if [ -z "${COMPOSE_ID}" ]; then
+            echo "::error::DOKPLOY_COMPOSE_ID absent de l'environnement '${{ github.ref_name == 'main' && 'production' || 'staging' }}'."
+            exit 1
+          fi
+          chmod +x .github/scripts/dokploy-deploy.sh
+          .github/scripts/dokploy-deploy.sh compose "${COMPOSE_ID}"
+
+  deploy-frontend:
+    name: Deploy frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Deploy and wait
+        env:
+          DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
+          APP_ID: ${{ vars.DOKPLOY_FRONTEND_APP_ID }}
+        run: |
+          if [ -z "${APP_ID}" ]; then
+            echo "::error::DOKPLOY_FRONTEND_APP_ID absent de l'environnement '${{ github.ref_name == 'main' && 'production' || 'staging' }}'."
+            exit 1
+          fi
+          chmod +x .github/scripts/dokploy-deploy.sh
+          .github/scripts/dokploy-deploy.sh application "${APP_ID}"
