@@ -16,6 +16,9 @@ on:
     branches:
       - main
       - staging
+  # Filet de secours : permet de forcer un déploiement complet sans pousser un
+  # commit vide, par exemple après une panne d'infrastructure.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -43,27 +46,71 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
-
-      - name: Filter paths
-        uses: dorny/paths-filter@v4
-        id: filter
         with:
-          # Le workflow et son script se trouvent dans les trois filtres : les
-          # modifier doit redéployer, sinon un correctif du pipeline reste
+          # `git diff` a besoin du commit précédent, qui n'est pas dans un
+          # clone superficiel.
+          fetch-depth: 0
+
+      # `dorny/paths-filter` a été retiré : sur un merge `staging` -> `main`, il
+      # calculait le diff depuis le merge-base des deux branches. Après le merge
+      # ce merge-base *est* la pointe de main, donc « 0 changed files », donc
+      # aucun déploiement — et un run vert. C'est exactement la panne
+      # silencieuse que ce workflow existe pour éliminer.
+      #
+      # On compare donc explicitement `before`..`sha`, ce que GitHub fournit
+      # pour tout push, merge inclus. Règle de sûreté : si l'ensemble modifié
+      # n'est pas déterminable avec certitude, on déploie tout. Déployer trop se
+      # remarque et se corrige ; ne rien déployer sans le savoir, non.
+      - name: Detect changes
+        id: filter
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+
+          deploy_all() {
+            echo "Raison : $1 — tous les services seront déployés."
+            for svc in backend mcp frontend; do echo "${svc}=true" >> "$GITHUB_OUTPUT"; done
+            exit 0
+          }
+
+          # `[ test ] && cmd` sortirait du script sous `set -e` quand le test est
+          # faux : le statut non nul du test devient celui de la commande.
+          if [ "$EVENT" != "push" ]; then
+            deploy_all "déclenchement manuel (${EVENT})"
+          fi
+          case "$BEFORE" in
+            ""|0000000000000000000000000000000000000000)
+              deploy_all "pas de commit de référence (nouvelle branche)" ;;
+          esac
+          git cat-file -e "${BEFORE}^{commit}" 2>/dev/null \
+            || deploy_all "commit de référence ${BEFORE} introuvable"
+          changed=$(git diff --name-only "$BEFORE" "$AFTER") \
+            || deploy_all "git diff en échec"
+          if [ -z "$changed" ]; then
+            deploy_all "aucun fichier modifié détecté"
+          fi
+
+          echo "Fichiers modifiés :"
+          printf '%s\n' "$changed" | sed 's/^/  /'
+
+          # Le workflow et son script comptent pour les trois services : modifier
+          # le pipeline doit le rejouer partout, sinon un correctif reste
           # invérifiable jusqu'au prochain changement applicatif.
-          filters: |
-            backend:
-              - 'backend/**'
-              - '.github/workflows/deploy.yml'
-              - '.github/scripts/dokploy-deploy.sh'
-            mcp:
-              - 'mcp/**'
-              - '.github/workflows/deploy.yml'
-              - '.github/scripts/dokploy-deploy.sh'
-            frontend:
-              - 'frontend/**'
-              - '.github/workflows/deploy.yml'
-              - '.github/scripts/dokploy-deploy.sh'
+          pipeline=$(printf '%s\n' "$changed" \
+            | grep -cE '^\.github/(workflows/deploy\.yml|scripts/dokploy-deploy\.sh)$' || true)
+
+          for svc in backend mcp frontend; do
+            hits=$(printf '%s\n' "$changed" | grep -cE "^${svc}/" || true)
+            if [ "$hits" -gt 0 ] || [ "$pipeline" -gt 0 ]; then
+              echo "${svc}=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "${svc}=false" >> "$GITHUB_OUTPUT"
+            fi
+          done
+          echo "Résultat :"; cat "$GITHUB_OUTPUT" | sed 's/^/  /'
 
   build-backend:
     name: Build and push backend image
