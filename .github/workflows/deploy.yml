@@ -1,12 +1,15 @@
 name: Deploy
 
-# Un seul workflow pour toute la stack. Les anciens `deploy-backend.yml` et
-# `deploy-mcp.yml` filtraient sur `backend/**` et `mcp/**` : un push qui ne
-# touchait que `frontend/**` ne déclenchait donc aucun déploiement, et le front
-# ne partait en prod que quand un changement backend passait dans le même push.
-# Ici le job `deploy` tourne sur *tous* les pushes de `main`/`staging` ; seuls
-# les builds d'images sont filtrés, parce qu'eux sont coûteux et qu'un build
-# sauté ne fait rien rater (Dokploy retire simplement l'image inchangée).
+# Un seul workflow pilote les trois services. Auparavant `deploy-backend.yml` et
+# `deploy-mcp.yml` couvraient le backend et le MCP, tandis que le frontend était
+# déployé par l'auto-deploy de Dokploy via le webhook de la GitHub App : deux
+# mécanismes distincts pour un même dépôt, sans vue d'ensemble.
+#
+# Surtout, l'ancien déclencheur se contentait d'un `curl` sur `compose.deploy`,
+# qui répond 200 dès la *mise en file*. En août 2026 un build figé d'un autre
+# projet a bloqué la file partagée de Dokploy : plus rien n'est parti en
+# production pendant trois jours, backend comme frontend, avec des checks verts
+# sur chaque merge. `dokploy-deploy.sh` attend désormais l'issue réelle.
 
 on:
   push:
@@ -17,12 +20,15 @@ on:
 permissions:
   contents: read
 
-# Deux pushes rapprochés déclenchaient deux `compose.deploy` concurrents sur la
-# même stack. On sérialise par branche, sans annuler : un déploiement en cours
-# doit aller au bout plutôt que de laisser la stack à moitié à jour.
+# Deux pushes rapprochés lançaient deux déploiements concurrents sur la même
+# stack. On sérialise par branche, sans annuler : un déploiement en cours doit
+# aller au bout plutôt que de laisser la stack à moitié à jour.
 concurrency:
   group: deploy-${{ github.ref_name }}
   cancel-in-progress: false
+
+env:
+  DOKPLOY_URL: https://dokploy.gablandry.com
 
 jobs:
   changes:
@@ -32,6 +38,7 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       mcp: ${{ steps.filter.outputs.mcp }}
+      frontend: ${{ steps.filter.outputs.frontend }}
 
     steps:
       - name: Checkout code
@@ -41,13 +48,22 @@ jobs:
         uses: dorny/paths-filter@v4
         id: filter
         with:
+          # Le workflow et son script se trouvent dans les trois filtres : les
+          # modifier doit redéployer, sinon un correctif du pipeline reste
+          # invérifiable jusqu'au prochain changement applicatif.
           filters: |
             backend:
               - 'backend/**'
               - '.github/workflows/deploy.yml'
+              - '.github/scripts/dokploy-deploy.sh'
             mcp:
               - 'mcp/**'
               - '.github/workflows/deploy.yml'
+              - '.github/scripts/dokploy-deploy.sh'
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/deploy.yml'
+              - '.github/scripts/dokploy-deploy.sh'
 
   build-backend:
     name: Build and push backend image
@@ -133,52 +149,63 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  deploy:
-    name: Deploy to Dokploy
+  deploy-stack:
+    name: Deploy backend stack
     needs: [changes, build-backend, build-mcp]
-    # Les deux builds sont conditionnels : `success()` (le défaut) sauterait le
-    # déploiement dès que l'un des deux est `skipped`, c'est-à-dire sur tout push
-    # frontend-only — exactement le bug qu'on corrige. On exige seulement qu'aucun
-    # build *lancé* n'ait échoué. `changes`, lui, doit avoir réussi : s'il casse,
-    # les builds sont sautés à tort et on déploierait une image périmée.
+    # Les deux builds sont conditionnels. Le `success()` implicite de `needs:`
+    # sauterait ce job dès que l'un des deux est `skipped` — c'est-à-dire dès
+    # qu'un push ne touche qu'un seul des deux services. On exige seulement
+    # qu'aucun build *lancé* n'ait échoué, et que la détection ait réussi :
+    # si `changes` casse, les builds sont sautés à tort et on déploierait une
+    # image périmée.
     if: >-
       !cancelled()
       && needs.changes.result == 'success'
+      && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.mcp == 'true')
       && needs.build-backend.result != 'failure'
       && needs.build-backend.result != 'cancelled'
       && needs.build-mcp.result != 'failure'
       && needs.build-mcp.result != 'cancelled'
     runs-on: ubuntu-latest
-    # `main` -> compose de prod, `staging` -> compose de staging. Le `composeId`
-    # vit dans les variables d'environnement GitHub, pas dans le workflow.
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
 
     steps:
-      - name: Trigger Dokploy deployment
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Deploy and wait
         env:
           DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
-          DOKPLOY_COMPOSE_ID: ${{ vars.DOKPLOY_COMPOSE_ID }}
+          COMPOSE_ID: ${{ vars.DOKPLOY_COMPOSE_ID }}
         run: |
-          set -euo pipefail
-
-          # Sans ce garde-fou, une variable d'environnement absente enverrait
-          # `{"composeId": ""}` et le job resterait vert sans rien déployer.
-          if [ -z "${DOKPLOY_COMPOSE_ID}" ]; then
-            echo "::error::DOKPLOY_COMPOSE_ID is not set for environment '${{ github.ref_name == 'main' && 'production' || 'staging' }}'."
+          # Sans ce garde-fou, une variable absente enverrait `{"composeId": ""}`
+          # et le job resterait vert sans rien déployer.
+          if [ -z "${COMPOSE_ID}" ]; then
+            echo "::error::DOKPLOY_COMPOSE_ID absent de l'environnement '${{ github.ref_name == 'main' && 'production' || 'staging' }}'."
             exit 1
           fi
+          chmod +x .github/scripts/dokploy-deploy.sh
+          .github/scripts/dokploy-deploy.sh compose "${COMPOSE_ID}"
 
-          payload=$(printf '{"composeId":"%s"}' "${DOKPLOY_COMPOSE_ID}")
+  deploy-frontend:
+    name: Deploy frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
 
-          # `--fail-with-body` renvoie le corps de la réponse même en erreur ;
-          # `--fail` seul masquait le message d'erreur de Dokploy.
-          curl -sS -X POST "https://dokploy.gablandry.com/api/compose.deploy" \
-            -H "Accept: application/json" \
-            -H "Content-Type: application/json" \
-            -H "x-api-key: ${DOKPLOY_API_TOKEN}" \
-            -d "${payload}" \
-            --fail-with-body
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
 
-          echo
-          echo "Deployment queued for compose ${DOKPLOY_COMPOSE_ID}."
-          echo "::notice::Dokploy a accepté la demande. L'API répond dès la mise en file : vérifier les logs Dokploy pour confirmer que le build a réussi."
+      - name: Deploy and wait
+        env:
+          DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
+          APP_ID: ${{ vars.DOKPLOY_FRONTEND_APP_ID }}
+        run: |
+          if [ -z "${APP_ID}" ]; then
+            echo "::error::DOKPLOY_FRONTEND_APP_ID absent de l'environnement '${{ github.ref_name == 'main' && 'production' || 'staging' }}'."
+            exit 1
+          fi
+          chmod +x .github/scripts/dokploy-deploy.sh
+          .github/scripts/dokploy-deploy.sh application "${APP_ID}"
