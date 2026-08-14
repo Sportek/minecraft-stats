@@ -330,7 +330,13 @@ const ServerPage = () => {
   return (
     <main className="flex-1 space-y-6 py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <nav aria-label={t("detail.breadcrumbAria")} className="flex items-center gap-2 text-sm text-muted-foreground">
+        {/* `min-w-0` : sans lui, le fil d'Ariane impose sa largeur de contenu au
+            conteneur flex et le nom d'un serveur un peu long déborde à droite au
+            lieu d'être tronqué. */}
+        <nav
+          aria-label={t("detail.breadcrumbAria")}
+          className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground"
+        >
           <Link href="/" className="text-accent transition-colors hover:underline">
             {t("detail.breadcrumb")}
           </Link>
