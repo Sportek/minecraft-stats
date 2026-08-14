@@ -30,11 +30,24 @@ COPY . .
 
 # Accept build arguments for NEXT_PUBLIC_* variables
 # These MUST be available at build time for Next.js to embed them in the client bundle
+#
+# TURNSTILE_SITE_KEY et ASSETS_URL manquaient ici. Ils fonctionnaient malgré tout
+# parce que Dokploy buildait l'image lui-même : son option « create .env file »
+# dépose un `.env` dans le contexte de build, que `.dockerignore` ne filtre pas
+# (il n'exclut que `.env*.local`, `.env.development` et `.env.test`), et que le
+# `COPY . .` ci-dessus embarque — Next le lit alors au build.
+#
+# Ce `.env` n'existe plus dès que l'image est construite ailleurs. Sans ces deux
+# ARG, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` devient `undefined` dans un composant
+# client (`components/form/turnstile.tsx` est en "use client"), donc le captcha
+# casse — et le build reste vert.
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_GOOGLE_TAG_MANAGER
 ARG NEXT_PUBLIC_MICROSOFT_CLARITY
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ARG NEXT_PUBLIC_ASSETS_URL
 
 # Convert build args to environment variables for the build process
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
@@ -42,6 +55,8 @@ ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_GOOGLE_TAG_MANAGER=$NEXT_PUBLIC_GOOGLE_TAG_MANAGER
 ENV NEXT_PUBLIC_MICROSOFT_CLARITY=$NEXT_PUBLIC_MICROSOFT_CLARITY
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ENV NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL
 
 # Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
