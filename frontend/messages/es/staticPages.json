@@ -259,7 +259,44 @@
   },
   "consent": {
     "description": "Medimos el uso del sitio (páginas visitadas, tráfico) para mejorarlo. Estas estadísticas utilizan tu dirección IP (almacenada de forma anonimizada) y tu navegador. <link>Más información</link>.",
-    "decline": "Rechazar",
-    "accept": "Aceptar"
+    "accept": "Aceptar todo",
+    "moreInfo": "Más información",
+    "purposes": {
+      "audience": {
+        "title": "Medición de audiencia",
+        "description": "Contar las visitas y las páginas vistas para saber qué se usa realmente en el sitio."
+      },
+      "improvement": {
+        "title": "Mejora del sitio",
+        "description": "Detectar páginas lentas, recorridos que fallan y funciones que hay que rehacer."
+      },
+      "personalization": {
+        "title": "Contenidos adaptados",
+        "description": "Destacar los servidores y las clasificaciones que encajan con tu uso del sitio."
+      }
+    },
+    "info": {
+      "title": "¿Para qué sirven estas estadísticas?",
+      "body": "Minecraft Stats es gratuito y lo mantiene un equipo pequeño. Estas mediciones nos dicen qué páginas son útiles, qué se rompe y qué mejorar primero. Nunca vendemos datos y tu dirección IP nunca se almacena en claro. <link>Política de privacidad</link>.",
+      "manage": "Gestionar mis preferencias"
+    },
+    "preferences": {
+      "title": "Tus preferencias",
+      "body": "Elige las finalidades que aceptas. Desmarcarlo todo equivale a rechazar las estadísticas detalladas.",
+      "alwaysOn": "Siempre activo",
+      "necessary": {
+        "title": "Funcionamiento del sitio",
+        "description": "Inicio de sesión, tema, favoritos. Imprescindible para el sitio, así que no se puede desactivar."
+      },
+      "save": "Aceptar y continuar",
+      "refuse": "Continuar sin aceptar"
+    },
+    "confirm": {
+      "title": "¿Estás seguro?",
+      "body": "Sin estas estadísticas vamos a ciegas: no podemos saber qué páginas merecen trabajo. No cuesta nada y sigue siendo anónimo, y puedes cambiar de opinión cuando quieras.",
+      "reconsider": "Pensándolo bien, acepto",
+      "refuse": "Confirmar el rechazo",
+      "refuseCountdown": "Confirmar el rechazo ({seconds})"
+    }
   }
 }
