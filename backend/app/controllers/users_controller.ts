@@ -3,6 +3,7 @@ import User from '#models/user'
 import UserPolicy from '#policies/user_policy'
 import BlacklistService from '#services/blacklist_service'
 import DuplicateAccountService from '#services/duplicate_account_service'
+import UserActivityService from '#services/user_activity_service'
 import {
   CreateUserValidator,
   UpdateUserBlacklistValidator,
@@ -170,9 +171,9 @@ export default class UsersController {
    * @operationId adminShowUser
    * @tag USERS_ADMIN
    * @summary Get a user's profile and uploaded servers (admin only)
-   * @description Returns a single user's full profile — including the normally hidden `email`, the registration `provider` (`null` for email/password sign-ups), and `verified` status — alongside every server they have uploaded and any candidate duplicate accounts (other users sharing the same device or hashed IP, from the analytics visitor tables). Requires an authenticated admin (gated by `UserPolicy.manage`).
+   * @description Returns a single user's full profile — including the normally hidden `email`, the registration `provider` (`null` for email/password sign-ups), and `verified` status — alongside every server they have uploaded, any candidate duplicate accounts (other users sharing the same device or hashed IP, from the analytics visitor tables) and their usage over the last 30 days (`activity`: connections — visits cut on 30 minutes of inactivity, not logins —, page views, devices, active days, time spent, per-day series and top pages). Requires an authenticated admin (gated by `UserPolicy.manage`).
    * @paramPath id - User ID - @type(number) @example(7) @required
-   * @responseBody 200 - {"user": {"id": 7, "username": "gabriel", "email": "gabriel@example.com", "role": "user", "verified": true, "provider": "discord", "avatarUrl": "", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "servers": [{"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "type": "java", "imageUrl": "", "lastPlayerCount": 1200, "peakPlayerCount": 5000, "lastOnlineAt": "2026-05-28T12:00:00.000Z", "createdAt": "2025-01-01T00:00:00.000Z"}], "duplicates": [{"id": 9, "username": "gab2", "email": "gab2@example.com", "role": "user", "createdAt": "2025-02-01T00:00:00.000Z", "signals": {"sameDevice": true, "sameIp": true}}], "stats": {"serverCount": 1, "duplicateCount": 1}}
+   * @responseBody 200 - {"user": {"id": 7, "username": "gabriel", "email": "gabriel@example.com", "role": "user", "verified": true, "provider": "discord", "avatarUrl": "", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2026-05-28T12:00:00.000Z"}, "servers": [{"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "type": "java", "imageUrl": "", "lastPlayerCount": 1200, "peakPlayerCount": 5000, "lastOnlineAt": "2026-05-28T12:00:00.000Z", "createdAt": "2025-01-01T00:00:00.000Z"}], "duplicates": [{"id": 9, "username": "gab2", "email": "gab2@example.com", "role": "user", "createdAt": "2025-02-01T00:00:00.000Z", "signals": {"sameDevice": true, "sameIp": true}}], "activity": {"connections": 42, "pageViews": 310, "devices": 2, "activeDays": 18, "timeSpentMs": 4200000, "viewsPerConnection": 7.4, "firstSeenAt": "2026-05-01T10:00:00.000Z", "lastSeenAt": "2026-05-28T09:12:00.000Z", "series": [{"day": "2026-05-28T00:00:00.000Z", "connections": 3, "pageViews": 21}], "topPages": [{"path": "/servers/:id", "views": 120}]}, "stats": {"serverCount": 1, "duplicateCount": 1}}
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
    * @responseBody 404 - {"error": "User not found"}
@@ -201,6 +202,10 @@ export default class UsersController {
 
     const duplicates = await DuplicateAccountService.forUser(user.id)
 
+    // Fenêtre par défaut du service (30 derniers jours) : le détail admin montre
+    // l'activité récente, pas l'historique complet du compte.
+    const activity = await UserActivityService.forUser(user.id, { fromDate: null, toDate: null })
+
     // `email` and `provider` are intentionally surfaced here even though the model
     // hides `email` from default serialization — this admin-only view needs them.
     return response.ok({
@@ -217,6 +222,7 @@ export default class UsersController {
       },
       servers,
       duplicates,
+      activity,
       stats: {
         serverCount: servers.length,
         duplicateCount: duplicates.length,

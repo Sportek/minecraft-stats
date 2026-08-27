@@ -1,3 +1,4 @@
+import { UserActivity } from '@/types/analytics'
 import { AdminUserProfile, User } from '@/types/auth'
 import { AdminUserServer } from '@/types/server'
 import { apiFetch } from './client'
@@ -28,6 +29,7 @@ export interface AdminUserDetailResponse {
   user: AdminUserProfile
   servers: AdminUserServer[]
   duplicates: DuplicateAccount[]
+  activity: UserActivity
   stats: {
     serverCount: number
     duplicateCount: number

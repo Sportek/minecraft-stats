@@ -259,7 +259,44 @@
   },
   "consent": {
     "description": "Nous mesurons l'utilisation du site (pages consultées, trafic) afin de l'améliorer. Ces statistiques utilisent votre adresse IP (stockée sous une forme anonymisée) et votre navigateur. <link>En savoir plus</link>.",
-    "decline": "Refuser",
-    "accept": "Accepter"
+    "accept": "Tout accepter",
+    "moreInfo": "Plus d'infos",
+    "purposes": {
+      "audience": {
+        "title": "Mesure d'audience",
+        "description": "Compter les visites et les pages consultées pour savoir ce qui est utilisé sur le site."
+      },
+      "improvement": {
+        "title": "Amélioration du site",
+        "description": "Repérer les pages lentes, les parcours qui coincent et les fonctionnalités à revoir."
+      },
+      "personalization": {
+        "title": "Contenus adaptés",
+        "description": "Mettre en avant les serveurs et les classements qui correspondent à votre usage."
+      }
+    },
+    "info": {
+      "title": "À quoi servent ces statistiques ?",
+      "body": "Minecraft Stats est gratuit et suivi par une petite équipe. Ces mesures nous disent quelles pages sont utiles, ce qui casse et ce qu'il faut améliorer en priorité. Aucune donnée n'est revendue, et votre adresse IP n'est jamais stockée en clair. <link>Politique de confidentialité</link>.",
+      "manage": "Gérer mes préférences"
+    },
+    "preferences": {
+      "title": "Vos préférences",
+      "body": "Choisissez les finalités que vous acceptez. Décocher tout revient à refuser les statistiques détaillées.",
+      "alwaysOn": "Toujours actif",
+      "necessary": {
+        "title": "Fonctionnement du site",
+        "description": "Connexion à votre compte, thème, favoris. Indispensable au site, donc non désactivable."
+      },
+      "save": "Accepter et continuer",
+      "refuse": "Continuer sans accepter"
+    },
+    "confirm": {
+      "title": "Vous êtes sûr ?",
+      "body": "Sans ces statistiques, nous naviguons à l'aveugle : impossible de savoir quelles pages méritent du travail. Cela ne coûte rien et reste anonyme — vous pouvez changer d'avis à tout moment.",
+      "reconsider": "Finalement, j'accepte",
+      "refuse": "Confirmer le refus",
+      "refuseCountdown": "Confirmer le refus ({seconds})"
+    }
   }
 }

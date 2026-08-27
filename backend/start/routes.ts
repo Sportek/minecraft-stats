@@ -300,6 +300,9 @@ router
         router
           .get('analytics', '#controllers/analytics_controller.dashboard')
           .use([middleware.admin(), throttleLight('admin.analytics', 30), NO_STORE])
+        router
+          .get('analytics/users', '#controllers/analytics_controller.users')
+          .use([middleware.admin(), throttleLight('admin.analytics.users', 30), NO_STORE])
 
         // Ownership claims — manual review queue (admin only)
         router
