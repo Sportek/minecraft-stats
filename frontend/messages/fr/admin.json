@@ -280,7 +280,24 @@
       "offlineStatus": "Hors ligne",
       "peak": "pic {count}",
       "viewServer": "Voir le serveur",
-      "view": "Voir"
+      "view": "Voir",
+      "activity": {
+        "title": "Activité (30 derniers jours)",
+        "help": "Une connexion est une visite : 30 minutes d'inactivité en ouvrent une nouvelle. Calculé depuis les pages vues attribuées au compte, pas depuis les logins.",
+        "empty": "Aucune activité enregistrée sur les 30 derniers jours.",
+        "lastSeen": "Dernière activité",
+        "viewsPerConnection": "Pages par connexion",
+        "topPages": "Pages les plus consultées",
+        "noPages": "Aucune page vue sur la période.",
+        "pageViews": "{count} vues",
+        "tiles": {
+          "connections": "Connexions",
+          "pageViews": "Pages vues",
+          "activeDays": "Jours actifs",
+          "devices": "Appareils",
+          "timeSpent": "Temps passé"
+        }
+      }
     }
   },
   "analytics": {
@@ -317,6 +334,45 @@
       "noData": "aucune donnée",
       "fewer": "Moins",
       "more": "Plus"
+    },
+    "activeUsers": {
+      "title": "Utilisateurs les plus actifs",
+      "subtitle": "Connexions et usage des comptes connectés sur la période choisie.",
+      "badge": "{count} comptes actifs",
+      "backToAnalytics": "Retour aux statistiques",
+      "cardTitle": "Utilisateurs les plus actifs",
+      "cardSubtitle": "Une connexion = une visite : 30 minutes d'inactivité en ouvrent une nouvelle. Ce n'est pas un nombre de logins.",
+      "viewAll": "Voir tout",
+      "rowValue": "{connections} connexions · {views} pages vues",
+      "searchPlaceholder": "Rechercher par nom ou e-mail…",
+      "loading": "Chargement de l'activité…",
+      "emptyTitle": "Aucune activité",
+      "emptyDescription": "Aucun compte connecté n'a été vu sur cette période.",
+      "tiles": {
+        "activeUsers": "Comptes actifs",
+        "connections": "Connexions",
+        "pageViews": "Pages vues",
+        "perUser": "Connexions / compte"
+      },
+      "columns": {
+        "connections": "Connexions",
+        "pageViews": "Pages vues",
+        "activeDays": "Jours actifs",
+        "devices": "Appareils",
+        "timeSpent": "Temps passé",
+        "lastSeen": "Dernière activité"
+      },
+      "sort": {
+        "connections": "Connexions",
+        "pageViews": "Pages vues",
+        "timeSpent": "Temps passé",
+        "lastSeen": "Dernière activité"
+      },
+      "duration": {
+        "hours": "{hours} h {minutes} min",
+        "minutes": "{minutes} min",
+        "none": "—"
+      }
     }
   },
   "ownershipClaims": {

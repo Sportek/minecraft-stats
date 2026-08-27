@@ -259,7 +259,44 @@
   },
   "consent": {
     "description": "We measure site usage (pages visited, traffic) to improve it. These statistics use your IP address (stored in an anonymized form) and your browser. <link>Learn more</link>.",
-    "decline": "Decline",
-    "accept": "Accept"
+    "accept": "Accept all",
+    "moreInfo": "More info",
+    "purposes": {
+      "audience": {
+        "title": "Audience measurement",
+        "description": "Counting visits and page views so we know what is actually used on the site."
+      },
+      "improvement": {
+        "title": "Site improvement",
+        "description": "Spotting slow pages, broken journeys and features that need a rework."
+      },
+      "personalization": {
+        "title": "Relevant content",
+        "description": "Highlighting the servers and rankings that match how you use the site."
+      }
+    },
+    "info": {
+      "title": "What are these statistics for?",
+      "body": "Minecraft Stats is free and run by a small team. These measurements tell us which pages are useful, what breaks and what to improve first. No data is ever sold, and your IP address is never stored in clear. <link>Privacy policy</link>.",
+      "manage": "Manage my preferences"
+    },
+    "preferences": {
+      "title": "Your preferences",
+      "body": "Pick the purposes you accept. Unchecking everything means declining detailed statistics.",
+      "alwaysOn": "Always on",
+      "necessary": {
+        "title": "Site functionality",
+        "description": "Account sign-in, theme, favourites. Required for the site to work, so it cannot be turned off."
+      },
+      "save": "Accept and continue",
+      "refuse": "Continue without accepting"
+    },
+    "confirm": {
+      "title": "Are you sure?",
+      "body": "Without these statistics we are flying blind: we cannot tell which pages deserve the work. It costs nothing and stays anonymous — and you can change your mind at any time.",
+      "reconsider": "Actually, I accept",
+      "refuse": "Confirm refusal",
+      "refuseCountdown": "Confirm refusal ({seconds})"
+    }
   }
 }

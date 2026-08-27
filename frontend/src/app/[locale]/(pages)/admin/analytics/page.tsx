@@ -6,9 +6,10 @@ import DashboardStatTile from "@/components/account/dashboard-stat-tile";
 import { AdminFilterTabs } from "@/components/admin/admin-filter-tabs";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import { useAuth } from "@/contexts/auth";
-import { getAnalyticsDashboard } from "@/http/analytics";
+import { getActiveUsers, getAnalyticsDashboard } from "@/http/analytics";
+import { Link } from "@/i18n/navigation";
 import "@/lib/ag-charts";
-import { AnalyticsDashboard } from "@/types/analytics";
+import { ActiveUser, AnalyticsDashboard } from "@/types/analytics";
 import { AgCartesianChartOptions } from "ag-charts-community";
 import { AgCharts } from "ag-charts-react";
 import dynamic from "next/dynamic";
@@ -20,6 +21,9 @@ import { useEffect, useMemo, useState } from "react";
 const WorldMap = dynamic(() => import("@/components/analytics/world-map"), { ssr: false });
 
 type RangeKey = "7d" | "30d" | "90d";
+
+/** Aperçu du classement d'activité : le détail complet a sa propre page. */
+const TOP_USERS = 5;
 
 const RANGES: Record<RangeKey, { ms: number }> = {
   "7d": { ms: 7 * 86400000 },
@@ -58,6 +62,7 @@ const AnalyticsDashboardPage = () => {
   const { resolvedTheme } = useTheme();
 
   const [data, setData] = useState<AnalyticsDashboard | null>(null);
+  const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
   const [range, setRange] = useState<RangeKey>("30d");
   const [loading, setLoading] = useState(true);
 
@@ -68,7 +73,18 @@ const AnalyticsDashboardPage = () => {
       try {
         setLoading(true);
         const now = Date.now();
-        setData(await getAnalyticsDashboard(token, { fromDate: now - RANGES[range].ms, toDate: now }));
+        const period = { fromDate: now - RANGES[range].ms, toDate: now };
+        // L'aperçu du classement est secondaire : son échec ne doit pas vider
+        // le dashboard, qui est l'objet de la page.
+        const [dashboard, leaderboard] = await Promise.all([
+          getAnalyticsDashboard(token, period),
+          getActiveUsers(token, { ...period, limit: TOP_USERS }).catch((error) => {
+            console.error("Failed to fetch active users:", error);
+            return null;
+          }),
+        ]);
+        setData(dashboard);
+        setActiveUsers(leaderboard?.data ?? []);
       } catch (error) {
         console.error("Failed to fetch analytics dashboard:", error);
       } finally {
@@ -184,6 +200,30 @@ const AnalyticsDashboardPage = () => {
         )}
       </div>
 
+      <AnalyticsTable
+        title={t("analytics.activeUsers.cardTitle")}
+        subtitle={t("analytics.activeUsers.cardSubtitle")}
+        emptyLabel={t("analytics.activeUsers.emptyTitle")}
+        topLabel={t("analytics.top")}
+        action={
+          <Link
+            href="/admin/analytics/users"
+            className="text-xs font-medium text-accent hover:underline"
+          >
+            {t("analytics.activeUsers.viewAll")}
+          </Link>
+        }
+        rows={activeUsers.map((activeUser) => ({
+          key: String(activeUser.id),
+          label: activeUser.username,
+          href: `/admin/users/${activeUser.id}`,
+          value: t("analytics.activeUsers.rowValue", {
+            connections: formatNumber(activeUser.connections),
+            views: formatNumber(activeUser.pageViews),
+          }),
+        }))}
+      />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <AnalyticsTable
           title={t("analytics.topPages")}
@@ -249,6 +289,8 @@ interface AnalyticsTableRow {
   key: string;
   label: string;
   value: string;
+  /** Rend le libellé cliquable (une ligne « utilisateur » mène à sa fiche admin). */
+  href?: string;
 }
 
 const AnalyticsTable = ({
@@ -257,20 +299,24 @@ const AnalyticsTable = ({
   rows,
   emptyLabel,
   topLabel,
+  action,
 }: {
   title: string;
   subtitle?: string;
   rows: AnalyticsTableRow[];
   emptyLabel: string;
   topLabel: string;
+  action?: React.ReactNode;
 }) => (
   <div className="rounded-lg border border-border bg-card text-card-foreground shadow-xs">
     <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
       <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-      {rows.length > 0 && (
-        <span className="text-xs text-muted-foreground">
-          {topLabel} {rows.length}
-        </span>
+      {action ?? (
+        rows.length > 0 && (
+          <span className="text-xs text-muted-foreground">
+            {topLabel} {rows.length}
+          </span>
+        )
       )}
     </div>
     {subtitle && <p className="px-4 pt-2 text-xs text-muted-foreground">{subtitle}</p>}
@@ -280,9 +326,19 @@ const AnalyticsTable = ({
       <ul className="max-h-[320px] divide-y divide-border overflow-y-auto">
         {rows.map((row) => (
           <li key={row.key} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2.5 text-sm">
-            <span className="min-w-0 truncate text-foreground" title={row.label}>
-              {row.label}
-            </span>
+            {row.href ? (
+              <Link
+                href={row.href}
+                className="min-w-0 truncate text-foreground transition-colors hover:text-accent"
+                title={row.label}
+              >
+                {row.label}
+              </Link>
+            ) : (
+              <span className="min-w-0 truncate text-foreground" title={row.label}>
+                {row.label}
+              </span>
+            )}
             <span className="shrink-0 text-right text-muted-foreground">{row.value}</span>
           </li>
         ))}
