@@ -280,7 +280,24 @@
       "offlineStatus": "Offline",
       "peak": "peak {count}",
       "viewServer": "View server",
-      "view": "View"
+      "view": "View",
+      "activity": {
+        "title": "Activity (last 30 days)",
+        "help": "A connection is a visit: 30 minutes of inactivity opens a new one. Computed from page views attributed to the account, not from logins.",
+        "empty": "No activity recorded over the last 30 days.",
+        "lastSeen": "Last activity",
+        "viewsPerConnection": "Pages per connection",
+        "topPages": "Most visited pages",
+        "noPages": "No page view over the period.",
+        "pageViews": "{count} views",
+        "tiles": {
+          "connections": "Connections",
+          "pageViews": "Page views",
+          "activeDays": "Active days",
+          "devices": "Devices",
+          "timeSpent": "Time spent"
+        }
+      }
     }
   },
   "analytics": {
@@ -317,6 +334,45 @@
       "noData": "no data",
       "fewer": "Fewer",
       "more": "More"
+    },
+    "activeUsers": {
+      "title": "Most active users",
+      "subtitle": "Connections and usage of logged-in accounts over the selected period.",
+      "badge": "{count} active accounts",
+      "backToAnalytics": "Back to analytics",
+      "cardTitle": "Most active users",
+      "cardSubtitle": "One connection = one visit: 30 minutes of inactivity opens a new one. This is not a login count.",
+      "viewAll": "View all",
+      "rowValue": "{connections} connections · {views} page views",
+      "searchPlaceholder": "Search by name or email…",
+      "loading": "Loading activity…",
+      "emptyTitle": "No activity",
+      "emptyDescription": "No logged-in account was seen over this period.",
+      "tiles": {
+        "activeUsers": "Active accounts",
+        "connections": "Connections",
+        "pageViews": "Page views",
+        "perUser": "Connections / account"
+      },
+      "columns": {
+        "connections": "Connections",
+        "pageViews": "Page views",
+        "activeDays": "Active days",
+        "devices": "Devices",
+        "timeSpent": "Time spent",
+        "lastSeen": "Last activity"
+      },
+      "sort": {
+        "connections": "Connections",
+        "pageViews": "Page views",
+        "timeSpent": "Time spent",
+        "lastSeen": "Last activity"
+      },
+      "duration": {
+        "hours": "{hours} h {minutes} min",
+        "minutes": "{minutes} min",
+        "none": "—"
+      }
     }
   },
   "ownershipClaims": {

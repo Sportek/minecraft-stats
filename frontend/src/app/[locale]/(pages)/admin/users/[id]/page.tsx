@@ -3,6 +3,7 @@
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardStatTile from "@/components/account/dashboard-stat-tile";
+import { ActivityDuration } from "@/components/admin/activity-duration";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
 import ServerImage from "@/components/serveur/card/server-image";
@@ -61,6 +62,13 @@ const AdminUserDetailPage = () => {
   const formatNumber = (value: number) => formatter.number(value);
   const formatDate = (value: string | Date) =>
     formatter.dateTime(new Date(value), { year: "numeric", month: "short", day: "numeric" });
+  const formatDateTime = (value: string | Date) =>
+    formatter.dateTime(new Date(value), {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   const token = getToken();
   const params = useParams();
   const userId = Number(params.id);
@@ -105,6 +113,7 @@ const AdminUserDetailPage = () => {
   const profile = detail?.user;
   const servers = detail?.servers ?? [];
   const duplicates = detail?.duplicates ?? [];
+  const activity = detail?.activity;
   const registration = profile
     ? getRegistration(profile.provider, t("users.detail.emailPassword"))
     : null;
@@ -238,6 +247,88 @@ const AdminUserDetailPage = () => {
               <InfoRow label={t("users.detail.joined")}>{formatDate(profile.createdAt)}</InfoRow>
               <InfoRow label={t("users.detail.lastUpdated")}>{formatDate(profile.updatedAt)}</InfoRow>
             </div>
+          </div>
+
+          {/* Activity over the last 30 days */}
+          <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
+            <div className="border-b border-border px-5 py-4">
+              <h2 className="text-base font-semibold text-foreground">
+                {t("users.detail.activity.title")}
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">{t("users.detail.activity.help")}</p>
+            </div>
+
+            {!activity || activity.pageViews === 0 ? (
+              <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+                  <Icon icon="material-symbols:timeline" className="h-6 w-6" />
+                </div>
+                <p className="text-sm text-muted-foreground">{t("users.detail.activity.empty")}</p>
+              </div>
+            ) : (
+              <div className="space-y-5 p-5">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                  <DashboardStatTile
+                    label={t("users.detail.activity.tiles.connections")}
+                    value={formatNumber(activity.connections)}
+                  />
+                  <DashboardStatTile
+                    label={t("users.detail.activity.tiles.pageViews")}
+                    value={formatNumber(activity.pageViews)}
+                  />
+                  <DashboardStatTile
+                    label={t("users.detail.activity.tiles.activeDays")}
+                    value={formatNumber(activity.activeDays)}
+                  />
+                  <DashboardStatTile
+                    label={t("users.detail.activity.tiles.devices")}
+                    value={formatNumber(activity.devices)}
+                  />
+                  <DashboardStatTile
+                    label={t("users.detail.activity.tiles.timeSpent")}
+                    value={<ActivityDuration ms={activity.timeSpentMs} />}
+                  />
+                </div>
+
+                <div className="divide-y divide-border rounded-lg border border-border">
+                  <InfoRow label={t("users.detail.activity.lastSeen")}>
+                    {activity.lastSeenAt ? formatDateTime(activity.lastSeenAt) : "—"}
+                  </InfoRow>
+                  <InfoRow label={t("users.detail.activity.viewsPerConnection")}>
+                    {formatNumber(activity.viewsPerConnection)}
+                  </InfoRow>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    {t("users.detail.activity.topPages")}
+                  </h3>
+                  {activity.topPages.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      {t("users.detail.activity.noPages")}
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-border rounded-lg border border-border">
+                      {activity.topPages.map((page) => (
+                        <li
+                          key={page.path}
+                          className="flex items-center justify-between gap-4 px-4 py-2 text-sm"
+                        >
+                          <span className="min-w-0 truncate font-mono text-xs text-foreground">
+                            {page.path}
+                          </span>
+                          <span className="shrink-0 text-muted-foreground">
+                            {t("users.detail.activity.pageViews", {
+                              count: formatNumber(page.views),
+                            })}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Possible duplicate accounts */}

@@ -1,5 +1,6 @@
 import { recordAnonymousHit } from '#services/analytics_counters'
 import AnalyticsService from '#services/analytics_service'
+import UserActivityService, { isUserActivitySort } from '#services/user_activity_service'
 import { IdentifyVisitorValidator, TrackPageViewValidator } from '#validators/analytics'
 import { parseEpochMs } from '#validators/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -104,6 +105,37 @@ export default class AnalyticsController {
     const toDate = parseEpochMs(request.input('toDate'))
 
     const data = await AnalyticsService.getDashboard({ fromDate, toDate })
+
+    return response.ok(data)
+  }
+
+  /**
+   * @getUserActivity
+   * @operationId getUserActivity
+   * @tag ANALYTICS_ADMIN
+   * @summary Logged-in user activity leaderboard (admin)
+   * @description Ranks the accounts that used the site over the requested window. A "connection" is a visit, not a login: page views attributed to an account are cut into sessions on 30 minutes of inactivity, so a member who logs in once and comes back daily still counts one connection per visit. Each row carries the connection count, page views, distinct devices, active days, time spent and last activity; `totals` sums the same window. Supports pagination (`page`, `limit`), a username/email `search` and a `sort` column. Requires authentication and administrator privileges.
+   * @paramQuery fromDate - Lower bound of the window, in epoch milliseconds. - @type(number) @example(1716854400000)
+   * @paramQuery toDate - Upper bound of the window, in epoch milliseconds. - @type(number) @example(1717459200000)
+   * @paramQuery page - Page number (1-based). - @type(number) @example(1)
+   * @paramQuery limit - Rows per page (1-100, default 20). - @type(number) @example(20)
+   * @paramQuery search - Filters on username or email. - @type(string) @example(gabriel)
+   * @paramQuery sort - Sort column: `connections` (default), `pageViews`, `timeSpent` or `lastSeen`. - @type(string) @example(connections)
+   * @responseBody 200 - {"data": [{"id": 7, "username": "gabriel", "email": "gabriel@example.com", "role": "user", "avatarUrl": "", "createdAt": "2025-01-01T00:00:00.000Z", "connections": 42, "pageViews": 310, "devices": 2, "activeDays": 18, "timeSpentMs": 4200000, "viewsPerConnection": 7.4, "firstSeenAt": "2026-05-01T10:00:00.000Z", "lastSeenAt": "2026-05-28T09:12:00.000Z"}], "meta": {"total": 120, "perPage": 20, "currentPage": 1, "lastPage": 6}, "totals": {"activeUsers": 120, "connections": 2400, "pageViews": 18000, "connectionsPerUser": 20}}
+   * @responseBody 401 - {"message": "Unauthorized"}
+   * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
+   */
+  async users({ request, response }: HttpContext) {
+    const sort = request.input('sort', 'connections')
+
+    const data = await UserActivityService.leaderboard({
+      fromDate: parseEpochMs(request.input('fromDate')),
+      toDate: parseEpochMs(request.input('toDate')),
+      page: Math.max(1, Number.parseInt(request.input('page', 1), 10) || 1),
+      limit: Math.min(100, Math.max(1, Number.parseInt(request.input('limit', 20), 10) || 20)),
+      search: String(request.input('search', '')),
+      sort: isUserActivitySort(sort) ? sort : 'connections',
+    })
 
     return response.ok(data)
   }

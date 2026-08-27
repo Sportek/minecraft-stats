@@ -2,7 +2,8 @@ import { cn } from "@/lib/utils";
 
 interface DashboardStatTileProps {
   label: string;
-  value: string;
+  /** Nombre déjà formaté, ou un rendu (durée traduite, badge…) à afficher tel quel. */
+  value: React.ReactNode;
   dot?: "success" | "muted";
 }
 

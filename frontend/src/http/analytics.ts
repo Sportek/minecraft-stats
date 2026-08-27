@@ -1,5 +1,5 @@
 import { getBaseUrl } from "@/app/_cheatcode";
-import { AnalyticsDashboard } from "@/types/analytics";
+import { ActiveUsersResponse, ActiveUsersSort, AnalyticsDashboard } from "@/types/analytics";
 import { apiFetch } from "./client";
 
 // --- Tracking public (best-effort, fire-and-forget) ---
@@ -85,4 +85,26 @@ export const getAnalyticsDashboard = (
   if (options.toDate) params.set("toDate", String(options.toDate));
 
   return apiFetch<AnalyticsDashboard>(`/admin/analytics?${params.toString()}`, { token });
+};
+
+interface ActiveUsersOptions {
+  fromDate?: number;
+  toDate?: number;
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort?: ActiveUsersSort;
+}
+
+/** Classement des comptes les plus actifs (connexions = visites, pas logins). */
+export const getActiveUsers = (
+  token: string,
+  options: ActiveUsersOptions = {}
+): Promise<ActiveUsersResponse> => {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(options)) {
+    if (value !== undefined && value !== "") params.set(key, String(value));
+  }
+
+  return apiFetch<ActiveUsersResponse>(`/admin/analytics/users?${params.toString()}`, { token });
 };
