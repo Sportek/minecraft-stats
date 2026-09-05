@@ -84,7 +84,7 @@
     "@vinejs/vine": "^4.3.1",
     "adonis-autoswagger": "^3.64.0",
     "adonisjs-scheduler": "^2.6.4",
-    "argon2": "^0.44.0",
+    "argon2": "^0.45.1",
     "edge.js": "^6.5.0",
     "jsonwebtoken": "^9.0.2",
     "leb128": "^0.0.5",

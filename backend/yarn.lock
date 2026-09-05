@@ -2796,16 +2796,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"argon2@npm:^0.44.0":
-  version: 0.44.0
-  resolution: "argon2@npm:0.44.0"
+"argon2@npm:^0.45.1":
+  version: 0.45.1
+  resolution: "argon2@npm:0.45.1"
   dependencies:
     "@phc/format": "npm:^1.0.0"
-    cross-env: "npm:^10.0.0"
-    node-addon-api: "npm:^8.5.0"
+    cross-env: "npm:^10.1.0"
+    node-addon-api: "npm:^8.9.0"
     node-gyp: "npm:latest"
     node-gyp-build: "npm:^4.8.4"
-  checksum: 10c0/e0c4ccdebda659b4e44ed25621ad4cce07ee1d1bc9790ba3ef7145cd57a561b483e448fb8fd585dc28eadcb353918d89d0dcae73da36d9cb95af55e243ce49b9
+  checksum: 10c0/d8015f20135d53460e18cb7b17eaa41d9915e08aae04d8d8b6330ae81a7efe25c45d1147450cdd1e29f80f74725fbf0fa9729b4c14192d40e537e0f4139270fa
   languageName: node
   linkType: hard
 
@@ -2917,7 +2917,7 @@ __metadata:
     adonis-autoswagger: "npm:^3.64.0"
     adonis-sail: "npm:^1.0.0"
     adonisjs-scheduler: "npm:^2.6.4"
-    argon2: "npm:^0.44.0"
+    argon2: "npm:^0.45.1"
     edge.js: "npm:^6.5.0"
     eslint: "npm:^10.5.0"
     hot-hook: "npm:^0.4.0"
@@ -3526,7 +3526,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-env@npm:^10.0.0":
+"cross-env@npm:^10.1.0":
   version: 10.1.0
   resolution: "cross-env@npm:10.1.0"
   dependencies:
@@ -6537,12 +6537,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^8.5.0":
-  version: 8.8.0
-  resolution: "node-addon-api@npm:8.8.0"
+"node-addon-api@npm:^8.9.0":
+  version: 8.9.0
+  resolution: "node-addon-api@npm:8.9.0"
   dependencies:
     node-gyp: "npm:latest"
-  checksum: 10c0/4fc508efce85b448eac0e6ca5e3df7f287db42ca6b7c83490c1b9e805f56f558f0d4411112b3b1cb27a573a5a1007eefd0ca91e7aa2afa5b9b513a146b1ae8f9
+  checksum: 10c0/6d687ffbc66e9735f4182e4c05d137d083be1fa5972b1762307e007804a85b70f810fed5b908f27f48caa4ed831517c95eec5137c8a02eaa08893bdef7fec05e
   languageName: node
   linkType: hard
 
