@@ -182,9 +182,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adonisjs/core@npm:^7.3.1":
-  version: 7.3.4
-  resolution: "@adonisjs/core@npm:7.3.4"
+"@adonisjs/core@npm:^7.3.5":
+  version: 7.3.5
+  resolution: "@adonisjs/core@npm:7.3.5"
   dependencies:
     "@adonisjs/ace": "npm:^14.1.0"
     "@adonisjs/application": "npm:^9.0.1"
@@ -195,7 +195,7 @@ __metadata:
     "@adonisjs/fold": "npm:^11.0.0"
     "@adonisjs/hash": "npm:^10.1.0"
     "@adonisjs/health": "npm:^3.1.0"
-    "@adonisjs/http-server": "npm:^9.0.2"
+    "@adonisjs/http-server": "npm:^9.1.0"
     "@adonisjs/http-transformers": "npm:^2.3.1"
     "@adonisjs/logger": "npm:^7.1.1"
     "@adonisjs/repl": "npm:^5.0.0"
@@ -206,7 +206,7 @@ __metadata:
     "@poppinss/utils": "npm:^7.0.1"
     "@sindresorhus/is": "npm:^8.1.0"
     "@types/he": "npm:^1.2.3"
-    error-stack-parser-es: "npm:^1.0.5"
+    error-stack-parser-es: "npm:^2.0.1"
     he: "npm:^1.2.0"
     pretty-hrtime: "npm:^1.0.3"
     string-width: "npm:^8.2.1"
@@ -235,7 +235,7 @@ __metadata:
       optional: true
   bin:
     adonis-kit: build/toolkit/main.js
-  checksum: 10c0/2c6f92fbd18bb795aceec73ad6803fd3fd262fb3b431005649ccb5bd4fb198c822eabf4fd66cbf2898c0075d77fa3216f2c315a74b1eef509612399ac78cc3c0
+  checksum: 10c0/88a4cdf6a7d1830b77067198b96fdb066b508444908b65a14b398c96b842393e3fd74fd5b0870e5595d4f8410b9235d5e9b75bd90c585d7a5911d61026484245
   languageName: node
   linkType: hard
 
@@ -382,9 +382,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adonisjs/http-server@npm:^9.0.2":
-  version: 9.0.2
-  resolution: "@adonisjs/http-server@npm:9.0.2"
+"@adonisjs/http-server@npm:^9.1.0":
+  version: 9.1.1
+  resolution: "@adonisjs/http-server@npm:9.1.1"
   dependencies:
     "@poppinss/macroable": "npm:^1.1.2"
     "@poppinss/matchit": "npm:^3.2.0"
@@ -414,7 +414,7 @@ __metadata:
   peerDependenciesMeta:
     youch:
       optional: true
-  checksum: 10c0/7b4c4f11715487a5349654d216388a5111e71dff0155f6ef623338b92dbedaddee9e194f26f9a83ea9414b357cf2dacf3d391bf848843c572358162743aaa5f6
+  checksum: 10c0/712bab135a90c081ca44e14e53428c9de2ac6bad08993d649d3c3cf917bbd2caca991afaeeeea42cfc4b9dc2222b24972bda2afb684700993c13eb4c7096cd1d
   languageName: node
   linkType: hard
 
@@ -2886,7 +2886,7 @@ __metadata:
     "@adonisjs/assembler": "npm:^8.4.0"
     "@adonisjs/auth": "npm:^10.1.0"
     "@adonisjs/bouncer": "npm:^4.0.0"
-    "@adonisjs/core": "npm:^7.3.1"
+    "@adonisjs/core": "npm:^7.3.5"
     "@adonisjs/cors": "npm:^3.0.0"
     "@adonisjs/drive": "npm:^4.0.0"
     "@adonisjs/eslint-config": "npm:^3.0.0"
@@ -4145,6 +4145,13 @@ __metadata:
   version: 1.0.5
   resolution: "error-stack-parser-es@npm:1.0.5"
   checksum: 10c0/040665eb87a42fe068c0da501bc258f3d15d3a03963c0723d7a2741e251d400c9776a52d2803afdc5709def99554cdb5a5d99c203c7eaf4885d3fbc217e2e8f7
+  languageName: node
+  linkType: hard
+
+"error-stack-parser-es@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "error-stack-parser-es@npm:2.0.1"
+  checksum: 10c0/4813d68f997e7ba93b6ebc7e544f77fcdbf9ca3475024dfb8a880a960898dc7379896f2e777ba6116f5fdb366fa32d5ae3692a9d5827c211f36ae01dfde16ae7
   languageName: node
   linkType: hard
 
