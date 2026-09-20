@@ -62,7 +62,8 @@
       "genericTitle": "No se pudo cargar el servidor",
       "genericDescription": "Se produjo un error al cargar los datos del servidor. Vuelve a intentarlo en un momento.",
       "retry": "Reintentar"
-    }
+    },
+    "bannerAlt": "Banner de {name}"
   },
   "faq": {
     "heading": "Preguntas frecuentes",
@@ -181,5 +182,84 @@
   },
   "boost": {
     "badge": "Conectados no fiables"
+  },
+  "customization": {
+    "title": "Personalización de la ficha",
+    "subtitle": "Banner, estilo del título y efecto de tarjeta: haz que tu servidor destaque en los rankings.",
+    "locked": {
+      "description": "La personalización está reservada a los servidores con propiedad verificada. Demuestra que gestionas este servidor para desbloquearla.",
+      "cta": "Verificar la propiedad"
+    },
+    "preview": {
+      "heading": "Vista previa",
+      "hint": "La tarjeta tal como aparece en la página de inicio."
+    },
+    "banner": {
+      "title": "Banner",
+      "description": "Exactamente {width}×{height} px, en JPG, PNG, WebP o GIF animado. 1 MB como máximo.",
+      "alt": "Banner de {name}",
+      "empty": "Sin banner",
+      "upload": "Añadir un banner",
+      "replace": "Reemplazar el banner",
+      "remove": "Eliminar",
+      "working": "Procesando…",
+      "uploaded": "Banner guardado",
+      "removed": "Banner eliminado",
+      "errorTitle": "No se pudo modificar el banner"
+    },
+    "titleStyle": {
+      "heading": "Título del servidor",
+      "description": "Elige una fuente y un color, liso o en degradado.",
+      "fontLabel": "Fuente del título",
+      "fonts": {
+        "default": "Por defecto",
+        "minecraft": "Minecraft",
+        "pixel": "Píxel",
+        "medieval": "Medieval",
+        "fantasy": "Uncial",
+        "bungee": "Rótulo",
+        "rounded": "Redondeada",
+        "script": "Manuscrita",
+        "future": "Futurista",
+        "marker": "Rotulador"
+      },
+      "color": "Color",
+      "colorStart": "Color inicial",
+      "colorEnd": "Color final",
+      "addGradient": "Añadir degradado",
+      "removeGradient": "Quitar degradado",
+      "resetColor": "Usar el color del tema",
+      "themeColorHint": "Sin color elegido, el título sigue el tema claro u oscuro del sitio."
+    },
+    "effect": {
+      "heading": "Efecto de tarjeta",
+      "description": "Una animación discreta en la tarjeta del servidor dentro de los rankings.",
+      "options": {
+        "none": {
+          "label": "Ninguno",
+          "description": "Tarjeta estándar."
+        },
+        "frost": {
+          "label": "Hielo",
+          "description": "Escarcha, cristales que centellean y un destello que cruza la tarjeta."
+        },
+        "enchanted": {
+          "label": "Encantado",
+          "description": "El destello violeta de los objetos encantados de Minecraft."
+        },
+        "embers": {
+          "label": "Brasas",
+          "description": "Un halo cálido y chispas que suben."
+        },
+        "neon": {
+          "label": "Neón",
+          "description": "Un borde luminoso que pulsa, con el color del título."
+        }
+      }
+    },
+    "save": "Guardar estilo",
+    "saving": "Guardando…",
+    "saved": "Personalización guardada",
+    "saveError": "No se pudo guardar la personalización"
   }
 }

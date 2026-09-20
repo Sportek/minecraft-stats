@@ -18,6 +18,7 @@ import ServerVote from './server_vote.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
 import type { BoostStatus } from '../constants/server_boost.js'
+import type { CardEffect, TitleFont } from '../constants/server_customization.js'
 import type { OwnershipMethod } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
 import { normalizeWebsite } from '#utils/website'
@@ -89,6 +90,24 @@ export default class Server extends BaseModel {
 
   @column({ columnName: 'owner_verified_method' })
   declare ownerVerifiedMethod: OwnershipMethod | null
+
+  // Personnalisation de la fiche, réservée aux propriétaires confirmés (cf.
+  // ServerPolicy.customize). NULL = rendu par défaut.
+  @column({ columnName: 'banner_url' })
+  declare bannerUrl: string | null
+
+  @column({ columnName: 'title_font' })
+  declare titleFont: TitleFont | null
+
+  @column({ columnName: 'title_color' })
+  declare titleColor: string | null
+
+  // Seconde couleur du dégradé du titre ; sans `titleColor`, elle n'a pas de sens.
+  @column({ columnName: 'title_color_end' })
+  declare titleColorEnd: string | null
+
+  @column({ columnName: 'card_effect' })
+  declare cardEffect: CardEffect | null
 
   @hasMany(() => ServerOwnershipClaim)
   declare ownershipClaims: relations.HasMany<typeof ServerOwnershipClaim>

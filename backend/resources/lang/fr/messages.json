@@ -40,6 +40,12 @@
     "termsRequired": "Vous devez accepter les conditions d'utilisation pour voter.",
     "captchaFailed": "Échec de la vérification anti-robot. Veuillez réessayer."
   },
+  "serverCustomization": {
+    "noImageProvided": "Aucune bannière fournie.",
+    "invalidUpload": "Image refusée : JPG, PNG, WebP ou GIF, 1 Mo maximum.",
+    "invalidImage": "Le fichier n'est pas une image lisible.",
+    "wrongSize": "La bannière doit faire exactement 468×60 pixels."
+  },
   "serverOwnership": {
     "unauthorized": "Non autorisé",
     "alreadyOwner": "Vous êtes déjà propriétaire de ce serveur.",

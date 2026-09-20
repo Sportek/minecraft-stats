@@ -62,7 +62,8 @@
       "genericTitle": "Unable to load the server",
       "genericDescription": "Something went wrong while loading the server data. Please try again in a moment.",
       "retry": "Try again"
-    }
+    },
+    "bannerAlt": "Banner of {name}"
   },
   "faq": {
     "heading": "Frequently Asked Questions",
@@ -181,5 +182,84 @@
   },
   "boost": {
     "badge": "Player count unreliable"
+  },
+  "customization": {
+    "title": "Listing customization",
+    "subtitle": "Banner, title style and card effect: make your server stand out in the rankings.",
+    "locked": {
+      "description": "Customization is reserved for servers with verified ownership. Prove you manage this server to unlock it.",
+      "cta": "Verify ownership"
+    },
+    "preview": {
+      "heading": "Preview",
+      "hint": "The card as it appears on the home page."
+    },
+    "banner": {
+      "title": "Banner",
+      "description": "Exactly {width}×{height} px, as JPG, PNG, WebP or animated GIF. 1 MB maximum.",
+      "alt": "Banner of {name}",
+      "empty": "No banner",
+      "upload": "Add a banner",
+      "replace": "Replace banner",
+      "remove": "Remove",
+      "working": "Processing…",
+      "uploaded": "Banner saved",
+      "removed": "Banner removed",
+      "errorTitle": "Couldn't update the banner"
+    },
+    "titleStyle": {
+      "heading": "Server title",
+      "description": "Pick a font and a color, solid or gradient.",
+      "fontLabel": "Title font",
+      "fonts": {
+        "default": "Default",
+        "minecraft": "Minecraft",
+        "pixel": "Pixel",
+        "medieval": "Medieval",
+        "fantasy": "Uncial",
+        "bungee": "Signage",
+        "rounded": "Rounded",
+        "script": "Handwritten",
+        "future": "Futuristic",
+        "marker": "Marker"
+      },
+      "color": "Color",
+      "colorStart": "Start color",
+      "colorEnd": "End color",
+      "addGradient": "Add a gradient",
+      "removeGradient": "Remove gradient",
+      "resetColor": "Use theme color",
+      "themeColorHint": "With no color picked, the title follows the site's light or dark theme."
+    },
+    "effect": {
+      "heading": "Card effect",
+      "description": "A subtle animation on your server's card in the rankings.",
+      "options": {
+        "none": {
+          "label": "None",
+          "description": "Standard card."
+        },
+        "frost": {
+          "label": "Frost",
+          "description": "Frost, twinkling crystals and a glint sweeping across the card."
+        },
+        "enchanted": {
+          "label": "Enchanted",
+          "description": "The purple glint of enchanted Minecraft items."
+        },
+        "embers": {
+          "label": "Embers",
+          "description": "A warm glow and sparks rising up."
+        },
+        "neon": {
+          "label": "Neon",
+          "description": "A pulsing glowing border in your title color."
+        }
+      }
+    },
+    "save": "Save style",
+    "saving": "Saving…",
+    "saved": "Customization saved",
+    "saveError": "Couldn't save the customization"
   }
 }

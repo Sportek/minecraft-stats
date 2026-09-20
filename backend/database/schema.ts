@@ -648,8 +648,10 @@ export class ServerVoteSchema extends BaseModel {
 export class ServerSchema extends BaseModel {
   static $columns = [
     'address',
+    'bannerUrl',
     'boostReviewedAt',
     'boostStatus',
+    'cardEffect',
     'categoryId',
     'createdAt',
     'faviconHash',
@@ -670,6 +672,9 @@ export class ServerSchema extends BaseModel {
     'peakPlayerCount',
     'port',
     'resolvedEndpoint',
+    'titleColor',
+    'titleColorEnd',
+    'titleFont',
     'type',
     'updatedAt',
     'userId',
@@ -680,10 +685,14 @@ export class ServerSchema extends BaseModel {
   $columns = ServerSchema.$columns
   @column()
   declare address: string
+  @column()
+  declare bannerUrl: string | null
   @column.dateTime()
   declare boostReviewedAt: DateTime | null
   @column()
   declare boostStatus: string | null
+  @column()
+  declare cardEffect: string | null
   @column()
   declare categoryId: number | null
   @column.dateTime({ autoCreate: true })
@@ -724,6 +733,12 @@ export class ServerSchema extends BaseModel {
   declare port: number
   @column()
   declare resolvedEndpoint: string | null
+  @column()
+  declare titleColor: string | null
+  @column()
+  declare titleColorEnd: string | null
+  @column()
+  declare titleFont: string | null
   @column()
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })

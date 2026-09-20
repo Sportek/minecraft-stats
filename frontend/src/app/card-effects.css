@@ -1,0 +1,566 @@
+/*
+  Effets de carte choisis par les propriétaires de serveurs vérifiés.
+  `data-card-effect` est posé sur la carte (components/serveur/card/index.tsx) et
+  <CardEffectLayers> y injecte trois calques : .fx-surface, .fx-ring, .fx-particles.
+
+  Hors de toute @layer, volontairement : une règle non stratifiée l'emporte sur les
+  utilitaires Tailwind (`border-border`, `hover:border-accent/50`…).
+
+  Principe : chaque effet est un matériau avec sa propre physique de lumière, construit
+  deux fois. En sombre il est ÉMISSIF (la lumière s'ajoute : lueurs, `screen`). En clair
+  la lumière additive disparaît sur du blanc : le matériau devient PIGMENTAIRE (carte
+  teintée, ombres colorées, `multiply`, reflets nets). Les couleurs vivent dans des
+  jetons `--fx-*` redéfinis sous `.dark` ; les règles, elles, sont communes.
+
+  Coût : seuls `transform` et `opacity` s'animent (compositeur). Les animations sont mises
+  en pause hors écran ([data-fx-idle], posé par <CardEffectLayers>) et coupées sous
+  `prefers-reduced-motion`.
+*/
+
+/* Pas d'`overflow: hidden` sur la carte : le bouton « modifier », le popup des drapeaux et
+   l'info-bulle dépassent volontairement de son cadre. Ce sont les calques qui se clippent
+   eux-mêmes (voir plus bas), avec le même arrondi que la carte. */
+[data-card-effect] {
+  isolation: isolate;
+  border-color: var(--fx-edge);
+  box-shadow: var(--fx-shadow);
+}
+
+.fx-layers {
+  display: contents;
+}
+
+.fx-surface,
+.fx-ring,
+.fx-particles {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Leurs pseudo-éléments dépassent (nappes de reflets, éclat) : on les rogne au cadre du calque. */
+.fx-surface {
+  z-index: -1;
+  overflow: hidden;
+}
+
+.fx-particles {
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Anneau : seule la bande de bordure est visible (masque « contenu XOR boîte »). */
+.fx-ring {
+  z-index: 2;
+  padding: var(--fx-ring-w, 1.5px);
+  overflow: hidden;
+  background: var(--fx-ring-bg, none);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+@keyframes fx-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes fx-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ============================== GLACE ============================== */
+
+[data-card-effect="frost"] {
+  --fx-edge: #b3e2f7;
+  --fx-shadow: 0 8px 26px -10px rgb(40 150 215 / 0.45);
+  --fx-wash: linear-gradient(155deg, #e4f4fd 0%, #f8fdff 46%, #d4eaf8 100%);
+  --fx-ring-bg: linear-gradient(120deg, #fff 0%, #8fd6f7 22%, #2a9fd8 50%, #a8e7ff 76%, #fff 100%);
+  --fx-crystal: #74c0e4;
+  --fx-star: #fff;
+  --fx-star-glow: #1c95dc;
+}
+
+.dark [data-card-effect="frost"] {
+  --fx-edge: #2b5f7d;
+  --fx-shadow: 0 0 30px -8px rgb(90 205 255 / 0.4);
+  --fx-wash: linear-gradient(155deg, #0e2a3d 0%, #0a1822 48%, #0f3247 100%);
+  --fx-ring-bg: linear-gradient(120deg, #eafcff 0%, #64d2ff 22%, #1d84bb 50%, #7de4ff 76%, #eafcff 100%);
+  --fx-crystal: #b9ecff;
+  --fx-star-glow: #7fdcff;
+}
+
+[data-card-effect="frost"] .fx-surface {
+  background: var(--fx-wash);
+}
+
+/* Givre : grains de cristal qui s'épaississent vers les bords de la carte. */
+[data-card-effect="frost"] .fx-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fx-crystal);
+  opacity: 0.85;
+  -webkit-mask-image: url("/fx/frost.svg"), radial-gradient(130% 105% at 50% 50%, transparent 46%, #000 100%);
+  mask-image: url("/fx/frost.svg"), radial-gradient(130% 105% at 50% 50%, transparent 46%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  mask-size:
+    200px 200px,
+    100% 100%;
+}
+
+/* Le bord accroche la lumière : un reflet parcourt lentement l'anneau. */
+[data-card-effect="frost"] .fx-ring {
+  --fx-ring-w: 1.5px;
+  background-size: 300% 300%;
+  animation: fx-frost-glint 8s ease-in-out infinite;
+}
+
+@keyframes fx-frost-glint {
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Étincelles de givre : deux jeux de trois étoiles, en décalé. */
+[data-card-effect="frost"] .fx-particles {
+  filter: drop-shadow(0 0 2px var(--fx-star-glow)) drop-shadow(0 0 6px var(--fx-star-glow));
+}
+
+[data-card-effect="frost"] .fx-particles::before,
+[data-card-effect="frost"] .fx-particles::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--fx-star);
+  -webkit-mask-image: url("/fx/star.svg"), url("/fx/star.svg"), url("/fx/star.svg");
+  mask-image: url("/fx/star.svg"), url("/fx/star.svg"), url("/fx/star.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  opacity: 0;
+  animation: fx-twinkle 3.6s ease-in-out infinite;
+}
+
+[data-card-effect="frost"] .fx-particles::before {
+  mask-size: 14px, 9px, 11px;
+  mask-position: 9% 24%, 71% 13%, 93% 62%;
+}
+
+[data-card-effect="frost"] .fx-particles::after {
+  mask-size: 10px, 13px, 8px;
+  mask-position: 33% 78%, 84% 86%, 52% 9%;
+  animation-duration: 4.8s;
+  animation-delay: 1.7s;
+}
+
+/* ============================== ENCHANTÉ ============================== */
+
+[data-card-effect="enchanted"] {
+  --fx-edge: #cbb2fb;
+  --fx-shadow: 0 8px 26px -10px rgb(130 70 240 / 0.45);
+  --fx-wash: linear-gradient(150deg, #f3ecff 0%, #fbf8ff 50%, #e8dcff 100%);
+  --fx-ring-conic: conic-gradient(#7c3aed, #d946ef, #6366f1, #a855f7, #7c3aed);
+  --fx-glint: #8b3dff;
+  --fx-glint-a: 0.13;
+  --fx-blend: multiply;
+  --fx-sweep: rgb(150 80 255 / 0.2);
+}
+
+.dark [data-card-effect="enchanted"] {
+  --fx-edge: #4b2d86;
+  --fx-shadow: 0 0 32px -8px rgb(168 85 247 / 0.5);
+  --fx-wash: linear-gradient(150deg, #1b1033 0%, #120b22 50%, #22124a 100%);
+  --fx-ring-conic: conic-gradient(#a78bfa, #f0abfc, #818cf8, #c084fc, #a78bfa);
+  --fx-glint: #c58bff;
+  --fx-glint-a: 0.2;
+  --fx-blend: screen;
+  --fx-sweep: rgb(222 180 255 / 0.26);
+}
+
+[data-card-effect="enchanted"] .fx-surface {
+  background: var(--fx-wash);
+}
+
+/* Deux nappes de reflets quasi parallèles qui défilent en sens inverse, à des vitesses et
+   des échelles différentes : elles glissent l'une sur l'autre sans former de quadrillage — comme les deux textures du reflet d'enchantement de Minecraft. Le
+   décalage vaut exactement une tuile du masque : la boucle est sans couture. */
+[data-card-effect="enchanted"] .fx-surface::before,
+[data-card-effect="enchanted"] .fx-surface::after {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: var(--fx-glint);
+  opacity: var(--fx-glint-a);
+  mix-blend-mode: var(--fx-blend);
+  -webkit-mask-image: url("/fx/glint.svg");
+  mask-image: url("/fx/glint.svg");
+  will-change: transform;
+}
+
+[data-card-effect="enchanted"] .fx-surface::before {
+  mask-size: 320px 320px;
+  transform: rotate(-32deg);
+  animation: fx-glint-a 11s linear infinite;
+}
+
+[data-card-effect="enchanted"] .fx-surface::after {
+  opacity: calc(var(--fx-glint-a) * 0.6);
+  mask-size: 240px 240px;
+  transform: rotate(-39deg);
+  animation: fx-glint-b 15s linear infinite;
+}
+
+@keyframes fx-glint-a {
+  to {
+    transform: rotate(-32deg) translateX(320px);
+  }
+}
+
+@keyframes fx-glint-b {
+  to {
+    transform: rotate(-39deg) translateX(-240px);
+  }
+}
+
+/* Éclat qui balaie la carte, comme la lumière qui passe sur un objet enchanté : il
+   traverse, puis la carte reprend son souffle avant le passage suivant. */
+[data-card-effect="enchanted"] .fx-particles::before {
+  content: "";
+  position: absolute;
+  inset: -20% -30%;
+  background: linear-gradient(100deg, transparent 38%, var(--fx-sweep) 50%, transparent 62%);
+  transform: translateX(-110%);
+  animation: fx-enchant-sweep 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes fx-enchant-sweep {
+  0% {
+    transform: translateX(-110%);
+  }
+  42%,
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+/* Anneau à dégradé conique qui tourne : le violet glisse tout autour de la carte. */
+[data-card-effect="enchanted"] .fx-ring {
+  --fx-ring-w: 1.5px;
+}
+
+[data-card-effect="enchanted"] .fx-ring::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: var(--fx-ring-conic);
+  animation: fx-spin 9s linear infinite;
+  will-change: transform;
+}
+
+/* ============================== BRAISES ============================== */
+
+[data-card-effect="embers"] {
+  --fx-edge: #ffc9a1;
+  --fx-shadow: 0 8px 26px -10px rgb(255 100 30 / 0.5);
+  --fx-wash: linear-gradient(to top, #ffd5b0 0%, #ffeddc 36%, #fffaf5 78%);
+  --fx-heat: radial-gradient(100% 66% at 50% 118%, rgb(255 90 20 / 0.55), rgb(255 160 60 / 0.2) 52%, transparent 76%);
+  --fx-ring-bg: linear-gradient(to top, #ff4d12 0%, #ff9a3d 38%, rgb(255 154 61 / 0) 80%);
+  --fx-ember-core: #ff5a0a;
+  --fx-ember-halo: rgb(255 110 30 / 0.4);
+}
+
+.dark [data-card-effect="embers"] {
+  --fx-edge: #6b2a12;
+  --fx-shadow: 0 0 32px -8px rgb(255 110 30 / 0.5);
+  --fx-wash: linear-gradient(to top, #4d1707 0%, #24110c 40%, #130e0e 86%);
+  --fx-heat: radial-gradient(100% 66% at 50% 118%, rgb(255 110 30 / 0.78), rgb(255 150 50 / 0.26) 52%, transparent 76%);
+  --fx-ring-bg: linear-gradient(to top, #ff6a1f 0%, #ffb04a 38%, rgb(255 176 74 / 0) 80%);
+  --fx-ember-core: #fff1a8;
+  --fx-ember-halo: rgb(255 150 50 / 0.55);
+}
+
+[data-card-effect="embers"] .fx-surface {
+  background: var(--fx-wash);
+}
+
+/* Halo de chaleur : le feu ne respire pas régulièrement, il vacille. */
+[data-card-effect="embers"] .fx-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fx-heat);
+  animation: fx-flicker 4.1s ease-in-out infinite;
+}
+
+@keyframes fx-flicker {
+  0% {
+    opacity: 0.86;
+  }
+  9% {
+    opacity: 1;
+  }
+  17% {
+    opacity: 0.74;
+  }
+  31% {
+    opacity: 0.96;
+  }
+  44% {
+    opacity: 0.8;
+  }
+  62% {
+    opacity: 1;
+  }
+  76% {
+    opacity: 0.78;
+  }
+  91% {
+    opacity: 0.97;
+  }
+  100% {
+    opacity: 0.86;
+  }
+}
+
+[data-card-effect="embers"] .fx-ring {
+  --fx-ring-w: 1.5px;
+  animation: fx-flicker 4.1s ease-in-out infinite;
+}
+
+/* Braises : chaque couche a sa tuile, sa vitesse et sa dérive latérale. Le fondu vers
+   le haut les éteint en montant. Le décalage total vaut la hauteur de tuile : boucle nette. */
+[data-card-effect="embers"] .fx-particles {
+  -webkit-mask-image: linear-gradient(to top, #000 8%, transparent 82%);
+  mask-image: linear-gradient(to top, #000 8%, transparent 82%);
+}
+
+[data-card-effect="embers"] .fx-particles::before,
+[data-card-effect="embers"] .fx-particles::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+}
+
+/* Chaque couche est une grande tuile qui contient quelques braises à des positions
+   irrégulières : à l'échelle d'une carte, on ne perçoit ni grille ni rangée. */
+[data-card-effect="embers"] .fx-particles::before {
+  background-image:
+    radial-gradient(circle at 12% 71%, var(--fx-ember-core) 0 1.1px, var(--fx-ember-halo) 2.3px, transparent 4.6px),
+    radial-gradient(circle at 31% 24%, var(--fx-ember-core) 0 0.9px, var(--fx-ember-halo) 2px, transparent 4px),
+    radial-gradient(circle at 47% 89%, var(--fx-ember-core) 0 1.2px, var(--fx-ember-halo) 2.4px, transparent 4.8px),
+    radial-gradient(circle at 64% 43%, var(--fx-ember-core) 0 1px, var(--fx-ember-halo) 2.1px, transparent 4.2px),
+    radial-gradient(circle at 79% 77%, var(--fx-ember-core) 0 0.9px, var(--fx-ember-halo) 2px, transparent 4px),
+    radial-gradient(circle at 92% 16%, var(--fx-ember-core) 0 1.1px, var(--fx-ember-halo) 2.3px, transparent 4.6px);
+  background-size: 263px 229px;
+  animation: fx-embers-fast 6s linear infinite;
+}
+
+[data-card-effect="embers"] .fx-particles::after {
+  background-image:
+    radial-gradient(circle at 22% 58%, var(--fx-ember-core) 0 1.6px, var(--fx-ember-halo) 3.1px, transparent 6.2px),
+    radial-gradient(circle at 51% 12%, var(--fx-ember-core) 0 1.4px, var(--fx-ember-halo) 2.8px, transparent 5.6px),
+    radial-gradient(circle at 68% 83%, var(--fx-ember-core) 0 1.7px, var(--fx-ember-halo) 3.3px, transparent 6.6px),
+    radial-gradient(circle at 90% 47%, var(--fx-ember-core) 0 1.5px, var(--fx-ember-halo) 3px, transparent 6px);
+  background-size: 341px 307px;
+  animation: fx-embers-slow 11s linear infinite;
+}
+
+/* Montée avec une légère dérive latérale ; une seule valeur s'applique à toutes les
+   couches, et le décalage final vaut la hauteur de tuile : la boucle est nette. */
+@keyframes fx-embers-fast {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 12px -115px;
+  }
+  100% {
+    background-position: 0 -229px;
+  }
+}
+
+@keyframes fx-embers-slow {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: -16px -154px;
+  }
+  100% {
+    background-position: 0 -307px;
+  }
+}
+
+/* ============================== NÉON ============================== */
+
+[data-card-effect="neon"] {
+  --fx: var(--effect-color, hsl(var(--accent)));
+  --fx-edge: color-mix(in srgb, var(--fx) 50%, #fff);
+  --fx-shadow:
+    0 0 0 1px color-mix(in srgb, var(--fx) 30%, transparent),
+    0 10px 28px -10px color-mix(in srgb, var(--fx) 65%, transparent);
+  --fx-wash: color-mix(in srgb, var(--fx) 6%, #fff);
+  --fx-inner: color-mix(in srgb, var(--fx) 16%, transparent);
+  --fx-ring-bg: color-mix(in srgb, var(--fx) 50%, transparent);
+  --fx-beam-tail: color-mix(in srgb, var(--fx) 22%, transparent);
+  --fx-beam-glow: color-mix(in srgb, var(--fx) 34%, transparent);
+  --fx-beam-head: var(--fx);
+  --fx-beam-core: color-mix(in srgb, var(--fx) 62%, #000);
+}
+
+.dark [data-card-effect="neon"] {
+  --fx-edge: color-mix(in srgb, var(--fx) 45%, #000);
+  --fx-shadow:
+    0 0 0 1px color-mix(in srgb, var(--fx) 40%, transparent),
+    0 0 30px -4px color-mix(in srgb, var(--fx) 55%, transparent);
+  --fx-wash: color-mix(in srgb, var(--fx) 9%, #0a0a0f);
+  --fx-inner: color-mix(in srgb, var(--fx) 26%, transparent);
+  --fx-ring-bg: color-mix(in srgb, var(--fx) 60%, transparent);
+  --fx-beam-core: #fff;
+  --fx-beam-glow: color-mix(in srgb, var(--fx) 48%, transparent);
+}
+
+[data-card-effect="neon"] .fx-surface {
+  background: var(--fx-wash);
+}
+
+/* Lueur intérieure du tube, qui pulse doucement (opacité seule : compositeur). */
+[data-card-effect="neon"] .fx-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 26px var(--fx-inner);
+  animation: fx-neon-breathe 3.4s ease-in-out infinite alternate;
+}
+
+@keyframes fx-neon-breathe {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* La lumière du faisceau se répand sur la carte, près des bords, à son passage. Ici l'angle
+   est animé (@property) plutôt que le calque tourné : le masque des bords doit rester fixe.
+   Même durée et même départ que l'anneau, donc les deux restent synchronisés. */
+@property --fx-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+[data-card-effect="neon"] .fx-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from var(--fx-angle), transparent 0 52%, var(--fx-beam-glow) 90%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, transparent 52%, #000 100%);
+  mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, transparent 52%, #000 100%);
+  animation: fx-angle 4.6s linear infinite;
+}
+
+@keyframes fx-angle {
+  to {
+    --fx-angle: 360deg;
+  }
+}
+
+/* Le tube est allumé en permanence ; un faisceau plus vif en fait le tour. */
+[data-card-effect="neon"] .fx-ring {
+  --fx-ring-w: 2.5px;
+  animation: fx-neon-on 0.9s steps(1, end) 1 both;
+}
+
+[data-card-effect="neon"] .fx-ring::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    transparent 0 38%,
+    var(--fx-beam-tail) 38%,
+    var(--fx-beam-head) 78%,
+    var(--fx-beam-core) 91%,
+    var(--fx-beam-head) 96%,
+    transparent 100%
+  );
+  animation: fx-spin 4.6s linear infinite;
+  will-change: transform;
+}
+
+/* Allumage du tube, une seule fois à l'affichage. */
+@keyframes fx-neon-on {
+  0% {
+    opacity: 0.15;
+  }
+  18% {
+    opacity: 1;
+  }
+  26% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0.55;
+  }
+  60%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ============================== HORS ÉCRAN / ACCESSIBILITÉ ============================== */
+
+[data-fx-idle] .fx-layers *,
+[data-fx-idle] .fx-layers *::before,
+[data-fx-idle] .fx-layers *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-layers *,
+  .fx-layers *::before,
+  .fx-layers *::after {
+    animation: none !important;
+  }
+
+  /* Sans mouvement, les étoiles restent visibles au lieu de rester à opacité 0. */
+  [data-card-effect="frost"] .fx-particles::before,
+  [data-card-effect="frost"] .fx-particles::after {
+    opacity: 0.85;
+  }
+}

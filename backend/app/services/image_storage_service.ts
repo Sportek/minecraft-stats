@@ -2,6 +2,15 @@ import logger from '@adonisjs/core/services/logger'
 import drive from '@adonisjs/drive/services/main'
 import { randomUUID } from 'node:crypto'
 import sharp from 'sharp'
+import {
+  BANNER_HEIGHT,
+  BANNER_WIDTH,
+  MAX_BANNER_FRAMES,
+} from '../constants/server_customization.js'
+
+export type StoreBannerResult =
+  | { ok: true; url: string }
+  | { ok: false; reason: 'invalidImage' | 'wrongSize' }
 
 /**
  * Taille max d'un favicon accepté. Un favicon Minecraft légitime est un PNG
@@ -110,6 +119,47 @@ class ImageStorageService {
     })
 
     return `/${key}`
+  }
+
+  /**
+   * Stocke la bannière d'un serveur en WebP (animé si l'entrée l'est : GIF, WebP
+   * animé). Seules les dimensions exactes 468x60 sont acceptées — voir
+   * `BANNER_WIDTH`. Le décodage est borné en pixels totaux (frames incluses) puisque
+   * l'image est fournie par l'utilisateur. La clé porte un UUID : chaque upload a sa
+   * propre URL, l'appelant supprime l'ancienne via `deletePublicAsset`.
+   * Retourne le chemin relatif (`/images/servers/banners/<id>-<uuid>.webp`).
+   */
+  async storeServerBanner(serverId: number, buffer: Buffer): Promise<StoreBannerResult> {
+    const image = sharp(buffer, {
+      animated: true,
+      limitInputPixels: BANNER_WIDTH * BANNER_HEIGHT * MAX_BANNER_FRAMES,
+      failOn: 'error',
+    })
+
+    const metadata = await image.metadata().catch(() => null)
+    if (!metadata) return { ok: false, reason: 'invalidImage' }
+
+    // `pageHeight` = hauteur d'une frame ; `height` cumulerait toutes les frames d'un GIF.
+    const frameHeight = metadata.pageHeight ?? metadata.height
+    if (metadata.width !== BANNER_WIDTH || frameHeight !== BANNER_HEIGHT) {
+      return { ok: false, reason: 'wrongSize' }
+    }
+
+    // `metadata()` ne lit que l'en-tête : une image tronquée ou corrompue ne casse
+    // qu'ici, au décodage des pixels.
+    const webp = await image
+      .webp({ quality: 85 })
+      .toBuffer()
+      .catch(() => null)
+    if (!webp) return { ok: false, reason: 'invalidImage' }
+
+    const key = `images/servers/banners/${serverId}-${randomUUID()}.webp`
+    await this.disk.put(key, webp, {
+      contentType: 'image/webp',
+      cacheControl: 'public, max-age=31536000, immutable',
+    })
+
+    return { ok: true, url: `/${key}` }
   }
 
   /**

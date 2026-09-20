@@ -45,3 +45,7 @@ tombe donc dans le vide — viser une fenêtre dense comme juin 2025 (~4 400 rel
 **Après tout `node ace`** (`migration:run`, `test`), le codegen réécrit `backend/database/schema.ts` et
 `backend/.adonisjs/server/controllers.ts` **sans formatage**, ce qui pollue le diff sans changer le
 contenu. Remettre en état avec `npx prettier --write` sur ces deux fichiers.
+`backend/.adonisjs/server/routes.d.ts` (régénéré par `node ace serve`) est l'inverse : il est versionné
+en format brut et déjà en retard sur le code, donc prettier le réécrit en ~240 lignes de bruit —
+**le restaurer** (`git checkout -- backend/.adonisjs/server/routes.d.ts`) plutôt que le formater. Idem
+pour `backend/swagger.json|yml` : régénérés au build Docker, ne pas committer leur dérive.

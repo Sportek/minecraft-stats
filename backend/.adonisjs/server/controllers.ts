@@ -14,6 +14,7 @@ export const controllers = {
   Posts: () => import('#controllers/posts_controller'),
   ServerBoost: () => import('#controllers/server_boost_controller'),
   ServerCategories: () => import('#controllers/server_categories_controller'),
+  ServerCustomization: () => import('#controllers/server_customization_controller'),
   ServerOwnership: () => import('#controllers/server_ownership_controller'),
   ServerVotes: () => import('#controllers/server_votes_controller'),
   Servers: () => import('#controllers/servers_controller'),

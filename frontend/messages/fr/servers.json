@@ -62,7 +62,8 @@
       "genericTitle": "Impossible de charger le serveur",
       "genericDescription": "Une erreur est survenue lors du chargement des données du serveur. Réessayez dans un instant.",
       "retry": "Réessayer"
-    }
+    },
+    "bannerAlt": "Bannière de {name}"
   },
   "faq": {
     "heading": "Questions fréquentes",
@@ -181,5 +182,84 @@
   },
   "boost": {
     "badge": "Connectés non fiables"
+  },
+  "customization": {
+    "title": "Personnalisation de la fiche",
+    "subtitle": "Bannière, style du titre et effet de carte : rendez votre serveur reconnaissable dans les classements.",
+    "locked": {
+      "description": "La personnalisation est réservée aux serveurs dont la propriété est vérifiée. Prouvez que vous gérez ce serveur pour la débloquer.",
+      "cta": "Vérifier la propriété"
+    },
+    "preview": {
+      "heading": "Aperçu",
+      "hint": "La carte telle qu'elle apparaît sur la page d'accueil."
+    },
+    "banner": {
+      "title": "Bannière",
+      "description": "{width}×{height} px exactement, au format JPG, PNG, WebP ou GIF animé. 1 Mo maximum.",
+      "alt": "Bannière de {name}",
+      "empty": "Aucune bannière",
+      "upload": "Ajouter une bannière",
+      "replace": "Remplacer la bannière",
+      "remove": "Supprimer",
+      "working": "Traitement…",
+      "uploaded": "Bannière enregistrée",
+      "removed": "Bannière supprimée",
+      "errorTitle": "Impossible de modifier la bannière"
+    },
+    "titleStyle": {
+      "heading": "Titre du serveur",
+      "description": "Choisissez une police et une couleur, unie ou en dégradé.",
+      "fontLabel": "Police du titre",
+      "fonts": {
+        "default": "Par défaut",
+        "minecraft": "Minecraft",
+        "pixel": "Pixel",
+        "medieval": "Médiévale",
+        "fantasy": "Onciale",
+        "bungee": "Enseigne",
+        "rounded": "Arrondie",
+        "script": "Manuscrite",
+        "future": "Futuriste",
+        "marker": "Marqueur"
+      },
+      "color": "Couleur",
+      "colorStart": "Couleur de départ",
+      "colorEnd": "Couleur de fin",
+      "addGradient": "Ajouter un dégradé",
+      "removeGradient": "Retirer le dégradé",
+      "resetColor": "Revenir à la couleur du thème",
+      "themeColorHint": "Sans couleur choisie, le titre suit le thème clair ou sombre du site."
+    },
+    "effect": {
+      "heading": "Effet de carte",
+      "description": "Une animation discrète sur la carte du serveur dans les classements.",
+      "options": {
+        "none": {
+          "label": "Aucun",
+          "description": "Carte standard."
+        },
+        "frost": {
+          "label": "Glace",
+          "description": "Givre, cristaux qui scintillent et reflet qui traverse la carte."
+        },
+        "enchanted": {
+          "label": "Enchanté",
+          "description": "Le reflet violet des objets enchantés de Minecraft."
+        },
+        "embers": {
+          "label": "Braises",
+          "description": "Halo chaud et étincelles qui montent."
+        },
+        "neon": {
+          "label": "Néon",
+          "description": "Bordure lumineuse qui pulse, dans la couleur du titre."
+        }
+      }
+    },
+    "save": "Enregistrer le style",
+    "saving": "Enregistrement…",
+    "saved": "Personnalisation enregistrée",
+    "saveError": "Impossible d'enregistrer la personnalisation"
   }
 }

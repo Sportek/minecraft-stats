@@ -40,6 +40,12 @@
     "termsRequired": "You must accept the terms of use to vote.",
     "captchaFailed": "Anti-bot verification failed. Please try again."
   },
+  "serverCustomization": {
+    "noImageProvided": "No banner provided.",
+    "invalidUpload": "Image rejected: JPG, PNG, WebP or GIF, 1 MB maximum.",
+    "invalidImage": "The file is not a readable image.",
+    "wrongSize": "The banner must be exactly 468×60 pixels."
+  },
   "serverOwnership": {
     "unauthorized": "Unauthorized",
     "alreadyOwner": "You already own this server.",

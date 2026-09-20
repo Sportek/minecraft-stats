@@ -25,7 +25,7 @@ const ServerActions = ({ server }: ServerActionsProps) => {
 
   return (
     <button
-      className="group-hover:flex hidden absolute top-[-5px] right-[-5px] h-7 w-7 rounded-full bg-secondary text-secondary-foreground items-center justify-center hover:bg-accent hover:text-accent-foreground hover:cursor-pointer transition-colors"
+      className="group-hover:flex hidden absolute top-[-5px] right-[-5px] z-10 h-7 w-7 rounded-full bg-secondary text-secondary-foreground items-center justify-center hover:bg-accent hover:text-accent-foreground hover:cursor-pointer transition-colors"
       onClick={handleEdit}
       aria-label={t("card.edit")}
     >

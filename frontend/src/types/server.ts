@@ -38,7 +38,29 @@ export interface Server {
   // Verdict admin sur le gonflage des connectés. null = jamais revu.
   boostStatus: BoostStatus | null;
   boostReviewedAt: Date | null;
+  // Personnalisation de la fiche, réservée aux propriétaires confirmés. null = rendu par défaut.
+  bannerUrl: string | null;
+  titleFont: TitleFont | null;
+  titleColor: string | null;
+  // Seconde couleur du dégradé du titre ; sans `titleColor`, elle n'a pas de sens.
+  titleColorEnd: string | null;
+  cardEffect: CardEffect | null;
 }
+
+/** Clés de polices de titre — miroir de `constants/server_customization.ts` côté API. */
+export type TitleFont =
+  | "minecraft"
+  | "pixel"
+  | "medieval"
+  | "fantasy"
+  | "bungee"
+  | "rounded"
+  | "script"
+  | "future"
+  | "marker";
+
+/** Animations de carte — miroir de `constants/server_customization.ts` côté API. */
+export type CardEffect = "frost" | "enchanted" | "embers" | "neon";
 
 /** Verdict d'un admin sur un serveur suspecté de gonfler ses connectés. */
 export type BoostStatus = "boosting" | "clean" | "inconclusive";

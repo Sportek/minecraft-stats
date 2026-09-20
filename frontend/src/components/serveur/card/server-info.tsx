@@ -4,7 +4,9 @@ import { Check, Copy, ExternalLink, Gamepad2, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { cleanWebsiteHost, deriveServerWebsite, toWebsiteHref } from "@/utils/server-website";
+import type { TitleStyle } from "@/lib/server-customization";
 import { Language } from "@/types/server";
+import ServerTitle from "../server-title";
 import ServerLanguages from "./server-languages";
 
 interface ServerInfoProps {
@@ -12,9 +14,10 @@ interface ServerInfoProps {
   address: string | null;
   website?: string | null;
   languages?: Language[];
+  titleStyle: TitleStyle;
 }
 
-const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
+const ServerInfo = ({ name, address, website, languages, titleStyle }: ServerInfoProps) => {
   const t = useTranslations("Servers");
   const [copied, setCopied] = useState(false);
   // Persisted value (derived server-side), falling back to the client-side
@@ -46,7 +49,7 @@ const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
   return (
     <div className="min-w-0 flex flex-col gap-0.5">
       <div className="flex min-w-0 items-center gap-2">
-        <span className="truncate text-lg font-bold leading-tight text-foreground">{name}</span>
+        <ServerTitle name={name} style={titleStyle} />
         {languages && languages.length > 0 && <ServerLanguages languages={languages} className="shrink-0" />}
       </div>
       {address ? (

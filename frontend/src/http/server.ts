@@ -2,6 +2,7 @@ import {
   AdminBoostReport,
   AdminOwnershipClaim,
   BoostStatus,
+  CardEffect,
   Category,
   ClaimStatus,
   DailyRhythm,
@@ -12,6 +13,7 @@ import {
   ServerOwnershipClaim,
   ServerStat,
   ServerType,
+  TitleFont,
 } from "@/types/server";
 import { apiFetch, ApiError } from "./client";
 
@@ -132,6 +134,33 @@ export const deleteServer = async (serverId: number, token: string) => {
 
 export const editServer = (serverId: number, data: ServerPayload, token: string) =>
   apiFetch<Server>(`/servers/${serverId}`, { method: "PUT", token, body: data });
+
+/* -------------------------------------------------------------------------- */
+/*  Personnalisation de la fiche (propriétaires vérifiés)                      */
+/* -------------------------------------------------------------------------- */
+
+/** Remplacement complet du style : `null` remet le rendu par défaut. */
+export interface ServerCustomizationPayload {
+  titleFont: TitleFont | null;
+  titleColor: string | null;
+  titleColorEnd: string | null;
+  cardEffect: CardEffect | null;
+}
+
+export const updateServerCustomization = (
+  serverId: number,
+  data: ServerCustomizationPayload,
+  token: string
+) => apiFetch<Server>(`/servers/${serverId}/customization`, { method: "PUT", token, body: data });
+
+export const uploadServerBanner = (serverId: number, file: File, token: string) => {
+  const body = new FormData();
+  body.append("banner", file);
+  return apiFetch<Server>(`/servers/${serverId}/banner`, { method: "POST", token, body });
+};
+
+export const deleteServerBanner = (serverId: number, token: string) =>
+  apiFetch<Server>(`/servers/${serverId}/banner`, { method: "DELETE", token });
 
 /* -------------------------------------------------------------------------- */
 /*  Réclamation de propriété d'un serveur                                      */

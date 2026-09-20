@@ -20,6 +20,9 @@ export type ScannedRoutes = {
     'server_ownership.start_dns': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.verify_dns': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.submit_manual': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_customization.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_customization.store_banner': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_customization.destroy_banner': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.categories.index': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
     'servers.categories.store': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
     'servers.categories.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'server_id': ParamValue,'id': ParamValue} }
@@ -30,7 +33,10 @@ export type ScannedRoutes = {
     'categories.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'categories.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.stats.index': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
+    'stats.export': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
+    'stats.daily_rhythm': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
     'stats.global_stats': { paramsTuple?: []; params?: {} }
+    'entitlements.index': { paramsTuple?: []; params?: {} }
     'users.index': { paramsTuple?: []; params?: {} }
     'users.store': { paramsTuple?: []; params?: {} }
     'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -82,9 +88,12 @@ export type ScannedRoutes = {
     'server_ownership.admin_index': { paramsTuple?: []; params?: {} }
     'server_ownership.approve': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.reject': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_boost.admin_index': { paramsTuple?: []; params?: {} }
+    'server_boost.review': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.update_role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'users.update_blacklist': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.admin_index': { paramsTuple?: []; params?: {} }
     'advertisements.stats': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -106,7 +115,10 @@ export type ScannedRoutes = {
     'categories.index': { paramsTuple?: []; params?: {} }
     'categories.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.stats.index': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
+    'stats.export': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
+    'stats.daily_rhythm': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
     'stats.global_stats': { paramsTuple?: []; params?: {} }
+    'entitlements.index': { paramsTuple?: []; params?: {} }
     'users.index': { paramsTuple?: []; params?: {} }
     'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'website_stats.index': { paramsTuple?: []; params?: {} }
@@ -126,6 +138,7 @@ export type ScannedRoutes = {
     'posts.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'analytics.dashboard': { paramsTuple?: []; params?: {} }
     'server_ownership.admin_index': { paramsTuple?: []; params?: {} }
+    'server_boost.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.admin_index': { paramsTuple?: []; params?: {} }
@@ -145,7 +158,10 @@ export type ScannedRoutes = {
     'categories.index': { paramsTuple?: []; params?: {} }
     'categories.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.stats.index': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
+    'stats.export': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
+    'stats.daily_rhythm': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
     'stats.global_stats': { paramsTuple?: []; params?: {} }
+    'entitlements.index': { paramsTuple?: []; params?: {} }
     'users.index': { paramsTuple?: []; params?: {} }
     'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'website_stats.index': { paramsTuple?: []; params?: {} }
@@ -165,6 +181,7 @@ export type ScannedRoutes = {
     'posts.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'analytics.dashboard': { paramsTuple?: []; params?: {} }
     'server_ownership.admin_index': { paramsTuple?: []; params?: {} }
+    'server_boost.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.admin_index': { paramsTuple?: []; params?: {} }
@@ -179,6 +196,7 @@ export type ScannedRoutes = {
     'server_ownership.start_dns': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.verify_dns': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.submit_manual': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_customization.store_banner': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.categories.store': { paramsTuple: [ParamValue]; params: {'server_id': ParamValue} }
     'categories.store': { paramsTuple?: []; params?: {} }
     'users.store': { paramsTuple?: []; params?: {} }
@@ -207,11 +225,13 @@ export type ScannedRoutes = {
     'posts.preview_placeholder': { paramsTuple?: []; params?: {} }
     'server_ownership.approve': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.reject': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_boost.review': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.store': { paramsTuple?: []; params?: {} }
     'uploads.upload_image': { paramsTuple?: []; params?: {} }
   }
   PUT: {
     'servers.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_customization.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'categories.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -222,9 +242,11 @@ export type ScannedRoutes = {
     'categories.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.update_role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'users.update_blacklist': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
     'servers.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_customization.destroy_banner': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.categories.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'server_id': ParamValue,'id': ParamValue} }
     'categories.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }

@@ -4,6 +4,7 @@ import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
 import { formatGrowth } from "@/lib/format";
 import { BadgeCheck, TriangleAlert } from "lucide-react";
+import ServerBanner from "./server-banner";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
@@ -36,6 +37,22 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_140%_at_0%_0%,hsl(var(--accent)/0.06),transparent_55%)]"
       />
 
+      {/* Ambiance : la bannière, agrandie et floutée, teinte la carte aux couleurs du
+          serveur. Le dégradé par-dessus garde le texte lisible quelle que soit l'image. */}
+      {server.bannerUrl && (
+        <>
+          <ServerBanner
+            url={server.bannerUrl}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover opacity-40 blur-2xl dark:opacity-30"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-card/30 via-card/60 to-card/90"
+          />
+        </>
+      )}
+
       <div className="relative flex flex-col gap-4 p-4 sm:p-6">
         {/* Row 1: avatar + name/address/website · players online */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -51,6 +68,7 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
                 address={server.address}
                 website={server.website}
                 languages={server.languages}
+                titleStyle={server}
               />
             </div>
           </div>
@@ -74,6 +92,15 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
             </div>
           </div>
         </div>
+
+        {/* Bannière nette, à sa taille réelle : à 468px, l'étirer sur toute la carte la pixeliserait. */}
+        {server.bannerUrl && (
+          <ServerBanner
+            url={server.bannerUrl}
+            alt={t("detail.bannerAlt", { name: server.name })}
+            className="h-auto w-[468px] max-w-full rounded-md border border-border/60 shadow-sm"
+          />
+        )}
 
         {/* Row 2: badges · vote — the vote control fills the dead space beside
             the categories instead of stretching the right column. */}

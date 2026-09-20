@@ -13,4 +13,11 @@ export default class ServerPolicy extends BasePolicy {
   async update(user: User, server: Server): Promise<AuthorizerResponse> {
     return user.role === 'admin' || server.userId === user.id
   }
+
+  // Personnalisation de la fiche : réservée aux propriétaires confirmés (un simple
+  // « ajouteur » n'a rien prouvé). Le retrait d'une bannière reste sous `update`,
+  // pour qu'un admin — ou un ancien propriétaire — puisse toujours la supprimer.
+  async customize(user: User, server: Server): Promise<AuthorizerResponse> {
+    return user.role === 'admin' || (server.userId === user.id && server.ownerVerifiedAt !== null)
+  }
 }

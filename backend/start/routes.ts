@@ -77,6 +77,17 @@ router
       .post('servers/:id/claim/manual', '#controllers/server_ownership_controller.submitManual')
       .use([middleware.auth(), throttleLight('servers.claim.manual', 5), NO_STORE])
 
+    // Personnalisation de la fiche (style du titre, effet de carte, bannière 468x60).
+    router
+      .put('servers/:id/customization', '#controllers/server_customization_controller.update')
+      .use([middleware.auth(), throttleLight('servers.customization', 20), NO_STORE])
+    router
+      .post('servers/:id/banner', '#controllers/server_customization_controller.storeBanner')
+      .use([middleware.auth(), throttleLight('servers.banner.store', 10), NO_STORE])
+    router
+      .delete('servers/:id/banner', '#controllers/server_customization_controller.destroyBanner')
+      .use([middleware.auth(), throttleLight('servers.banner.destroy', 10), NO_STORE])
+
     router
       .resource('servers.categories', '#controllers/server_categories_controller')
       .only(['index', 'store', 'destroy'])
