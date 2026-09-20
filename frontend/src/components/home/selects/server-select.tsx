@@ -109,20 +109,24 @@ export const ServerSelect = ({ selectedServers, onChange, disabled }: ServerSele
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
-        <Command>
+        {/* On filtre déjà la liste nous-mêmes : le filtre interne de cmdk, en double, perd les
+            items démontés puis remontés (ex. recherche sans résultat, puis retour arrière). */}
+        <Command shouldFilter={false}>
           <CommandInput placeholder={t("serverSelect.placeholder")} value={search} onValueChange={setSearch} />
           <CommandEmpty>{t("serverSelect.empty")}</CommandEmpty>
           <CommandGroup>
-            <CommandItem
-              onSelect={() => {
-                onChange([]);
-                setOpen(false);
-              }}
-              className="cursor-pointer"
-            >
-              <Check className={cn("mr-2 h-4 w-4", selectedServers.length === 0 ? "opacity-100" : "opacity-0")} />
-              {t("allMonitoredServers")}
-            </CommandItem>
+            {search.length === 0 && (
+              <CommandItem
+                onSelect={() => {
+                  onChange([]);
+                  setOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                <Check className={cn("mr-2 h-4 w-4", selectedServers.length === 0 ? "opacity-100" : "opacity-0")} />
+                {t("allMonitoredServers")}
+              </CommandItem>
+            )}
             {displayedServers.map((server) => (
               <CommandItem
                 key={server.id}
