@@ -9,6 +9,10 @@ import { apiFetch } from "./client";
  */
 export const RANKING_SORTS = ["players", "trending", "peak", "newest", "votes"] as const;
 
+/** Taille d'un classement affiché : un podium de `PODIUM_SIZE` puis la liste des suivants. */
+export const RANKING_LIMIT = 25;
+export const PODIUM_SIZE = 3;
+
 export type RankingSort = (typeof RANKING_SORTS)[number];
 
 export const isRankingSort = (value: string): value is RankingSort =>

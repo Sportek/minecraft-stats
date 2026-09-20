@@ -1,8 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { PODIUM_SIZE, RANKING_LIMIT } from "@/http/rankings";
 
 /**
  * Affiché dès le clic sur un onglet, sous la nav qui reste en place : reprend la
- * silhouette de la page (titre, podium, liste) pour que la transition ne saute pas.
+ * silhouette de la page (titre, podium, liste complète) pour que la transition ne saute pas.
  */
 const RankingLoading = () => {
   return (
@@ -19,8 +20,8 @@ const RankingLoading = () => {
           <Skeleton className="h-44 rounded-xl sm:order-3" />
         </div>
         <div className="mt-4 flex flex-col gap-2">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Skeleton key={i} className="h-16 rounded-lg" />
+          {Array.from({ length: RANKING_LIMIT - PODIUM_SIZE }, (_, i) => (
+            <Skeleton key={i} className="h-16.5 rounded-lg" />
           ))}
         </div>
       </div>

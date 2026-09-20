@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { buildAlternates, getOpenGraphLocales } from "@/lib/domain-server";
 import { serverPath } from "@/lib/server-url";
-import { getRanking, isRankingSort, RANKING_SORTS } from "@/http/rankings";
+import { getRanking, isRankingSort, RANKING_LIMIT, RANKING_SORTS } from "@/http/rankings";
 import { buildMetric } from "@/components/rankings/metric";
 import RankingList from "@/components/rankings/ranking-list";
 import { PodiumRow } from "@/components/rankings/podium";
@@ -15,9 +15,6 @@ export const revalidate = 600;
 // Un tri inconnu doit répondre un vrai 404 : avec le loading.tsx, le `notFound()` du
 // rendu arriverait après l'envoi du statut 200 (soft-404).
 export const dynamicParams = false;
-
-// Classement complet : podium 3 + liste 22.
-const RANKING_LIMIT = 25;
 
 const OG_IMAGE = "/images/minecraft-stats/og-image.webp";
 

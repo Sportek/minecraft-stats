@@ -1,5 +1,6 @@
 import Podium, { PodiumRow } from "./podium";
 import RankRow from "./rank-row";
+import { PODIUM_SIZE } from "@/http/rankings";
 
 interface RankingListProps {
   rows: PodiumRow[];
@@ -19,8 +20,8 @@ const RankingList = ({ rows, emptyLabel }: RankingListProps) => {
     );
   }
 
-  const podium = rows.slice(0, 3);
-  const rest = rows.slice(3);
+  const podium = rows.slice(0, PODIUM_SIZE);
+  const rest = rows.slice(PODIUM_SIZE);
 
   return (
     <div>
