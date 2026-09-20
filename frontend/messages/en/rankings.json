@@ -1,50 +1,56 @@
 {
   "eyebrow": "Rankings",
+  "aboutTitle": "How is this ranking calculated?",
   "sections": {
     "players": {
       "nav": "Top players",
-      "title": "Top servers by players online",
-      "description": "The Minecraft servers with the most players connected right now. The reference leaderboard, in real time.",
+      "title": "Best Minecraft servers, ranked by players online",
+      "description": "The best Minecraft servers right now, ranked by players connected. The reference top servers list, updated in real time.",
       "empty": "No player data available yet.",
-      "metaTitle": "Top Minecraft Servers by Players Online — Live Ranking",
-      "metaDescription": "The most played Minecraft servers right now, ranked by players connected. Live leaderboard updated every 10 minutes from real player data.",
-      "metaKeywords": "top minecraft servers, most played minecraft servers, biggest minecraft servers, minecraft servers by players online"
+      "metaTitle": "Best Minecraft Servers: Top 25 Live Ranking",
+      "metaDescription": "The best Minecraft servers right now: the top 25 ranked by players online, updated every 10 minutes from real data, with inflated counts demoted.",
+      "metaKeywords": "best minecraft servers, top minecraft servers, top servers minecraft, most played minecraft servers, minecraft server list, biggest minecraft servers",
+      "about": "Servers are ranked by the number of players connected at their last ping, refreshed every 10 minutes. A server whose last successful ping is more than 30 minutes old drops to the bottom, so an offline server never stays on top on the strength of an old count. Servers reviewed and confirmed as inflating their player count are demoted to the end of the ranking."
     },
     "trending": {
       "nav": "Trending",
-      "title": "Trending servers",
+      "title": "Trending Minecraft servers",
       "description": "The fastest growing servers, ranked by player-count growth over the past week.",
       "empty": "Not enough growth data yet to build this ranking.",
-      "metaTitle": "Trending Minecraft Servers — Fastest Growing This Week",
-      "metaDescription": "The fastest growing Minecraft servers, ranked by weekly player growth. Spot the next big server before everyone else.",
-      "metaKeywords": "trending minecraft servers, growing minecraft servers, new popular minecraft servers, rising minecraft servers"
+      "metaTitle": "Top Trending Minecraft Servers This Week",
+      "metaDescription": "The fastest growing Minecraft servers this week, ranked by player growth. Spot the next best server before everyone else — updated every 10 minutes.",
+      "metaKeywords": "trending minecraft servers, growing minecraft servers, new popular minecraft servers, rising minecraft servers",
+      "about": "Servers are ranked by the growth of their player count over the past week. Only servers with at least 75 players online are eligible, so a small server going from 1 to 5 players does not top the list. Servers reviewed and confirmed as inflating their player count are demoted."
     },
     "peak": {
       "nav": "Records",
-      "title": "All-time attendance records",
-      "description": "The highest player peaks ever recorded. The servers that made history with their attendance.",
+      "title": "Biggest Minecraft servers: all-time player records",
+      "description": "The highest player peaks ever recorded on a Minecraft server. The biggest servers in the game's history, by attendance.",
       "empty": "No attendance records available yet.",
-      "metaTitle": "Minecraft Server Player Records — All-Time Peaks",
-      "metaDescription": "The highest player counts ever recorded on Minecraft servers. All-time attendance records, measured from real player data.",
-      "metaKeywords": "minecraft server records, minecraft server peak players, most players minecraft server, minecraft player count record"
+      "metaTitle": "Biggest Minecraft Servers: Player Records",
+      "metaDescription": "The biggest Minecraft servers of all time, ranked by their highest recorded player count. All-time records measured from real data.",
+      "metaKeywords": "minecraft server records, minecraft server peak players, most players minecraft server, minecraft player count record",
+      "about": "Servers are ranked by the highest number of players ever recorded on them since Minecraft Stats started tracking them, from pings taken every 10 minutes. Servers reviewed and confirmed as inflating their player count are demoted to the end of the ranking."
     },
     "newest": {
       "nav": "Newest",
-      "title": "Newest servers",
+      "title": "New Minecraft servers",
       "description": "The latest servers added to Minecraft Stats. Discover them before everyone else.",
       "empty": "No recent servers to show yet.",
-      "metaTitle": "Newest Minecraft Servers — Latest Additions",
-      "metaDescription": "The newest Minecraft servers added to Minecraft Stats. Discover fresh servers before everyone else.",
-      "metaKeywords": "new minecraft servers, newest minecraft servers, latest minecraft servers, recently added minecraft servers"
+      "metaTitle": "New Minecraft Servers: Latest Additions",
+      "metaDescription": "Discover new Minecraft servers, freshly added to Minecraft Stats. Follow their player growth from day one.",
+      "metaKeywords": "new minecraft servers, newest minecraft servers, latest minecraft servers, recently added minecraft servers",
+      "about": "Servers are listed by the date they were added to Minecraft Stats, most recent first. Each one is pinged every 10 minutes from the moment it is added, so you can follow its player count from day one."
     },
     "votes": {
       "nav": "Votes",
-      "title": "Top servers by votes this month",
+      "title": "Top Minecraft servers by votes this month",
       "description": "The servers most backed by the community this month. Anyone can vote every 90 minutes — the ranking resets at the start of each month.",
       "empty": "No votes yet this month. Be the first to back your server!",
-      "metaTitle": "Top Minecraft Servers by Votes — Monthly Ranking",
-      "metaDescription": "The most-voted Minecraft servers this month, chosen by the community. Vote for your favorite server, no account needed, with your Minecraft username.",
-      "metaKeywords": "vote minecraft server, top minecraft servers votes, minecraft server vote ranking, best minecraft server"
+      "metaTitle": "Top Voted Minecraft Servers This Month",
+      "metaDescription": "The most voted Minecraft servers this month, chosen by the community. Vote for your favorite server — no account needed, just your Minecraft username.",
+      "metaKeywords": "vote minecraft server, top minecraft servers votes, minecraft server vote ranking, best minecraft server",
+      "about": "Servers are ranked by the number of votes received since the 1st of the current month, and the ranking resets at the start of each month. Anyone can vote every 90 minutes with their Minecraft username, no account required."
     }
   },
   "metrics": {

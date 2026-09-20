@@ -78,7 +78,7 @@ export function useGlobalInsight() {
       // Si la sélection matche pile les favoris, on reste en mode "suivre favoris".
       setManualSelection(fingerprint === favFingerprint ? null : next);
     },
-    [favorites]
+    [favorites],
   );
 
   const resetToFavorites = useCallback(() => {
@@ -155,7 +155,7 @@ export function useGlobalInsight() {
         const stats: ServerStat[] = await statsRes.json();
         const serverData = await serverRes.json();
         return { id: serverId, server: serverData.server as Server, stats };
-      })
+      }),
     )
       .then((results) => {
         if (controller.signal.aborted) return;
@@ -205,7 +205,7 @@ export function useGlobalInsight() {
     filtersDisabled,
     controlsDisabled,
     isLoading,
-    globalStats,
+    globalStats: selectedServers.length === 0 ? globalStats : [],
     serverStats,
     favoritesCount: favorites.length,
     hasFavorites: favorites.length > 0,
