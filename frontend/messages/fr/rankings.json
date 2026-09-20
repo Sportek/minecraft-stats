@@ -1,50 +1,56 @@
 {
   "eyebrow": "Classements",
+  "aboutTitle": "Comment est calculé ce classement ?",
   "sections": {
     "players": {
       "nav": "Top joueurs",
-      "title": "Top serveurs par joueurs en ligne",
-      "description": "Les serveurs Minecraft avec le plus de joueurs connectés en ce moment. Le classement de référence, en temps réel.",
+      "title": "Meilleurs serveurs Minecraft, classés par joueurs en ligne",
+      "description": "Les meilleurs serveurs Minecraft en ce moment, classés par joueurs connectés. Le top serveurs de référence, en temps réel.",
       "empty": "Aucune donnée de joueurs disponible pour l'instant.",
-      "metaTitle": "Top serveurs Minecraft par joueurs en ligne — Classement en direct",
-      "metaDescription": "Les serveurs Minecraft les plus joués en ce moment, classés par joueurs connectés. Classement en direct, mis à jour toutes les 10 minutes à partir de données réelles.",
-      "metaKeywords": "top serveur minecraft, serveur minecraft le plus joué, plus gros serveur minecraft, serveur minecraft joueurs en ligne"
+      "metaTitle": "Meilleurs serveurs Minecraft : top 25 en direct",
+      "metaDescription": "Les meilleurs serveurs Minecraft du moment : top 25 classé par joueurs en ligne, mis à jour toutes les 10 minutes, compteurs gonflés rétrogradés.",
+      "metaKeywords": "meilleur serveur minecraft, meilleurs serveurs minecraft, top serveur minecraft, serveur minecraft le plus joué, liste serveur minecraft, plus gros serveur minecraft",
+      "about": "Les serveurs sont classés selon le nombre de joueurs connectés lors de leur dernier ping, actualisé toutes les 10 minutes. Un serveur dont le dernier ping réussi date de plus de 30 minutes descend tout en bas : un serveur hors ligne ne reste donc jamais en tête grâce à un ancien compteur. Les serveurs dont la gonflette de joueurs a été vérifiée et confirmée sont rétrogradés en fin de classement."
     },
     "trending": {
       "nav": "Tendances",
-      "title": "Serveurs en tendance",
+      "title": "Serveurs Minecraft en tendance",
       "description": "Les serveurs qui montent le plus vite, classés par croissance du nombre de joueurs sur la dernière semaine.",
       "empty": "Pas encore assez de données de croissance pour établir ce classement.",
-      "metaTitle": "Serveurs Minecraft en tendance — La plus forte croissance cette semaine",
-      "metaDescription": "Les serveurs Minecraft qui grandissent le plus vite, classés par croissance hebdomadaire de joueurs. Repérez le prochain gros serveur avant tout le monde.",
-      "metaKeywords": "serveur minecraft tendance, serveur minecraft en croissance, nouveau serveur minecraft populaire, serveur minecraft qui monte"
+      "metaTitle": "Serveurs Minecraft en tendance cette semaine",
+      "metaDescription": "Les serveurs Minecraft qui grandissent le plus vite cette semaine, classés par croissance de joueurs. Repérez le prochain meilleur serveur avant tout le monde.",
+      "metaKeywords": "serveur minecraft tendance, serveur minecraft en croissance, nouveau serveur minecraft populaire, serveur minecraft qui monte",
+      "about": "Les serveurs sont classés selon la croissance de leur nombre de joueurs sur la dernière semaine. Seuls les serveurs qui ont au moins 75 joueurs en ligne sont éligibles : un petit serveur qui passe de 1 à 5 joueurs ne truste donc pas la liste. Les serveurs dont la gonflette de joueurs a été vérifiée et confirmée sont rétrogradés."
     },
     "peak": {
       "nav": "Records",
-      "title": "Records de fréquentation all-time",
-      "description": "Les plus gros pics de joueurs jamais enregistrés. Les serveurs qui ont marqué l'histoire par leur affluence.",
+      "title": "Plus gros serveurs Minecraft : records de fréquentation",
+      "description": "Les plus gros pics de joueurs jamais enregistrés sur un serveur Minecraft. Les plus gros serveurs de l'histoire du jeu, par affluence.",
       "empty": "Aucun record de fréquentation disponible pour l'instant.",
-      "metaTitle": "Records de joueurs des serveurs Minecraft — Pics all-time",
-      "metaDescription": "Les plus hauts pics de joueurs jamais enregistrés sur les serveurs Minecraft. Des records de fréquentation mesurés à partir de données réelles.",
-      "metaKeywords": "record serveur minecraft, pic de joueurs serveur minecraft, record joueurs minecraft, plus de joueurs serveur minecraft"
+      "metaTitle": "Plus gros serveurs Minecraft : les records",
+      "metaDescription": "Les plus gros serveurs Minecraft de tous les temps, classés par leur record de joueurs connectés. Des records mesurés à partir de données réelles.",
+      "metaKeywords": "record serveur minecraft, pic de joueurs serveur minecraft, record joueurs minecraft, plus de joueurs serveur minecraft",
+      "about": "Les serveurs sont classés selon le plus grand nombre de joueurs jamais enregistré depuis que Minecraft Stats les suit, à partir de pings effectués toutes les 10 minutes. Les serveurs dont la gonflette de joueurs a été vérifiée et confirmée sont rétrogradés en fin de classement."
     },
     "newest": {
       "nav": "Nouveaux",
-      "title": "Nouveaux serveurs",
+      "title": "Nouveaux serveurs Minecraft",
       "description": "Les derniers serveurs ajoutés à Minecraft Stats. À découvrir avant tout le monde.",
       "empty": "Aucun serveur récent à afficher pour l'instant.",
-      "metaTitle": "Nouveaux serveurs Minecraft — Derniers ajouts",
-      "metaDescription": "Les derniers serveurs Minecraft ajoutés sur Minecraft Stats. Découvrez les nouveaux serveurs avant tout le monde.",
-      "metaKeywords": "nouveau serveur minecraft, nouveaux serveurs minecraft, derniers serveurs minecraft, serveur minecraft récent"
+      "metaTitle": "Nouveaux serveurs Minecraft : derniers ajouts",
+      "metaDescription": "Découvrez les nouveaux serveurs Minecraft, tout juste ajoutés à Minecraft Stats. Suivez leur croissance de joueurs dès le premier jour.",
+      "metaKeywords": "nouveau serveur minecraft, nouveaux serveurs minecraft, derniers serveurs minecraft, serveur minecraft récent",
+      "about": "Les serveurs sont listés par date d'ajout à Minecraft Stats, du plus récent au plus ancien. Chacun est pingé toutes les 10 minutes dès son ajout : vous suivez donc son nombre de joueurs dès le premier jour."
     },
     "votes": {
       "nav": "Votes",
-      "title": "Top serveurs par votes ce mois-ci",
+      "title": "Top serveurs Minecraft par votes ce mois-ci",
       "description": "Les serveurs les plus soutenus par la communauté ce mois-ci. Chaque joueur peut voter toutes les 90 minutes — le classement repart à zéro chaque mois.",
       "empty": "Aucun vote pour l'instant ce mois-ci. Soyez le premier à soutenir votre serveur !",
-      "metaTitle": "Top serveurs Minecraft par votes — Classement mensuel",
+      "metaTitle": "Top serveurs Minecraft les plus votés du mois",
       "metaDescription": "Les serveurs Minecraft les plus votés ce mois-ci par la communauté. Votez pour votre serveur préféré, sans compte, avec votre pseudo Minecraft.",
-      "metaKeywords": "voter serveur minecraft, top serveur minecraft votes, classement votes serveur minecraft, meilleur serveur minecraft"
+      "metaKeywords": "voter serveur minecraft, top serveur minecraft votes, classement votes serveur minecraft, meilleur serveur minecraft",
+      "about": "Les serveurs sont classés selon le nombre de votes reçus depuis le 1er du mois en cours, et le classement repart à zéro au début de chaque mois. Chacun peut voter toutes les 90 minutes avec son pseudo Minecraft, sans créer de compte."
     }
   },
   "metrics": {

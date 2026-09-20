@@ -1,50 +1,56 @@
 {
   "eyebrow": "Clasificaciones",
+  "aboutTitle": "¿Cómo se calcula esta clasificación?",
   "sections": {
     "players": {
       "nav": "Top jugadores",
-      "title": "Top de servidores por jugadores en línea",
-      "description": "Los servidores de Minecraft con más jugadores conectados ahora mismo. La clasificación de referencia, en tiempo real.",
+      "title": "Mejores servidores de Minecraft, clasificados por jugadores en línea",
+      "description": "Los mejores servidores de Minecraft ahora mismo, clasificados por jugadores conectados. El top de servidores de referencia, en tiempo real.",
       "empty": "Todavía no hay datos de jugadores disponibles.",
-      "metaTitle": "Top de servidores de Minecraft por jugadores en línea — Clasificación en vivo",
-      "metaDescription": "Los servidores de Minecraft más jugados ahora mismo, clasificados por jugadores conectados. Clasificación en vivo, actualizada cada 10 minutos con datos reales.",
-      "metaKeywords": "top servidor minecraft, servidor minecraft más jugado, servidor minecraft más grande, servidor minecraft jugadores en línea"
+      "metaTitle": "Mejores servidores de Minecraft: top 25 en vivo",
+      "metaDescription": "Los mejores servidores de Minecraft del momento: top 25 por jugadores en línea, actualizado cada 10 minutos, con los contadores inflados penalizados.",
+      "metaKeywords": "mejores servidores minecraft, top servidores minecraft, mejor servidor minecraft, servidor minecraft más jugado, lista de servidores minecraft, servidor minecraft más grande",
+      "about": "Los servidores se clasifican según el número de jugadores conectados en su último ping, actualizado cada 10 minutos. Un servidor cuyo último ping correcto tiene más de 30 minutos baja al final, así que un servidor sin conexión nunca se queda arriba gracias a un contador antiguo. Los servidores cuyo inflado de jugadores ha sido revisado y confirmado se relegan al final de la clasificación."
     },
     "trending": {
       "nav": "Tendencias",
-      "title": "Servidores en tendencia",
+      "title": "Servidores de Minecraft en tendencia",
       "description": "Los servidores que más rápido crecen, clasificados por el aumento de jugadores durante la última semana.",
       "empty": "Aún no hay suficientes datos de crecimiento para esta clasificación.",
-      "metaTitle": "Servidores de Minecraft en tendencia — Los que más crecen esta semana",
-      "metaDescription": "Los servidores de Minecraft que más rápido crecen, clasificados por crecimiento semanal de jugadores. Descubre el próximo gran servidor antes que nadie.",
-      "metaKeywords": "servidor minecraft tendencia, servidor minecraft en crecimiento, nuevo servidor minecraft popular, servidor minecraft en auge"
+      "metaTitle": "Servidores de Minecraft en tendencia esta semana",
+      "metaDescription": "Los servidores de Minecraft que más rápido crecen esta semana, clasificados por crecimiento de jugadores. Descubre el próximo mejor servidor antes que nadie.",
+      "metaKeywords": "servidor minecraft tendencia, servidor minecraft en crecimiento, nuevo servidor minecraft popular, servidor minecraft en auge",
+      "about": "Los servidores se clasifican según el crecimiento de su número de jugadores durante la última semana. Solo son elegibles los servidores con al menos 75 jugadores en línea, así que un servidor pequeño que pasa de 1 a 5 jugadores no acapara la lista. Los servidores cuyo inflado de jugadores ha sido revisado y confirmado se relegan."
     },
     "peak": {
       "nav": "Récords",
-      "title": "Récords de afluencia histórica",
-      "description": "Los picos de jugadores más altos jamás registrados. Los servidores que hicieron historia por su afluencia.",
+      "title": "Servidores de Minecraft más grandes: récords de afluencia",
+      "description": "Los picos de jugadores más altos jamás registrados en un servidor de Minecraft. Los servidores más grandes de la historia del juego, por afluencia.",
       "empty": "Todavía no hay récords de afluencia disponibles.",
-      "metaTitle": "Récords de jugadores en servidores de Minecraft — Picos históricos",
-      "metaDescription": "Los picos de jugadores más altos jamás registrados en servidores de Minecraft. Récords históricos de afluencia basados en datos reales.",
-      "metaKeywords": "récord servidor minecraft, pico de jugadores servidor minecraft, récord jugadores minecraft, más jugadores servidor minecraft"
+      "metaTitle": "Servidores de Minecraft más grandes: récords",
+      "metaDescription": "Los servidores de Minecraft más grandes de todos los tiempos, clasificados por su récord de jugadores conectados. Récords medidos con datos reales.",
+      "metaKeywords": "récord servidor minecraft, pico de jugadores servidor minecraft, récord jugadores minecraft, más jugadores servidor minecraft",
+      "about": "Los servidores se clasifican según el mayor número de jugadores registrado desde que Minecraft Stats los sigue, a partir de pings realizados cada 10 minutos. Los servidores cuyo inflado de jugadores ha sido revisado y confirmado se relegan al final de la clasificación."
     },
     "newest": {
       "nav": "Nuevos",
-      "title": "Servidores nuevos",
+      "title": "Nuevos servidores de Minecraft",
       "description": "Los últimos servidores añadidos a Minecraft Stats. Descúbrelos antes que nadie.",
       "empty": "Todavía no hay servidores recientes que mostrar.",
-      "metaTitle": "Nuevos servidores de Minecraft — Últimas incorporaciones",
-      "metaDescription": "Los últimos servidores de Minecraft añadidos a Minecraft Stats. Descubre los servidores nuevos antes que nadie.",
-      "metaKeywords": "nuevo servidor minecraft, nuevos servidores minecraft, últimos servidores minecraft, servidor minecraft reciente"
+      "metaTitle": "Nuevos servidores de Minecraft: novedades",
+      "metaDescription": "Descubre los nuevos servidores de Minecraft, recién añadidos a Minecraft Stats. Sigue su crecimiento de jugadores desde el primer día.",
+      "metaKeywords": "nuevo servidor minecraft, nuevos servidores minecraft, últimos servidores minecraft, servidor minecraft reciente",
+      "about": "Los servidores se listan por fecha de incorporación a Minecraft Stats, del más reciente al más antiguo. Cada uno se comprueba cada 10 minutos desde que se añade, así que puedes seguir su número de jugadores desde el primer día."
     },
     "votes": {
       "nav": "Votos",
-      "title": "Top servidores por votos este mes",
+      "title": "Top servidores de Minecraft por votos este mes",
       "description": "Los servidores más apoyados por la comunidad este mes. Cualquiera puede votar cada 90 minutos — la clasificación se reinicia al principio de cada mes.",
       "empty": "Aún no hay votos este mes. ¡Sé el primero en apoyar tu servidor!",
-      "metaTitle": "Top servidores de Minecraft por votos — Clasificación mensual",
+      "metaTitle": "Servidores de Minecraft más votados del mes",
       "metaDescription": "Los servidores de Minecraft más votados este mes por la comunidad. Vota por tu servidor favorito, sin cuenta, con tu nombre de Minecraft.",
-      "metaKeywords": "votar servidor minecraft, top servidores minecraft votos, clasificación votos servidor minecraft, mejor servidor minecraft"
+      "metaKeywords": "votar servidor minecraft, top servidores minecraft votos, clasificación votos servidor minecraft, mejor servidor minecraft",
+      "about": "Los servidores se clasifican según el número de votos recibidos desde el día 1 del mes en curso, y la clasificación se reinicia al comienzo de cada mes. Cualquiera puede votar cada 90 minutos con su nombre de Minecraft, sin crear una cuenta."
     }
   },
   "metrics": {

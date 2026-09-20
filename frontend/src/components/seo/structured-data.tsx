@@ -1,6 +1,5 @@
 import { getClientDomainConfig, resolveAssetUrl } from "@/lib/domain";
 import { Category, Server } from "@/types/server";
-import { serverPath } from "@/lib/server-url";
 import Script from "next/script";
 
 /**
@@ -276,45 +275,67 @@ export function BlogPostStructuredData({ post, locale }: Readonly<BlogPostStruct
 interface RankingsStructuredDataProps {
   /** Titre du classement (ex. "Top serveurs par joueurs en ligne"). */
   name: string;
-  rows: { rank: number; entry: { server: Pick<Server, "id" | "name"> } }[];
+  description: string;
+  /** URLs absolues canoniques de la page et de l'accueil de la locale courante. */
+  pageUrl: string;
+  homeUrl: string;
+  items: { rank: number; name: string; url: string }[];
   locale?: string;
 }
 
 /**
- * JSON-LD `ItemList` pour un classement. Donne aux moteurs et aux agents IA
- * l'ordre exact et l'URL de chaque serveur classé — un signal fort et lisible
- * par machine, en complément du HTML sémantique de la page.
+ * JSON-LD d'une page de classement : `CollectionPage` portant l'`ItemList` (l'ordre
+ * exact et l'URL de chaque serveur classé) et le fil d'Ariane. Balise `<script>`
+ * classique et non `next/script` : ce dernier injecte après l'hydratation, donc le
+ * JSON-LD serait absent du HTML initial lu par les crawlers qui n'exécutent pas le JS.
  */
-export function RankingsStructuredData({ name, rows, locale }: Readonly<RankingsStructuredDataProps>) {
-  const { baseUrl } = getClientDomainConfig();
-
+export function RankingsStructuredData({
+  name,
+  description,
+  pageUrl,
+  homeUrl,
+  items,
+  locale,
+}: Readonly<RankingsStructuredDataProps>) {
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    name,
-    inLanguage: bcp47(locale),
-    numberOfItems: rows.length,
-    itemListOrder: "https://schema.org/ItemListOrderDescending",
-    itemListElement: rows.map(({ rank, entry }) => ({
-      "@type": "ListItem",
-      position: rank,
-      name: entry.server.name,
-      url: `${baseUrl}${serverPath(entry.server.id, entry.server.name)}`,
-    })),
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": pageUrl,
+        url: pageUrl,
+        name,
+        description,
+        inLanguage: bcp47(locale),
+        isPartOf: { "@type": "WebSite", name: "Minecraft Stats", url: homeUrl },
+        breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
+        ...(items.length > 0 && {
+          mainEntity: {
+            "@type": "ItemList",
+            name,
+            numberOfItems: items.length,
+            itemListOrder: "https://schema.org/ItemListOrderDescending",
+            itemListElement: items.map(({ rank, name: serverName, url }) => ({
+              "@type": "ListItem",
+              position: rank,
+              name: serverName,
+              url,
+            })),
+          },
+        }),
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${pageUrl}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Minecraft Stats", item: homeUrl },
+          { "@type": "ListItem", position: 2, name, item: pageUrl },
+        ],
+      },
+    ],
   };
 
-  const id = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-
-  return (
-    <Script
-      id={`rankings-structured-data-${id}`}
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }} />;
 }
 
 interface ServerFAQStructuredDataProps {
