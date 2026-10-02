@@ -433,12 +433,11 @@
       "granularity": "Granularité des valeurs",
       "slotsGlued": "Slots calés sur le compte"
     },
-    "manual": {
-      "title": "Verdict manuel",
-      "description": "Un serveur triche mais n'apparaît pas dans la file ? Recherchez-le pour lui appliquer un verdict directement.",
-      "searchPlaceholder": "Nom ou adresse du serveur…",
-      "searching": "Recherche…",
-      "noResults": "Aucun serveur trouvé."
+    "serverVerdict": {
+      "title": "Connectés suspects",
+      "description": "Verdict admin sur le gonflage du nombre de joueurs, même si la détection n'a pas signalé ce serveur.",
+      "current": "Verdict actuel :",
+      "none": "Aucun"
     }
   }
 }

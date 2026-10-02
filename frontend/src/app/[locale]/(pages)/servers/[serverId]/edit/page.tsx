@@ -2,8 +2,10 @@
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardLayout from "@/components/account/dashboard-layout";
+import ServerBoostVerdict from "@/components/admin/server-boost-verdict";
 import EditServerForm from "@/components/form/edit-server-form";
 import Loader from "@/components/loader";
+import { useAuth } from "@/contexts/auth";
 import { Category, Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useTranslations } from "next-intl";
@@ -13,6 +15,7 @@ import useSWR from "swr";
 const ServerEditPage = () => {
   const t = useTranslations("Servers");
   const { serverId } = useParams();
+  const { user } = useAuth();
 
   const { data: server, isLoading, mutate } = useSWR<{ server: Server; stats: ServerStat[]; categories: Category[] }>(
     `${getBaseUrl()}/servers/${serverId}`,
@@ -54,6 +57,8 @@ const ServerEditPage = () => {
           <EditServerForm server={server.server} serverCategories={server.categories} updateServer={mutate} />
         </div>
       </section>
+
+      {user?.role === "admin" && <ServerBoostVerdict server={server.server} onSaved={mutate} />}
     </DashboardLayout>
   );
 };

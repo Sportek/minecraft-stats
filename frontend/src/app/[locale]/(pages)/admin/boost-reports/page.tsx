@@ -3,15 +3,12 @@
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
-import ManualBoostReview, {
-  BoostStatusBadge,
-  type BoostVerdictTarget,
-} from "@/components/admin/manual-boost-review";
+import BoostStatusBadge from "@/components/admin/boost-status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
-import { getBoostReports, reviewBoostReport } from "@/http/server";
+import { useBoostVerdict } from "@/hooks/use-boost-verdict";
+import { getBoostReports } from "@/http/server";
 import { Link } from "@/i18n/navigation";
 import type { AdminBoostReport, BoostStatus } from "@/types/server";
 import { Check, HelpCircle, Loader2, ShieldAlert, X } from "lucide-react";
@@ -49,12 +46,11 @@ const AdminBoostReportsPage = () => {
   const { user, getToken } = useAuth();
   const t = useTranslations("Admin.boostReports");
   const format = useFormatter();
-  const { toast } = useToast();
+  const { submitVerdict, actingId } = useBoostVerdict();
   const token = getToken();
 
   const [reports, setReports] = useState<AdminBoostReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [actingId, setActingId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -75,43 +71,15 @@ const AdminBoostReportsPage = () => {
     );
   }
 
-  /**
-   * Partagé par la file et par le verdict manuel : même confirmation, même note, même
-   * endpoint. Renvoie `false` si l'admin a annulé ou si l'appel a échoué.
-   */
-  const submitVerdict = async (
-    target: BoostVerdictTarget,
-    verdict: BoostStatus
-  ): Promise<boolean> => {
-    if (!token) return false;
-    if (verdict === "boosting" && !confirm(t("confirmBoosting", { server: target.name }))) {
-      return false;
-    }
-    const note = prompt(t("notePrompt")) ?? undefined;
-
-    setActingId(target.id);
-    try {
-      await reviewBoostReport(target.id, verdict, token, note);
-      setReports((current) =>
-        current.map((r) =>
-          r.serverId === target.id ? { ...r, server: { ...r.server, boostStatus: verdict } } : r
-        )
-      );
-      toast({ variant: "success", description: t("saved") });
-      return true;
-    } catch (error) {
-      toast({
-        variant: "error",
-        description: error instanceof Error ? error.message : t("error"),
-      });
-      return false;
-    } finally {
-      setActingId(null);
-    }
+  const handleVerdict = async (report: AdminBoostReport, verdict: BoostStatus) => {
+    const saved = await submitVerdict({ id: report.serverId, name: report.server.name }, verdict);
+    if (!saved) return;
+    setReports((current) =>
+      current.map((r) =>
+        r.serverId === report.serverId ? { ...r, server: { ...r.server, boostStatus: verdict } } : r
+      )
+    );
   };
-
-  const handleVerdict = (report: AdminBoostReport, verdict: BoostStatus) =>
-    submitVerdict({ id: report.serverId, name: report.server.name }, verdict);
 
   const pendingCount = reports.filter((r) => r.server.boostStatus === null).length;
 
@@ -122,10 +90,6 @@ const AdminBoostReportsPage = () => {
         subtitle={t("subtitle")}
         badge={t("queueBadge", { count: pendingCount })}
       />
-
-      {token && (
-        <ManualBoostReview token={token} actingId={actingId} onVerdict={submitVerdict} />
-      )}
 
       <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         {loading ? (
