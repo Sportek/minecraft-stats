@@ -215,3 +215,17 @@ export const reviewBoostReport = (
     token,
     body: { verdict, note },
   });
+
+/**
+ * Recherche d'un serveur hors de la file de revue, pour lui appliquer un verdict à la
+ * main. `nocache=1` (honoré pour un admin) : après un verdict, la recherche suivante
+ * doit refléter le nouveau statut plutôt qu'une page mise en cache.
+ */
+export const searchServersForBoostReview = async (search: string, token: string) => {
+  const params = new URLSearchParams({ search, limit: "8", nocache: "1" });
+  const { data } = await apiFetch<{ data: { server: Server }[] }>(
+    `/servers/paginate?${params}`,
+    { token }
+  );
+  return data.map((row) => row.server);
+};

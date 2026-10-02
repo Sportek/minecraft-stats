@@ -432,6 +432,13 @@
       "flatness": "Abnormally low variation",
       "granularity": "Value granularity",
       "slotsGlued": "Slots pinned to the count"
+    },
+    "manual": {
+      "title": "Manual verdict",
+      "description": "A server is cheating but isn't in the queue? Search for it to apply a verdict directly.",
+      "searchPlaceholder": "Server name or address…",
+      "searching": "Searching…",
+      "noResults": "No server found."
     }
   }
 }

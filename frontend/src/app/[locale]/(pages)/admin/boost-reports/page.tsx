@@ -3,6 +3,10 @@
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
+import ManualBoostReview, {
+  BoostStatusBadge,
+  type BoostVerdictTarget,
+} from "@/components/admin/manual-boost-review";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -71,36 +75,43 @@ const AdminBoostReportsPage = () => {
     );
   }
 
-  const handleVerdict = async (report: AdminBoostReport, verdict: BoostStatus) => {
-    if (!token) return;
-    if (
-      verdict === "boosting" &&
-      !confirm(t("confirmBoosting", { server: report.server.name }))
-    ) {
-      return;
+  /**
+   * Partagé par la file et par le verdict manuel : même confirmation, même note, même
+   * endpoint. Renvoie `false` si l'admin a annulé ou si l'appel a échoué.
+   */
+  const submitVerdict = async (
+    target: BoostVerdictTarget,
+    verdict: BoostStatus
+  ): Promise<boolean> => {
+    if (!token) return false;
+    if (verdict === "boosting" && !confirm(t("confirmBoosting", { server: target.name }))) {
+      return false;
     }
     const note = prompt(t("notePrompt")) ?? undefined;
 
-    setActingId(report.serverId);
+    setActingId(target.id);
     try {
-      await reviewBoostReport(report.serverId, verdict, token, note);
+      await reviewBoostReport(target.id, verdict, token, note);
       setReports((current) =>
         current.map((r) =>
-          r.serverId === report.serverId
-            ? { ...r, server: { ...r.server, boostStatus: verdict } }
-            : r
+          r.serverId === target.id ? { ...r, server: { ...r.server, boostStatus: verdict } } : r
         )
       );
       toast({ variant: "success", description: t("saved") });
+      return true;
     } catch (error) {
       toast({
         variant: "error",
         description: error instanceof Error ? error.message : t("error"),
       });
+      return false;
     } finally {
       setActingId(null);
     }
   };
+
+  const handleVerdict = (report: AdminBoostReport, verdict: BoostStatus) =>
+    submitVerdict({ id: report.serverId, name: report.server.name }, verdict);
 
   const pendingCount = reports.filter((r) => r.server.boostStatus === null).length;
 
@@ -111,6 +122,10 @@ const AdminBoostReportsPage = () => {
         subtitle={t("subtitle")}
         badge={t("queueBadge", { count: pendingCount })}
       />
+
+      {token && (
+        <ManualBoostReview token={token} actingId={actingId} onVerdict={submitVerdict} />
+      )}
 
       <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">
         {loading ? (
@@ -137,17 +152,7 @@ const AdminBoostReportsPage = () => {
                     </Link>
                     <Badge variant="secondary">{report.server.address}</Badge>
                     {report.server.boostStatus && (
-                      <Badge
-                        variant={report.server.boostStatus === "boosting" ? "destructive" : "outline"}
-                      >
-                        {t(
-                          report.server.boostStatus === "boosting"
-                            ? "statusBoosting"
-                            : report.server.boostStatus === "clean"
-                              ? "statusClean"
-                              : "statusInconclusive"
-                        )}
-                      </Badge>
+                      <BoostStatusBadge status={report.server.boostStatus} />
                     )}
                   </div>
                   <div className="flex items-center gap-2">

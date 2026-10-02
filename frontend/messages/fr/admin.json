@@ -432,6 +432,13 @@
       "flatness": "Variation anormalement faible",
       "granularity": "Granularité des valeurs",
       "slotsGlued": "Slots calés sur le compte"
+    },
+    "manual": {
+      "title": "Verdict manuel",
+      "description": "Un serveur triche mais n'apparaît pas dans la file ? Recherchez-le pour lui appliquer un verdict directement.",
+      "searchPlaceholder": "Nom ou adresse du serveur…",
+      "searching": "Recherche…",
+      "noResults": "Aucun serveur trouvé."
     }
   }
 }

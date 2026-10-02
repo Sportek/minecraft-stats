@@ -432,6 +432,13 @@
       "flatness": "Variación anormalmente baja",
       "granularity": "Granularidad de valores",
       "slotsGlued": "Slots pegados al conteo"
+    },
+    "manual": {
+      "title": "Veredicto manual",
+      "description": "¿Un servidor hace trampa pero no aparece en la cola? Búscalo para aplicarle un veredicto directamente.",
+      "searchPlaceholder": "Nombre o dirección del servidor…",
+      "searching": "Buscando…",
+      "noResults": "No se encontró ningún servidor."
     }
   }
 }
