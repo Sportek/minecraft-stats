@@ -3,11 +3,12 @@
 import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import { AdminLoadingState, AdminMessageState } from "@/components/admin/admin-states";
+import BoostStatusBadge from "@/components/admin/boost-status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
-import { getBoostReports, reviewBoostReport } from "@/http/server";
+import { useBoostVerdict } from "@/hooks/use-boost-verdict";
+import { getBoostReports } from "@/http/server";
 import { Link } from "@/i18n/navigation";
 import type { AdminBoostReport, BoostStatus } from "@/types/server";
 import { Check, HelpCircle, Loader2, ShieldAlert, X } from "lucide-react";
@@ -45,12 +46,11 @@ const AdminBoostReportsPage = () => {
   const { user, getToken } = useAuth();
   const t = useTranslations("Admin.boostReports");
   const format = useFormatter();
-  const { toast } = useToast();
+  const { submitVerdict, actingId } = useBoostVerdict();
   const token = getToken();
 
   const [reports, setReports] = useState<AdminBoostReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [actingId, setActingId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -72,34 +72,13 @@ const AdminBoostReportsPage = () => {
   }
 
   const handleVerdict = async (report: AdminBoostReport, verdict: BoostStatus) => {
-    if (!token) return;
-    if (
-      verdict === "boosting" &&
-      !confirm(t("confirmBoosting", { server: report.server.name }))
-    ) {
-      return;
-    }
-    const note = prompt(t("notePrompt")) ?? undefined;
-
-    setActingId(report.serverId);
-    try {
-      await reviewBoostReport(report.serverId, verdict, token, note);
-      setReports((current) =>
-        current.map((r) =>
-          r.serverId === report.serverId
-            ? { ...r, server: { ...r.server, boostStatus: verdict } }
-            : r
-        )
-      );
-      toast({ variant: "success", description: t("saved") });
-    } catch (error) {
-      toast({
-        variant: "error",
-        description: error instanceof Error ? error.message : t("error"),
-      });
-    } finally {
-      setActingId(null);
-    }
+    const saved = await submitVerdict({ id: report.serverId, name: report.server.name }, verdict);
+    if (!saved) return;
+    setReports((current) =>
+      current.map((r) =>
+        r.serverId === report.serverId ? { ...r, server: { ...r.server, boostStatus: verdict } } : r
+      )
+    );
   };
 
   const pendingCount = reports.filter((r) => r.server.boostStatus === null).length;
@@ -137,17 +116,7 @@ const AdminBoostReportsPage = () => {
                     </Link>
                     <Badge variant="secondary">{report.server.address}</Badge>
                     {report.server.boostStatus && (
-                      <Badge
-                        variant={report.server.boostStatus === "boosting" ? "destructive" : "outline"}
-                      >
-                        {t(
-                          report.server.boostStatus === "boosting"
-                            ? "statusBoosting"
-                            : report.server.boostStatus === "clean"
-                              ? "statusClean"
-                              : "statusInconclusive"
-                        )}
-                      </Badge>
+                      <BoostStatusBadge status={report.server.boostStatus} />
                     )}
                   </div>
                   <div className="flex items-center gap-2">

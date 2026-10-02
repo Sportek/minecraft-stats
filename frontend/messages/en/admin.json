@@ -432,6 +432,12 @@
       "flatness": "Abnormally low variation",
       "granularity": "Value granularity",
       "slotsGlued": "Slots pinned to the count"
+    },
+    "serverVerdict": {
+      "title": "Suspicious player count",
+      "description": "Admin verdict on player-count inflation, even if detection hasn't flagged this server.",
+      "current": "Current verdict:",
+      "none": "None"
     }
   }
 }
