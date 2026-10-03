@@ -100,6 +100,28 @@ test.group('BoostDetectionService — verdict admin', (group) => {
     assert.isNotNull(server.boostReviewedAt)
   })
 
+  test('accepte un verdict manuel sur un serveur que la détection n’a pas scoré', async ({
+    assert,
+  }) => {
+    const server = await makeServer('boost-manual.test')
+    const admin = await User.create({
+      username: `boost-admin-${server.id}`,
+      email: `boost-admin-${server.id}@example.test`,
+      password: 'secret-password',
+      role: 'admin',
+    })
+
+    const review = await BoostDetectionService.review(server, admin, 'boosting')
+
+    // Aucun score : la revue l'enregistre comme un faux négatif de la détection.
+    const stored = await ServerBoostReview.findOrFail(review.id)
+    assert.equal(stored.scoreAtReview, 0)
+    assert.deepEqual(stored.signalsAtReview, [])
+
+    await server.refresh()
+    assert.equal(server.boostStatus, 'boosting')
+  })
+
   test('la file de revue remonte les serveurs les plus suspects', async ({ assert }) => {
     const server = await makeServer('boost-queue.test')
     await Database.table('server_stats').multiInsert(inflatedSeries(server.id, 6))

@@ -432,6 +432,12 @@
       "flatness": "Variation anormalement faible",
       "granularity": "Granularité des valeurs",
       "slotsGlued": "Slots calés sur le compte"
+    },
+    "serverVerdict": {
+      "title": "Connectés suspects",
+      "description": "Verdict admin sur le gonflage du nombre de joueurs, même si la détection n'a pas signalé ce serveur.",
+      "current": "Verdict actuel :",
+      "none": "Aucun"
     }
   }
 }

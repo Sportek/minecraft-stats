@@ -432,6 +432,12 @@
       "flatness": "Variación anormalmente baja",
       "granularity": "Granularidad de valores",
       "slotsGlued": "Slots pegados al conteo"
+    },
+    "serverVerdict": {
+      "title": "Jugadores sospechosos",
+      "description": "Veredicto de administrador sobre la inflación del número de jugadores, aunque la detección no haya señalado este servidor.",
+      "current": "Veredicto actual:",
+      "none": "Ninguno"
     }
   }
 }
