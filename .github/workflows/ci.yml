@@ -76,14 +76,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      # Version épinglée : sur Node 26.7.0, `node ace docs:generate` casse au boot
-      # d'Ace (« Invalid command exported … Invalid URL » — 26.7 déprécie
-      # `module.register()`, utilisé par le loader TS d'AdonisJS). 26.6.0 est la
-      # dernière version saine. Même épinglage dans `backend/Dockerfile`.
+      # Version épinglée, alignée sur `backend/Dockerfile` (voir le commentaire
+      # là-bas sur le patch `jsonschema` requis depuis Node 26.7).
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.6.0'
+          node-version: '26.12.1'
 
       # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer,
       # ce qui fournit le yarn épinglé (packageManager: yarn@4).
@@ -134,14 +132,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      # Version épinglée : sur Node 26.7.0, `node ace docs:generate` casse au boot
-      # d'Ace (« Invalid command exported … Invalid URL » — 26.7 déprécie
-      # `module.register()`, utilisé par le loader TS d'AdonisJS). 26.6.0 est la
-      # dernière version saine. Même épinglage dans `backend/Dockerfile`.
+      # Version épinglée, alignée sur `backend/Dockerfile` (voir le commentaire
+      # là-bas sur le patch `jsonschema` requis depuis Node 26.7).
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.6.0'
+          node-version: '26.12.1'
 
       # node:26 ne fournit plus corepack : on l'installe via npm avant de l'activer,
       # ce qui fournit le yarn épinglé (packageManager: yarn@4).
