@@ -38,6 +38,15 @@ function isPrivateOrReservedIp(host: string): boolean {
 }
 
 /**
+ * Caractères de contrôle, espaces et caractères interdits dans un hôte (WHATWG
+ * « forbidden host code points », hors `:` / `[` / `]` réservés aux IPv6).
+ * Un NUL fait par exemple tronquer le nom par `dns.resolve*` (CVE-2026-105482) :
+ * l'hôte stocké ne serait plus celui réellement interrogé.
+ */
+// eslint-disable-next-line no-control-regex
+const FORBIDDEN_HOST_CHARS = /[\u0000- \u007f-\u009f#%/<>?@\\^|]/
+
+/**
  * Champ "hôte public" : une chaîne qui ne doit pas désigner une IP littérale
  * interne. Bloque le SSRF/scan réseau le plus évident (adresse de serveur
  * pointée sur 127.0.0.1, 169.254.169.254, 10.x, etc.) sans impacter les
@@ -45,7 +54,11 @@ function isPrivateOrReservedIp(host: string): boolean {
  */
 const publicHostRule = vine.createRule((value: unknown, _options: undefined, field) => {
   if (typeof value !== 'string') return
-  if (isPrivateOrReservedIp(value.trim())) {
+  if (FORBIDDEN_HOST_CHARS.test(value) || (value.includes(':') && isIP(value) !== 6)) {
+    field.report('The {{ field }} field must be a valid host name', 'validHost', field)
+    return
+  }
+  if (isPrivateOrReservedIp(value)) {
     field.report(
       'The {{ field }} field must not point to a private or reserved IP address',
       'publicHost',
@@ -54,7 +67,7 @@ const publicHostRule = vine.createRule((value: unknown, _options: undefined, fie
   }
 })
 
-export const publicHostField = () => vine.string().use(publicHostRule())
+export const publicHostField = () => vine.string().trim().use(publicHostRule())
 
 /**
  * Champ epoch milliseconds. Accepte aussi la chaîne littérale `"now"`, convertie
