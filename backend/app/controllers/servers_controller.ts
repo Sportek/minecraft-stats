@@ -25,20 +25,18 @@ export default class ServersController {
     // Endpoint léger : pas de préloads (user/categories/growthStat/languages), pas de stats par serveur.
     // Consommé par le sitemap, le ServerSelect et le compteur "Monitored servers" — tous se contentent du
     // {id, name, updatedAt} de chaque serveur. Forme `[{ server }]` conservée pour compat frontend.
-    const servers = await Server.query()
-      .apply((scopes) => scopes.visible())
-      .select(
-        'id',
-        'name',
-        'address',
-        'port',
-        'type',
-        'image_url',
-        'last_player_count',
-        'last_stats_at',
-        'created_at',
-        'updated_at'
-      )
+    const servers = await Server.query().select(
+      'id',
+      'name',
+      'address',
+      'port',
+      'type',
+      'image_url',
+      'last_player_count',
+      'last_stats_at',
+      'created_at',
+      'updated_at'
+    )
     return servers.map((server) => ({ server }))
   }
 
@@ -58,6 +56,7 @@ export default class ServersController {
     }
 
     const servers = await Server.query()
+      .apply((scopes) => scopes.withHidden())
       .where('user_id', user.id)
       .preload('categories')
       .preload('languages')
@@ -152,7 +151,9 @@ export default class ServersController {
    * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
    */
   async show({ params, response, i18n }: HttpContext) {
+    // withHidden : un serveur masqué répond 410 (page dédiée), pas 404.
     let server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
       .where('id', params.id)
       .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
       .preload('growthStat')
@@ -193,7 +194,10 @@ export default class ServersController {
       'languages',
     ])
     const validatedData = await UpdateServerValidator.validate(data)
-    const server = await Server.findByOrFail('id', params.id)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .firstOrFail()
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
       return response.forbidden({ message: i18n.t('messages.servers.unauthorized') })
     }
@@ -219,7 +223,10 @@ export default class ServersController {
    * @responseBody 404 - {"message": "Server not found"}
    */
   async updateVisibility({ params, request, response, auth, bouncer, i18n }: HttpContext) {
-    const server = await Server.find(params.id)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .first()
     if (!server) {
       return response.notFound({ message: i18n.t('messages.servers.notFound') })
     }
@@ -249,7 +256,10 @@ export default class ServersController {
    * @responseBody 404 - {"message": "Server not found"}
    */
   async destroy({ params, response, bouncer, i18n }: HttpContext) {
-    const server = await Server.find(params.id)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .first()
     if (!server) {
       return response.notFound({ message: i18n.t('messages.servers.notFound') })
     }

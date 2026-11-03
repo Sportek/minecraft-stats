@@ -44,7 +44,6 @@ export default class ServerListingService {
     // Évite qu'un serveur down depuis des jours reste top juste parce qu'il
     // avait 500 joueurs avant de tomber.
     let query = Server.query()
-      .apply((scopes) => scopes.visible())
       .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
       .preload('categories')
       .preload('growthStat')

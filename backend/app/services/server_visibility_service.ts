@@ -30,7 +30,11 @@ export default class ServerVisibilityService {
    * les endpoints publics qui ne chargent pas le modèle (stats, rythme, export).
    */
   static async isHidden(serverId: number): Promise<boolean> {
-    const server = await Server.query().where('id', serverId).select('hidden_at').first()
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', serverId)
+      .select('hidden_at')
+      .first()
     return Boolean(server?.hiddenAt)
   }
 }

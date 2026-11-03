@@ -111,9 +111,7 @@ export default class BoostDetectionService {
    * ~1 000 lignes par serveur.
    */
   static async scanAll(): Promise<{ scored: number; skipped: number }> {
-    const servers = await Server.query()
-      .apply((scopes) => scopes.visible())
-      .select('id')
+    const servers = await Server.query().select('id')
     let scored = 0
     let skipped = 0
 
@@ -459,16 +457,18 @@ export default class BoostDetectionService {
     return ServerBoostScore.query()
       .where('score', '>=', BOOST_WATCH_THRESHOLD)
       .preload('server', (query) =>
-        query.select(
-          'id',
-          'name',
-          'address',
-          'type',
-          'boostStatus',
-          'boostReviewedAt',
-          'lastPlayerCount',
-          'createdAt'
-        )
+        query
+          .apply((scopes) => scopes.withHidden())
+          .select(
+            'id',
+            'name',
+            'address',
+            'type',
+            'boostStatus',
+            'boostReviewedAt',
+            'lastPlayerCount',
+            'createdAt'
+          )
       )
       .orderBy('score', 'desc')
   }

@@ -1,4 +1,5 @@
 import Server from '#models/server'
+import ServerOwnershipClaim from '#models/server_ownership_claim'
 import User from '#models/user'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
 import ServerRegistrationService from '#services/server_registration_service'
@@ -264,7 +265,84 @@ test.group('Server visibility — ré-ajout bloqué', (group) => {
     assert.notProperty(response.body(), 'matchedSignals')
     assert.notInclude(JSON.stringify(response.body()), hidden.name)
 
-    const copies = await Server.query().where('address', address)
+    const copies = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('address', address)
     assert.lengthOf(copies, 1)
+  })
+})
+
+test.group('Server visibility — masqués exclus par défaut (modèle)', (group) => {
+  group.each.setup(() => testUtils.db().withGlobalTransaction())
+
+  test('find, query et first ignorent un serveur masqué', async ({ assert }) => {
+    const hidden = await createServer({ hiddenAt: DateTime.now() })
+
+    assert.isNull(await Server.find(hidden.id))
+    assert.isNull(await Server.query().where('id', hidden.id).first())
+    assert.lengthOf(await Server.query().where('id', hidden.id), 0)
+  })
+
+  test('withHidden les inclut explicitement', async ({ assert }) => {
+    const hidden = await createServer({ hiddenAt: DateTime.now() })
+
+    const found = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', hidden.id)
+      .first()
+    assert.equal(found?.id, hidden.id)
+  })
+
+  test('les comptages et le total de pagination les excluent', async ({ assert }) => {
+    const name = `Count ${uid()}`
+    await createServer({ name })
+    await createServer({ name, hiddenAt: DateTime.now() })
+
+    const [count] = await Server.query().where('name', name).count('* as total')
+    assert.equal(Number(count.$extras.total), 1)
+
+    const page = await Server.query().where('name', name).paginate(1, 10)
+    assert.equal(page.total, 1)
+    assert.lengthOf(page.all(), 1)
+
+    const pageWithHidden = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('name', name)
+      .paginate(1, 10)
+    assert.equal(pageWithHidden.total, 2)
+  })
+
+  test('un preload de relation les exclut aussi, sauf opt-in', async ({ assert }) => {
+    const owner = await createUser()
+    const hidden = await createVerifiedServer(owner, { hiddenAt: DateTime.now() })
+    const claim = await ServerOwnershipClaim.create({
+      serverId: hidden.id,
+      userId: owner.id,
+      method: 'manual',
+      status: 'pending',
+    })
+
+    const withoutOptIn = await ServerOwnershipClaim.query()
+      .where('id', claim.id)
+      .preload('server')
+      .firstOrFail()
+    assert.isNull(withoutOptIn.server)
+
+    const withOptIn = await ServerOwnershipClaim.query()
+      .where('id', claim.id)
+      .preload('server', (query) => query.apply((scopes) => scopes.withHidden()))
+      .firstOrFail()
+    assert.equal(withOptIn.server.id, hidden.id)
+  })
+
+  test('refresh fonctionne sur une instance masquée', async ({ assert }) => {
+    const server = await createServer({ hiddenAt: DateTime.now() })
+    await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', server.id)
+      .update({ name: 'Renamed' })
+
+    await server.refresh()
+    assert.equal(server.name, 'Renamed')
   })
 })

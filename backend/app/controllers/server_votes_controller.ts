@@ -24,10 +24,7 @@ export default class ServerVotesController {
    * @responseBody 422 - {"errors": [{"message": "The username field format is invalid", "field": "username", "rule": "regex"}]}
    */
   async store({ params, request, response, auth, i18n }: HttpContext) {
-    const server = await Server.query()
-      .apply((scopes) => scopes.visible())
-      .where('id', params.serverId)
-      .first()
+    const server = await Server.query().where('id', params.serverId).first()
     if (!server) {
       return response.notFound({ message: i18n.t('messages.servers.notFound') })
     }
@@ -109,7 +106,6 @@ export default class ServerVotesController {
    */
   async status({ params, request, response, i18n }: HttpContext) {
     const server = await Server.query()
-      .apply((scopes) => scopes.visible())
       .where('id', params.serverId)
       .select('id', 'voteCount')
       .first()
