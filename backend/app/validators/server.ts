@@ -46,3 +46,10 @@ export const UpdateServerValidator = vine.compile(
     languages: vine.array(vine.enum(Object.values(LanguageCode))).optional(),
   })
 )
+
+/** Masquage / démasquage d'un serveur par son propriétaire vérifié. */
+export const UpdateServerVisibilityValidator = vine.compile(
+  vine.object({
+    hidden: vine.boolean(),
+  })
+)

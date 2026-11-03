@@ -3,7 +3,9 @@
     "title": "{name} - Estadísticas y análisis del servidor de Minecraft",
     "description": "Sigue {name}, un servidor de Minecraft {categories} con {playerCount} jugadores en línea. Estadísticas en tiempo real, gráficos del número de jugadores y tendencias de crecimiento. Idiomas: {languages}.",
     "notFoundTitle": "Servidor no encontrado - Estadísticas de servidores de Minecraft",
-    "notFoundDescription": "No se pudo encontrar el servidor de Minecraft solicitado. Explora otros servidores de Minecraft y sus estadísticas."
+    "notFoundDescription": "No se pudo encontrar el servidor de Minecraft solicitado. Explora otros servidores de Minecraft y sus estadísticas.",
+    "hiddenTitle": "Servidor no listado - Estadísticas de servidores de Minecraft",
+    "hiddenDescription": "El propietario de este servidor ha decidido no hacerlo visible en Minecraft Stats."
   },
   "card": {
     "edit": "Editar servidor",
@@ -62,6 +64,10 @@
       "genericTitle": "No se pudo cargar el servidor",
       "genericDescription": "Se produjo un error al cargar los datos del servidor. Vuelve a intentarlo en un momento.",
       "retry": "Reintentar"
+    },
+    "hidden": {
+      "title": "Servidor no listado",
+      "description": "El propietario de este servidor ha decidido no hacerlo visible en Minecraft Stats."
     }
   },
   "faq": {

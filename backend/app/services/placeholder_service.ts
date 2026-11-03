@@ -121,7 +121,10 @@ export default class PlaceholderService {
       return serversData
     }
 
-    const servers = await Server.query().whereIn('id', allIds)
+    // Un serveur masqué est traité comme inexistant : ses jetons ne se résolvent plus.
+    const servers = await Server.query()
+      .apply((scopes) => scopes.visible())
+      .whereIn('id', allIds)
     for (const server of servers) {
       serversData.set(server.id, { exists: true, server })
     }

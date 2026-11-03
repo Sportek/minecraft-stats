@@ -111,7 +111,9 @@ export default class BoostDetectionService {
    * ~1 000 lignes par serveur.
    */
   static async scanAll(): Promise<{ scored: number; skipped: number }> {
-    const servers = await Server.query().select('id')
+    const servers = await Server.query()
+      .apply((scopes) => scopes.visible())
+      .select('id')
     let scored = 0
     let skipped = 0
 

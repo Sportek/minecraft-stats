@@ -16,7 +16,10 @@ export default class ServerCategoriesController {
    */
   async index({ request, response }: HttpContext) {
     const { serverId } = request.params()
-    const server = await Server.findOrFail(serverId)
+    const server = await Server.query()
+      .apply((scopes) => scopes.visible())
+      .where('id', serverId)
+      .firstOrFail()
     await server.load('categories')
     return response.ok(server.categories)
   }

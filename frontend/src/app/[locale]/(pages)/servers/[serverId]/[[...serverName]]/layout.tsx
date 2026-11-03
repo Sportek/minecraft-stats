@@ -101,19 +101,22 @@ export const generateMetadata = async (props: {
     };
   } catch (error) {
     console.error("Erreur", error);
-    // Seul un vrai 404 doit figer le titre « introuvable » + noindex dans le
-    // cache ISR (revalidate 600). Sur une erreur transitoire (429, 5xx,
-    // timeout), on hérite des metadata parentes pour ne pas désindexer un
-    // serveur valide pendant 10 minutes.
-    if (!(error instanceof HttpError && error.status === 404)) {
+    // Seul un vrai 404 (ou un 410 : serveur masqué par son propriétaire) doit
+    // figer le titre dédié + noindex dans le cache ISR (revalidate 600). Sur une
+    // erreur transitoire (429, 5xx, timeout), on hérite des metadata parentes
+    // pour ne pas désindexer un serveur valide pendant 10 minutes.
+    const status = error instanceof HttpError ? error.status : null;
+    if (status !== 404 && status !== 410) {
       return {};
     }
+    const title = status === 410 ? t("meta.hiddenTitle") : t("meta.notFoundTitle");
+    const description = status === 410 ? t("meta.hiddenDescription") : t("meta.notFoundDescription");
     return {
-      title: t("meta.notFoundTitle"),
-      description: t("meta.notFoundDescription"),
+      title,
+      description,
       openGraph: {
-        title: t("meta.notFoundTitle"),
-        description: t("meta.notFoundDescription"),
+        title,
+        description,
         type: "website",
         siteName: "Minecraft Stats",
       },

@@ -63,6 +63,10 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
   real frozen series in `tests/unit/boost_detection_service.spec.ts` — recalibrate there. Admin
   verdicts land in `server_boost_reviews` and set `servers.boost_status`, which drives the public
   badge and demotes the server in player-count rankings.
+- **Hidden servers**: a verified owner (or admin) can hide a server (`servers.hidden_at`, `PATCH
+  servers/:id/visibility`). Hidden = no public surface (410 on page/stats), no ping, but kept for
+  duplicate detection so it can't be re-added. **Every public `Server` query must apply
+  `.apply((scopes) => scopes.visible())`**; internal/admin/owner queries don't.
 - **`Server.syncLanguages()`**: many-to-many language sync with manual transaction control for atomicity.
 - **Auth**: session-based (DB access tokens) + Google/Discord OAuth (Ally) + JWT email verification
   (MJML mail templates); passwords hashed with Argon2.

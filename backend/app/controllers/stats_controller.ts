@@ -1,5 +1,6 @@
 import CacheService from '#services/cache_service'
 import EntitlementsService from '#services/entitlements_service'
+import ServerVisibilityService from '#services/server_visibility_service'
 import StatsService from '#services/stat_service'
 import { DailyRhythmValidator, StatExportValidator, StatValidator } from '#validators/stat'
 import { GlobalStatValidator } from '#validators/global_stat'
@@ -19,6 +20,17 @@ const CSV_COLUMNS = [
 
 export default class StatsController {
   /**
+   * L'historique d'un serveur masqué n'est plus public. Vérifié avant le cache : une
+   * entrée encore chaude ne doit pas continuer à servir ses stats après le masquage.
+   * Renvoie `true` quand la réponse 410 a été écrite (l'appelant doit s'arrêter là).
+   */
+  private async rejectIfHidden({ response, i18n }: HttpContext, serverId: number) {
+    if (!(await ServerVisibilityService.isHidden(serverId))) return false
+    response.gone({ message: i18n.t('messages.servers.hidden'), hidden: true })
+    return true
+  }
+
+  /**
    * @index
    * @operationId getServerStats
    * @tag STATS
@@ -31,6 +43,7 @@ export default class StatsController {
    * @paramQuery interval - Bucket size for aggregation. When provided, stats are grouped per bucket. Allowed values: `30 minutes`, `1 hour`, `2 hours`, `6 hours`, `1 day`, `1 week` (URL-encode the space, e.g. `interval=1%20hour`). A range/interval pair producing more buckets than your tier allows is rejected. - @type(string) @example(1 hour)
    * @responseBody 200 - [{"serverId": 134, "createdAt": "2026-05-28T12:00:00.000Z", "playerCount": 1250, "peakPlayerCount": 1840, "minPlayerCount": 910, "maxCount": 2000}]
    * @responseBody 400 - {"errors": [{"message": "This range would produce 26280 points (limit is 1500) — request a wider interval", "code": "E_TIER_LIMIT"}], "limit": "statBuckets", "allowed": 1500, "requested": 26280, "tier": "guest", "unlockedBy": "login"}
+   * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
    * @responseBody 500 - {"error": "Internal server error"}
    */
   async index(ctx: HttpContext) {
@@ -40,6 +53,7 @@ export default class StatsController {
       ...request.params(),
       ...request.qs(),
     })
+    if (await this.rejectIfHidden(ctx, validatedData.server_id)) return
 
     // Cas exactTime non cacheable (point-in-time, rarement réutilisé).
     if (validatedData.exactTime) {
@@ -82,6 +96,7 @@ export default class StatsController {
    * @paramQuery format - Output format, `csv` (default) or `json`. - @type(string) @example(csv)
    * @responseBody 200 - createdAt,playerCount,peakPlayerCount,minPlayerCount,maxCount
    * @responseBody 400 - {"errors": [{"message": "Exporting stats requires an account", "code": "E_TIER_LIMIT"}], "limit": "statsExport", "allowed": 0, "requested": 1, "tier": "guest", "unlockedBy": "login"}
+   * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
    */
   async export(ctx: HttpContext) {
     const { request, response } = ctx
@@ -97,6 +112,7 @@ export default class StatsController {
       ...request.params(),
       ...request.qs(),
     })
+    if (await this.rejectIfHidden(ctx, query.server_id)) return
 
     // Même garde-fou que l'affichage, avec le plafond d'export : un fichier peut
     // porter dix fois ce qu'un graphique sait montrer.
@@ -147,6 +163,7 @@ export default class StatsController {
       ...request.params(),
       ...request.qs(),
     })
+    if (await this.rejectIfHidden(ctx, validatedData.server_id)) return
 
     EntitlementsService.assertWithinLimit({
       limit: 'rhythmDays',
@@ -181,6 +198,7 @@ export default class StatsController {
    * @paramQuery languageId - Restrict aggregation to servers in this language. - @type(number) @example(1)
    * @responseBody 200 - [{"createdAt": "2026-05-28T12:00:00.000Z", "playerCount": 48230, "peakPlayerCount": 71400, "minPlayerCount": 29800, "maxCount": 120000}]
    * @responseBody 400 - {"errors": [{"message": "This range would produce 26280 points (limit is 1500) — request a wider interval", "code": "E_TIER_LIMIT"}], "limit": "statBuckets", "allowed": 1500, "requested": 26280, "tier": "guest", "unlockedBy": "login"}
+   * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
    * @responseBody 500 - {"error": "Internal server error"}
    */
   async globalStats(ctx: HttpContext) {

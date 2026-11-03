@@ -30,8 +30,13 @@ export default class WebsiteStatsController {
         Database.rawQuery(
           `SELECT reltuples::bigint AS total FROM pg_class WHERE oid = 'server_stats'::regclass`
         ),
-        Server.query().count('* as total'),
-        Server.query().where('last_stats_at', '>=', onlineSince!).sum('last_player_count as total'),
+        Server.query()
+          .apply((scopes) => scopes.visible())
+          .count('* as total'),
+        Server.query()
+          .apply((scopes) => scopes.visible())
+          .where('last_stats_at', '>=', onlineSince!)
+          .sum('last_player_count as total'),
       ])
 
       // reltuples vaut -1 tant qu'aucun ANALYZE n'a tourné (table fraîche) : on

@@ -85,7 +85,21 @@
     "remove": "Eliminar servidor",
     "verifiedBadge": "Verificado",
     "verify": "Verificar la propiedad",
-    "verifyTitle": "Verificar la propiedad de este servidor"
+    "verifyTitle": "Verificar la propiedad de este servidor",
+    "hiddenBadge": "Oculto",
+    "hide": "Ocultar servidor",
+    "hideTitle": "Ocultar del sitio",
+    "unhide": "Hacer visible el servidor",
+    "unhideTitle": "Hacer visible en el sitio",
+    "hideDialogTitle": "¿Ocultar este servidor?",
+    "hideDialogDescription": "<b>{name}</b> dejará de aparecer en Minecraft Stats: clasificaciones, ficha, estadísticas y votos. Su seguimiento se detiene y nadie podrá volver a añadirlo. Puedes hacerlo visible de nuevo en cualquier momento desde esta página.",
+    "hiding": "Ocultando…",
+    "hideConfirm": "Ocultar servidor",
+    "hiddenToastTitle": "Servidor oculto",
+    "hiddenToastDescription": "{name} ya no es visible en Minecraft Stats.",
+    "shownToastTitle": "Servidor visible",
+    "shownToastDescription": "{name} vuelve a ser visible; el seguimiento se reanuda.",
+    "visibilityErrorTitle": "No se pudo cambiar la visibilidad"
   },
   "signInMethods": {
     "title": "Métodos de inicio de sesión",

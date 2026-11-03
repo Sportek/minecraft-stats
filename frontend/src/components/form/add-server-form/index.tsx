@@ -111,7 +111,16 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
       // Bascule sur l'invite de vérification de propriété plutôt que de rester sur le formulaire.
       setCreatedServer(server);
     } catch (error) {
-      if (error instanceof DuplicateServerError) {
+      if (error instanceof DuplicateServerError && error.hidden) {
+        // Serveur masqué par son propriétaire : refus sans lien ni nom.
+        toast({
+          title: t("addServer.duplicateTitle"),
+          description: t("addServer.duplicateHiddenDescription"),
+          variant: "error",
+        });
+        return;
+      }
+      if (error instanceof DuplicateServerError && error.existingServer) {
         const safeServerId = encodeURIComponent(String(error.existingServer.id));
         toast({
           title: t("addServer.duplicateTitle"),

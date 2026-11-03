@@ -6,6 +6,7 @@ import {
   hasMany,
   hasOne,
   manyToMany,
+  scope,
 } from '@adonisjs/lucid/orm'
 import * as relations from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
@@ -151,6 +152,11 @@ export default class Server extends BaseModel {
   @column.dateTime({ columnName: 'next_ping_at' })
   declare nextPingAt: DateTime | null
 
+  // Masqué à la demande du propriétaire vérifié : absent des surfaces publiques et
+  // plus pingué, mais conservé pour bloquer un nouvel ajout (cf. migration hidden_at).
+  @column.dateTime({ columnName: 'hidden_at' })
+  declare hiddenAt: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -177,6 +183,15 @@ export default class Server extends BaseModel {
       server.hostDomain = deriveServerWebsite(server.address)
     }
   }
+
+  /**
+   * Restreint une requête aux serveurs visibles publiquement. À appliquer à toute
+   * lecture publique : `Server.query().apply((scopes) => scopes.visible())`.
+   * Qualifié par la table pour rester valable dans les requêtes avec jointure.
+   */
+  static visible = scope((query) => {
+    query.whereNull('servers.hidden_at')
+  })
 
   /**
    * Résout des noms de catégories en ids existants (les inconnus sont ignorés).
