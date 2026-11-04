@@ -191,14 +191,26 @@ test.group('Daily rhythm', (group) => {
     assert.equal(evening?.playerCount, 500)
     assert.equal(evening?.peakPlayerCount, 1000)
     assert.equal(evening?.minuteOfDay, 1260)
-    assert.equal(evening?.daysCount, 40)
+
+    // Attendu recompté depuis la donnée semée, pas codé en dur à 40 : la fenêtre fait
+    // 40 × 24 h réelles, et si elle enjambe un changement d'heure, un jour local y
+    // dure 23 ou 25 h — une heure locale y apparaît alors 39 ou 41 jours. Le test
+    // échouait ainsi pendant les 40 jours suivant chaque changement d'heure.
+    const windowStart = DateTime.fromISO(rhythm.from).toMillis()
+    const windowEnd = DateTime.fromISO(rhythm.to).toMillis()
+    const daysPerLocalHour = Array.from({ length: 24 }, () => new Set<string>())
+    for (let hour = 0; hour < 41 * 24; hour++) {
+      const at = endsAt.minus({ hours: hour })
+      if (at.toMillis() < windowStart || at.toMillis() >= windowEnd) continue
+      daysPerLocalHour[at.hour].add(at.toISODate()!)
+    }
 
     // Toutes les heures locales, pas seulement celle du soir : c'est l'invariant qui
     // lâche si la donnée cesse de déborder de la fenêtre, quelle que soit l'heure à
     // laquelle la suite tourne.
     assert.deepEqual(
       rhythm.series.all.map((slot) => slot.daysCount),
-      Array.from({ length: 24 }, () => 40)
+      daysPerLocalHour.map((days) => days.size)
     )
   })
 
