@@ -196,8 +196,8 @@ test.group('Daily rhythm', (group) => {
     // 40 × 24 h réelles, et si elle enjambe un changement d'heure, un jour local y
     // dure 23 ou 25 h — une heure locale y apparaît alors 39 ou 41 jours. Le test
     // échouait ainsi pendant les 40 jours suivant chaque changement d'heure.
-    const windowStart = DateTime.fromISO(rhythm.from).toMillis()
-    const windowEnd = DateTime.fromISO(rhythm.to).toMillis()
+    const windowStart = DateTime.fromISO(rhythm.from!).toMillis()
+    const windowEnd = DateTime.fromISO(rhythm.to!).toMillis()
     const daysPerLocalHour = Array.from({ length: 24 }, () => new Set<string>())
     for (let hour = 0; hour < 41 * 24; hour++) {
       const at = endsAt.minus({ hours: hour })
