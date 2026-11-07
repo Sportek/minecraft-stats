@@ -196,6 +196,7 @@ export default class UsersController {
     }
 
     const servers = await Server.query()
+      .apply((scopes) => scopes.withHidden())
       .where('user_id', user.id)
       .preload('languages')
       .orderBy('created_at', 'desc')

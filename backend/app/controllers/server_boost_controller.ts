@@ -30,7 +30,10 @@ export default class ServerBoostController {
    */
   async review(ctx: HttpContext) {
     const { params, request, auth, response, i18n } = ctx
-    const server = await Server.find(params.id)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .first()
     if (!server) return response.notFound({ message: i18n.t('messages.serverBoost.notFound') })
 
     const { verdict, note } = await ReviewBoostValidator.validate(request.only(['verdict', 'note']))

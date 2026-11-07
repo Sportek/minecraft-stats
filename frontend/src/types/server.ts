@@ -38,6 +38,9 @@ export interface Server {
   // Verdict admin sur le gonflage des connectés. null = jamais revu.
   boostStatus: BoostStatus | null;
   boostReviewedAt: Date | null;
+  // Masqué par son propriétaire vérifié : absent du site public et plus suivi.
+  // Visible seulement dans le tableau de bord du propriétaire.
+  hiddenAt: Date | null;
 }
 
 /** Verdict d'un admin sur un serveur suspecté de gonfler ses connectés. */

@@ -653,6 +653,7 @@ export class ServerSchema extends BaseModel {
     'categoryId',
     'createdAt',
     'faviconHash',
+    'hiddenAt',
     'hostDomain',
     'id',
     'imageUrl',
@@ -690,6 +691,8 @@ export class ServerSchema extends BaseModel {
   declare createdAt: DateTime | null
   @column()
   declare faviconHash: string | null
+  @column.dateTime()
+  declare hiddenAt: DateTime | null
   @column()
   declare hostDomain: string | null
   @column({ isPrimary: true })

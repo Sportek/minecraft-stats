@@ -16,7 +16,7 @@ export default class ServerCategoriesController {
    */
   async index({ request, response }: HttpContext) {
     const { serverId } = request.params()
-    const server = await Server.findOrFail(serverId)
+    const server = await Server.query().where('id', serverId).firstOrFail()
     await server.load('categories')
     return response.ok(server.categories)
   }
@@ -35,7 +35,10 @@ export default class ServerCategoriesController {
    */
   async store({ request, response, bouncer, i18n }: HttpContext) {
     const { serverId, categoryId } = await request.validateUsing(attachServerCategoryValidator)
-    const server = await Server.findOrFail(serverId)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', serverId)
+      .firstOrFail()
     if (await bouncer.with(ServerCategoryPolicy).denies('update', server)) {
       return response.forbidden({ message: i18n.t('messages.serverCategories.unauthorized') })
     }
@@ -58,7 +61,10 @@ export default class ServerCategoriesController {
    */
   async destroy({ request, response, bouncer, i18n }: HttpContext) {
     const { serverId, categoryId } = await request.validateUsing(attachServerCategoryValidator)
-    const server = await Server.findOrFail(serverId)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', serverId)
+      .firstOrFail()
     if (await bouncer.with(ServerCategoryPolicy).denies('destroy', server)) {
       return response.forbidden({ message: i18n.t('messages.serverCategories.unauthorized') })
     }

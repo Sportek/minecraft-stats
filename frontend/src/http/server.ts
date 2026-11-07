@@ -36,15 +36,19 @@ export interface DuplicateServerInfo {
 /**
  * Levée quand le backend répond 409 lors de la création : le serveur est
  * détecté comme déjà référencé (cf. DuplicateDetectionService côté backend).
- * Porte le serveur existant pour permettre à l'UI d'y renvoyer l'utilisateur.
+ * Porte le serveur existant pour permettre à l'UI d'y renvoyer l'utilisateur —
+ * sauf s'il a été masqué par son propriétaire : `existingServer` vaut alors null
+ * (le backend ne révèle pas lequel) et `hidden` est vrai.
  */
 export class DuplicateServerError extends Error {
-  readonly existingServer: DuplicateServerInfo;
+  readonly existingServer: DuplicateServerInfo | null;
+  readonly hidden: boolean;
 
-  constructor(message: string, existingServer: DuplicateServerInfo) {
+  constructor(message: string, existingServer: DuplicateServerInfo | null, hidden = false) {
     super(message);
     this.name = "DuplicateServerError";
     this.existingServer = existingServer;
+    this.hidden = hidden;
   }
 }
 
@@ -54,10 +58,13 @@ export const addMinecraftServer = async (data: ServerPayload, token: string) => 
   } catch (err) {
     // Conflit 409 = doublon : on remonte l'info du serveur existant à l'UI.
     if (err instanceof ApiError && err.status === 409) {
-      const body = err.body as { message?: string; existingServer?: DuplicateServerInfo } | undefined;
+      const body = err.body as
+        | { message?: string; existingServer?: DuplicateServerInfo; hidden?: boolean }
+        | undefined;
       throw new DuplicateServerError(
         body?.message ?? "This server is already listed.",
-        body?.existingServer ?? { id: 0, name: "" }
+        body?.existingServer ?? null,
+        body?.hidden === true
       );
     }
     throw err;
@@ -132,6 +139,13 @@ export const deleteServer = async (serverId: number, token: string) => {
 
 export const editServer = (serverId: number, data: ServerPayload, token: string) =>
   apiFetch<Server>(`/servers/${serverId}`, { method: "PUT", token, body: data });
+
+/**
+ * Masque (`hidden: true`) ou rend visible un serveur. Réservé au propriétaire
+ * vérifié (ou à un admin) : un propriétaire non vérifié reçoit un 403.
+ */
+export const setServerVisibility = (serverId: number, hidden: boolean, token: string) =>
+  apiFetch<Server>(`/servers/${serverId}/visibility`, { method: "PATCH", token, body: { hidden } });
 
 /* -------------------------------------------------------------------------- */
 /*  Réclamation de propriété d'un serveur                                      */

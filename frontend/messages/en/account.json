@@ -85,7 +85,21 @@
     "remove": "Remove server",
     "verifiedBadge": "Verified",
     "verify": "Verify ownership",
-    "verifyTitle": "Verify ownership of this server"
+    "verifyTitle": "Verify ownership of this server",
+    "hiddenBadge": "Hidden",
+    "hide": "Hide server",
+    "hideTitle": "Hide from the site",
+    "unhide": "Make server visible",
+    "unhideTitle": "Make visible on the site",
+    "hideDialogTitle": "Hide this server?",
+    "hideDialogDescription": "<b>{name}</b> will no longer appear on Minecraft Stats: rankings, server page, statistics and votes. Tracking stops and nobody will be able to list it again. You can make it visible again at any time from this page.",
+    "hiding": "Hiding…",
+    "hideConfirm": "Hide server",
+    "hiddenToastTitle": "Server hidden",
+    "hiddenToastDescription": "{name} is no longer visible on Minecraft Stats.",
+    "shownToastTitle": "Server visible",
+    "shownToastDescription": "{name} is visible again; tracking resumes.",
+    "visibilityErrorTitle": "Couldn't change visibility"
   },
   "signInMethods": {
     "title": "Sign-in methods",

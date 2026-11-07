@@ -38,7 +38,10 @@
     "notFound": "Serveur introuvable",
     "alreadyVoted": "Vous avez déjà voté pour ce serveur. Revenez plus tard.",
     "termsRequired": "Vous devez accepter les conditions d'utilisation pour voter.",
-    "captchaFailed": "Échec de la vérification anti-robot. Veuillez réessayer."
+    "captchaFailed": "Échec de la vérification anti-robot. Veuillez réessayer.",
+    "hidden": "Ce serveur a choisi de ne pas être référencé sur Minecraft Stats.",
+    "duplicateHidden": "Ce serveur a demandé à ne pas être référencé sur Minecraft Stats et ne peut pas être ajouté.",
+    "visibilityRequiresVerification": "Vérifiez la propriété de ce serveur avant de pouvoir le masquer."
   },
   "serverOwnership": {
     "unauthorized": "Non autorisé",

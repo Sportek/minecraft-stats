@@ -160,8 +160,15 @@ const createAreaSeries = ({
   };
 };
 
-const ServerNotFound = () => {
+/**
+ * Page d'indisponibilité : serveur inexistant (404) ou masqué par son
+ * propriétaire (410). Les deux cas partagent la mise en page ; seuls l'icône
+ * et le texte changent, pour qu'un vieux lien vers un serveur masqué explique
+ * pourquoi il n'est plus là au lieu de laisser croire à une erreur.
+ */
+const ServerUnavailable = ({ reason }: { reason: "notFound" | "hidden" }) => {
   const t = useTranslations("Servers");
+  const icon = reason === "hidden" ? "mdi:eye-off-outline" : "mdi:server-off";
   return (
     <main className="flex-1 space-y-4 py-4">
       <div className="flex flex-col gap-4">
@@ -169,10 +176,10 @@ const ServerNotFound = () => {
           <div className="bg-card text-card-foreground border border-border rounded-lg shadow-xs p-8 space-y-6 max-w-md w-full">
             <div className="space-y-2 text-center">
               <div className="w-16 h-16 mx-auto bg-secondary text-muted-foreground rounded-full flex items-center justify-center">
-                <Icon icon="mdi:server-off" className="w-8 h-8" />
+                <Icon icon={icon} className="w-8 h-8" />
               </div>
-              <h2 className="text-xl font-semibold text-foreground">{t("detail.notFound.title")}</h2>
-              <p className="text-sm text-muted-foreground">{t("detail.notFound.description")}</p>
+              <h2 className="text-xl font-semibold text-foreground">{t(`detail.${reason}.title`)}</h2>
+              <p className="text-sm text-muted-foreground">{t(`detail.${reason}.description`)}</p>
             </div>
             <Link
               href="/"
@@ -330,14 +337,17 @@ const ServerPage = () => {
 
   if (serverError) {
     if (serverError instanceof HttpError && serverError.status === 404) {
-      return <ServerNotFound />;
+      return <ServerUnavailable reason="notFound" />;
+    }
+    if (serverError instanceof HttpError && serverError.status === 410) {
+      return <ServerUnavailable reason="hidden" />;
     }
     return <ServerLoadError error={serverError} onRetry={() => retryServer()} />;
   }
 
   // Filet de sécurité : réponse 200 sans payload exploitable.
   if (!serverData?.server) {
-    return <ServerNotFound />;
+    return <ServerUnavailable reason="notFound" />;
   }
 
   return (
