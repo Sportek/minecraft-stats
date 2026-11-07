@@ -233,17 +233,15 @@ export default class UserActivityService {
     const connections = Number(totalsRow?.connections ?? 0)
 
     return {
-      data: rows.map(
-        (row): ActiveUser => ({
-          id: Number(row.id),
-          username: row.username,
-          email: row.email,
-          role: row.role,
-          avatarUrl: row.avatar_url,
-          createdAt: row.created_at,
-          ...this.toMetrics(row),
-        })
-      ),
+      data: rows.map((row): ActiveUser => ({
+        id: Number(row.id),
+        username: row.username,
+        email: row.email,
+        role: row.role,
+        avatarUrl: row.avatar_url,
+        createdAt: row.created_at,
+        ...this.toMetrics(row),
+      })),
       meta: {
         total: activeUsers,
         perPage: limit,
