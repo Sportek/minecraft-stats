@@ -187,18 +187,33 @@ test.group('Daily rhythm', (group) => {
     assert.equal(rhythm.slotMinutes, 60)
     assert.equal(rhythm.series.all.length, 24)
 
+    // La fenêtre fait 40 × 24 h, pas 40 jours locaux : quand un changement d'heure
+    // tombe dedans, une heure locale n'y apparaît que 39 jours (ou 41). L'attendu se
+    // compte donc sur la grille horaire de la fenêtre renvoyée, indépendamment de la
+    // donnée — en jours distincts, puisque 2 h existe deux fois la nuit du recul.
+    const windowFrom = DateTime.fromISO(rhythm.from!)
+    const windowTo = DateTime.fromISO(rhythm.to!)
+    const datesPerHour = Array.from({ length: 24 }, () => new Set<string>())
+    let gridHour = windowFrom.startOf('hour')
+    if (gridHour < windowFrom) gridHour = gridHour.plus({ hours: 1 })
+    for (; gridHour <= windowTo; gridHour = gridHour.plus({ hours: 1 })) {
+      const local = gridHour.setZone(PARIS)
+      datesPerHour[local.hour].add(local.toISODate()!)
+    }
+    const expectedDays = datesPerHour.map((dates) => dates.size)
+
     const evening = rhythm.series.all.find((slot) => slot.slot === 21)
     assert.equal(evening?.playerCount, 500)
     assert.equal(evening?.peakPlayerCount, 1000)
     assert.equal(evening?.minuteOfDay, 1260)
-    assert.equal(evening?.daysCount, 40)
+    assert.equal(evening?.daysCount, expectedDays[21])
 
     // Toutes les heures locales, pas seulement celle du soir : c'est l'invariant qui
     // lâche si la donnée cesse de déborder de la fenêtre, quelle que soit l'heure à
     // laquelle la suite tourne.
     assert.deepEqual(
       rhythm.series.all.map((slot) => slot.daysCount),
-      Array.from({ length: 24 }, () => 40)
+      expectedDays
     )
   })
 

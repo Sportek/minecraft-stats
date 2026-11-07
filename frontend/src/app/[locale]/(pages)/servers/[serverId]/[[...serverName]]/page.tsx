@@ -37,12 +37,21 @@ import ImprovedCard from "@/components/serveur/improved-card";
 import AdSlot from "@/components/ads/ad-slot";
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import MinecraftStatsLogo from "@/images/minecraft-stats/logo.svg";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
+
+// Épaisseurs d'axes figées : la zone de tracé démarre toujours au même endroit, ce qui
+// permet d'ancrer le filigrane pile dans son coin bas-gauche. 52px suffit pour « 100 000 ».
+const X_AXIS_THICKNESS = 28;
+const Y_AXIS_THICKNESS = 52;
+const CHART_PADDING_LEFT = 10;
+const WATERMARK_INSET = 4;
 
 const BASE_AXES: { x: AgTimeAxisOptions; y: AgCartesianAxisOptions } = {
   x: {
@@ -54,10 +63,14 @@ const BASE_AXES: { x: AgTimeAxisOptions; y: AgCartesianAxisOptions } = {
     nice: false,
     min: undefined,
     max: undefined,
+    // Repères verticaux alignés sur les graduations date/heure, pour lire les intervalles.
+    gridLine: { enabled: true },
+    thickness: X_AXIS_THICKNESS,
   },
   y: {
     type: "number",
     position: "left",
+    thickness: Y_AXIS_THICKNESS,
   },
 };
 
@@ -80,7 +93,7 @@ const BASE_CHART_OPTIONS: Partial<AgCartesianChartOptions> = {
     top: 10,
     right: 10,
     bottom: 0,
-    left: 10,
+    left: CHART_PADDING_LEFT,
   },
 };
 
@@ -413,8 +426,20 @@ const ServerPage = () => {
             </div>
           )}
           {/* Smaller chart height on mobile, taller on larger screens */}
-          <div className="h-[280px] sm:h-[360px]">
+          <div className="relative h-[280px] sm:h-[360px]">
             <AgCharts options={options} className="h-full w-full" />
+            {/* Filigrane : la marque du header, désaturée et réduite, posée sur la ligne de base. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute flex select-none items-center gap-1 opacity-40 grayscale"
+              style={{
+                left: CHART_PADDING_LEFT + Y_AXIS_THICKNESS + WATERMARK_INSET,
+                bottom: X_AXIS_THICKNESS + WATERMARK_INSET,
+              }}
+            >
+              <Image src={MinecraftStatsLogo} alt="" width={14} height={14} className="dark:brightness-0 dark:invert" />
+              <span className="text-[11px] font-bold tracking-tight text-muted-foreground">Minecraft Stats</span>
+            </div>
           </div>
         </div>
 
