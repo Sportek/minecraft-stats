@@ -244,6 +244,7 @@ async function flushStatsBatch(batch: ServerStatRow[]): Promise<void> {
 async function pingDueServers(overwriteImage = false): Promise<void> {
   const start = Date.now()
 
+  // Les serveurs masqués ne sont plus pingués (cf. ServerVisibilityService).
   const due = await Server.query()
     .where((builder) => {
       builder.whereNull('next_ping_at').orWhere('next_ping_at', '<=', DateTime.now().toSQL())
@@ -295,7 +296,7 @@ scheduler
 scheduler
   .call(async () => {
     const start = Date.now()
-    const servers = await Server.all()
+    const servers = await Server.query()
     if (servers.length === 0) return
 
     const limit = pLimit(PING_CONCURRENCY)

@@ -25,8 +25,7 @@ interface RecordInput extends VoterIdentity {
 }
 
 type RecordResult =
-  | { recorded: true; voteCount: number }
-  | { recorded: false; nextVoteAt: DateTime | null }
+  { recorded: true; voteCount: number } | { recorded: false; nextVoteAt: DateTime | null }
 
 /**
  * Logique métier du vote de serveur : anti-triche par fenêtre glissante (visiteur

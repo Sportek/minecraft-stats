@@ -258,7 +258,7 @@ export default class ServerOwnershipService {
     return ServerOwnershipClaim.query()
       .where('method', 'manual')
       .where('status', 'pending')
-      .preload('server')
+      .preload('server', (query) => query.apply((scopes) => scopes.withHidden()))
       .preload('user', (query) => query.select('id', 'username', 'email', 'avatarUrl'))
       .orderBy('created_at', 'asc')
   }
@@ -269,7 +269,10 @@ export default class ServerOwnershipService {
     admin: User,
     note?: string
   ): Promise<ReviewOutcome> {
-    const server = await Server.findOrFail(claim.serverId)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', claim.serverId)
+      .firstOrFail()
     if (server.ownerVerifiedAt && server.userId !== claim.userId) {
       return { status: 'already_verified' }
     }

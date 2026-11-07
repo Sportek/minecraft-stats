@@ -1,11 +1,16 @@
 import ServerStat from '#models/server_stat'
 import ServerPolicy from '#policies/server_policy'
-import { CreateServerValidator, UpdateServerValidator } from '#validators/server'
+import {
+  CreateServerValidator,
+  UpdateServerValidator,
+  UpdateServerVisibilityValidator,
+} from '#validators/server'
 import type { HttpContext } from '@adonisjs/core/http'
 import Server from '../models/server.js'
 import CacheService from '#services/cache_service'
 import ServerListingService from '#services/server_listing_service'
 import ServerRegistrationService from '#services/server_registration_service'
+import ServerVisibilityService from '#services/server_visibility_service'
 
 export default class ServersController {
   /**
@@ -13,7 +18,7 @@ export default class ServersController {
    * @operationId listServers
    * @tag SERVERS
    * @summary List all servers (lightweight)
-   * @description Returns a lightweight list of every server, without preloads or stats. Used by the sitemap, ServerSelect dropdown, and the "Monitored servers" counter. Each item contains only the minimal server fields. Publicly accessible.
+   * @description Returns a lightweight list of every publicly visible server (servers hidden by their owner are excluded), without preloads or stats. Used by the sitemap, ServerSelect dropdown, and the "Monitored servers" counter. Each item contains only the minimal server fields. Publicly accessible.
    * @responseBody 200 - [{"server": {"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "image_url": "/images/servers/1.webp", "last_player_count": 42000, "last_stats_at": "2026-05-28T12:00:00.000Z", "created_at": "2025-01-01T00:00:00.000Z", "updated_at": "2026-05-28T12:00:00.000Z"}}]
    */
   async index() {
@@ -51,6 +56,7 @@ export default class ServersController {
     }
 
     const servers = await Server.query()
+      .apply((scopes) => scopes.withHidden())
       .where('user_id', user.id)
       .preload('categories')
       .preload('languages')
@@ -69,7 +75,7 @@ export default class ServersController {
    * @operationId createServer
    * @tag SERVERS
    * @summary Create a new server
-   * @description Creates a new Minecraft server entry owned by the authenticated user. The controller first performs an interactive ping that doubles as a reachability check and as the source for duplicate-detection fingerprints (favicon, MOTD, version). If the server cannot be reached the request is rejected with 400. If the fingerprint matches an existing server the request is rejected with 409 and includes the duplicate metadata. Requires authentication.
+   * @description Creates a new Minecraft server entry owned by the authenticated user. The controller first performs an interactive ping that doubles as a reachability check and as the source for duplicate-detection fingerprints (favicon, MOTD, version). If the server cannot be reached the request is rejected with 400. If the fingerprint matches an existing server the request is rejected with 409 and includes the duplicate metadata — unless that server was hidden by its owner, in which case the 409 carries `hidden: true` and no server details. Requires authentication.
    * @requestBody <CreateServerValidator>
    * @responseBody 200 - <Server>
    * @responseBody 400 - {"message": "Server is not reachable"}
@@ -103,6 +109,14 @@ export default class ServersController {
       case 'unreachable':
         return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
       case 'duplicate':
+        // Serveur masqué par son propriétaire : on refuse l'ajout sans révéler
+        // lequel des serveurs référencés correspond (ni nom, ni id, ni signaux).
+        if (result.duplicate.server.hiddenAt) {
+          return response.conflict({
+            message: i18n.t('messages.servers.duplicateHidden'),
+            hidden: true,
+          })
+        }
         return response.conflict({
           message: i18n.t('messages.servers.duplicate'),
           existingServer: {
@@ -130,13 +144,16 @@ export default class ServersController {
    * @operationId showServer
    * @tag SERVERS
    * @summary Get a single server by id
-   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. Publicly accessible.
+   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. A server hidden by its owner returns 410 with `hidden: true` and no server details. Publicly accessible.
    * @paramPath id - The server id - @type(number) @example(134) @required
    * @responseBody 200 - {"server": "<Server>", "stats": ["<ServerStat>"], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}
    * @responseBody 404 - {"message": "Server not found"}
+   * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
    */
   async show({ params, response, i18n }: HttpContext) {
+    // withHidden : un serveur masqué répond 410 (page dédiée), pas 404.
     let server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
       .where('id', params.id)
       .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
       .preload('growthStat')
@@ -144,6 +161,9 @@ export default class ServersController {
       .preload('languages')
       .first()
     if (!server) return response.notFound({ message: i18n.t('messages.servers.notFound') })
+    if (server.hiddenAt) {
+      return response.gone({ message: i18n.t('messages.servers.hidden'), hidden: true })
+    }
     const stats = await this.getActualStats(server)
     return { server, stats, categories: server.categories, growthStat: server.growthStat }
   }
@@ -174,7 +194,10 @@ export default class ServersController {
       'languages',
     ])
     const validatedData = await UpdateServerValidator.validate(data)
-    const server = await Server.findByOrFail('id', params.id)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .firstOrFail()
     if (await bouncer.with(ServerPolicy).denies('update', server)) {
       return response.forbidden({ message: i18n.t('messages.servers.unauthorized') })
     }
@@ -185,6 +208,40 @@ export default class ServersController {
       return response.badRequest({ message: i18n.t('messages.servers.notReachable') })
     }
     return result.server
+  }
+
+  /**
+   * @updateServerVisibility
+   * @operationId updateServerVisibility
+   * @tag SERVERS
+   * @summary Hide or unhide a server
+   * @description Hides (`hidden: true`) or re-lists (`hidden: false`) a server. A hidden server disappears from every public surface (rankings, server page, stats, votes, sitemap), stops being pinged, and cannot be re-added by anyone else: duplicate detection still matches it. Re-listing resumes pinging on the next scheduler tick. Only the verified owner (ownership proven via MOTD, DNS or an approved manual claim) or an admin may change it — an unverified owner gets 403. Requires authentication.
+   * @paramPath id - The server id - @type(number) @example(134) @required
+   * @requestBody <UpdateServerVisibilityValidator>
+   * @responseBody 200 - <Server>
+   * @responseBody 403 - {"message": "Verify ownership of this server before you can hide it."}
+   * @responseBody 404 - {"message": "Server not found"}
+   */
+  async updateVisibility({ params, request, response, auth, bouncer, i18n }: HttpContext) {
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .first()
+    if (!server) {
+      return response.notFound({ message: i18n.t('messages.servers.notFound') })
+    }
+    if (await bouncer.with(ServerPolicy).denies('changeVisibility', server)) {
+      // Propriétaire non vérifié : on lui indique la marche à suivre plutôt qu'un
+      // simple « non autorisé ».
+      const key =
+        server.userId === auth.user?.id
+          ? 'messages.servers.visibilityRequiresVerification'
+          : 'messages.servers.unauthorized'
+      return response.forbidden({ message: i18n.t(key) })
+    }
+
+    const { hidden } = await UpdateServerVisibilityValidator.validate(request.only(['hidden']))
+    return ServerVisibilityService.setHidden(server, hidden)
   }
 
   /**
@@ -199,7 +256,10 @@ export default class ServersController {
    * @responseBody 404 - {"message": "Server not found"}
    */
   async destroy({ params, response, bouncer, i18n }: HttpContext) {
-    const server = await Server.find(params.id)
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', params.id)
+      .first()
     if (!server) {
       return response.notFound({ message: i18n.t('messages.servers.notFound') })
     }

@@ -52,7 +52,9 @@ export default class BoostScan extends BaseCommand {
 
     const flagged = await ServerBoostScore.query()
       .where('score', '>=', BOOST_WATCH_THRESHOLD)
-      .preload('server', (query) => query.select('id', 'name', 'address'))
+      .preload('server', (query) =>
+        query.apply((scopes) => scopes.withHidden()).select('id', 'name', 'address')
+      )
       .orderBy('score', 'desc')
 
     if (flagged.length === 0) {

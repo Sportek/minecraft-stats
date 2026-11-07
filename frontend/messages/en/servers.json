@@ -3,7 +3,9 @@
     "title": "{name} - Minecraft Server Stats & Analytics",
     "description": "Track {name}, a {categories} Minecraft server with {playerCount} players online. Real-time statistics, player count graphs, and growth trends. Languages: {languages}.",
     "notFoundTitle": "Server Not Found - Minecraft Server Stats",
-    "notFoundDescription": "The requested Minecraft server could not be found. Browse other Minecraft servers and their statistics."
+    "notFoundDescription": "The requested Minecraft server could not be found. Browse other Minecraft servers and their statistics.",
+    "hiddenTitle": "Server Not Listed - Minecraft Server Stats",
+    "hiddenDescription": "The owner of this server has chosen not to make it visible on Minecraft Stats."
   },
   "card": {
     "edit": "Edit server",
@@ -62,6 +64,10 @@
       "genericTitle": "Unable to load the server",
       "genericDescription": "Something went wrong while loading the server data. Please try again in a moment.",
       "retry": "Try again"
+    },
+    "hidden": {
+      "title": "Server Not Listed",
+      "description": "The owner of this server has chosen not to make it visible on Minecraft Stats."
     }
   },
   "faq": {

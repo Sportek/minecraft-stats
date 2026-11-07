@@ -457,16 +457,18 @@ export default class BoostDetectionService {
     return ServerBoostScore.query()
       .where('score', '>=', BOOST_WATCH_THRESHOLD)
       .preload('server', (query) =>
-        query.select(
-          'id',
-          'name',
-          'address',
-          'type',
-          'boostStatus',
-          'boostReviewedAt',
-          'lastPlayerCount',
-          'createdAt'
-        )
+        query
+          .apply((scopes) => scopes.withHidden())
+          .select(
+            'id',
+            'name',
+            'address',
+            'type',
+            'boostStatus',
+            'boostReviewedAt',
+            'lastPlayerCount',
+            'createdAt'
+          )
       )
       .orderBy('score', 'desc')
   }

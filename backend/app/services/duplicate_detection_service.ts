@@ -220,7 +220,10 @@ export default class DuplicateDetectionService {
     if (!domain && !faviconHash && !resolvedEndpoint && !motdHash) return null
 
     const countSharing = async (column: string, value: string): Promise<number> => {
-      const query = Server.query().where(column, value)
+      // withHidden : un serveur masqué doit continuer de bloquer son ré-ajout.
+      const query = Server.query()
+        .apply((scopes) => scopes.withHidden())
+        .where(column, value)
       if (excludeId) query.whereNot('id', excludeId)
       const rows = await query.count('* as total')
       return Number(rows[0].$extras.total)
@@ -249,6 +252,7 @@ export default class DuplicateDetectionService {
 
     // Candidats : tout serveur partageant au moins un signal discriminant.
     const candidates = await Server.query()
+      .apply((scopes) => scopes.withHidden())
       .where((builder) => {
         if (domain && domainTrusted) builder.orWhere('host_domain', domain)
         if (faviconHash) builder.orWhere('favicon_hash', faviconHash)

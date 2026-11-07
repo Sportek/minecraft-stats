@@ -6,7 +6,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useAuth } from "@/contexts/auth";
-import { deleteServer, getMyServers, MyServerItem } from "@/http/server";
+import { deleteServer, getMyServers, MyServerItem, setServerVisibility } from "@/http/server";
 import { serverPath } from "@/lib/server-url";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import DashboardHero from "@/components/account/dashboard-hero";
@@ -50,6 +50,33 @@ const MyServersPage = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   // Serveur dont on ouvre la modale de vérification de propriété.
   const [claimTarget, setClaimTarget] = useState<MyServerItem | null>(null);
+  // Serveur dont on confirme le masquage (le démasquage, lui, est immédiat).
+  const [pendingHide, setPendingHide] = useState<MyServerItem | null>(null);
+  const [isChangingVisibility, setIsChangingVisibility] = useState(false);
+
+  const changeVisibility = async (item: MyServerItem, hidden: boolean) => {
+    setIsChangingVisibility(true);
+    try {
+      await setServerVisibility(item.server.id, hidden, token ?? "");
+      toast({
+        title: hidden ? t("myServers.hiddenToastTitle") : t("myServers.shownToastTitle"),
+        description: hidden
+          ? t("myServers.hiddenToastDescription", { name: item.server.name })
+          : t("myServers.shownToastDescription", { name: item.server.name }),
+        variant: "success",
+      });
+      await mutate();
+      setPendingHide(null);
+    } catch (error) {
+      toast({
+        title: t("myServers.visibilityErrorTitle"),
+        description: error instanceof Error ? error.message : t("myServers.removeErrorDescription"),
+        variant: "error",
+      });
+    } finally {
+      setIsChangingVisibility(false);
+    }
+  };
 
   const confirmDelete = async () => {
     if (!pendingDelete) return;
@@ -135,6 +162,10 @@ const MyServersPage = () => {
             {list.map((item) => {
               const { server } = item;
               const online = isOnline(server.lastOnlineAt);
+              const hidden = server.hiddenAt !== null;
+              // Masquer exige une propriété prouvée (sinon n'importe qui pourrait
+              // ajouter puis masquer le serveur d'un concurrent) — cf. ServerPolicy.
+              const canChangeVisibility = server.ownerVerifiedAt !== null || isAdmin;
               return (
                 <div key={server.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 p-4 transition-colors hover:bg-secondary/40">
                   <ServerImage imageUrl={server.imageUrl} name={server.name} className="h-10 w-10" />
@@ -157,6 +188,12 @@ const MyServersPage = () => {
                       {t("myServers.verifiedBadge")}
                     </Badge>
                   )}
+                  {hidden && (
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Icon icon="material-symbols:visibility-off-outline" className="h-3.5 w-3.5" />
+                      {t("myServers.hiddenBadge")}
+                    </Badge>
+                  )}
                   <div className="w-20 text-right">
                     <div className="text-sm font-bold tabular-nums text-foreground">
                       {formatNumber(server.lastPlayerCount ?? 0)}
@@ -173,6 +210,21 @@ const MyServersPage = () => {
                         className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                       >
                         <Icon icon="material-symbols:verified-user-outline" className="h-4 w-4" />
+                      </button>
+                    )}
+                    {canChangeVisibility && (
+                      <button
+                        type="button"
+                        onClick={() => (hidden ? changeVisibility(item, false) : setPendingHide(item))}
+                        disabled={isChangingVisibility}
+                        aria-label={hidden ? t("myServers.unhide") : t("myServers.hide")}
+                        title={hidden ? t("myServers.unhideTitle") : t("myServers.hideTitle")}
+                        className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-50"
+                      >
+                        <Icon
+                          icon={hidden ? "material-symbols:visibility-outline" : "material-symbols:visibility-off-outline"}
+                          className="h-4 w-4"
+                        />
                       </button>
                     )}
                     <Link
@@ -219,6 +271,34 @@ const MyServersPage = () => {
           onVerified={() => mutate()}
         />
       )}
+
+      <Dialog open={pendingHide !== null} onOpenChange={(open) => !open && setPendingHide(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("myServers.hideDialogTitle")}</DialogTitle>
+            <DialogDescription>
+              {pendingHide
+                ? t.rich("myServers.hideDialogDescription", {
+                    name: pendingHide.server.name,
+                    b: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+                  })
+                : null}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingHide(null)} disabled={isChangingVisibility}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => pendingHide && changeVisibility(pendingHide, true)}
+              disabled={isChangingVisibility}
+            >
+              {isChangingVisibility ? t("myServers.hiding") : t("myServers.hideConfirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
         <DialogContent>

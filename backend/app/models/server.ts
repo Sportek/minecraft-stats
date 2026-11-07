@@ -1,12 +1,18 @@
 import {
   BaseModel,
+  beforeFetch,
+  beforeFind,
+  beforePaginate,
   beforeSave,
   belongsTo,
   column,
   hasMany,
   hasOne,
   manyToMany,
+  scope,
 } from '@adonisjs/lucid/orm'
+import type { QueryClientContract } from '@adonisjs/lucid/types/database'
+import type { LucidModel, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import * as relations from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Category from './category.js'
@@ -23,6 +29,14 @@ import type { ServerType } from '../constants/server_type.js'
 import { normalizeWebsite } from '#utils/website'
 import { deriveServerWebsite } from '#utils/server_website'
 import db from '@adonisjs/lucid/services/db'
+
+type ServerQuery = ModelQueryBuilderContract<typeof Server>
+
+/**
+ * Requêtes autorisées à voir les serveurs masqués (marquées par `withHidden`).
+ * WeakSet : le marquage disparaît avec le builder, sans état global qui fuit.
+ */
+const queriesIncludingHidden = new WeakSet<object>()
 
 export default class Server extends BaseModel {
   @column({ isPrimary: true })
@@ -151,6 +165,11 @@ export default class Server extends BaseModel {
   @column.dateTime({ columnName: 'next_ping_at' })
   declare nextPingAt: DateTime | null
 
+  // Masqué à la demande du propriétaire vérifié : absent des surfaces publiques et
+  // plus pingué, mais conservé pour bloquer un nouvel ajout (cf. migration hidden_at).
+  @column.dateTime({ columnName: 'hidden_at' })
+  declare hiddenAt: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -176,6 +195,67 @@ export default class Server extends BaseModel {
     if (server.$dirty.address !== undefined || server.hostDomain === null) {
       server.hostDomain = deriveServerWebsite(server.address)
     }
+  }
+
+  /**
+   * Serveurs masqués exclus PAR DÉFAUT de toute lecture via le modèle : `find`,
+   * `query()`, comptages, pagination et préchargements de relation (`preload('server')`).
+   * Une nouvelle requête publique est donc sûre sans rien faire ; voir un serveur
+   * masqué demande un opt-in explicite, `withHidden` ci-dessous.
+   *
+   * Hors périmètre : le SQL brut (`db.from('servers')`, `rawQuery`) ne passe pas par
+   * ces hooks.
+   */
+  @beforeFind()
+  @beforeFetch()
+  static excludeHidden(query: ServerQuery) {
+    if (queriesIncludingHidden.has(query)) return
+    // Qualifié par la table pour rester valable dans les requêtes avec jointure.
+    query.whereNull('servers.hidden_at')
+  }
+
+  // La pagination compte sur un clone fait AVANT les hooks : il faut le filtrer aussi,
+  // sinon le total inclurait les serveurs masqués.
+  @beforePaginate()
+  static excludeHiddenFromCount([countQuery, query]: [ServerQuery, ServerQuery]) {
+    if (queriesIncludingHidden.has(query)) return
+    countQuery.whereNull('servers.hidden_at')
+  }
+
+  /**
+   * Opt-in : inclut les serveurs masqués. Réservé aux lectures qui ne sont pas
+   * publiques — propriétaire, admin, détection de doublon (qui doit les voir pour
+   * bloquer leur ré-ajout).
+   *
+   *   Server.query().apply((scopes) => scopes.withHidden())
+   */
+  static withHidden = scope((query) => {
+    queriesIncludingHidden.add(query)
+  })
+
+  /**
+   * `refresh()` relit la ligne via `first()`, donc via le hook ci-dessus : sans cette
+   * exception, rafraîchir une instance masquée échouerait (« Unable to lookup »).
+   * Une instance déjà chargée a passé un contrôle d'accès ; la relire n'expose rien.
+   */
+  $getQueryFor(
+    action: 'insert',
+    client: QueryClientContract
+  ): ReturnType<QueryClientContract['insertQuery']>
+  $getQueryFor(action: 'update' | 'delete' | 'refresh', client: QueryClientContract): ServerQuery
+  $getQueryFor(
+    action: 'insert',
+    client: QueryClientContract
+  ): ReturnType<QueryClientContract['insertQuery']>
+  $getQueryFor(
+    action: 'update' | 'delete' | 'refresh',
+    client: QueryClientContract
+  ): ModelQueryBuilderContract<LucidModel>
+  $getQueryFor(action: 'insert' | 'update' | 'delete' | 'refresh', client: QueryClientContract) {
+    if (action === 'insert') return super.$getQueryFor(action, client)
+    const query = super.$getQueryFor(action, client)
+    if (action === 'refresh') queriesIncludingHidden.add(query)
+    return query
   }
 
   /**

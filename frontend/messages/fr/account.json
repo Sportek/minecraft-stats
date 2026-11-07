@@ -85,7 +85,21 @@
     "remove": "Supprimer le serveur",
     "verifiedBadge": "Vérifié",
     "verify": "Vérifier la propriété",
-    "verifyTitle": "Vérifier la propriété de ce serveur"
+    "verifyTitle": "Vérifier la propriété de ce serveur",
+    "hiddenBadge": "Masqué",
+    "hide": "Masquer le serveur",
+    "hideTitle": "Masquer du site",
+    "unhide": "Rendre le serveur visible",
+    "unhideTitle": "Rendre visible sur le site",
+    "hideDialogTitle": "Masquer ce serveur ?",
+    "hideDialogDescription": "<b>{name}</b> n'apparaîtra plus sur Minecraft Stats : classements, fiche, statistiques et votes. Son suivi s'arrête et personne ne pourra le référencer à nouveau. Vous pourrez le rendre visible à tout moment depuis cette page.",
+    "hiding": "Masquage…",
+    "hideConfirm": "Masquer le serveur",
+    "hiddenToastTitle": "Serveur masqué",
+    "hiddenToastDescription": "{name} n'est plus visible sur Minecraft Stats.",
+    "shownToastTitle": "Serveur visible",
+    "shownToastDescription": "{name} est de nouveau visible ; son suivi reprend.",
+    "visibilityErrorTitle": "Impossible de modifier la visibilité"
   },
   "signInMethods": {
     "title": "Méthodes de connexion",

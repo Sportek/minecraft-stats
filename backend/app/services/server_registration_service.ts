@@ -9,6 +9,7 @@ import {
   pingMinecraftServer,
 } from '../../minecraft-ping/minecraft_ping.js'
 import type { NormalizedPing } from '../../minecraft-ping/minecraft_ping.js'
+import type { ServerType } from '../constants/server_type.js'
 
 type CreateServerData = Awaited<ReturnType<typeof CreateServerValidator.validate>>
 type UpdateServerData = Awaited<ReturnType<typeof UpdateServerValidator.validate>>
@@ -34,24 +35,25 @@ export type ServerUpdateResult = { status: 'unreachable' } | { status: 'updated'
  * l'auto-détection de doublon (un serveur détecté comme doublon de lui-même).
  */
 export default class ServerRegistrationService {
+  /**
+   * Ping interactif isolé comme point d'injection : les tests le remplacent par un
+   * stub pour rester hermétiques. Pas de `readonly` (cf. ServerOwnershipService).
+   *
+   * `detailed` : un seul serveur à traiter, on peut dépenser l'appel dédié qui ramène
+   * le favicon d'un hébergeur mutualisé — c'est ici que l'icône et les empreintes de
+   * doublon sont établies (cf. host_providers).
+   */
+  static pingServer: (type: ServerType, address: string, port: number) => Promise<NormalizedPing> =
+    (type, address, port) =>
+      pingMinecraftServer(type, address, port, INTERACTIVE_PING_TIMEOUT, { detailed: true })
+
   static async register(data: CreateServerData, user: User): Promise<ServerRegisterResult> {
     const type = data.type ?? 'java'
 
     // Ping interactif : test de joignabilité ET source des empreintes de doublon.
     let pingData: NormalizedPing | null = null
     try {
-      // `detailed` : un seul serveur à traiter, on peut dépenser l'appel dédié qui
-      // ramène le favicon d'un hébergeur mutualisé — c'est ici que l'icône et les
-      // empreintes de doublon sont établies (cf. host_providers).
-      pingData = await pingMinecraftServer(
-        type,
-        data.address,
-        data.port,
-        INTERACTIVE_PING_TIMEOUT,
-        {
-          detailed: true,
-        }
-      )
+      pingData = await this.pingServer(type, data.address, data.port)
     } catch {
       pingData = null
     }

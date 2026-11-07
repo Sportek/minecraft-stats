@@ -57,6 +57,11 @@ router
       .get('servers/:serverId/vote-status', '#controllers/server_votes_controller.status')
       .use([throttleLight('servers.voteStatus', 60), NO_STORE])
 
+    // Masquage d'un serveur par son propriétaire vérifié (ou un admin).
+    router
+      .patch('servers/:id/visibility', '#controllers/servers_controller.updateVisibility')
+      .use([middleware.auth(), throttleLight('servers.visibility', 10), NO_STORE])
+
     // Réclamation de propriété d'un serveur (MOTD + DNS self-service + demande manuelle).
     router
       .get('servers/:id/claim', '#controllers/server_ownership_controller.status')
