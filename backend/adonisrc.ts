@@ -73,6 +73,10 @@ export default defineConfig({
     () => import('#start/routes'),
     () => import('#start/kernel'),
     {
+      file: () => import('#start/metrics'),
+      environment: ['web', 'test'],
+    },
+    {
       file: () => import('#start/scheduler'),
       environment: ['console'],
     },
