@@ -27,7 +27,9 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - LIMITER_STORE=${LIMITER_STORE}
-      - REDIS_HOST=${REDIS_HOST}
+      # Nom de conteneur et non `redis` : prod et staging partagent dokploy-network,
+      # où l'alias `redis` résout vers les deux Redis à la fois.
+      - REDIS_HOST=redis-${APP_NAME}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - APP_NAME=${APP_NAME}
@@ -78,7 +80,9 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - LIMITER_STORE=${LIMITER_STORE}
-      - REDIS_HOST=${REDIS_HOST}
+      # Nom de conteneur et non `redis` : prod et staging partagent dokploy-network,
+      # où l'alias `redis` résout vers les deux Redis à la fois.
+      - REDIS_HOST=redis-${APP_NAME}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - APP_NAME=${APP_NAME}
@@ -163,7 +167,9 @@ services:
       - HOST=0.0.0.0
       # Le MCP récupère le spec OpenAPI et relaie les requêtes vers le backend
       # via le réseau interne, en utilisant le port d'écoute du backend (${PORT}).
-      - API_BASE_URL=http://adonis_app:${PORT}
+      # Nom de conteneur et non `adonis_app`, alias que les backends prod et
+      # staging portent tous les deux sur dokploy-network.
+      - API_BASE_URL=http://stats-backend-${APP_NAME}:${PORT}
       - MCP_PATH=/mcp
       - ALLOWED_HOSTS=${MCP_ALLOWED_HOSTS:-}
       - ALLOWED_ORIGINS=${MCP_ALLOWED_ORIGINS:-}
