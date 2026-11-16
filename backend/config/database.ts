@@ -1,15 +1,14 @@
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/lucid'
 
-const isProd = env.get('NODE_ENV') === 'production'
-
 const dbConfig = defineConfig({
   connection: 'postgres',
   connections: {
     postgres: {
       client: 'pg',
-      // debug=true loggue chaque query côté stdout — coûteux en prod (cf. investigation P.1.6).
-      debug: !isProd,
+      // N'active que l'événement `db:query` (Lucid force `debug: false` côté knex,
+      // rien n'est loggué) : start/metrics.ts en tire l'histogramme des requêtes SQL.
+      debug: true,
       connection: {
         host: env.get('DB_HOST'),
         port: env.get('DB_PORT'),

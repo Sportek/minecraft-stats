@@ -10,6 +10,7 @@ import redis from '@adonisjs/redis/services/main'
 import scheduler from 'adonisjs-scheduler/services/main'
 import { DateTime } from 'luxon'
 import pLimit from 'p-limit'
+import { PING_RUN_REDIS_KEY, type PingRunSummary } from '../app/constants/metrics.js'
 import { DEFAULT_PING_TIMEOUT, pingMinecraftServer } from '../minecraft-ping/minecraft_ping.js'
 
 type ServerStatRow = {
@@ -238,6 +239,28 @@ async function flushStatsBatch(batch: ServerStatRow[]): Promise<void> {
 }
 
 /**
+ * Dépose le bilan du passage pour /metrics (cf. start/metrics.ts). Écrit aussi
+ * quand rien n'était dû : c'est ce qui distingue un scheduler au repos d'un
+ * scheduler arrêté. Sans Redis, on perd la métrique, pas le ping.
+ */
+async function recordPingRun(start: number, due: number, pinged: number): Promise<void> {
+  const summary: PingRunSummary = {
+    finishedAt: Date.now(),
+    durationMs: Date.now() - start,
+    due,
+    pinged,
+  }
+  try {
+    await redis.set(PING_RUN_REDIS_KEY, JSON.stringify(summary))
+  } catch (error) {
+    logger.warn(
+      { err: error instanceof Error ? error.message : String(error) },
+      'SCHEDULER: impossible de publier le bilan du ping dans Redis'
+    )
+  }
+}
+
+/**
  * Ping tous les serveurs dont `next_ping_at` est passé (ou NULL = jamais pingué).
  * Parallélisme borné par `PING_CONCURRENCY`. Verrou Redis par serveur (P.5.1 N.2.3).
  *
@@ -255,6 +278,7 @@ async function pingDueServers(overwriteImage = false): Promise<void> {
 
   if (due.length === 0) {
     logger.debug('SCHEDULER: no servers due for ping')
+    await recordPingRun(start, 0, 0)
     return
   }
 
@@ -265,6 +289,7 @@ async function pingDueServers(overwriteImage = false): Promise<void> {
 
   const statsBatch = results.filter((row): row is ServerStatRow => row !== null)
   await flushStatsBatch(statsBatch)
+  await recordPingRun(start, due.length, statsBatch.length)
 
   logger.info(
     `SCHEDULER: pingDueServers done in ${Date.now() - start}ms — ${statsBatch.length}/${due.length} pinged`
