@@ -9,7 +9,7 @@ services:
     pull_policy: always
     restart: "unless-stopped"
     command: >
-      sh -c "node ace migration:run --force && node ace serve"
+      sh -c "node ace migration:run --force && node bin/server.js"
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
