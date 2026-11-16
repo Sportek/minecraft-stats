@@ -228,11 +228,13 @@ async function pingWithLock(
 }
 
 /**
- * Insère un lot de stats en une seule requête `server_stats`.
+ * Insère un lot de stats en une seule requête `server_stats`. Un relevé déjà présent
+ * pour le même (serveur, instant) est ignoré plutôt que de faire échouer tout le lot
+ * sur la clé primaire.
  */
 async function flushStatsBatch(batch: ServerStatRow[]): Promise<void> {
   if (batch.length === 0) return
-  await Database.table('server_stats').multiInsert(batch)
+  await Database.table('server_stats').multiInsert(batch).onConflict().ignore()
   logger.info(`SCHEDULER: bulk-inserted ${batch.length} server_stats rows`)
 }
 

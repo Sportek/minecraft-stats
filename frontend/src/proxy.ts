@@ -1,16 +1,7 @@
 import createMiddleware from "next-intl/middleware";
-import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
-const intlProxy = createMiddleware(routing);
-
-export default function proxy(request: NextRequest) {
-  const response = intlProxy(request);
-  // Expose the incoming path to generateMetadata (hreflang/canonical), which has
-  // no other access to the request pathname.
-  response.headers.set("x-pathname", request.nextUrl.pathname);
-  return response;
-}
+export default createMiddleware(routing);
 
 export const config = {
   // Skip API routes, Next internals, and real asset files. We exclude only known

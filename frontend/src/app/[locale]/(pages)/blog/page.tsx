@@ -2,7 +2,7 @@ import PostCard from "@/components/blog/post-card";
 import { Button } from "@/components/ui/button";
 import { getPosts } from "@/http/post";
 import { PostLocale } from "@/types/post";
-import { buildAlternates, getDomainConfig } from "@/lib/domain-server";
+import { buildAlternates, localeOrigin } from "@/lib/domain-server";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -25,7 +25,6 @@ function parsePage(value?: string): number {
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const { baseUrl } = await getDomainConfig();
   const t = await getTranslations({ locale, namespace: "Blog" });
   const page = parsePage((await searchParams).page);
   const path = page > 1 ? `/blog?page=${page}` : "/blog";
@@ -36,7 +35,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     alternates: {
       ...buildAlternates(locale, path),
       types: {
-        "application/rss+xml": `${baseUrl}/feed.xml`,
+        "application/rss+xml": `${localeOrigin(locale)}/feed.xml`,
       },
     },
   };

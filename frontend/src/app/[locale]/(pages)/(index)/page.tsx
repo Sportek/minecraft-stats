@@ -7,7 +7,9 @@ import StatsSection from "@/components/home/stats-section";
 import AdSlot from "@/components/ads/ad-slot";
 import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/seo/structured-data";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
-import { getLocale } from "next-intl/server";
+import { buildAlternates, localeOrigin } from "@/lib/domain-server";
+import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 
 export interface ServerData {
   server: Server;
@@ -16,8 +18,21 @@ export interface ServerData {
   growthStat: ServerGrowthStat | null;
 }
 
-const Home = async () => {
-  const locale = await getLocale();
+// The locale layout no longer knows the request path, so every indexable page
+// declares its own canonical/hreflang.
+export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+  const { locale } = await params;
+  return {
+    alternates: {
+      ...buildAlternates(locale),
+      types: { "application/rss+xml": `${localeOrigin(locale)}/feed.xml` },
+    },
+  };
+};
+
+const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <>
       <WebsiteStructuredData locale={locale} />

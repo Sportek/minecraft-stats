@@ -19,10 +19,12 @@ export default defineConfig({
   commands: [
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
-    () => import('adonis-sail/commands'),
     () => import('@adonisjs/mail/commands'),
     () => import('@adonisjs/bouncer/commands'),
     () => import('adonisjs-scheduler/commands'),
+    // Dépendance de dev : absente de l'image de production (`yarn workspaces focus --production`),
+    // où Ace planterait au démarrage — migrations et scheduler compris.
+    ...(process.env.NODE_ENV === 'production' ? [] : [() => import('adonis-sail/commands')]),
   ],
 
   /*

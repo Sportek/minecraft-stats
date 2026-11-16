@@ -2,8 +2,9 @@ import { HttpError } from "@/app/_cheatcode";
 import { getServer } from "@/http/server";
 import { getLastStat } from "@/utils/stats";
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { buildAlternates, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getClientAssetsUrl } from "@/lib/domain";
+import { buildAlternates, getOpenGraphLocales } from "@/lib/domain-server";
 import { isServerIndexable, serverPath } from "@/lib/server-url";
 import { getPathname } from "@/i18n/navigation";
 import { permanentRedirect } from "next/navigation";
@@ -12,12 +13,18 @@ import { permanentRedirect } from "next/navigation";
 // au lieu d'être re-fetched à chaque requête (P.4.3 ; remplace force-dynamic).
 export const revalidate = 600;
 
+// Empty list = no server is prerendered at build time, but each one is cached on its
+// first visit and then revalidated (ISR). Without it, a dynamic segment is rendered
+// on every request.
+export function generateStaticParams() {
+  return [];
+}
+
 export const generateMetadata = async (props: {
   params: Promise<{ locale: string; serverId: string; serverName: string[] }>;
 }): Promise<Metadata> => {
   const params = await props.params;
-  const { backendUrl } = await getDomainConfig();
-  const assetsBase = process.env.NEXT_PUBLIC_ASSETS_URL || backendUrl;
+  const assetsBase = getClientAssetsUrl();
   const t = await getTranslations({ locale: params.locale, namespace: "Servers" });
   try {
     const server = await getServer(Number(params.serverId));
@@ -136,6 +143,7 @@ const Layout = async ({
   params: Promise<{ locale: string; serverId: string; serverName?: string[] }>;
 }) => {
   const { locale, serverId, serverName } = await params;
+  setRequestLocale(locale);
 
   // The slug after the id is purely cosmetic — the page only reads serverId — so
   // every spelling (raw display name, wrong slug, missing slug) serves identical

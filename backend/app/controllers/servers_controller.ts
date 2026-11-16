@@ -18,26 +18,33 @@ export default class ServersController {
    * @operationId listServers
    * @tag SERVERS
    * @summary List all servers (lightweight)
-   * @description Returns a lightweight list of every publicly visible server (servers hidden by their owner are excluded), without preloads or stats. Used by the sitemap, ServerSelect dropdown, and the "Monitored servers" counter. Each item contains only the minimal server fields. Publicly accessible.
+   * @description Returns a lightweight list of every publicly visible server (servers hidden by their owner are excluded), without preloads or stats. Used by the sitemap, ServerSelect dropdown, and the "Monitored servers" counter. Each item contains only the minimal server fields. Responses are cached for 5 minutes (a hidden or deleted server disappears immediately). Publicly accessible.
    * @responseBody 200 - [{"server": {"id": 1, "name": "Hypixel", "address": "mc.hypixel.net", "port": 25565, "image_url": "/images/servers/1.webp", "last_player_count": 42000, "last_stats_at": "2026-05-28T12:00:00.000Z", "created_at": "2025-01-01T00:00:00.000Z", "updated_at": "2026-05-28T12:00:00.000Z"}}]
    */
-  async index() {
+  async index(ctx: HttpContext) {
     // Endpoint léger : pas de préloads (user/categories/growthStat/languages), pas de stats par serveur.
     // Consommé par le sitemap, le ServerSelect et le compteur "Monitored servers" — tous se contentent du
     // {id, name, updatedAt} de chaque serveur. Forme `[{ server }]` conservée pour compat frontend.
-    const servers = await Server.query().select(
-      'id',
-      'name',
-      'address',
-      'port',
-      'type',
-      'image_url',
-      'last_player_count',
-      'last_stats_at',
-      'created_at',
-      'updated_at'
+    return CacheService.cacheOrFetch(
+      CacheService.SERVERS_LIST_KEY,
+      300,
+      async () => {
+        const servers = await Server.query().select(
+          'id',
+          'name',
+          'address',
+          'port',
+          'type',
+          'image_url',
+          'last_player_count',
+          'last_stats_at',
+          'created_at',
+          'updated_at'
+        )
+        return servers.map((server) => ({ server }))
+      },
+      { bypass: CacheService.bypassAllowed(ctx) }
     )
-    return servers.map((server) => ({ server }))
   }
 
   /**
@@ -131,12 +138,32 @@ export default class ServersController {
     }
   }
 
-  private async getActualStats(server: Server, amount: number = 1) {
+  /**
+   * Fiche publique d'un serveur, sous une forme cachable : l'absence et le masquage
+   * sont mis en cache au même titre que la fiche, pour ne pas repayer la requête à
+   * chaque visite d'un lien mort.
+   */
+  private async loadPublicServer(serverId: number) {
+    // withHidden : un serveur masqué répond 410 (page dédiée), pas 404.
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', serverId)
+      .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
+      .preload('growthStat')
+      .preload('categories')
+      .preload('languages')
+      .first()
+    if (!server) return { status: 'missing' as const }
+    if (server.hiddenAt) return { status: 'hidden' as const }
+
     const stats = await ServerStat.query()
       .where('server_id', server.id)
       .orderBy('created_at', 'desc')
-      .limit(amount)
-    return stats
+      .limit(1)
+    return {
+      status: 'visible' as const,
+      body: { server, stats, categories: server.categories, growthStat: server.growthStat },
+    }
   }
 
   /**
@@ -144,28 +171,32 @@ export default class ServersController {
    * @operationId showServer
    * @tag SERVERS
    * @summary Get a single server by id
-   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. A server hidden by its owner returns 410 with `hidden: true` and no server details. Publicly accessible.
+   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. A server hidden by its owner returns 410 with `hidden: true` and no server details. Responses are cached for 60 seconds and purged whenever the server is modified; pass `nocache=1` to bypass the cache (effective in non-production environments or for admin users). Publicly accessible.
    * @paramPath id - The server id - @type(number) @example(134) @required
    * @responseBody 200 - {"server": "<Server>", "stats": ["<ServerStat>"], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}
    * @responseBody 404 - {"message": "Server not found"}
    * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
    */
-  async show({ params, response, i18n }: HttpContext) {
-    // withHidden : un serveur masqué répond 410 (page dédiée), pas 404.
-    let server = await Server.query()
-      .apply((scopes) => scopes.withHidden())
-      .where('id', params.id)
-      .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
-      .preload('growthStat')
-      .preload('categories')
-      .preload('languages')
-      .first()
-    if (!server) return response.notFound({ message: i18n.t('messages.servers.notFound') })
-    if (server.hiddenAt) {
+  async show(ctx: HttpContext) {
+    const { params, response, i18n } = ctx
+    const serverId = Number(params.id)
+    if (!Number.isInteger(serverId) || serverId <= 0) {
+      return response.notFound({ message: i18n.t('messages.servers.notFound') })
+    }
+
+    const result = await CacheService.cacheOrFetch(
+      CacheService.serverKey(serverId),
+      60,
+      () => this.loadPublicServer(serverId),
+      { bypass: CacheService.bypassAllowed(ctx) }
+    )
+    if (result.status === 'missing') {
+      return response.notFound({ message: i18n.t('messages.servers.notFound') })
+    }
+    if (result.status === 'hidden') {
       return response.gone({ message: i18n.t('messages.servers.hidden'), hidden: true })
     }
-    const stats = await this.getActualStats(server)
-    return { server, stats, categories: server.categories, growthStat: server.growthStat }
+    return result.body
   }
 
   /**

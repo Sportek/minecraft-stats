@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Trophy } from "lucide-react";
 import RankingsNav from "@/components/rankings/rankings-nav";
 import { RANKING_SECTIONS } from "@/components/rankings/sections";
@@ -8,7 +8,14 @@ import { RANKING_SECTIONS } from "@/components/rankings/sections";
  * Coque commune aux pages /rankings/<sort> : eyebrow et onglets restent montés
  * quand on change de classement, seul le contenu de la page est remplacé.
  */
-const RankingsLayout = async ({ children }: { children: ReactNode }) => {
+const RankingsLayout = async ({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}) => {
+  setRequestLocale((await params).locale);
   const t = await getTranslations("Rankings");
 
   const navItems = RANKING_SECTIONS.map((section) => ({

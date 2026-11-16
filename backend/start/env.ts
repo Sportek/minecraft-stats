@@ -68,7 +68,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Variables for configuring the limiter package
   |----------------------------------------------------------
   */
-  LIMITER_STORE: Env.schema.enum(['database', 'memory'] as const),
+  LIMITER_STORE: Env.schema.enum(['redis', 'database', 'memory'] as const),
 
   REDIS_HOST: Env.schema.string({ format: 'host' }),
   REDIS_PORT: Env.schema.number(),

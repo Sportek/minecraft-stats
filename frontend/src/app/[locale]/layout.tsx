@@ -1,6 +1,7 @@
 import UmamiScript from "@/components/umami-script";
 import { routing } from "@/i18n/routing";
-import { buildAlternates, getDomainConfig, getLocaleFreePathname, getOpenGraphLocales } from "@/lib/domain-server";
+import { DOMAIN_CONFIG } from "@/lib/domain";
+import { getOpenGraphLocales, localeOrigin } from "@/lib/domain-server";
 import { cn } from "@/lib/utils";
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata } from "next";
@@ -22,20 +23,25 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+// Each domain proves ownership with its own Search Console token. Emitting all of
+// them keeps the layout independent of the request host — reading the host via
+// headers() made every page under [locale] dynamic, defeating ISR.
+const GOOGLE_SITE_VERIFICATIONS = [...new Set(Object.values(DOMAIN_CONFIG).map((domain) => domain.googleSearchId))];
+
 export const generateMetadata = async ({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> => {
   const { locale } = await params;
-  const { baseUrl, googleSearchId } = await getDomainConfig();
-  const path = await getLocaleFreePathname();
-  const { canonical, languages } = buildAlternates(locale, path);
+  // Canonical/hreflang are path-specific, so each page declares its own `alternates`
+  // (see buildAlternates): the layout no longer knows the request path.
+  const origin = localeOrigin(locale);
   const og = getOpenGraphLocales(locale);
   const t = await getTranslations({ locale, namespace: "Home" });
 
   return {
-    metadataBase: new URL(baseUrl),
+    metadataBase: new URL(origin),
     title: {
       template: "%s | Minecraft Stats",
       default: t("meta.title"),
@@ -88,14 +94,12 @@ export const generateMetadata = async ({
       },
     },
     alternates: {
-      canonical,
-      languages,
       types: {
-        "application/rss+xml": `${baseUrl}/feed.xml`,
+        "application/rss+xml": `${origin}/feed.xml`,
       },
     },
     verification: {
-      google: googleSearchId,
+      google: GOOGLE_SITE_VERIFICATIONS,
     },
   };
 };
