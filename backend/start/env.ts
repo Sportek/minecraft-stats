@@ -56,6 +56,15 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Prometheus scraping (GET /metrics)
+  |----------------------------------------------------------
+  | Bearer token expected from the Argus Prometheus. When unset,
+  | /metrics answers 401 to everyone.
+  */
+  METRICS_TOKEN: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
   | Variables for configuring the limiter package
   |----------------------------------------------------------
   */
