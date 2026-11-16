@@ -25,6 +25,14 @@ function keyPrefix(key: string): string {
 }
 
 export default class CacheService {
+  /** Liste légère de tous les serveurs visibles (`GET /servers`). */
+  static readonly SERVERS_LIST_KEY = 'servers:list'
+
+  /** Fiche publique d'un serveur (`GET /servers/:id`), purgée à chaque écriture du modèle. */
+  static serverKey(serverId: number): string {
+    return `server:${serverId}`
+  }
+
   /**
    * Renvoie la valeur Redis pour `key` si présente, sinon exécute `fetcher`,
    * stocke le résultat avec TTL (en secondes) et le retourne.

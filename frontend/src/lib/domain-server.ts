@@ -90,19 +90,17 @@ const LOCALE_HOME: Record<string, string> = {
  * x-default points at the English (.com) URL.
  */
 /**
- * Reads the current request path (without its locale prefix) from the `x-pathname`
- * header that the proxy middleware injects, so generateMetadata can build the
- * hreflang/canonical URLs. Returns "" for the homepage.
+ * Production home of a locale, usable without request headers. Pages under
+ * `[locale]` must stay header-free to be statically rendered / ISR-cached, so
+ * they derive absolute URLs from the locale rather than from the request host.
  */
-export async function getLocaleFreePathname(): Promise<string> {
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") ?? "";
-  const segments = pathname.split("/");
-  if (segments[1] && (routing.locales as readonly string[]).includes(segments[1])) {
-    segments.splice(1, 1);
-  }
-  const stripped = segments.join("/");
-  return stripped === "/" ? "" : stripped;
+export function localeHome(locale: string): string {
+  return LOCALE_HOME[locale] ?? LOCALE_HOME.en;
+}
+
+/** Origin of {@link localeHome}, for locale-agnostic resources (feed.xml, images). */
+export function localeOrigin(locale: string): string {
+  return new URL(localeHome(locale)).origin;
 }
 
 /** hreflang map (locale → absolute URL) for a locale-free path. */

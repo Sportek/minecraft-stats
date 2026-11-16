@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildAlternates } from "@/lib/domain-server";
 import { Link } from "@/i18n/navigation";
 
@@ -34,7 +34,8 @@ export const generateMetadata = async ({
   };
 };
 
-const CGU = async () => {
+const CGU = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  setRequestLocale((await params).locale);
   const t = await getTranslations("StaticPages");
   const mail = (chunks: ReactNode) => (
     <a href="mailto:legal@minecraft-stats.com" className="font-medium text-accent hover:underline">

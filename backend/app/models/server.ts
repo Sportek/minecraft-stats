@@ -1,4 +1,7 @@
 import {
+  afterCreate,
+  afterDelete,
+  afterSave,
   BaseModel,
   beforeFetch,
   beforeFind,
@@ -26,6 +29,7 @@ import { LanguageCode } from '../constants/languages.js'
 import type { BoostStatus } from '../constants/server_boost.js'
 import type { OwnershipMethod } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
+import CacheService from '#services/cache_service'
 import { normalizeWebsite } from '#utils/website'
 import { deriveServerWebsite } from '#utils/server_website'
 import db from '@adonisjs/lucid/services/db'
@@ -195,6 +199,28 @@ export default class Server extends BaseModel {
     if (server.$dirty.address !== undefined || server.hostDomain === null) {
       server.hostDomain = deriveServerWebsite(server.address)
     }
+  }
+
+  // La fiche publique est cachée (`ServersController.show`). La purger ici couvre tous
+  // les chemins d'écriture — édition, masquage, revendication, verdict boost, ping —
+  // sans que chaque appelant ait à y penser.
+  @afterSave()
+  static async purgePublicCache(server: Server) {
+    await CacheService.invalidate(CacheService.serverKey(server.id))
+  }
+
+  @afterDelete()
+  static async purgeCachesOnDelete(server: Server) {
+    await CacheService.invalidate(CacheService.serverKey(server.id))
+    await CacheService.invalidate(CacheService.SERVERS_LIST_KEY)
+  }
+
+  // La liste n'est pas purgée à chaque sauvegarde : le scheduler sauvegarde chaque
+  // serveur à chaque ping, elle ne serait alors jamais servie depuis le cache. Son TTL
+  // suffit pour les compteurs ; seuls un ajout ou une disparition doivent être immédiats.
+  @afterCreate()
+  static async purgeListOnCreate() {
+    await CacheService.invalidate(CacheService.SERVERS_LIST_KEY)
   }
 
   /**

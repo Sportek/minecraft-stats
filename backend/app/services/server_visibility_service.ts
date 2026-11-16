@@ -19,9 +19,11 @@ export default class ServerVisibilityService {
     if (!hidden) server.nextPingAt = null
     await server.save()
 
-    // Le classement est caché 60 s : on purge pour que le changement soit immédiat
-    // plutôt que de laisser le serveur apparaître (ou manquer) jusqu'à expiration.
+    // Classement et liste sont cachés : on purge pour que le changement soit immédiat
+    // plutôt que de laisser le serveur apparaître (ou manquer) jusqu'à expiration. La
+    // fiche, elle, est purgée par le hook `afterSave` du modèle.
     await CacheService.invalidatePattern('paginate:*')
+    await CacheService.invalidate(CacheService.SERVERS_LIST_KEY)
     return server
   }
 

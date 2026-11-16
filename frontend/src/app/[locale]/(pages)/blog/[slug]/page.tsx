@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { getPostBySlug } from "@/http/post";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
@@ -13,12 +13,18 @@ import ArticleBody from "@/components/blog/article-body";
 import ArticleFeedback from "@/components/blog/article-feedback";
 import ArticleViewTracker from "@/components/blog/article-view-tracker";
 import { resolveAssetUrl } from "@/lib/domain";
-import { buildAlternatesForSlugs, getDomainConfig, getOpenGraphLocales } from "@/lib/domain-server";
+import { buildAlternatesForSlugs, getOpenGraphLocales, localeOrigin } from "@/lib/domain-server";
 import { renderMarkdown } from "@/lib/markdown";
 import { PostLocale } from "@/types/post";
 
 // ISR — chaque page d'article est rebuild en arrière-plan toutes les 10 minutes (P.4.3)
 export const revalidate = 600;
+
+// Empty list = articles are cached on their first visit rather than prerendered at
+// build time. Without it, a dynamic segment is rendered on every request.
+export function generateStaticParams() {
+  return [];
+}
 
 // generateMetadata et le composant de page demandent le même article : on
 // mémoïse l'appel sur la durée de la requête. La locale fait partie de la clé de
@@ -31,7 +37,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
-  const { baseUrl } = await getDomainConfig();
+  const origin = localeOrigin(locale);
   const t = await getTranslations({ locale, namespace: "Blog" });
 
   try {
@@ -41,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // Fall back to the site OG image so cover-less posts still get a social card.
     const image = post.coverImage
       ? resolveAssetUrl(post.coverImage)
-      : `${baseUrl}/images/minecraft-stats/og-image.webp`;
+      : `${origin}/images/minecraft-stats/og-image.webp`;
 
     return {
       title: post.title,
@@ -50,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         canonical,
         languages,
         types: {
-          "application/rss+xml": `${baseUrl}/feed.xml`,
+          "application/rss+xml": `${origin}/feed.xml`,
         },
       },
       openGraph: {
@@ -83,6 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Readonly<Props>) {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Blog" });
 
   try {

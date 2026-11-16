@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getFormatter, getLocale, getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { buildAlternates, getOpenGraphLocales } from "@/lib/domain-server";
 import { serverPath } from "@/lib/server-url";
 import { getRanking, isRankingSort, RANKING_LIMIT, RANKING_SORTS } from "@/http/rankings";
@@ -67,12 +67,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Ranking = async ({ params }: Props) => {
-  const { sort } = await params;
+  const { locale, sort } = await params;
+  setRequestLocale(locale);
   if (!isRankingSort(sort)) {
     notFound();
   }
 
-  const locale = await getLocale();
   const t = await getTranslations("Rankings");
   const format = await getFormatter();
 
