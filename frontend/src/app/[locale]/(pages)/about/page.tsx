@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildAlternates } from "@/lib/domain-server";
 
 export const generateMetadata = async ({
@@ -33,7 +33,8 @@ export const generateMetadata = async ({
   };
 };
 
-const About = async () => {
+const About = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  setRequestLocale((await params).locale);
   const t = await getTranslations("StaticPages");
   const strong = (chunks: ReactNode) => <strong>{chunks}</strong>;
 

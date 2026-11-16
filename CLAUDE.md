@@ -51,6 +51,14 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
 - `src/contexts/` — `auth.tsx`, `servers.tsx` (SWR), `favorite.tsx` (localStorage).
 - `src/http/` — API client (`auth.ts`, `server.ts`). `src/types/` — TS types.
 - Tailwind + shadcn/ui, SWR for data, AG Charts for stats.
+- **Static rendering / ISR**: nothing rendered under `[locale]` may call `headers()`/`cookies()`
+  (directly or via a helper) — one call makes *every* page dynamic (`no-store`). Derive absolute
+  URLs from the locale (`localeHome`/`localeOrigin` in `lib/domain-server.ts`), not the request host;
+  each indexable page declares its own `alternates` (canonical/hreflang). Every server page/layout
+  calls `setRequestLocale(locale)` before `getTranslations()`. Dynamic segments that should be
+  cached export `generateStaticParams() { return [] }`. Check with `next build` (● = cached, ƒ = per request).
+- **SSR → API**: server-side calls go through `INTERNAL_API_URL` (Docker network), not the public
+  URL (`getBaseUrl()` in `app/_cheatcode.tsx`).
 
 ## Key Patterns
 
@@ -69,6 +77,9 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
   every `Server` model read (find/query/count/paginate/relation preloads) via hooks on the model;
   owner/admin/duplicate-detection reads opt in with `.apply((scopes) => scopes.withHidden())`.
   Raw SQL (`db.from('servers')`) bypasses the hooks — filter `hidden_at IS NULL` yourself.
+- **Response cache (Redis)**: `GET /servers/:id` (60 s) and `GET /servers` (5 min) are cached;
+  `Server` model hooks (`afterSave`/`afterCreate`/`afterDelete`) purge them, so any write path is
+  covered. `server_stats` has a composite PK `(server_id, created_at)` and no `id` column.
 - **`Server.syncLanguages()`**: many-to-many language sync with manual transaction control for atomicity.
 - **Auth**: session-based (DB access tokens) + Google/Discord OAuth (Ally) + JWT email verification
   (MJML mail templates); passwords hashed with Argon2.

@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { buildAlternates } from "@/lib/domain-server";
 import { Icon } from "@iconify/react";
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 export const generateMetadata = async ({
@@ -57,7 +57,8 @@ const channels = [
   },
 ];
 
-const Contact = async () => {
+const Contact = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  setRequestLocale((await params).locale);
   const t = await getTranslations("StaticPages");
 
   return (

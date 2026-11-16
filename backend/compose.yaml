@@ -131,6 +131,9 @@ services:
       - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       - NEXT_PUBLIC_GOOGLE_TAG_MANAGER=${NEXT_PUBLIC_GOOGLE_TAG_MANAGER}
       - NEXT_PUBLIC_MICROSOFT_CLARITY=${NEXT_PUBLIC_MICROSOFT_CLARITY}
+      # Appels faits pendant le rendu serveur : par le réseau interne plutôt que par
+      # l'URL publique (aller-retour Cloudflare → tunnel → Traefik, ~60 ms par appel).
+      - INTERNAL_API_URL=http://adonis_app:${PORT}/api/v1
     networks:
       - sail
     logging:
