@@ -1,5 +1,6 @@
 import { PostAuthor, PostViews, formatPostDate } from "@/components/blog/post-meta";
 import { Badge } from "@/components/ui/badge";
+import { ApiError } from "@/http/client";
 import { getPostBySlug } from "@/http/post";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
@@ -78,7 +79,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: [image],
       },
     };
-  } catch {
+  } catch (error) {
+    if (!isNotFound(error)) throw error;
     return {
       title: t("notFound.metaTitle"),
       description: t("notFound.metaDescription"),
@@ -208,8 +210,15 @@ export default async function BlogPostPage({ params }: Readonly<Props>) {
         </article>
       </div>
     );
-  } catch {
+  } catch (error) {
+    // Any other failure must bubble up: with ISR, Next then keeps serving the last
+    // good version instead of caching a 404 for a transient API error.
+    if (!isNotFound(error)) throw error;
     // Return a real 404 (not a soft 200 page) so search engines drop missing posts.
     notFound();
   }
+}
+
+function isNotFound(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 404;
 }

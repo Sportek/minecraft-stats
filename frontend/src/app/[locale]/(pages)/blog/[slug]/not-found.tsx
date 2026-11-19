@@ -1,10 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-export default async function BlogPostNotFound() {
-  const t = await getTranslations("Blog");
+// Client component on purpose: a not-found boundary receives no params, so a server
+// version can't call setRequestLocale and next-intl falls back to headers(), which
+// breaks the article page's ISR (DYNAMIC_SERVER_USAGE → 500 on every article).
+export default function BlogPostNotFound() {
+  const t = useTranslations("Blog");
 
   return (
     <div className="flex items-center justify-center">
