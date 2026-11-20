@@ -25,7 +25,8 @@ export const resolvePlaceholders = (placeholders: string[]) =>
   })
 
 export const getPostBySlug = (slug: string, locale: PostLocale = 'en') =>
-  apiFetch<Post>(`/posts/${slug}?locale=${locale}`, { cache: 'no-store' })
+  // Same lifetime as the article page's ISR: a `no-store` fetch would force the page dynamic.
+  apiFetch<Post>(`/posts/${slug}?locale=${locale}`, { next: { revalidate: 600 } })
 
 /**
  * Records a view for the article. Consent-exempt and best-effort: it only bumps
