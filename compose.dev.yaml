@@ -1,0 +1,40 @@
+# Dépendances du développement local : PostgreSQL et Redis seulement.
+# Le backend et le frontend tournent sur la machine (`yarn dev`), voir CONTRIBUTING.md.
+#
+#   docker compose -f compose.dev.yaml up -d
+#
+# Les ports se changent sans toucher au fichier, si 5432/6379 sont déjà pris :
+#   DEV_DB_PORT=5433 DEV_REDIS_PORT=6380 docker compose -f compose.dev.yaml up -d
+# (et reporter les mêmes ports dans backend/.env).
+name: minecraft-stats-dev
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: minecraft_stats
+      POSTGRES_PASSWORD: minecraft_stats
+      POSTGRES_DB: minecraft_stats
+    ports:
+      - "${DEV_DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U minecraft_stats"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass minecraft_stats
+    ports:
+      - "${DEV_REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "minecraft_stats", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
