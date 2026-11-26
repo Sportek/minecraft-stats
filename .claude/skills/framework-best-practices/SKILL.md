@@ -29,7 +29,7 @@ Lucid, VineJS, Bouncer), typescriptlang.org.
 | R8 | **Stable, meaningful `key`s in lists** — never the array index when the list can reorder/insert/delete. | `.map((x, i) => <... key={i}>`. |
 | R9 | **Prefer the data-layer cache (SWR here) over ad-hoc fetch-in-Effect.** Use SWR for server data; reserve `useEffect`+`fetch` for cases SWR can't express. | `useEffect` containing `fetch`/`getX(` + `setState` for data that a `useSWR` key would cover. |
 | R10 | **Controlled inputs** keep value+onChange consistent; don't switch controlled/uncontrolled. | `value=` without `onChange` (and not `readOnly`/`defaultValue`). |
-| R11 | **Don't over-memoize** — `useMemo`/`useCallback` only for measured cost or referential-identity needs (the React Compiler is not enabled in this repo, so memoize deliberately, not by default). | `useCallback`/`useMemo` wrapping trivial values with no consumer needing stable identity. |
+| R11 | **Let the React Compiler memoize** — it is on (`reactCompiler: true` in `frontend/next.config.mjs`), so new code doesn't need `useMemo`/`useCallback`/`memo`; keep them only where identity is part of an external contract (e.g. an effect dependency of a third-party hook). A component that disables a `react-hooks` lint rule is skipped by the compiler entirely. | New `useMemo`/`useCallback`/`memo(` in a diff; any `eslint-disable.*react-hooks/` (the component loses compiler optimization). |
 | R12 | **Accessibility**: interactive elements are real buttons/links; icons are labelled or `aria-hidden`. | `onClick` on a `<div>`/`<span>` with no role/keyboard handler. |
 
 > Note: this repo pins `eslint-plugin-react-hooks` at 7.0.1; v7.1.1 surfaces ~31
