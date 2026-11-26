@@ -29,7 +29,7 @@
     "@tiptap/extension-link": "^3.13.0",
     "@tiptap/extension-placeholder": "^3.13.0",
     "@tiptap/extension-text-style": "^3.13.0",
-    "@tiptap/extensions": "^3.13.0",
+    "@tiptap/extensions": "^3.35.0",
     "@tiptap/pm": "^3.13.0",
     "@tiptap/react": "^3.13.0",
     "@tiptap/starter-kit": "^3.14.0",
