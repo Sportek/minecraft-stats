@@ -1,6 +1,6 @@
 ---
 name: scaffolding-adonis-resources
-description: Scaffolds AdonisJS 7 backend resources (models, controllers, migrations, validators, policies, services, mails, factories, etc.) with the Ace CLI instead of hand-written files. Use when the user asks to create, generate or "make" a backend model, controller, migration, validator, policy, service, middleware, mail, factory, seeder, test or a full CRUD resource in backend/. Do NOT use for frontend components or for editing existing backend files.
+description: Scaffolds AdonisJS 7 backend resources (models, controllers, migrations, validators, policies, services, mails, factories, etc.) with the Ace CLI instead of hand-written files. Use it whenever a new file is about to be created under backend/app, backend/database or backend/tests - a model, controller, migration, validator, policy, service, middleware, mail, factory, seeder, test or a full CRUD resource - even if the user just says « ajoute un endpoint » or « crée une table » without mentioning Ace. Do NOT use for frontend components or for editing existing backend files.
 ---
 
 # Scaffolding AdonisJS resources

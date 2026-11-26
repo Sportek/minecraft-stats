@@ -1,6 +1,6 @@
 ---
 name: framework-best-practices
-description: Auditable best practices for this stack - React 19, Next.js 16 (App Router), AdonisJS 7 (Lucid, VineJS, Bouncer) and strict TypeScript 6, each with a detection heuristic. Use when reviewing a diff or a PR, auditing the codebase for violations, or checking new React/Next/Adonis code against framework guidance ("review", "audit", "best practices"). Do NOT use for generic readability issues (use writing-clean-code) or for scaffolding files (use scaffolding-adonis-resources).
+description: Auditable best practices for this stack - React 19, Next.js 16 (App Router), AdonisJS 7 (Lucid, VineJS, Bouncer) and strict TypeScript 6, each with a detection heuristic. Use it whenever you review a diff or a PR, audit part of the codebase, or finish a non-trivial React/Next/Adonis change and want to check it, even if the user only says « review », « relis », « audit » or « c'est propre ? ». Do NOT use for generic readability issues (use writing-clean-code) or for scaffolding files (use scaffolding-adonis-resources).
 ---
 
 # Framework best practices (React · Next.js · AdonisJS · TypeScript)
