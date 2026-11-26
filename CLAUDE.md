@@ -71,6 +71,9 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
 - `src/contexts/` — `auth.tsx`, `servers.tsx` (SWR), `favorite.tsx` (localStorage).
 - `src/http/` — API client (`auth.ts`, `server.ts`). `src/types/` — TS types.
 - Tailwind + shadcn/ui, SWR for data, AG Charts for stats.
+- **React Compiler** is on (`reactCompiler: true`): don't add `useMemo`/`useCallback`/`memo` by
+  default. A component that disables a `react-hooks` lint rule is skipped by the compiler, so fix
+  the code instead of adding `eslint-disable`.
 - **Static rendering / ISR**: nothing rendered under `[locale]` may call `headers()`/`cookies()`
   (directly or via a helper) — one call makes *every* page dynamic (`no-store`). Derive absolute
   URLs from the locale (`localeHome`/`localeOrigin` in `lib/domain-server.ts`), not the request host;

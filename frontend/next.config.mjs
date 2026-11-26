@@ -80,6 +80,9 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  // React Compiler : mémoïse automatiquement les composants. Ceux qui désactivent une
+  // règle react-hooks (eslint-disable) sont ignorés par le compilateur et restent tels quels.
+  reactCompiler: true,
   productionBrowserSourceMaps: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
