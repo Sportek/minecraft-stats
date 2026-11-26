@@ -29,7 +29,7 @@ Lucid, VineJS, Bouncer), typescriptlang.org.
 | R8 | **Stable, meaningful `key`s in lists** — never the array index when the list can reorder/insert/delete. | `.map((x, i) => <... key={i}>`. |
 | R9 | **Prefer the data-layer cache (SWR here) over ad-hoc fetch-in-Effect.** Use SWR for server data; reserve `useEffect`+`fetch` for cases SWR can't express. | `useEffect` containing `fetch`/`getX(` + `setState` for data that a `useSWR` key would cover. |
 | R10 | **Controlled inputs** keep value+onChange consistent; don't switch controlled/uncontrolled. | `value=` without `onChange` (and not `readOnly`/`defaultValue`). |
-| R11 | **Don't over-memoize** — `useMemo`/`useCallback` only for measured cost or referential-identity needs (the React Compiler is not enabled in this repo, so memoize deliberately, not by default). | `useCallback`/`useMemo` wrapping trivial values with no consumer needing stable identity. |
+| R11 | **Don't over-memoize** — `useMemo`/`useCallback` only for measured cost or referential-identity needs. Check `reactCompiler` in `frontend/next.config.mjs`: when it is on, the compiler memoizes for you and manual memoization is noise. | `useCallback`/`useMemo` wrapping trivial values with no consumer needing stable identity. |
 | R12 | **Accessibility**: interactive elements are real buttons/links; icons are labelled or `aria-hidden`. | `onClick` on a `<div>`/`<span>` with no role/keyboard handler. |
 
 > Note: this repo pins `eslint-plugin-react-hooks` at 7.0.1; v7.1.1 surfaces ~31
