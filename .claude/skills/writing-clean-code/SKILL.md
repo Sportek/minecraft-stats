@@ -1,6 +1,6 @@
 ---
 name: writing-clean-code
-description: Code-quality guardrails for writing or editing application code (React, TypeScript, AdonisJS). Avoids common AI/LLM anti-patterns — nested ternaries, redundant comments, over-defensive null checks, try-catch abuse, single-use helpers, and over-engineering. Use whenever generating or refactoring code, not just when the user explicitly asks for "clean code".
+description: Code-quality guardrails for writing or editing application code (React, TypeScript, AdonisJS). Avoids common AI/LLM anti-patterns — nested ternaries, redundant comments, over-defensive null checks, try-catch abuse, single-use helpers, and over-engineering. Use whenever generating or refactoring code, not just when the user explicitly asks for "clean code". For framework-specific rules (React hooks, Next.js rendering, Adonis/Lucid patterns) use framework-best-practices instead.
 ---
 
 # Writing clean code

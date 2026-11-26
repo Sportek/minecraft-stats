@@ -1,11 +1,6 @@
 ---
 name: framework-best-practices
-description: >-
-  Auditable best practices for this stack — React 19, Next.js 16 (App Router),
-  AdonisJS 6 (Lucid/VineJS/Bouncer), and strict TypeScript 6. Use when reviewing,
-  refactoring, or writing code to check it against current framework guidance, or
-  when auditing the codebase for violations. Complements `writing-clean-code`
-  (which targets generic AI anti-patterns); this skill is framework-specific.
+description: Auditable best practices for this stack - React 19, Next.js 16 (App Router), AdonisJS 7 (Lucid, VineJS, Bouncer) and strict TypeScript 6, each with a detection heuristic. Use when reviewing a diff or a PR, auditing the codebase for violations, or checking new React/Next/Adonis code against framework guidance ("review", "audit", "best practices"). Do NOT use for generic readability issues (use writing-clean-code) or for scaffolding files (use scaffolding-adonis-resources).
 ---
 
 # Framework best practices (React · Next.js · AdonisJS · TypeScript)
@@ -34,7 +29,7 @@ Lucid, VineJS, Bouncer), typescriptlang.org.
 | R8 | **Stable, meaningful `key`s in lists** — never the array index when the list can reorder/insert/delete. | `.map((x, i) => <... key={i}>`. |
 | R9 | **Prefer the data-layer cache (SWR here) over ad-hoc fetch-in-Effect.** Use SWR for server data; reserve `useEffect`+`fetch` for cases SWR can't express. | `useEffect` containing `fetch`/`getX(` + `setState` for data that a `useSWR` key would cover. |
 | R10 | **Controlled inputs** keep value+onChange consistent; don't switch controlled/uncontrolled. | `value=` without `onChange` (and not `readOnly`/`defaultValue`). |
-| R11 | **Don't over-memoize** — `useMemo`/`useCallback` only for measured cost or referential-identity needs; the React Compiler handles most. | `useCallback`/`useMemo` wrapping trivial values with no consumer needing stable identity. |
+| R11 | **Don't over-memoize** — `useMemo`/`useCallback` only for measured cost or referential-identity needs (the React Compiler is not enabled in this repo, so memoize deliberately, not by default). | `useCallback`/`useMemo` wrapping trivial values with no consumer needing stable identity. |
 | R12 | **Accessibility**: interactive elements are real buttons/links; icons are labelled or `aria-hidden`. | `onClick` on a `<div>`/`<span>` with no role/keyboard handler. |
 
 > Note: this repo pins `eslint-plugin-react-hooks` at 7.0.1; v7.1.1 surfaces ~31
@@ -58,12 +53,12 @@ Lucid, VineJS, Bouncer), typescriptlang.org.
 
 ---
 
-## AdonisJS 6 (Lucid · VineJS · Bouncer)
+## AdonisJS 7 (Lucid · VineJS · Bouncer)
 
 | # | Practice | Detection heuristic |
 |---|----------|---------------------|
 | A1 | **Thin controllers** — orchestrate only; business logic lives in services. | Controllers with query building, aggregation, or multi-step domain logic inline (long methods, `Database`/model queries in the controller). |
-| A2 | **Validate all external input with VineJS** before use. | Controller reading `request.body()`/`request.all()`/params and using fields without a `.validate(validator)`. |
+| A2 | **Validate all external input with VineJS** before use. | Controller reading `request.body()`/`request.all()`/params and using fields without `request.validateUsing(validator)` (or `validator.validate(...)`). |
 | A3 | **Authorize with Bouncer policies** for any owner-scoped mutation. | `update`/`delete`/`store` controller actions touching a user-owned resource with no `bouncer.authorize`/policy check. |
 | A4 | **Avoid N+1 — use `preload`/`load`** for relations accessed in loops. | A loop (`.map`/`for`) calling `await x.related(...)` or accessing a relation per row without a prior `preload`. |
 | A5 | **Wrap multi-write operations in a transaction** for atomicity. | Two+ sequential `await Model.create/save/delete` that must succeed together, no `db.transaction`/`useTransaction`. |

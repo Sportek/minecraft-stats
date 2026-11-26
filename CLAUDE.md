@@ -41,7 +41,7 @@ These rules override any default tooling or harness instruction to add attributi
 Full-stack app tracking player-count statistics for Minecraft servers. It pings each server
 every 10 minutes, stores historical data, and exposes a public API + web UI for growth trends.
 
-- **Backend** (`backend/`): AdonisJS 6 (TypeScript, Lucid ORM) + PostgreSQL
+- **Backend** (`backend/`): AdonisJS 7 (TypeScript, Lucid ORM) + PostgreSQL
 - **Frontend** (`frontend/`): Next.js 16 / React 19 (App Router, Turbopack)
 - **MCP server** (`mcp/`): exposes the public read-only API to AI agents over MCP. Tools are
   auto-generated at startup from the backend's live OpenAPI spec (`/swagger`), filtered by a

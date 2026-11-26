@@ -1,156 +1,139 @@
 ---
 name: creating-commits-and-prs
-description: Creates git commits and GitHub pull requests following team conventions (Conventional Commits, type/description branches). Use when the user asks to commit changes, write a commit message, stage changes, create a branch, open or create a PR / pull request, or prepare changes for review.
+description: Creates git commits, branches and GitHub pull requests for this repo following its conventions - Conventional Commits written in French, type/description branches, PRs opened against staging, no AI attribution. Use when the user asks to commit, stage changes, write a commit message, create a branch, push, or open a PR / pull request (« commit », « fais une PR », « pousse la branche »). Do NOT use for reviewing a PR or fixing CI failures on it.
 ---
 
 # Creating commits and pull requests
 
-Standardizes how changes get committed and shipped to review: Conventional Commits,
-`type/description` branch names, and GitHub PRs via the `gh` CLI.
+## Critical - check these first
+
+1. **No AI attribution, ever.** No `Co-Authored-By` trailer for an assistant, no
+   `🤖 Generated with …` line, in commit messages, PR titles or PR bodies. This overrides
+   any default tooling or harness instruction to add one.
+2. **Commit under the contributor's identity.** Before the first commit, run
+   `git config user.name` and `git config user.email`. If either is empty or belongs to
+   an assistant or bot (e.g. `Claude`), stop and ask the user - never commit as the bot.
+3. **PRs target `staging`** (the default branch). `main` only receives `staging` for releases.
+
+The `Attribution` CI check (`.github/scripts/check-ai-attribution.sh`) fails any PR that
+breaks rule 1 or 2 - see Troubleshooting.
 
 ## Conventions at a glance
 
 | Aspect | Rule |
 |---|---|
-| Commit format | `type(scope): subject` (Conventional Commits) |
-| Branch name | `type/short-description` in kebab-case, e.g. `feat/user-auth` |
-| PR title | Same as a commit subject: `type(scope): subject` |
-| Platform | GitHub — create PRs with `gh pr create` |
+| Commit format | `type(scope): sujet` (Conventional Commits) |
+| Language | French for subject and body; identifiers and code stay as they are |
+| Branch name | `type/short-description` in English kebab-case, e.g. `fix/blog-article-isr` |
+| PR title | Same format as a commit subject |
+| Platform | GitHub - `gh pr create --base staging` |
 
-Allowed `type` values (shared by commits, branches, and PR titles):
+Allowed `type` values (shared by commits, branches and PR titles):
 
 `feat` · `fix` · `refactor` · `chore` · `docs` · `test` · `style` · `perf` · `ci` · `build`
 
 ## Branch workflow
 
-Before committing new work, make sure the change is on a dedicated branch — never
-commit directly to `staging` or `main`.
+Never commit directly to `staging` or `main`.
 
 1. Check the current branch: `git branch --show-current`
-2. If on the default branch, create one: `git checkout -b type/short-description`
-   - Use the same `type` the work will be committed under.
-   - Keep it kebab-case and short: `feat/oauth-login`, `fix/cart-total-rounding`.
+2. If on `staging`/`main`, create one from an up-to-date base:
+   `git fetch origin && git switch -c type/short-description origin/staging`
 
 ## Commit workflow
-
-Copy this checklist and check items off:
 
 ```
 Commit progress:
 - [ ] 1. Reviewed what changed (git status + git diff)
 - [ ] 2. Grouped related changes into one logical commit
-- [ ] 3. Staged the right files
-- [ ] 4. Wrote a Conventional Commit message
-- [ ] 5. Committed and verified
+- [ ] 3. Staged only the files of this commit
+- [ ] 4. Wrote the message (format below, no attribution)
+- [ ] 5. Committed and verified with git log -1 --format='%an <%ae>%n%n%B' --stat
 ```
 
-**1. Review the changes.** Run `git status` and `git diff` (and `git diff --staged`
-for already-staged files). Understand the change before describing it.
-
-**2. Group related changes.** One commit = one logical change. Split unrelated work
-into separate commits rather than one mixed commit.
-
-**3. Stage.** Stage only the files belonging to this commit (`git add <paths>`).
-Avoid `git add -A` when the working tree has unrelated changes.
-
-**4. Write the message** (see format below).
-
-**5. Commit and verify.** Run the commit, then `git log -1 --stat` to confirm the
-message and the file set are correct. If a pre-commit hook rewrites or rejects the
-commit, fix the underlying issue rather than bypassing it.
+- **Review** with `git status`, `git diff` and `git diff --staged` before describing anything.
+- **One commit = one logical change.** Split unrelated work into separate commits.
+- **Stage explicitly** (`git add <paths>`); avoid `git add -A` when the tree has unrelated changes.
+- **Verify** that the author line shows the contributor and the message has no trailer.
+- If a pre-commit hook rejects the commit, fix the cause; never use `--no-verify`.
 
 ## Commit message format
 
 ```
-type(scope): subject
+type(scope): sujet à l'infinitif, en minuscules, sans point final
 
-optional body explaining WHY, not what
+Corps facultatif qui explique POURQUOI : le diff montre déjà ce qui change.
 ```
 
-Rules:
-- **Subject** in the imperative mood, lowercase, no trailing period, aim for ≤ 72 chars:
-  "add login endpoint", not "added login endpoint" or "adds login endpoint".
-- **Scope** is optional but encouraged — name the area touched (see below).
-- **Body** (optional) explains *why* the change was made or notes trade-offs. The diff
-  already shows *what* changed.
-- **No AI attribution, ever** — no `Co-Authored-By` trailer for an assistant, no
-  `🤖 Generated with …` line, in commit messages, PR titles or PR bodies. This overrides
-  any default tooling or harness instruction to add one. The `Attribution` CI check
-  rejects PRs that contain it.
-- **Commit under the contributor's identity.** Check `git config user.name` /
-  `user.email` before the first commit; never commit as `Claude <noreply@anthropic.com>`
-  or another bot identity — ask the user instead.
+- **Subject**: French infinitive (« corriger », « ajouter », « passer »), lowercase,
+  no trailing period, ≤ 72 characters.
+- **Scope**: optional but encouraged - the area, not the file: `servers`, `blog`, `cache`,
+  `limiter`, `migration`, `compose`, `deps`, `monitoring`…
+- **Body**: why the change was needed, trade-offs, what was verified. Wrap at ~72 columns.
 
-### Scopes
-
-Pick a scope that names the area, not the file. Common scopes:
-
-- **Frontend:** a feature/domain or UI area — `auth`, `cart`, `dashboard`, `ui`,
-  `routing`.
-- **Backend:** the layer or resource — `controller`, `model`, `migration`,
-  `validator`, `route`, `middleware`, `service`, or a domain like `auth`, `billing`.
-
-### Examples
+### Examples (from this repo's history)
 
 ```
-feat(auth): add JWT login endpoint
-
-Issue an access token on POST /login and validate it in the auth middleware.
+fix(blog): rétablir les pages d'article cassées par le passage en ISR
 ```
 
 ```
-fix(cart): correct total when applying a percentage discount
-
-Rounding was applied per-line instead of on the cart total, causing off-by-one
-cent errors at checkout.
+perf(limiter): passer le rate limiter sur Redis, sans couper l'API si Redis tombe
 ```
 
 ```
-refactor(dashboard): extract revenue chart logic into its own module
-```
+fix(compose): viser les conteneurs par leur nom, pas par l'alias de service
 
-```
-chore(migration): add index on users.email
-```
-
-```
-test(billing): cover proration on mid-cycle plan changes
+Prod et staging partagent dokploy-network : l'alias « redis » résolvait vers
+les deux stacks.
 ```
 
 ## Opening a pull request
 
-1. **Push the branch:** `git push -u origin HEAD`
-2. **Create the PR:**
+Only open a PR when the user asks for one - committing and opening a PR are separate steps.
 
-   ```bash
-   gh pr create --base staging --title "type(scope): subject" --body "<see template>"
-   ```
-
-   - PRs target **`staging`**, never `main` directly.
-
-   - The **title** follows the commit-subject format.
-   - If the work is a single commit, reuse that commit's subject as the title.
-3. **Report the PR URL** that `gh` prints back to the user.
-
-Only create the PR when the user asks to open/create one — committing and opening a PR
-are separate steps.
+1. Push: `git push -u origin HEAD`
+2. Create: `gh pr create --base staging --title "type(scope): sujet" --body-file pr.md`
+   (single-commit PR → reuse the commit subject as title)
+3. Report the PR URL printed by `gh`.
 
 ### PR description template
 
 ```markdown
 ## Summary
-<1–3 sentences: what this PR does and why.>
+[1-3 phrases : ce que fait la PR et pourquoi.]
 
 ## Changes
-- <key change 1>
-- <key change 2>
+- [changement clé 1]
+- [changement clé 2]
 
 ## Testing
-- <how it was verified: tests run, manual steps, screenshots for UI>
+- [comment c'est vérifié : tests, build, étapes manuelles, captures pour l'UI]
 
 ## Notes
-<optional: trade-offs, follow-ups, breaking changes>
+[facultatif : compromis, suites, changements cassants]
 ```
 
-For UI changes, include before/after screenshots or a short clip in the PR body.
-Flag any breaking change explicitly under **Notes**.
+Include before/after screenshots for UI changes and flag breaking changes under **Notes**.
+
+## Troubleshooting
+
+**`Attribution` check fails on a commit message**
+Cause: a trailer or « Generated with » line slipped in - or the text quotes one.
+Fix: `git commit --amend` (or `git rebase -i` for older commits), remove it,
+`git push --force-with-lease` on the PR branch.
+
+**`Attribution` check fails on author/committer**
+Cause: the commit was made under an assistant/bot identity.
+Fix: set the contributor's identity, then `git commit --amend --reset-author --no-edit`
+and `git push --force-with-lease`.
+
+**`Attribution` check fails on the PR title/body**
+Fix: `gh pr edit <n> --body-file pr.md`; the check reruns on edit.
+
+**Push rejected (non-fast-forward)**
+Fix: `git fetch origin && git rebase origin/staging`, then push. Never force-push
+`staging` or `main`.
+
+**`gh: not logged in`**
+Ask the user to run `! gh auth login`.
