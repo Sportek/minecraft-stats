@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question ou discussion
+    url: https://discord.gg/dGEqqPEaXP
+    about: Pour une question, passe plutôt par le Discord.
+  - name: Faille de sécurité
+    url: https://github.com/Sportek/minecraft-stats/security/advisories/new
+    about: Ne l'ouvre pas en issue publique, signale-la en privé.
