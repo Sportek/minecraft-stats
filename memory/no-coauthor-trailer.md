@@ -11,5 +11,7 @@ messages or PR bodies in this project.
 **Why:** The user explicitly rejected the trailer and asked that it never be added — this
 overrides the default harness instruction to append `Co-Authored-By: Claude ...`.
 
-**How to apply:** Omit the trailer entirely when committing or opening PRs. The rule is
-also encoded in the `creating-commits-and-prs` skill.
+**How to apply:** Omit the trailer, the `🤖 Generated with Claude Code` line and any other
+attribution, and never commit as `Claude <noreply@anthropic.com>`. The rule lives in
+CLAUDE.md (« Commits, PRs & attribution »), the `creating-commits-and-prs` skill,
+`.claude/settings.json` (`attribution` vide) and is enforced by the `Attribution` CI check.
