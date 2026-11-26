@@ -33,6 +33,8 @@ const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
       return "destructive";
     case "writer":
       return "accent";
+    case "support":
+      return "outline";
     default:
       return "secondary";
   }
@@ -46,10 +48,12 @@ const AdminUsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [counts, setCounts] = useState({ admin: 0, writer: 0, user: 0 });
+  const [counts, setCounts] = useState({ admin: 0, writer: 0, support: 0, user: 0 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "writer" | "user">("all");
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "writer" | "support" | "user">(
+    "all"
+  );
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
   const [blacklistingUserId, setBlacklistingUserId] = useState<number | null>(null);
   // Bumped after a role change to refresh both the current page and the counts.
@@ -83,14 +87,16 @@ const AdminUsersPage = () => {
 
     const fetchCounts = async () => {
       try {
-        const [admins, writers, members] = await Promise.all([
+        const [admins, writers, supports, members] = await Promise.all([
           getAdminUsers(token, 1, 1, "", "admin"),
           getAdminUsers(token, 1, 1, "", "writer"),
+          getAdminUsers(token, 1, 1, "", "support"),
           getAdminUsers(token, 1, 1, "", "user"),
         ]);
         setCounts({
           admin: admins.meta.total,
           writer: writers.meta.total,
+          support: supports.meta.total,
           user: members.meta.total,
         });
       } catch (error) {
@@ -101,7 +107,7 @@ const AdminUsersPage = () => {
     fetchCounts();
   }, [token, refresh]);
 
-  const total = counts.admin + counts.writer + counts.user;
+  const total = counts.admin + counts.writer + counts.support + counts.user;
 
   // Filters/search reset pagination to the first page.
   const updateSearch = (value: string) => {
@@ -109,7 +115,7 @@ const AdminUsersPage = () => {
     setPage(1);
   };
 
-  const updateRoleFilter = (value: "all" | "admin" | "writer" | "user") => {
+  const updateRoleFilter = (value: "all" | "admin" | "writer" | "support" | "user") => {
     setRoleFilter(value);
     setPage(1);
   };
@@ -128,7 +134,10 @@ const AdminUsersPage = () => {
     );
   }
 
-  const handleRoleChange = async (userId: number, newRole: "admin" | "writer" | "user") => {
+  const handleRoleChange = async (
+    userId: number,
+    newRole: "admin" | "writer" | "support" | "user"
+  ) => {
     if (!token) return;
 
     const targetUser = users.find((u) => u.id === userId);
@@ -207,10 +216,11 @@ const AdminUsersPage = () => {
       />
 
       {/* Stat tiles */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         <DashboardStatTile label={t("users.tiles.total")} value={String(total)} />
         <DashboardStatTile label={t("users.tiles.admins")} value={String(counts.admin)} dot="success" />
         <DashboardStatTile label={t("users.tiles.writers")} value={String(counts.writer)} dot="success" />
+        <DashboardStatTile label={t("users.tiles.support")} value={String(counts.support)} dot="success" />
         <DashboardStatTile label={t("users.tiles.members")} value={String(counts.user)} />
       </div>
 
@@ -225,6 +235,7 @@ const AdminUsersPage = () => {
               { value: "all", label: t("users.tabs.all") },
               { value: "admin", label: t("users.tabs.admins") },
               { value: "writer", label: t("users.tabs.writers") },
+              { value: "support", label: t("users.tabs.support") },
               { value: "user", label: t("users.tabs.users") },
             ]}
           />
@@ -292,7 +303,7 @@ const AdminUsersPage = () => {
                       <Select
                         value={u.role}
                         onValueChange={(value) =>
-                          handleRoleChange(u.id, value as "admin" | "writer" | "user")
+                          handleRoleChange(u.id, value as "admin" | "writer" | "support" | "user")
                         }
                         disabled={updatingUserId === u.id}
                       >
@@ -302,6 +313,7 @@ const AdminUsersPage = () => {
                         <SelectContent>
                           <SelectItem value="user">{t("users.roles.user")}</SelectItem>
                           <SelectItem value="writer">{t("users.roles.writer")}</SelectItem>
+                          <SelectItem value="support">{t("users.roles.support")}</SelectItem>
                           <SelectItem value="admin">{t("users.roles.admin")}</SelectItem>
                         </SelectContent>
                       </Select>

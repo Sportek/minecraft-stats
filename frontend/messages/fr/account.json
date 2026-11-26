@@ -10,7 +10,8 @@
     "users": "Utilisateurs",
     "advertisements": "Publicités",
     "ownershipClaims": "Demandes de propriété",
-    "boostReports": "Connectés suspects"
+    "boostReports": "Connectés suspects",
+    "serversPending": "Modération des serveurs"
   },
   "common": {
     "loading": "Chargement…",
@@ -87,6 +88,8 @@
     "verify": "Vérifier la propriété",
     "verifyTitle": "Vérifier la propriété de ce serveur",
     "hiddenBadge": "Masqué",
+    "pendingBadge": "En attente d'approbation",
+    "blockedBadge": "Bloqué par la modération",
     "hide": "Masquer le serveur",
     "hideTitle": "Masquer du site",
     "unhide": "Rendre le serveur visible",

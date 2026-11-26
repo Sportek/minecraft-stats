@@ -29,7 +29,7 @@ export const generateMetadata = async (props: {
   try {
     const server = await getServer(Number(params.serverId));
     const lastStat = getLastStat(server.stats);
-    const playerCount = lastStat.playerCount ?? 0;
+    const playerCount = lastStat?.playerCount ?? 0;
     const categories = server.categories.map((c) => c.name).join(", ");
     const languages = server.server.languages.map((l) => l.name).join(", ");
     const imageUrl = `${assetsBase}${server.server.imageUrl}.webp`;
@@ -107,13 +107,13 @@ export const generateMetadata = async (props: {
       },
     };
   } catch (error) {
-    console.error("Erreur", error);
     // Seul un vrai 404 (ou un 410 : serveur masqué par son propriétaire) doit
     // figer le titre dédié + noindex dans le cache ISR (revalidate 600). Sur une
     // erreur transitoire (429, 5xx, timeout), on hérite des metadata parentes
     // pour ne pas désindexer un serveur valide pendant 10 minutes.
     const status = error instanceof HttpError ? error.status : null;
     if (status !== 404 && status !== 410) {
+      console.error("generateMetadata: échec inattendu", error);
       return {};
     }
     const title = status === 410 ? t("meta.hiddenTitle") : t("meta.notFoundTitle");

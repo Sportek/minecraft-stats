@@ -10,7 +10,8 @@
     "users": "Users",
     "advertisements": "Advertisements",
     "ownershipClaims": "Ownership claims",
-    "boostReports": "Suspicious player counts"
+    "boostReports": "Suspicious player counts",
+    "serversPending": "Server moderation"
   },
   "common": {
     "loading": "Loading...",
@@ -87,6 +88,8 @@
     "verify": "Verify ownership",
     "verifyTitle": "Verify ownership of this server",
     "hiddenBadge": "Hidden",
+    "pendingBadge": "Pending approval",
+    "blockedBadge": "Blocked by moderation",
     "hide": "Hide server",
     "hideTitle": "Hide from the site",
     "unhide": "Make server visible",

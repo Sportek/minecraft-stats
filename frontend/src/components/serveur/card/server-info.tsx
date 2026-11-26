@@ -2,7 +2,7 @@
 
 import { Check, Copy, ExternalLink, Gamepad2, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { cleanWebsiteHost, deriveServerWebsite, toWebsiteHref } from "@/utils/server-website";
 import { Language } from "@/types/server";
 import ServerLanguages from "./server-languages";
@@ -12,9 +12,10 @@ interface ServerInfoProps {
   address: string | null;
   website?: string | null;
   languages?: Language[];
+  nameAddon?: ReactNode;
 }
 
-const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
+const ServerInfo = ({ name, address, website, languages, nameAddon }: ServerInfoProps) => {
   const t = useTranslations("Servers");
   const [copied, setCopied] = useState(false);
   // Persisted value (derived server-side), falling back to the client-side
@@ -48,6 +49,7 @@ const ServerInfo = ({ name, address, website, languages }: ServerInfoProps) => {
       <div className="flex min-w-0 items-center gap-2">
         <span className="truncate text-lg font-bold leading-tight text-foreground">{name}</span>
         {languages && languages.length > 0 && <ServerLanguages languages={languages} className="shrink-0" />}
+        {nameAddon}
       </div>
       {address ? (
         <button

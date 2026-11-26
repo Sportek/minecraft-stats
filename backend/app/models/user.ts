@@ -31,7 +31,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare provider: 'discord' | 'google' | null
 
   @column()
-  declare role: 'admin' | 'writer' | 'user'
+  declare role: 'admin' | 'writer' | 'user' | 'support'
 
   @column()
   declare avatarUrl: string | null
@@ -84,6 +84,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
   static async createVerificationToken(user: User) {
     user.verificationToken = randomBytes(4).toString('hex')
     user.verificationTokenExpires = DateTime.now().plus({ days: 7 })
+  }
+
+  get isModerator(): boolean {
+    return this.role === 'admin' || this.role === 'support'
   }
 
   /**

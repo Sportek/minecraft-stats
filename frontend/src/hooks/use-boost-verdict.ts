@@ -1,4 +1,5 @@
 import { useToast } from "@/components/ui/use-toast";
+import { NOTE_MAX_LENGTH } from "@/lib/admin-note";
 import { useAuth } from "@/contexts/auth";
 import { reviewBoostReport } from "@/http/server";
 import type { BoostStatus } from "@/types/server";
@@ -29,6 +30,10 @@ export const useBoostVerdict = () => {
       return false;
     }
     const note = prompt(t("notePrompt")) ?? undefined;
+    if (note && note.trim().length > NOTE_MAX_LENGTH) {
+      toast({ variant: "error", description: t("noteTooLong", { max: NOTE_MAX_LENGTH }) });
+      return false;
+    }
 
     setActingId(target.id);
     try {

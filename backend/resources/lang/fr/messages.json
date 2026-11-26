@@ -40,6 +40,7 @@
     "termsRequired": "Vous devez accepter les conditions d'utilisation pour voter.",
     "captchaFailed": "Échec de la vérification anti-robot. Veuillez réessayer.",
     "hidden": "Ce serveur a choisi de ne pas être référencé sur Minecraft Stats.",
+    "blocked": "Ce serveur a été retiré de Minecraft Stats par la modération.",
     "duplicateHidden": "Ce serveur a demandé à ne pas être référencé sur Minecraft Stats et ne peut pas être ajouté.",
     "visibilityRequiresVerification": "Vérifiez la propriété de ce serveur avant de pouvoir le masquer."
   },
@@ -60,6 +61,18 @@
   "serverBoost": {
     "notFound": "Serveur introuvable",
     "reviewed": "Verdict enregistré."
+  },
+  "serverModeration": {
+    "notFound": "Serveur introuvable",
+    "reviewed": "Verdict enregistré."
+  },
+  "serverReports": {
+    "unauthorized": "Non autorisé",
+    "notFound": "Serveur introuvable",
+    "alreadyOpen": "Vous avez déjà un signalement ouvert sur ce serveur.",
+    "created": "Signalement envoyé.",
+    "reportNotFound": "Signalement introuvable",
+    "resolved": "Signalement résolu."
   },
   "posts": {
     "unauthorized": "Non autorisé",

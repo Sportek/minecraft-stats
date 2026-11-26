@@ -187,5 +187,31 @@
   },
   "boost": {
     "badge": "Conectados no fiables"
+  },
+  "moderation": {
+    "pendingBadge": "Pendiente de aprobación",
+    "blockedBadge": "Bloqueado por moderación"
+  },
+  "report": {
+    "button": "Reportar",
+    "dialogTitle": "Reportar «{name}»",
+    "dialogDescription": "Cuéntanos qué pasa — esto va directo al equipo de moderación, no al propietario del servidor.",
+    "reasonLabel": "Motivo",
+    "reasons": {
+      "scam": "Estafa",
+      "inappropriate_content": "Contenido inapropiado",
+      "offline": "Siempre fuera de línea / inalcanzable",
+      "fake_playercount": "Número de jugadores falso",
+      "other": "Otro"
+    },
+    "detailsLabel": "Detalles (opcional)",
+    "detailsPlaceholder": "Cualquier cosa que nos ayude a revisarlo — qué pasó, cuándo…",
+    "submit": "Enviar reporte",
+    "success": {
+      "title": "Reporte enviado",
+      "body": "Gracias — nuestro equipo lo revisará.",
+      "close": "Cerrar"
+    },
+    "error": "No se pudo enviar el reporte. Inténtalo de nuevo."
   }
 }

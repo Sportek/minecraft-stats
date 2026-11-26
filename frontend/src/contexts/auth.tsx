@@ -55,11 +55,14 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // `token` is kept in React state (not just localStorage) so it can drive the
   // SWR key reactively: writing a token re-fetches /me, removing it disables the read.
-  const [token, setToken] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("accessToken");
-  });
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenResolved, setTokenResolved] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setToken(localStorage.getItem("accessToken"));
+    setTokenResolved(true);
+  }, []);
 
   const {
     data: meUser,
@@ -106,8 +109,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // A token exists but /me hasn't settled yet (no user, no 401): the session is
   // still resolving — y compris pendant les réessais qui suivent une erreur
   // transitoire. Guards must wait for this before treating the user as logged
-  // out, otherwise they redirect during the initial /me fetch.
-  const isAuthLoading = Boolean(token) && meUser === undefined && !isTokenRejected;
+  // out, otherwise they redirect during the initial /me fetch. `!tokenResolved`
+  // covers the brief window before the mount effect above has even checked
+  // localStorage — without it, guards would see "no token" and redirect before
+  // a real session gets the chance to be restored.
+  const isAuthLoading =
+    !tokenResolved || (Boolean(token) && meUser === undefined && !isTokenRejected);
 
   // Compat shims for the previous useState setters exposed in the public API.
   const setUser = useCallback(

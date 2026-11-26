@@ -236,11 +236,11 @@ export default class UsersController {
    * @operationId adminUpdateUserRole
    * @tag USERS_ADMIN
    * @summary Update a user's role (admin only)
-   * @description Sets the target user's role. The body must contain a `role` field whose value is one of `admin`, `writer`, or `user`; any other value is rejected with 400. Authorization is enforced by `UserPolicy.updateRole` against the target user.
+   * @description Sets the target user's role. The body must contain a `role` field whose value is one of `admin`, `writer`, `support`, or `user`; any other value is rejected with 400. Authorization is enforced by `UserPolicy.updateRole` against the target user.
    * @paramPath id - User ID of the user being updated - @type(number) @example(7) @required
    * @requestBody {"role": "admin"}
    * @responseBody 200 - <User>
-   * @responseBody 400 - {"error": "Invalid role. Must be admin, writer, or user."}
+   * @responseBody 400 - {"error": "Invalid role. Must be admin, writer, support, or user."}
    * @responseBody 401 - {"error": "Unauthorized"}
    * @responseBody 403 - {"error": "Access denied. Cannot change this user's role."}
    * @responseBody 404 - {"error": "User not found"}
@@ -261,7 +261,7 @@ export default class UsersController {
     }
 
     const newRole = request.input('role')
-    if (!['admin', 'writer', 'user'].includes(newRole)) {
+    if (!['admin', 'writer', 'support', 'user'].includes(newRole)) {
       return response.badRequest({ error: i18n.t('messages.users.invalidRole') })
     }
 
