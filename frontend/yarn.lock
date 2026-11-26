@@ -3716,7 +3716,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-charts-community@npm:14.0.2, ag-charts-community@npm:^14.0.2":
+"ag-charts-community@npm:14.3.0":
+  version: 14.3.0
+  resolution: "ag-charts-community@npm:14.3.0"
+  dependencies:
+    ag-charts-core: "npm:14.3.0"
+    ag-charts-locale: "npm:14.3.0"
+    ag-charts-types: "npm:14.3.0"
+  checksum: 10c0/31230cc3cac0e45ac722c0f195071a0fc18022fc41ea9272881fe856f9c93d85fb2fb11abbeefd65adb1e20d5b7c4b26804e796abc3259de3985758627a214eb
+  languageName: node
+  linkType: hard
+
+"ag-charts-community@npm:^14.0.2":
   version: 14.0.2
   resolution: "ag-charts-community@npm:14.0.2"
   dependencies:
@@ -3736,6 +3747,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ag-charts-core@npm:14.3.0":
+  version: 14.3.0
+  resolution: "ag-charts-core@npm:14.3.0"
+  dependencies:
+    ag-charts-types: "npm:14.3.0"
+  checksum: 10c0/15a62a5d884acc32e33afef16a2897cecce46bfcf13c570c29a297815f8d6a6ce75183911948a5f9ce90012a8893be592d449c2fb776d6073ff0fde1db076e26
+  languageName: node
+  linkType: hard
+
 "ag-charts-locale@npm:14.0.2":
   version: 14.0.2
   resolution: "ag-charts-locale@npm:14.0.2"
@@ -3743,14 +3763,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-charts-react@npm:^14.0.2":
-  version: 14.0.2
-  resolution: "ag-charts-react@npm:14.0.2"
+"ag-charts-locale@npm:14.3.0":
+  version: 14.3.0
+  resolution: "ag-charts-locale@npm:14.3.0"
+  checksum: 10c0/5fefe94dad35b44e3cc5318313a1e8e683a81ec8d890ebfb083cdf80f4329b409a20e49ab98a49deef5690b18fecbf16d3b3534ec94ca4b8f7cdd774fd3f954f
+  languageName: node
+  linkType: hard
+
+"ag-charts-react@npm:^14.3.0":
+  version: 14.3.0
+  resolution: "ag-charts-react@npm:14.3.0"
   dependencies:
-    ag-charts-community: "npm:14.0.2"
+    ag-charts-community: "npm:14.3.0"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
-  checksum: 10c0/5b2eb50a7be533a06b86faa8177e39efbbbc5bd5dfe02d64a71c1e3b91f99e80cf229743301e8d76b27d7cdd01596499274fd0430e036a98a88ca82edfbd318b
+  checksum: 10c0/6ef97d9d0a65a0693743fa31be47efca5a811fa85a3a2b8d631bef21aadd5e711134e700f0e8d72108ed639cd8f4b67b33ed51860c6ec55626177233e5eeadb3
   languageName: node
   linkType: hard
 
@@ -3758,6 +3785,13 @@ __metadata:
   version: 14.0.2
   resolution: "ag-charts-types@npm:14.0.2"
   checksum: 10c0/eab4666799d9ff8835b2f7fb00719e8ec1fe967c503e981102fbb8008829ecd1439b130e7154efcdda9ebe534fd7a8790c8dd6719b0c7a4d816e3e4c9eedccef
+  languageName: node
+  linkType: hard
+
+"ag-charts-types@npm:14.3.0":
+  version: 14.3.0
+  resolution: "ag-charts-types@npm:14.3.0"
+  checksum: 10c0/b23efa2c6f5ddf3280cc39b0efbc81e70cbd62c238354fbb65c941c54c2047acef7a653cdeb909e7cd61797de778fc37d49432af14b440514bce89ca15c68e2a
   languageName: node
   linkType: hard
 
@@ -5238,7 +5272,7 @@ __metadata:
     "@types/react-dom": "npm:19.3.0"
     "@types/react-simple-maps": "npm:^3.0.6"
     ag-charts-community: "npm:^14.0.2"
-    ag-charts-react: "npm:^14.0.2"
+    ag-charts-react: "npm:^14.3.0"
     class-variance-authority: "npm:^0.7.0"
     clsx: "npm:^2.1.1"
     cmdk: "npm:^1.1.1"
