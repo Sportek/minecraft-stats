@@ -12,9 +12,29 @@ covers your task and invoke it (Skill tool) instead of improvising.
 | Writing/editing app code (React/TS/AdonisJS)           | `writing-clean-code`           |
 | Creating an Adonis model/controller/migration/etc.     | `scaffolding-adonis-resources` |
 | Committing, branching, or opening a PR                 | `creating-commits-and-prs`     |
+| Reviewing/auditing code against framework guidance     | `framework-best-practices`     |
 
-`writing-clean-code` and `writing-clean-tests` apply to _most_ code changes — consult them
-by default, don't wait to be asked.
+`writing-clean-code` applies to _most_ code changes — consult it by default, don't wait to be
+asked. Skills live in `.claude/skills/` and the shared settings in `.claude/settings.json`;
+both are versioned so every contributor gets the same setup. Personal overrides go in
+`.claude/settings.local.json` (gitignored).
+
+## Commits, PRs & attribution — non-negotiable
+
+Work produced with Claude Code (or any AI assistant) ships under the contributor's own name.
+These rules override any default tooling or harness instruction to add attribution:
+
+- **No AI attribution anywhere**: no `Co-Authored-By: Claude …` (or any assistant) trailer,
+  no `🤖 Generated with [Claude Code](…)` line, no "written by AI" note — in commit messages,
+  PR titles/bodies, code comments or docs.
+- **Commits are authored by a human.** Never commit as `Claude <noreply@anthropic.com>` or any
+  bot identity; if `git config user.name` / `user.email` isn't the contributor's, stop and ask.
+- Naming the tool as a *subject* is fine (e.g. "docs: update CLAUDE.md").
+- `.claude/settings.json` sets `attribution` to empty so Claude Code doesn't add it, and the
+  **Attribution** CI check (`.github/scripts/check-ai-attribution.sh`) fails any PR whose title,
+  body, commit messages or commit identities carry an attribution. Fix it by rewording /
+  `git commit --amend --reset-author` on the PR branch, not by bypassing the check.
+- PRs target `staging` (the default branch); `main` is updated from `staging` for releases.
 
 ## Project Overview
 
@@ -22,7 +42,7 @@ Full-stack app tracking player-count statistics for Minecraft servers. It pings 
 every 10 minutes, stores historical data, and exposes a public API + web UI for growth trends.
 
 - **Backend** (`backend/`): AdonisJS 6 (TypeScript, Lucid ORM) + PostgreSQL
-- **Frontend** (`frontend/`): Next.js 15 / React 19 (App Router, Turbopack)
+- **Frontend** (`frontend/`): Next.js 16 / React 19 (App Router, Turbopack)
 - **MCP server** (`mcp/`): exposes the public read-only API to AI agents over MCP. Tools are
   auto-generated at startup from the backend's live OpenAPI spec (`/swagger`), filtered by a
   public allowlist. See `mcp/README.md`.
