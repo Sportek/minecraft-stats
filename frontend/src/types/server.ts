@@ -41,10 +41,27 @@ export interface Server {
   // Masqué par son propriétaire vérifié : absent du site public et plus suivi.
   // Visible seulement dans le tableau de bord du propriétaire.
   hiddenAt: Date | null;
+  moderationStatus: ModerationStatus;
+  moderationReviewedAt: Date | null;
 }
 
 /** Verdict d'un admin sur un serveur suspecté de gonfler ses connectés. */
 export type BoostStatus = "boosting" | "clean" | "inconclusive";
+
+export type ModerationStatus = "pending" | "approved" | "blocked";
+
+export type ModerationVerdict = "approved" | "blocked";
+
+export type ReportReason = "scam" | "inappropriate_content" | "offline" | "fake_playercount" | "other";
+
+export interface AdminServerReport {
+  id: number;
+  reason: ReportReason;
+  details: string | null;
+  createdAt: Date;
+  server: Server;
+  reporter: { id: number; username: string };
+}
 
 /** Niveau de suspicion dérivé du score, avant toute décision humaine. */
 export type BoostLevel = "clean" | "watch" | "likely";

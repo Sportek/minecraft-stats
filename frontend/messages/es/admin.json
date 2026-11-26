@@ -204,12 +204,14 @@
       "total": "Total de usuarios",
       "admins": "Administradores",
       "writers": "Redactores",
+      "support": "Soporte",
       "members": "Miembros"
     },
     "tabs": {
       "all": "Todos",
       "admins": "Administradores",
       "writers": "Redactores",
+      "support": "Soporte",
       "users": "Usuarios"
     },
     "searchPlaceholder": "Buscar por nombre de usuario...",
@@ -222,6 +224,7 @@
     "roles": {
       "user": "Usuario",
       "writer": "Redactor",
+      "support": "Soporte",
       "admin": "Administrador"
     },
     "ownRoleError": "No puedes cambiar tu propio rol.",
@@ -421,6 +424,7 @@
     "statusInconclusive": "No concluyente",
     "reviewedOn": "Revisado el {date}",
     "notePrompt": "Nota para el registro (opcional):",
+    "noteTooLong": "La nota no puede superar los {max} caracteres.",
     "confirmBoosting": "¿Confirmar que «{server}» infla sus conectados? El servidor recibirá una insignia pública y bajará en las clasificaciones por número de jugadores.",
     "saved": "Veredicto registrado.",
     "error": "La acción ha fallado. Inténtalo de nuevo.",
@@ -439,5 +443,45 @@
       "current": "Veredicto actual:",
       "none": "Ninguno"
     }
+  },
+  "serversPending": {
+    "title": "Moderación de servidores",
+    "subtitle": "Servidores a la espera de aprobación antes de publicarse, y servidores bloqueados por un moderador.",
+    "queueBadge": "{count} pendientes",
+    "loading": "Cargando…",
+    "loadingList": "Cargando servidores…",
+    "accessDenied": "Acceso denegado",
+    "moderatorOnly": "Esta sección está restringida a administradores y soporte.",
+    "emptyTitle": "Nada que revisar",
+    "emptyDescription": "Los servidores recién enviados a la espera de aprobación aparecerán aquí.",
+    "statusPending": "Pendiente de aprobación",
+    "statusBlocked": "Bloqueado",
+    "submittedOn": "Enviado el {date}",
+    "reviewedOn": "Revisado el {date}",
+    "searchTitle": "Buscar cualquier servidor",
+    "searchPlaceholder": "Buscar por nombre o dirección…",
+    "searchEmpty": "Ningún servidor coincide.",
+    "verdictApprove": "Aprobar",
+    "verdictBlock": "Bloquear",
+    "verdictUnblock": "Desbloquear",
+    "notePrompt": "Nota para el registro (opcional):",
+    "noteTooLong": "La nota no puede superar los {max} caracteres.",
+    "confirmBlock": "¿Bloquear «{server}»? Desaparecerá de todas las páginas públicas y dejará de recibir ping hasta que un administrador o soporte levante el bloqueo.",
+    "saved": "Veredicto registrado.",
+    "error": "La acción falló. Inténtalo de nuevo.",
+    "reportsTitle": "Reportes ({count})",
+    "reportsEmpty": "Ningún reporte abierto — los servidores reportados aparecerán aquí.",
+    "reportReason": "Motivo: {reason}",
+    "reportReasons": {
+      "scam": "Estafa",
+      "inappropriate_content": "Contenido inapropiado",
+      "offline": "Siempre fuera de línea / inalcanzable",
+      "fake_playercount": "Número de jugadores falso",
+      "other": "Otro"
+    },
+    "reportedBy": "Reportado por {username}",
+    "reportedOn": "Reportado el {date}",
+    "resolveReport": "Resolver",
+    "reportResolved": "Reporte resuelto."
   }
 }

@@ -41,7 +41,7 @@ export const getAdminUsers = (
   page: number = 1,
   limit: number = 20,
   search: string = '',
-  role: 'all' | 'admin' | 'writer' | 'user' = 'all'
+  role: 'all' | 'admin' | 'writer' | 'support' | 'user' = 'all'
 ) => {
   const params = new URLSearchParams({
     page: page.toString(),
@@ -64,7 +64,7 @@ export const getAdminUserDetail = (userId: number, token: string) =>
 
 export const updateUserRole = (
   userId: number,
-  role: 'admin' | 'writer' | 'user',
+  role: 'admin' | 'writer' | 'support' | 'user',
   token: string
 ) => apiFetch<User>(`/admin/users/${userId}/role`, { method: 'PATCH', token, body: { role } })
 

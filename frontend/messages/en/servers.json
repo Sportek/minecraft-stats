@@ -187,5 +187,31 @@
   },
   "boost": {
     "badge": "Player count unreliable"
+  },
+  "moderation": {
+    "pendingBadge": "Pending approval",
+    "blockedBadge": "Blocked by moderation"
+  },
+  "report": {
+    "button": "Report",
+    "dialogTitle": "Report \"{name}\"",
+    "dialogDescription": "Tell us what's wrong — this goes straight to our moderation team, not to the server owner.",
+    "reasonLabel": "Reason",
+    "reasons": {
+      "scam": "Scam",
+      "inappropriate_content": "Inappropriate content",
+      "offline": "Always offline / unreachable",
+      "fake_playercount": "Fake player count",
+      "other": "Other"
+    },
+    "detailsLabel": "Details (optional)",
+    "detailsPlaceholder": "Anything that would help us review this — what happened, when…",
+    "submit": "Submit report",
+    "success": {
+      "title": "Report submitted",
+      "body": "Thanks — our team will take a look.",
+      "close": "Close"
+    },
+    "error": "The report could not be submitted. Please try again."
   }
 }

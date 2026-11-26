@@ -27,6 +27,7 @@ import ServerVote from './server_vote.js'
 import User from './user.js'
 import { LanguageCode } from '../constants/languages.js'
 import type { BoostStatus } from '../constants/server_boost.js'
+import type { ModerationStatus } from '../constants/server_moderation.js'
 import type { OwnershipMethod } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
 import CacheService from '#services/cache_service'
@@ -174,6 +175,12 @@ export default class Server extends BaseModel {
   @column.dateTime({ columnName: 'hidden_at' })
   declare hiddenAt: DateTime | null
 
+  @column({ columnName: 'moderation_status' })
+  declare moderationStatus: ModerationStatus
+
+  @column.dateTime({ columnName: 'moderation_reviewed_at' })
+  declare moderationReviewedAt: DateTime | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -224,10 +231,16 @@ export default class Server extends BaseModel {
   }
 
   /**
-   * Serveurs masqués exclus PAR DÉFAUT de toute lecture via le modèle : `find`,
-   * `query()`, comptages, pagination et préchargements de relation (`preload('server')`).
-   * Une nouvelle requête publique est donc sûre sans rien faire ; voir un serveur
-   * masqué demande un opt-in explicite, `withHidden` ci-dessous.
+   * Serveurs masqués OU pas encore approuvés (pending/blocked) exclus PAR DÉFAUT de
+   * toute lecture via le modèle : `find`, `query()`, comptages, pagination et
+   * préchargements de relation (`preload('server')`). Une nouvelle requête publique
+   * est donc sûre sans rien faire ; voir un serveur masqué ou en file de modération
+   * demande un opt-in explicite, `withHidden` ci-dessous.
+   *
+   * Les 13 call sites actuels de `withHidden` sont tous des contextes privilégiés
+   * (propriétaire, admin, détection de doublon, boost, ownership) qui doivent de
+   * toute façon voir les serveurs pending/blocked — un seul scope suffit, pas besoin
+   * d'un second mécanisme d'opt-in parallèle pour la modération.
    *
    * Hors périmètre : le SQL brut (`db.from('servers')`, `rawQuery`) ne passe pas par
    * ces hooks.
@@ -237,20 +250,20 @@ export default class Server extends BaseModel {
   static excludeHidden(query: ServerQuery) {
     if (queriesIncludingHidden.has(query)) return
     // Qualifié par la table pour rester valable dans les requêtes avec jointure.
-    query.whereNull('servers.hidden_at')
+    query.whereNull('servers.hidden_at').andWhere('servers.moderation_status', 'approved')
   }
 
   // La pagination compte sur un clone fait AVANT les hooks : il faut le filtrer aussi,
-  // sinon le total inclurait les serveurs masqués.
   @beforePaginate()
   static excludeHiddenFromCount([countQuery, query]: [ServerQuery, ServerQuery]) {
     if (queriesIncludingHidden.has(query)) return
-    countQuery.whereNull('servers.hidden_at')
+    countQuery.whereNull('servers.hidden_at').andWhere('servers.moderation_status', 'approved')
   }
 
   /**
-   * Opt-in : inclut les serveurs masqués. Réservé aux lectures qui ne sont pas
-   * publiques — propriétaire, admin, détection de doublon (qui doit les voir pour
+   * Opt-in : inclut les serveurs masqués ET ceux en file de modération
+   * (pending/blocked). Réservé aux lectures qui ne sont pas publiques —
+   * propriétaire, admin/support, détection de doublon (qui doit les voir pour
    * bloquer leur ré-ajout).
    *
    *   Server.query().apply((scopes) => scopes.withHidden())

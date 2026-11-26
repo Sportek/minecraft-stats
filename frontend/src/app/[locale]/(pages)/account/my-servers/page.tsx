@@ -194,6 +194,18 @@ const MyServersPage = () => {
                       {t("myServers.hiddenBadge")}
                     </Badge>
                   )}
+                  {server.moderationStatus === "pending" && (
+                    <Badge variant="outline" className="gap-1.5">
+                      <Icon icon="material-symbols:hourglass-empty" className="h-3.5 w-3.5" />
+                      {t("myServers.pendingBadge")}
+                    </Badge>
+                  )}
+                  {server.moderationStatus === "blocked" && (
+                    <Badge variant="destructive" className="gap-1.5">
+                      <Icon icon="material-symbols:block" className="h-3.5 w-3.5" />
+                      {t("myServers.blockedBadge")}
+                    </Badge>
+                  )}
                   <div className="w-20 text-right">
                     <div className="text-sm font-bold tabular-nums text-foreground">
                       {formatNumber(server.lastPlayerCount ?? 0)}

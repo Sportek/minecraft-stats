@@ -4,6 +4,7 @@ import { generateTooltipHtml } from "@/components/serveur/card/tooltip-chart";
 import { getServerStats } from "@/http/server";
 import { ServerStat } from "@/types/server";
 import "@/lib/ag-charts";
+import { isModerator as hasModeratorRole } from "@/lib/roles";
 import {
   AgAreaSeriesOptions,
   AgCartesianAxisOptions,
@@ -232,25 +233,33 @@ const ServerLoadError = ({ error, onRetry }: { error: Error; onRetry: () => void
   );
 };
 
+const bearer = (token: string | null) => (token ? { Authorization: `Bearer ${token}` } : undefined);
+
 const ServerPage = () => {
   const { serverId } = useParams();
   const locale = useLocale();
   const t = useTranslations("Servers");
   const tStats = useTranslations("Stats");
+  const { getToken, user } = useAuth();
+
+  const isModerator = hasModeratorRole(user);
   const {
     data: serverData,
     error: serverError,
     isLoading: isServerLoading,
     mutate: retryServer,
-  } = useSWR<ServerData, Error>(`${getBaseUrl()}/servers/${serverId}`, fetcher, {
-    // Aligné sur le TTL Redis backend (300s) — cf. P.2.1
-    refreshInterval: 1000 * 60 * 5,
-  });
+  } = useSWR<ServerData, Error>(
+    [`${getBaseUrl()}/servers/${serverId}`, isModerator],
+    ([url]) => fetcher(url, { headers: isModerator ? bearer(getToken()) : undefined }),
+    {
+      // Aligné sur le TTL Redis backend (300s) — cf. P.2.1
+      refreshInterval: 1000 * 60 * 5,
+    }
+  );
 
   const [selectedPeriod, setPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [seriesMode, setSeriesMode] = useState<SeriesMode>("average");
   const { resolvedTheme } = useTheme();
-  const { getToken } = useAuth();
   const entitlements = useEntitlements();
   const allowance = toAllowance(entitlements);
 

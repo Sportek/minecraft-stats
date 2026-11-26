@@ -47,6 +47,7 @@ router
       .except(['create', 'edit'])
       .middleware(['destroy', 'store', 'update'], middleware.auth())
       .middleware(['destroy', 'store', 'update'], NO_STORE)
+      .middleware('show', [middleware.silentAuth(), NO_STORE])
       .use('*', throttleLight('servers', 35))
 
     // Votes de serveur (public, anonyme : pseudo Minecraft + consentement RGPD)
@@ -61,6 +62,10 @@ router
     router
       .patch('servers/:id/visibility', '#controllers/servers_controller.updateVisibility')
       .use([middleware.auth(), throttleLight('servers.visibility', 10), NO_STORE])
+
+    router
+      .post('servers/:id/report', '#controllers/server_reports_controller.store')
+      .use([middleware.auth(), throttleLight('servers.report', 10), NO_STORE])
 
     // Réclamation de propriété d'un serveur (MOTD + DNS self-service + demande manuelle).
     router
@@ -327,6 +332,23 @@ router
         router
           .post('boost-reports/:id/review', '#controllers/server_boost_controller.review')
           .use([middleware.admin(), throttleLight('admin.boost.review', 20), NO_STORE])
+
+        router
+          .get('servers/pending', '#controllers/server_moderation_controller.adminIndex')
+          .use([middleware.moderator(), throttleLight('admin.moderation.index', 30), NO_STORE])
+        router
+          .get('servers/search', '#controllers/server_moderation_controller.search')
+          .use([middleware.moderator(), throttleLight('admin.moderation.search', 30), NO_STORE])
+        router
+          .post('servers/:id/review', '#controllers/server_moderation_controller.review')
+          .use([middleware.moderator(), throttleLight('admin.moderation.review', 20), NO_STORE])
+
+        router
+          .get('servers/reports', '#controllers/server_reports_controller.adminIndex')
+          .use([middleware.moderator(), throttleLight('admin.reports.index', 30), NO_STORE])
+        router
+          .post('servers/reports/:id/resolve', '#controllers/server_reports_controller.resolve')
+          .use([middleware.moderator(), throttleLight('admin.reports.resolve', 20), NO_STORE])
 
         // User management (admin only via policy)
         router

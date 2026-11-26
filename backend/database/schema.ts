@@ -23,15 +23,7 @@ export class AdvertisementCategorySchema extends BaseModel {
 }
 
 export class AdvertisementEventSchema extends BaseModel {
-  static $columns = [
-    'advertisementId',
-    'createdAt',
-    'id',
-    'placement',
-    'serverId',
-    'targetUrl',
-    'type',
-  ] as const
+  static $columns = ['advertisementId', 'createdAt', 'id', 'placement', 'serverId', 'targetUrl', 'type'] as const
   $columns = AdvertisementEventSchema.$columns
   @column()
   declare advertisementId: number
@@ -50,20 +42,7 @@ export class AdvertisementEventSchema extends BaseModel {
 }
 
 export class AdvertisementSchema extends BaseModel {
-  static $columns = [
-    'createdAt',
-    'enabled',
-    'endsAt',
-    'htmlContent',
-    'id',
-    'name',
-    'showOnHome',
-    'showOnServer',
-    'startsAt',
-    'type',
-    'updatedAt',
-    'weight',
-  ] as const
+  static $columns = ['createdAt', 'enabled', 'endsAt', 'htmlContent', 'id', 'name', 'showOnHome', 'showOnServer', 'startsAt', 'type', 'updatedAt', 'weight'] as const
   $columns = AdvertisementSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -92,18 +71,7 @@ export class AdvertisementSchema extends BaseModel {
 }
 
 export class AuthAccessTokenSchema extends BaseModel {
-  static $columns = [
-    'abilities',
-    'createdAt',
-    'expiresAt',
-    'hash',
-    'id',
-    'lastUsedAt',
-    'name',
-    'tokenableId',
-    'type',
-    'updatedAt',
-  ] as const
+  static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
   $columns = AuthAccessTokenSchema.$columns
   @column()
   declare abilities: string
@@ -188,16 +156,7 @@ export class LanguageSchema extends BaseModel {
 }
 
 export class MinecraftPlayerSchema extends BaseModel {
-  static $columns = [
-    'createdAt',
-    'headPath',
-    'id',
-    'resolvedAt',
-    'textureHash',
-    'updatedAt',
-    'username',
-    'uuid',
-  ] as const
+  static $columns = ['createdAt', 'headPath', 'id', 'resolvedAt', 'textureHash', 'updatedAt', 'username', 'uuid'] as const
   $columns = MinecraftPlayerSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -233,16 +192,7 @@ export class PageViewDailySchema extends BaseModel {
 }
 
 export class PageViewSchema extends BaseModel {
-  static $columns = [
-    'createdAt',
-    'durationMs',
-    'id',
-    'path',
-    'referrer',
-    'title',
-    'userId',
-    'visitorId',
-  ] as const
+  static $columns = ['createdAt', 'durationMs', 'id', 'path', 'referrer', 'title', 'userId', 'visitorId'] as const
   $columns = PageViewSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -263,15 +213,7 @@ export class PageViewSchema extends BaseModel {
 }
 
 export class PostFeedbackSchema extends BaseModel {
-  static $columns = [
-    'createdAt',
-    'helpful',
-    'id',
-    'postId',
-    'updatedAt',
-    'userId',
-    'visitorId',
-  ] as const
+  static $columns = ['createdAt', 'helpful', 'id', 'postId', 'updatedAt', 'userId', 'visitorId'] as const
   $columns = PostFeedbackSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -290,17 +232,7 @@ export class PostFeedbackSchema extends BaseModel {
 }
 
 export class PostTranslationSchema extends BaseModel {
-  static $columns = [
-    'content',
-    'createdAt',
-    'excerpt',
-    'id',
-    'locale',
-    'postId',
-    'slug',
-    'title',
-    'updatedAt',
-  ] as const
+  static $columns = ['content', 'createdAt', 'excerpt', 'id', 'locale', 'postId', 'slug', 'title', 'updatedAt'] as const
   $columns = PostTranslationSchema.$columns
   @column()
   declare content: string
@@ -323,17 +255,7 @@ export class PostTranslationSchema extends BaseModel {
 }
 
 export class PostSchema extends BaseModel {
-  static $columns = [
-    'coverImage',
-    'createdAt',
-    'defaultLocale',
-    'id',
-    'published',
-    'publishedAt',
-    'updatedAt',
-    'userId',
-    'viewCount',
-  ] as const
+  static $columns = ['coverImage', 'createdAt', 'defaultLocale', 'id', 'published', 'publishedAt', 'updatedAt', 'userId', 'viewCount'] as const
   $columns = PostSchema.$columns
   @column()
   declare coverImage: string | null
@@ -367,17 +289,7 @@ export class RateLimitSchema extends BaseModel {
 }
 
 export class ServerBoostReviewSchema extends BaseModel {
-  static $columns = [
-    'createdAt',
-    'id',
-    'note',
-    'reviewedBy',
-    'scoreAtReview',
-    'serverId',
-    'signalsAtReview',
-    'updatedAt',
-    'verdict',
-  ] as const
+  static $columns = ['createdAt', 'id', 'note', 'reviewedBy', 'scoreAtReview', 'serverId', 'signalsAtReview', 'updatedAt', 'verdict'] as const
   $columns = ServerBoostReviewSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -400,18 +312,7 @@ export class ServerBoostReviewSchema extends BaseModel {
 }
 
 export class ServerBoostScoreSchema extends BaseModel {
-  static $columns = [
-    'computedAt',
-    'detectedFactor',
-    'estimatedRealPlayers',
-    'level',
-    'samplesCount',
-    'score',
-    'serverId',
-    'signals',
-    'windowFrom',
-    'windowTo',
-  ] as const
+  static $columns = ['computedAt', 'detectedFactor', 'estimatedRealPlayers', 'level', 'samplesCount', 'score', 'serverId', 'signals', 'windowFrom', 'windowTo'] as const
   $columns = ServerBoostScoreSchema.$columns
   @column.dateTime()
   declare computedAt: DateTime
@@ -451,15 +352,7 @@ export class ServerCategorySchema extends BaseModel {
 }
 
 export class ServerGrowthStatSchema extends BaseModel {
-  static $columns = [
-    'lastMonthAverage',
-    'lastUpdated',
-    'lastWeekAverage',
-    'monthlyGrowth',
-    'previousWeekAverage',
-    'serverId',
-    'weeklyGrowth',
-  ] as const
+  static $columns = ['lastMonthAverage', 'lastUpdated', 'lastWeekAverage', 'monthlyGrowth', 'previousWeekAverage', 'serverId', 'weeklyGrowth'] as const
   $columns = ServerGrowthStatSchema.$columns
   @column()
   declare lastMonthAverage: number | null
@@ -492,23 +385,27 @@ export class ServerLanguageSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class ServerModerationReviewSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'note', 'reviewedBy', 'serverId', 'updatedAt', 'verdict'] as const
+  $columns = ServerModerationReviewSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare note: string | null
+  @column()
+  declare reviewedBy: number | null
+  @column()
+  declare serverId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+  @column()
+  declare verdict: string
+}
+
 export class ServerOwnershipClaimSchema extends BaseModel {
-  static $columns = [
-    'createdAt',
-    'evidence',
-    'evidenceUrl',
-    'expiresAt',
-    'id',
-    'method',
-    'reviewNote',
-    'reviewedBy',
-    'serverId',
-    'status',
-    'token',
-    'updatedAt',
-    'userId',
-    'verifiedAt',
-  ] as const
+  static $columns = ['createdAt', 'evidence', 'evidenceUrl', 'expiresAt', 'id', 'method', 'reviewNote', 'reviewedBy', 'serverId', 'status', 'token', 'updatedAt', 'userId', 'verifiedAt'] as const
   $columns = ServerOwnershipClaimSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -540,31 +437,46 @@ export class ServerOwnershipClaimSchema extends BaseModel {
   declare verifiedAt: DateTime | null
 }
 
-export class ServerStatSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'maxCount', 'playerCount', 'serverId'] as const
-  $columns = ServerStatSchema.$columns
+export class ServerReportSchema extends BaseModel {
+  static $columns = ['createdAt', 'details', 'id', 'reason', 'reporterId', 'resolvedAt', 'resolvedBy', 'serverId', 'status', 'updatedAt'] as const
+  $columns = ServerReportSchema.$columns
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
+  declare createdAt: DateTime
+  @column()
+  declare details: string | null
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare reason: string
+  @column()
+  declare reporterId: number | null
+  @column.dateTime()
+  declare resolvedAt: DateTime | null
+  @column()
+  declare resolvedBy: number | null
+  @column()
+  declare serverId: number
+  @column()
+  declare status: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
+
+export class ServerStatSchema extends BaseModel {
+  static $columns = ['createdAt', 'maxCount', 'playerCount', 'serverId'] as const
+  $columns = ServerStatSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
   @column()
   declare maxCount: number | null
   @column()
   declare playerCount: number | null
-  @column()
-  declare serverId: number | null
+  @column({ isPrimary: true })
+  declare serverId: number
 }
 
 export class ServerStatsDailySchema extends BaseModel {
-  static $columns = [
-    'avgPlayerCount',
-    'day',
-    'maxSlotCount',
-    'minPlayerCount',
-    'peakPlayerCount',
-    'samplesCount',
-    'serverId',
-  ] as const
+  static $columns = ['avgPlayerCount', 'day', 'maxSlotCount', 'minPlayerCount', 'peakPlayerCount', 'samplesCount', 'serverId'] as const
   $columns = ServerStatsDailySchema.$columns
   @column()
   declare avgPlayerCount: number | null
@@ -583,15 +495,7 @@ export class ServerStatsDailySchema extends BaseModel {
 }
 
 export class ServerStatsHourlySchema extends BaseModel {
-  static $columns = [
-    'avgPlayerCount',
-    'hour',
-    'maxSlotCount',
-    'minPlayerCount',
-    'peakPlayerCount',
-    'samplesCount',
-    'serverId',
-  ] as const
+  static $columns = ['avgPlayerCount', 'hour', 'maxSlotCount', 'minPlayerCount', 'peakPlayerCount', 'samplesCount', 'serverId'] as const
   $columns = ServerStatsHourlySchema.$columns
   @column()
   declare avgPlayerCount: number | null
@@ -610,18 +514,7 @@ export class ServerStatsHourlySchema extends BaseModel {
 }
 
 export class ServerVoteSchema extends BaseModel {
-  static $columns = [
-    'country',
-    'createdAt',
-    'id',
-    'ipHash',
-    'mojangUuid',
-    'serverId',
-    'updatedAt',
-    'userId',
-    'username',
-    'visitorId',
-  ] as const
+  static $columns = ['country', 'createdAt', 'id', 'ipHash', 'mojangUuid', 'serverId', 'updatedAt', 'userId', 'username', 'visitorId'] as const
   $columns = ServerVoteSchema.$columns
   @column()
   declare country: string | null
@@ -646,38 +539,7 @@ export class ServerVoteSchema extends BaseModel {
 }
 
 export class ServerSchema extends BaseModel {
-  static $columns = [
-    'address',
-    'boostReviewedAt',
-    'boostStatus',
-    'categoryId',
-    'createdAt',
-    'faviconHash',
-    'hiddenAt',
-    'hostDomain',
-    'id',
-    'imageUrl',
-    'lastMaxCount',
-    'lastOnlineAt',
-    'lastPlayerCount',
-    'lastStatsAt',
-    'motd',
-    'motdHash',
-    'name',
-    'nextPingAt',
-    'ownerVerifiedAt',
-    'ownerVerifiedMethod',
-    'peakPlayerAt',
-    'peakPlayerCount',
-    'port',
-    'resolvedEndpoint',
-    'type',
-    'updatedAt',
-    'userId',
-    'version',
-    'voteCount',
-    'website',
-  ] as const
+  static $columns = ['address', 'boostReviewedAt', 'boostStatus', 'categoryId', 'createdAt', 'faviconHash', 'hiddenAt', 'hostDomain', 'id', 'imageUrl', 'lastMaxCount', 'lastOnlineAt', 'lastPlayerCount', 'lastStatsAt', 'moderationReviewedAt', 'moderationStatus', 'motd', 'motdHash', 'name', 'nextPingAt', 'ownerVerifiedAt', 'ownerVerifiedMethod', 'peakPlayerAt', 'peakPlayerCount', 'port', 'resolvedEndpoint', 'type', 'updatedAt', 'userId', 'version', 'voteCount', 'website'] as const
   $columns = ServerSchema.$columns
   @column()
   declare address: string
@@ -707,6 +569,10 @@ export class ServerSchema extends BaseModel {
   declare lastPlayerCount: number | null
   @column.dateTime()
   declare lastStatsAt: DateTime | null
+  @column.dateTime()
+  declare moderationReviewedAt: DateTime | null
+  @column()
+  declare moderationStatus: string
   @column()
   declare motd: string | null
   @column()
@@ -742,16 +608,7 @@ export class ServerSchema extends BaseModel {
 }
 
 export class TrafficDailySchema extends BaseModel {
-  static $columns = [
-    'countries',
-    'createdAt',
-    'date',
-    'httpErrors',
-    'httpRequests',
-    'id',
-    'uniqueVisitors',
-    'updatedAt',
-  ] as const
+  static $columns = ['countries', 'createdAt', 'date', 'httpErrors', 'httpRequests', 'id', 'uniqueVisitors', 'updatedAt'] as const
   $columns = TrafficDailySchema.$columns
   @column()
   declare countries: any
@@ -772,17 +629,7 @@ export class TrafficDailySchema extends BaseModel {
 }
 
 export class UserProviderSchema extends BaseModel {
-  static $columns = [
-    'confirmedAt',
-    'createdAt',
-    'id',
-    'linkTokenExpiresAt',
-    'linkTokenHash',
-    'provider',
-    'providerUserId',
-    'updatedAt',
-    'userId',
-  ] as const
+  static $columns = ['confirmedAt', 'createdAt', 'id', 'linkTokenExpiresAt', 'linkTokenHash', 'provider', 'providerUserId', 'updatedAt', 'userId'] as const
   $columns = UserProviderSchema.$columns
   @column.dateTime()
   declare confirmedAt: DateTime | null
@@ -805,25 +652,7 @@ export class UserProviderSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = [
-    'avatarUrl',
-    'blacklistReason',
-    'blacklistedAt',
-    'blacklistedBy',
-    'createdAt',
-    'email',
-    'id',
-    'password',
-    'passwordResetToken',
-    'passwordResetTokenExpires',
-    'provider',
-    'role',
-    'updatedAt',
-    'username',
-    'verificationToken',
-    'verificationTokenExpires',
-    'verified',
-  ] as const
+  static $columns = ['avatarUrl', 'blacklistReason', 'blacklistedAt', 'blacklistedBy', 'createdAt', 'email', 'id', 'password', 'passwordResetToken', 'passwordResetTokenExpires', 'provider', 'role', 'updatedAt', 'username', 'verificationToken', 'verificationTokenExpires', 'verified'] as const
   $columns = UserSchema.$columns
   @column()
   declare avatarUrl: string | null
@@ -877,15 +706,7 @@ export class VisitorAccountSchema extends BaseModel {
 }
 
 export class VisitorSchema extends BaseModel {
-  static $columns = [
-    'country',
-    'firstSeenAt',
-    'id',
-    'ipHash',
-    'lastSeenAt',
-    'userAgent',
-    'uuid',
-  ] as const
+  static $columns = ['country', 'firstSeenAt', 'id', 'ipHash', 'lastSeenAt', 'userAgent', 'uuid'] as const
   $columns = VisitorSchema.$columns
   @column()
   declare country: string | null

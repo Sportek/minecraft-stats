@@ -1,12 +1,15 @@
 import {
   AdminBoostReport,
   AdminOwnershipClaim,
+  AdminServerReport,
   BoostStatus,
   Category,
   ClaimStatus,
   DailyRhythm,
   DnsInstructions,
+  ModerationVerdict,
   MotdInstructions,
+  ReportReason,
   Server,
   ServerGrowthStat,
   ServerOwnershipClaim,
@@ -228,4 +231,39 @@ export const reviewBoostReport = (
     method: "POST",
     token,
     body: { verdict, note },
+  });
+
+
+export const getPendingServers = (token: string) =>
+  apiFetch<Server[]>("/admin/servers/pending", { token });
+
+export const searchServersForModeration = (search: string, token: string) =>
+  apiFetch<Server[]>(`/admin/servers/search?search=${encodeURIComponent(search)}`, { token });
+
+export const reviewServerModeration = (
+  serverId: number,
+  verdict: ModerationVerdict,
+  token: string,
+  note?: string
+) =>
+  apiFetch<{ message: string; server: Server }>(`/admin/servers/${serverId}/review`, {
+    method: "POST",
+    token,
+    body: { verdict, note },
+  });
+
+export const reportServer = (serverId: number, reason: ReportReason, token: string, details?: string) =>
+  apiFetch<{ message: string }>(`/servers/${serverId}/report`, {
+    method: "POST",
+    token,
+    body: { reason, details },
+  });
+
+export const getServerReports = (token: string) =>
+  apiFetch<AdminServerReport[]>("/admin/servers/reports", { token });
+
+export const resolveServerReport = (reportId: number, token: string) =>
+  apiFetch<{ message: string }>(`/admin/servers/reports/${reportId}/resolve`, {
+    method: "POST",
+    token,
   });

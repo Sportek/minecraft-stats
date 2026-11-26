@@ -9,6 +9,7 @@ tmp
 .env.production.local
 .env.development.local
 .env.production
+.env.development
 
 # Frontend assets compiled code
 public/assets
@@ -16,6 +17,7 @@ public/assets
 public/images/servers
 public/images/blog
 public/images/avatars
+public/images/heads
 
 supervisord.log
 

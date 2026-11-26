@@ -8,7 +8,7 @@ export type User = {
   id: number;
   username: string;
   email: string;
-  role: 'user' | 'writer' | 'admin';
+  role: 'user' | 'writer' | 'admin' | 'support';
   provider: RegistrationProvider;
   verificationTokenExpires: Date;
   avatarUrl: string | null;

@@ -33,6 +33,9 @@ const cspReportOnly = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Don't let `next dev` write/restore a managed AGENTS.md when it detects an AI agent.
+  agentRules: false,
+
   // Enable standalone output for optimized Docker builds
   output: "standalone",
 
