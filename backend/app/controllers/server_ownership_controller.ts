@@ -273,7 +273,7 @@ export default class ServerOwnershipController {
     const data = await CreateManualClaimValidator.validate(
       request.only(['evidence', 'evidenceUrl'])
     )
-    const result = await ServerOwnershipService.submitManualClaim(server, user, data)
+    const result = await ServerOwnershipService.submitManualClaim(server, user, data, i18n.locale)
     if (result.status !== 'ok') return this.blocked(ctx, result.status)
     return {
       claim: this.serializeClaim(result.claim),

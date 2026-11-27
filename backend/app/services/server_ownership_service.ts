@@ -1,6 +1,11 @@
 import Server from '#models/server'
 import ServerOwnershipClaim from '#models/server_ownership_claim'
-import type User from '#models/user'
+import User from '#models/user'
+import OwnershipClaimReviewedNotification, {
+  type ClaimDecision,
+} from '#mails/ownership_claim_reviewed_notification'
+import logger from '@adonisjs/core/services/logger'
+import mail from '@adonisjs/mail/services/main'
 import { flattenMotd } from '#utils/motd'
 import { DateTime } from 'luxon'
 import { randomBytes } from 'node:crypto'
@@ -136,6 +141,7 @@ export default class ServerOwnershipService {
       verifiedAt: null,
       reviewedBy: null,
       reviewNote: null,
+      locale: null,
       ...fields,
     }
     const existing = await this.findClaim(server.id, user.id)
@@ -236,7 +242,8 @@ export default class ServerOwnershipService {
   static async submitManualClaim(
     server: Server,
     user: User,
-    data: { evidence: string; evidenceUrl?: string }
+    data: { evidence: string; evidenceUrl?: string },
+    locale?: string
   ): Promise<ClaimOutcome> {
     const blocked = this.conflict(server, user)
     if (blocked) return blocked
@@ -245,6 +252,7 @@ export default class ServerOwnershipService {
       method: 'manual',
       evidence: data.evidence,
       evidenceUrl: data.evidenceUrl ?? null,
+      locale: locale ?? null,
     })
     await WebhookService.notifyOwnershipClaim(claim, server, user)
     return { status: 'ok', claim }
@@ -285,6 +293,7 @@ export default class ServerOwnershipService {
     claim.reviewedBy = reviewer.id
     claim.reviewNote = note ?? null
     await claim.save()
+    await this.notifyRequester(claim, server, 'approved')
     return { status: 'ok', server }
   }
 
@@ -298,6 +307,35 @@ export default class ServerOwnershipService {
     claim.reviewedBy = reviewer.id
     claim.reviewNote = note ?? null
     await claim.save()
+    const server = await Server.query()
+      .apply((scopes) => scopes.withHidden())
+      .where('id', claim.serverId)
+      .firstOrFail()
+    await this.notifyRequester(claim, server, 'rejected')
+  }
+
+  private static async notifyRequester(
+    claim: ServerOwnershipClaim,
+    server: Server,
+    decision: ClaimDecision
+  ) {
+    try {
+      const requester = await User.findOrFail(claim.userId)
+      await mail.sendLater(
+        new OwnershipClaimReviewedNotification(
+          requester,
+          server,
+          decision,
+          claim.reviewNote,
+          claim.locale ?? undefined
+        )
+      )
+    } catch (error) {
+      logger.warn(
+        { claimId: claim.id, err: (error as Error).message },
+        'OWNERSHIP: review email failed'
+      )
+    }
   }
 
   /** Passe la propriété du serveur à `userId` et grave la preuve. */
