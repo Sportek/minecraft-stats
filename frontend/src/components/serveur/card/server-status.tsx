@@ -9,7 +9,6 @@ import { formatGrowth } from "@/lib/format";
 interface ServerStatusProps {
   stats: ServerStat[];
   growthStat: ServerGrowthStat | null;
-  lastOnlineAt?: string | null;
 }
 
 

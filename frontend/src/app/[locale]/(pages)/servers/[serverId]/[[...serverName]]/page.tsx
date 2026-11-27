@@ -472,7 +472,6 @@ const ServerPage = () => {
         isLoading={isStatsLoading}
         server={serverData.server}
         stats={stats}
-        categories={serverData.categories}
       />
 
       <ServerFAQ
