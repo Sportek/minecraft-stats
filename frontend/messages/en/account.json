@@ -11,7 +11,8 @@
     "advertisements": "Advertisements",
     "ownershipClaims": "Ownership claims",
     "boostReports": "Suspicious player counts",
-    "serversPending": "Server moderation"
+    "serversPending": "Server moderation",
+    "webhooks": "Webhooks"
   },
   "common": {
     "loading": "Loading...",

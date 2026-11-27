@@ -725,3 +725,30 @@ export class VisitorSchema extends BaseModel {
   @column()
   declare uuid: string
 }
+
+export class WebhookSchema extends BaseModel {
+  static $columns = ['createdAt', 'createdBy', 'enabled', 'events', 'id', 'lastError', 'lastSentAt', 'lastStatus', 'name', 'updatedAt', 'url'] as const
+  $columns = WebhookSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare createdBy: number | null
+  @column()
+  declare enabled: boolean
+  @column()
+  declare events: any
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare lastError: string | null
+  @column.dateTime()
+  declare lastSentAt: DateTime | null
+  @column()
+  declare lastStatus: number | null
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare url: string
+}

@@ -483,5 +483,42 @@
     "reportedOn": "Signalé le {date}",
     "resolveReport": "Résoudre",
     "reportResolved": "Signalement résolu."
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "subtitle": "Recevez une notification Discord à chaque nouvelle demande de propriété, serveur soumis ou signalement.",
+    "countBadge": "{count, plural, =0 {aucun} one {# webhook} other {# webhooks}}",
+    "loading": "Chargement…",
+    "loadingList": "Chargement des webhooks…",
+    "accessDenied": "Accès refusé",
+    "adminOnly": "Cette section est réservée aux administrateurs.",
+    "error": "Une erreur est survenue.",
+    "addTitle": "Ajouter un webhook Discord",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Salon #modération",
+    "urlLabel": "URL du webhook Discord",
+    "eventsLabel": "Événements à recevoir",
+    "add": "Ajouter",
+    "events": {
+      "ownership_claim.created": "Nouvelle demande de propriété",
+      "server.submitted": "Nouveau serveur à modérer",
+      "server_report.created": "Nouveau signalement"
+    },
+    "created": "Webhook ajouté",
+    "deleted": "Webhook supprimé",
+    "needOneEvent": "Un webhook doit recevoir au moins un événement.",
+    "emptyTitle": "Aucun webhook",
+    "emptyDescription": "Ajoutez l'URL d'un webhook Discord pour être notifié dans un salon.",
+    "paused": "En pause",
+    "neverSent": "Aucun envoi pour l'instant.",
+    "lastOk": "Dernier envoi réussi le {date}.",
+    "lastFailed": "Dernier envoi en échec le {date} : {error}",
+    "test": "Envoyer un test",
+    "testSent": "Message de test envoyé",
+    "testFailed": "Échec de l'envoi : {error}",
+    "pause": "Mettre en pause",
+    "resume": "Réactiver",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer le webhook « {name} » ?"
   }
 }

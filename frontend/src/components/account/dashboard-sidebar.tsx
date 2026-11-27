@@ -47,6 +47,7 @@ const ADMIN_ITEMS: NavItem[] = [
   },
   ...MODERATION_ITEMS,
   { href: "/admin/advertisements", key: "advertisements", icon: "material-symbols:ad-group-outline" },
+  { href: "/admin/webhooks", key: "webhooks", icon: "material-symbols:webhook" },
 ];
 
 const isActive = (pathname: string | null, href: string) =>

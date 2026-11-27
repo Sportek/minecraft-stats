@@ -103,7 +103,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 843
+            "example": 585
           },
           "name": {
             "type": "string",
@@ -123,7 +123,7 @@
           },
           "weight": {
             "type": "number",
-            "example": 138
+            "example": 885
           },
           "show_on_home": {
             "type": "boolean",
@@ -176,11 +176,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 970
+            "example": 191
           },
           "advertisement_id": {
             "type": "number",
-            "example": 320
+            "example": 953
           },
           "type": {
             "$ref": "#/components/schemas/'impression'",
@@ -192,7 +192,7 @@
           },
           "server_id": {
             "type": "number",
-            "example": 148
+            "example": 839
           },
           "target_url": {
             "type": "string",
@@ -216,7 +216,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 357
+            "example": 86
           },
           "type": {
             "$ref": "#/components/schemas/'email'",
@@ -232,7 +232,7 @@
           },
           "blacklisted_by": {
             "type": "number",
-            "example": 72
+            "example": 170
           },
           "created_at": {
             "type": "string",
@@ -248,15 +248,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 614
+            "example": 194
           },
           "blacklisted_identifier_id": {
             "type": "number",
-            "example": 197
+            "example": 551
           },
           "user_id": {
             "type": "number",
-            "example": 788
+            "example": 128
           },
           "created_at": {
             "type": "string",
@@ -272,7 +272,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 658
+            "example": 680
           },
           "name": {
             "type": "string",
@@ -297,7 +297,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 859
+            "example": 853
           },
           "code": {
             "$ref": "#/components/schemas/LanguageCode",
@@ -330,7 +330,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 411
+            "example": 985
           },
           "uuid": {
             "type": "string",
@@ -372,15 +372,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 658
+            "example": 638
           },
           "visitor_id": {
             "type": "number",
-            "example": 676
+            "example": 342
           },
           "user_id": {
             "type": "number",
-            "example": 282
+            "example": 748
           },
           "path": {
             "type": "string",
@@ -396,7 +396,7 @@
           },
           "duration_ms": {
             "type": "number",
-            "example": 912
+            "example": 906
           },
           "created_at": {
             "type": "string",
@@ -420,7 +420,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 771
+            "example": 40
           },
           "cover_image": {
             "type": "string",
@@ -432,7 +432,7 @@
           },
           "view_count": {
             "type": "number",
-            "example": 282
+            "example": 218
           },
           "default_locale": {
             "type": "string",
@@ -445,7 +445,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 652
+            "example": 668
           },
           "author": {
             "$ref": "#/components/schemas/User",
@@ -477,15 +477,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 718
+            "example": 170
           },
           "post_id": {
             "type": "number",
-            "example": 356
+            "example": 990
           },
           "user_id": {
             "type": "number",
-            "example": 13
+            "example": 422
           },
           "visitor_id": {
             "type": "string",
@@ -522,11 +522,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 640
+            "example": 563
           },
           "post_id": {
             "type": "number",
-            "example": 499
+            "example": 605
           },
           "locale": {
             "type": "string",
@@ -571,7 +571,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 554
+            "example": 681
           },
           "name": {
             "type": "string",
@@ -583,7 +583,7 @@
           },
           "port": {
             "type": "number",
-            "example": 895
+            "example": 66
           },
           "type": {
             "$ref": "#/components/schemas/ServerType",
@@ -627,7 +627,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 232
+            "example": 346
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -675,7 +675,7 @@
           },
           "vote_count": {
             "type": "number",
-            "example": 710
+            "example": 882
           },
           "categories": {
             "type": "array",
@@ -698,11 +698,11 @@
           },
           "last_player_count": {
             "type": "number",
-            "example": 100
+            "example": 320
           },
           "last_max_count": {
             "type": "number",
-            "example": 469
+            "example": 404
           },
           "last_stats_at": {
             "type": "string",
@@ -711,7 +711,7 @@
           },
           "peak_player_count": {
             "type": "number",
-            "example": 71
+            "example": 14
           },
           "peak_player_at": {
             "type": "string",
@@ -756,11 +756,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 289
+            "example": 249
           },
           "server_id": {
             "type": "number",
-            "example": 621
+            "example": 231
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -772,7 +772,7 @@
           },
           "score_at_review": {
             "type": "number",
-            "example": 317
+            "example": 994
           },
           "signals_at_review": {
             "type": "array",
@@ -783,7 +783,7 @@
           },
           "reviewed_by": {
             "type": "number",
-            "example": 639
+            "example": 189
           },
           "reviewer": {
             "$ref": "#/components/schemas/User",
@@ -812,7 +812,7 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 255
+            "example": 36
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -820,7 +820,7 @@
           },
           "score": {
             "type": "number",
-            "example": 567
+            "example": 850
           },
           "level": {
             "$ref": "#/components/schemas/BoostLevel",
@@ -835,11 +835,11 @@
           },
           "detected_factor": {
             "type": "number",
-            "example": 645
+            "example": 69
           },
           "estimated_real_players": {
             "type": "number",
-            "example": 624
+            "example": 308
           },
           "window_from": {
             "type": "string",
@@ -853,7 +853,7 @@
           },
           "samples_count": {
             "type": "number",
-            "example": 960
+            "example": 567
           },
           "computed_at": {
             "type": "string",
@@ -869,27 +869,27 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 924
+            "example": 987
           },
           "weekly_growth": {
             "type": "number",
-            "example": 75
+            "example": 350
           },
           "monthly_growth": {
             "type": "number",
-            "example": 178
+            "example": 123
           },
           "last_week_average": {
             "type": "number",
-            "example": 815
+            "example": 404
           },
           "previous_week_average": {
             "type": "number",
-            "example": 503
+            "example": 978
           },
           "last_month_average": {
             "type": "number",
-            "example": 413
+            "example": 47
           },
           "last_updated": {
             "type": "string",
@@ -905,11 +905,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 433
+            "example": 129
           },
           "server_id": {
             "type": "number",
-            "example": 501
+            "example": 987
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -921,7 +921,7 @@
           },
           "reviewed_by": {
             "type": "number",
-            "example": 350
+            "example": 142
           },
           "reviewer": {
             "$ref": "#/components/schemas/User",
@@ -950,11 +950,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 5
+            "example": 131
           },
           "server_id": {
             "type": "number",
-            "example": 194
+            "example": 323
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -962,7 +962,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 347
+            "example": 42
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -996,7 +996,7 @@
           },
           "reviewed_by": {
             "type": "number",
-            "example": 146
+            "example": 72
           },
           "reviewer": {
             "$ref": "#/components/schemas/User",
@@ -1025,11 +1025,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 885
+            "example": 51
           },
           "server_id": {
             "type": "number",
-            "example": 295
+            "example": 292
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -1037,7 +1037,7 @@
           },
           "reporter_id": {
             "type": "number",
-            "example": 45
+            "example": 995
           },
           "reporter": {
             "$ref": "#/components/schemas/User",
@@ -1057,7 +1057,7 @@
           },
           "resolved_by": {
             "type": "number",
-            "example": 94
+            "example": 319
           },
           "resolver": {
             "$ref": "#/components/schemas/User",
@@ -1091,15 +1091,15 @@
           },
           "server_id": {
             "type": "number",
-            "example": 74
+            "example": 148
           },
           "player_count": {
             "type": "number",
-            "example": 784
+            "example": 952
           },
           "max_count": {
             "type": "number",
-            "example": 620
+            "example": 916
           },
           "created_at": {
             "type": "string",
@@ -1115,7 +1115,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 451
+            "example": 738
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -1123,11 +1123,11 @@
           },
           "server_id": {
             "type": "number",
-            "example": 675
+            "example": 34
           },
           "visitor_id": {
             "type": "number",
-            "example": 551
+            "example": 3
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -1135,7 +1135,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 169
+            "example": 974
           },
           "username": {
             "type": "string",
@@ -1172,7 +1172,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 894
+            "example": 603
           },
           "date": {
             "type": "string",
@@ -1181,15 +1181,15 @@
           },
           "http_requests": {
             "type": "number",
-            "example": 131
+            "example": 867
           },
           "http_errors": {
             "type": "number",
-            "example": 247
+            "example": 894
           },
           "unique_visitors": {
             "type": "number",
-            "example": 509
+            "example": 922
           },
           "countries": {
             "$ref": "#/components/schemas/Record<string, number>",
@@ -1214,7 +1214,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 321
+            "example": 90
           },
           "username": {
             "type": "string",
@@ -1248,7 +1248,7 @@
           },
           "blacklisted_by": {
             "type": "number",
-            "example": 376
+            "example": 677
           },
           "blacklist_reason": {
             "type": "string",
@@ -1287,7 +1287,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 645
+            "example": 674
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -1295,7 +1295,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 232
+            "example": 168
           },
           "provider": {
             "$ref": "#/components/schemas/'google'",
@@ -1329,7 +1329,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 990
+            "example": 870
           },
           "uuid": {
             "type": "string",
@@ -1380,15 +1380,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 843
+            "example": 928
           },
           "visitor_id": {
             "type": "number",
-            "example": 576
+            "example": 650
           },
           "user_id": {
             "type": "number",
-            "example": 905
+            "example": 964
           },
           "linked_at": {
             "type": "string",
@@ -1411,6 +1411,59 @@
         },
         "description": "VisitorAccount (Model)"
       },
+      "Webhook": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 375
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEvent",
+              "example": null
+            }
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "last_status": {
+            "type": "number",
+            "example": 155
+          },
+          "last_error": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "last_sent_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "number",
+            "example": 171
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          }
+        },
+        "description": "Webhook (Model)"
+      },
       "CreateAdvertisementValidator": {
         "type": "object",
         "properties": {
@@ -1423,7 +1476,7 @@
           },
           "type": {
             "type": "number",
-            "example": 885,
+            "example": 28,
             "choices": [
               "custom",
               "network"
@@ -1466,13 +1519,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 434
+              "example": 594
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 885,
+          "type": 28,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -1481,7 +1534,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            434
+            594
           ]
         },
         "description": "CreateAdvertisementValidator (Validator)"
@@ -1497,7 +1550,7 @@
           },
           "type": {
             "type": "number",
-            "example": 893,
+            "example": 846,
             "choices": [
               "custom",
               "network"
@@ -1539,13 +1592,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 714
+              "example": 162
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 893,
+          "type": 846,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -1554,7 +1607,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            714
+            162
           ]
         },
         "description": "UpdateAdvertisementValidator (Validator)"
@@ -1600,7 +1653,7 @@
           },
           "durationMs": {
             "type": "number",
-            "example": 955,
+            "example": 309,
             "maximum": 86400000
           }
         },
@@ -1609,7 +1662,7 @@
           "path": "Lorem Ipsum",
           "referrer": "Lorem Ipsum",
           "title": "Lorem Ipsum",
-          "durationMs": 955
+          "durationMs": 309
         },
         "description": "TrackPageViewValidator (Validator)"
       },
@@ -1625,13 +1678,13 @@
           },
           "expiresInDays": {
             "type": "number",
-            "example": 571,
+            "example": 181,
             "maximum": 3650
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "expiresInDays": 571
+          "expiresInDays": 181
         },
         "description": "CreateApiTokenValidator (Validator)"
       },
@@ -1640,12 +1693,12 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 251,
+            "example": 202,
             "required": true
           }
         },
         "example": {
-          "id": 251
+          "id": 202
         },
         "description": "CategoryIdValidator (Validator)"
       },
@@ -1668,7 +1721,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 858,
+            "example": 446,
             "required": true
           },
           "name": {
@@ -1678,7 +1731,7 @@
           }
         },
         "example": {
-          "id": 858,
+          "id": 446,
           "name": "Lorem Ipsum"
         },
         "description": "UpdateCategoryValidator (Validator)"
@@ -1688,15 +1741,15 @@
         "properties": {
           "fromDate": {
             "type": "number",
-            "example": 174
+            "example": 730
           },
           "toDate": {
             "type": "number",
-            "example": 85
+            "example": 234
           },
           "interval": {
             "type": "number",
-            "example": 640,
+            "example": 688,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -1708,19 +1761,19 @@
           },
           "categoryId": {
             "type": "number",
-            "example": 736
+            "example": 518
           },
           "languageId": {
             "type": "number",
-            "example": 340
+            "example": 660
           }
         },
         "example": {
-          "fromDate": 174,
-          "toDate": 85,
-          "interval": 640,
-          "categoryId": 736,
-          "languageId": 340
+          "fromDate": 730,
+          "toDate": 234,
+          "interval": 688,
+          "categoryId": 518,
+          "languageId": 660
         },
         "description": "GlobalStatValidator (Validator)"
       },
@@ -1729,7 +1782,7 @@
         "properties": {
           "defaultLocale": {
             "type": "number",
-            "example": 458,
+            "example": 951,
             "choices": [
               "fr",
               "en",
@@ -1749,7 +1802,7 @@
               "properties": {
                 "locale": {
                   "type": "number",
-                  "example": 794,
+                  "example": 318,
                   "choices": [
                     "fr",
                     "en",
@@ -1778,7 +1831,7 @@
                 },
                 "excerpt": {
                   "type": "number",
-                  "example": 332,
+                  "example": 877,
                   "maximum": 500
                 }
               }
@@ -1807,11 +1860,11 @@
           }
         },
         "example": {
-          "defaultLocale": 458,
+          "defaultLocale": 951,
           "coverImage": "Lorem Ipsum",
           "translations": [
             {
-              "locale": 794,
+              "locale": 318,
               "title": "Lorem Ipsum",
               "slug": "Lorem Ipsum",
               "content": "Lorem Ipsum",
@@ -1831,13 +1884,13 @@
           },
           "serverId": {
             "type": "number",
-            "example": 864,
+            "example": 626,
             "required": true
           }
         },
         "example": {
           "placeholderName": "Lorem Ipsum",
-          "serverId": 864
+          "serverId": 626
         },
         "description": "PreviewPlaceholderValidator (Validator)"
       },
@@ -1895,7 +1948,7 @@
         "properties": {
           "defaultLocale": {
             "type": "number",
-            "example": 150,
+            "example": 712,
             "choices": [
               "fr",
               "en",
@@ -1914,7 +1967,7 @@
               "properties": {
                 "locale": {
                   "type": "number",
-                  "example": 813,
+                  "example": 238,
                   "choices": [
                     "fr",
                     "en",
@@ -1941,7 +1994,7 @@
                 },
                 "excerpt": {
                   "type": "number",
-                  "example": 99,
+                  "example": 919,
                   "maximum": 500
                 }
               }
@@ -1969,11 +2022,11 @@
           }
         },
         "example": {
-          "defaultLocale": 150,
+          "defaultLocale": 712,
           "coverImage": "Lorem Ipsum",
           "translations": [
             {
-              "locale": 813,
+              "locale": 238,
               "title": "Lorem Ipsum",
               "slug": "Lorem Ipsum",
               "content": "Lorem Ipsum",
@@ -2005,7 +2058,7 @@
           },
           "type": {
             "type": "number",
-            "example": 788,
+            "example": 299,
             "choices": [
               "java",
               "bedrock"
@@ -2015,7 +2068,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 29
+              "example": 992
             },
             "required": true,
             "properties": {
@@ -2041,7 +2094,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 627
+              "example": 255
             },
             "required": true
           }
@@ -2050,7 +2103,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 788,
+          "type": 299,
           "categories": [
             "Lorem Ipsum"
           ],
@@ -2058,7 +2111,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            627
+            255
           ]
         },
         "description": "CreateServerValidator (Validator)"
@@ -2082,7 +2135,7 @@
           },
           "type": {
             "type": "number",
-            "example": 247,
+            "example": 161,
             "choices": [
               "java",
               "bedrock"
@@ -2092,7 +2145,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 412
+              "example": 586
             },
             "properties": {
               "items": {
@@ -2117,7 +2170,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 903
+              "example": 42
             }
           }
         },
@@ -2125,7 +2178,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 247,
+          "type": 161,
           "categories": [
             "Lorem Ipsum"
           ],
@@ -2133,7 +2186,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            903
+            42
           ]
         },
         "description": "UpdateServerValidator (Validator)"
@@ -2157,7 +2210,7 @@
         "properties": {
           "verdict": {
             "type": "number",
-            "example": 515,
+            "example": 125,
             "choices": [
               "boosting",
               "clean",
@@ -2172,7 +2225,7 @@
           }
         },
         "example": {
-          "verdict": 515,
+          "verdict": 125,
           "note": "Lorem Ipsum"
         },
         "description": "ReviewBoostValidator (Validator)"
@@ -2182,18 +2235,18 @@
         "properties": {
           "serverId": {
             "type": "number",
-            "example": 25,
+            "example": 781,
             "required": true
           },
           "categoryId": {
             "type": "number",
-            "example": 916,
+            "example": 37,
             "required": true
           }
         },
         "example": {
-          "serverId": 25,
-          "categoryId": 916
+          "serverId": 781,
+          "categoryId": 37
         },
         "description": "attachServerCategoryValidator (Validator)"
       },
@@ -2202,7 +2255,7 @@
         "properties": {
           "verdict": {
             "type": "number",
-            "example": 296,
+            "example": 309,
             "choices": [
               "approved",
               "blocked"
@@ -2216,7 +2269,7 @@
           }
         },
         "example": {
-          "verdict": 296,
+          "verdict": 309,
           "note": "Lorem Ipsum"
         },
         "description": "ReviewServerModerationValidator (Validator)"
@@ -2262,7 +2315,7 @@
         "properties": {
           "reason": {
             "type": "number",
-            "example": 984,
+            "example": 162,
             "choices": [
               "scam",
               "inappropriate_content",
@@ -2279,7 +2332,7 @@
           }
         },
         "example": {
-          "reason": 984,
+          "reason": 162,
           "details": "Lorem Ipsum"
         },
         "description": "CreateServerReportValidator (Validator)"
@@ -2334,7 +2387,7 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 734,
+            "example": 441,
             "required": true
           },
           "days": {
@@ -2352,7 +2405,7 @@
           }
         },
         "example": {
-          "server_id": 734,
+          "server_id": 441,
           "days": 1,
           "timezone": "Lorem Ipsum"
         },
@@ -2363,20 +2416,20 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 951,
+            "example": 729,
             "required": true
           },
           "fromDate": {
             "type": "number",
-            "example": 847
+            "example": 722
           },
           "toDate": {
             "type": "number",
-            "example": 297
+            "example": 934
           },
           "interval": {
             "type": "number",
-            "example": 847,
+            "example": 917,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -2388,7 +2441,7 @@
           },
           "format": {
             "type": "number",
-            "example": 954,
+            "example": 845,
             "choices": [
               "csv",
               "json"
@@ -2397,11 +2450,11 @@
           }
         },
         "example": {
-          "server_id": 951,
-          "fromDate": 847,
-          "toDate": 297,
-          "interval": 847,
-          "format": 954
+          "server_id": 729,
+          "fromDate": 722,
+          "toDate": 934,
+          "interval": 917,
+          "format": 845
         },
         "description": "StatExportValidator (Validator)"
       },
@@ -2410,24 +2463,24 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 254,
+            "example": 871,
             "required": true
           },
           "exactTime": {
             "type": "number",
-            "example": 606
+            "example": 788
           },
           "fromDate": {
             "type": "number",
-            "example": 512
+            "example": 579
           },
           "toDate": {
             "type": "number",
-            "example": 780
+            "example": 671
           },
           "interval": {
             "type": "number",
-            "example": 623,
+            "example": 544,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -2439,11 +2492,11 @@
           }
         },
         "example": {
-          "server_id": 254,
-          "exactTime": 606,
-          "fromDate": 512,
-          "toDate": 780,
-          "interval": 623
+          "server_id": 871,
+          "exactTime": 788,
+          "fromDate": 579,
+          "toDate": 671,
+          "interval": 544
         },
         "description": "StatValidator (Validator)"
       },
@@ -2653,6 +2706,72 @@
           "token": "Lorem Ipsum"
         },
         "description": "VerifyEmailValidator (Validator)"
+      },
+      "CreateWebhookValidator": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "pattern": "/^https:\\/\\/(?:(?:ptb|canary)\\.)?discord(?:app)?\\.com\\/api\\/webhooks\\/\\d+\\/[\\w-]+$/",
+            "required": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 1,
+              "minimum": 1
+            },
+            "required": true
+          }
+        },
+        "example": {
+          "name": "Lorem Ipsum",
+          "url": "Lorem Ipsum",
+          "events": [
+            1
+          ]
+        },
+        "description": "CreateWebhookValidator (Validator)"
+      },
+      "UpdateWebhookValidator": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 1,
+              "minimum": 1
+            }
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "example": {
+          "name": "Lorem Ipsum",
+          "events": [
+            1
+          ],
+          "enabled": true
+        },
+        "description": "UpdateWebhookValidator (Validator)"
       }
     }
   },
@@ -2660,7 +2779,7 @@
     "/metrics": {
       "get": {
         "summary": " (handle)",
-        "description": "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\wt-support\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**",
+        "description": "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\wt-webhooks\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**",
         "parameters": [],
         "tags": [
           ""
@@ -2717,10 +2836,10 @@
                 "example": [
                   {
                     "server": {
-                      "id": 554,
+                      "id": 681,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 895,
+                      "port": 66,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -2731,17 +2850,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 232,
+                      "user_id": 346,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 710,
+                      "vote_count": 882,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 100,
-                      "last_max_count": 469,
+                      "last_player_count": 320,
+                      "last_max_count": 404,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 71,
+                      "peak_player_count": 14,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -2754,12 +2873,12 @@
                       "<Category>"
                     ],
                     "growthStat": {
-                      "server_id": 924,
-                      "weekly_growth": 75,
-                      "monthly_growth": 178,
-                      "last_week_average": 815,
-                      "previous_week_average": 503,
-                      "last_month_average": 413,
+                      "server_id": 987,
+                      "weekly_growth": 350,
+                      "monthly_growth": 123,
+                      "last_week_average": 404,
+                      "previous_week_average": 978,
+                      "last_month_average": 47,
                       "last_updated": "2021-03-23T16:13:08.489+01:00"
                     }
                   }
@@ -3608,7 +3727,7 @@
                 "$ref": "#/components/schemas/CreateServerReportValidator"
               },
               "example": {
-                "reason": 984,
+                "reason": 162,
                 "details": "Lorem Ipsum"
               }
             }
@@ -3804,10 +3923,10 @@
                 "example": {
                   "verified": true,
                   "server": {
-                    "id": 554,
+                    "id": 681,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 895,
+                    "port": 66,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -3818,17 +3937,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 232,
+                    "user_id": 346,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 710,
+                    "vote_count": 882,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 100,
-                    "last_max_count": 469,
+                    "last_player_count": 320,
+                    "last_max_count": 404,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 71,
+                    "peak_player_count": 14,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -4063,10 +4182,10 @@
                 "example": {
                   "verified": true,
                   "server": {
-                    "id": 554,
+                    "id": 681,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 895,
+                    "port": 66,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -4077,17 +4196,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 232,
+                    "user_id": 346,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 710,
+                    "vote_count": 882,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 100,
-                    "last_max_count": 469,
+                    "last_player_count": 320,
+                    "last_max_count": 404,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 71,
+                    "peak_player_count": 14,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -6924,7 +7043,7 @@
               },
               "example": {
                 "name": "Lorem Ipsum",
-                "expiresInDays": 571
+                "expiresInDays": 181
               }
             }
           }
@@ -8422,6 +8541,423 @@
         ]
       }
     },
+    "/api/v1/admin/webhooks": {
+      "get": {
+        "summary": "List staff notification webhooks (admin) (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/webhooks_controller.ts_ - **index**",
+        "operationId": "adminListWebhooks",
+        "parameters": [],
+        "tags": [
+          "ADMIN"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "name": "Modération",
+                    "maskedUrl": "https://discord.com/api/webhooks/123/••••••••abcd",
+                    "events": [
+                      "server.submitted",
+                      "server_report.created"
+                    ],
+                    "enabled": true,
+                    "lastStatus": 204,
+                    "lastError": "",
+                    "lastSentAt": "2026-11-27T12:00:00.000Z",
+                    "createdAt": "2026-11-27T12:00:00.000Z",
+                    "updatedAt": "2026-11-27T12:00:00.000Z"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "summary": "Add a Discord webhook (admin) (store)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/webhooks_controller.ts_ - **store**",
+        "operationId": "adminCreateWebhook",
+        "parameters": [],
+        "tags": [
+          "ADMIN"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": 1,
+                    "name": "Modération",
+                    "maskedUrl": "https://discord.com/api/webhooks/123/••••••••abcd",
+                    "events": {
+                      "type": "object",
+                      "properties": {
+                        "0": "server.submitted"
+                      }
+                    },
+                    "enabled": true
+                  }
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Modération",
+                  "maskedUrl": "https://discord.com/api/webhooks/123/••••••••abcd",
+                  "events": [
+                    "server.submitted"
+                  ],
+                  "enabled": true
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "message": "The url field format is invalid",
+                            "field": "url"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "errors": [
+                    {
+                      "message": "The url field format is invalid",
+                      "field": "url"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **422** (Unprocessable Entity) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": "Modération",
+                  "url": "https://discord.com/api/webhooks/123/abcd",
+                  "events": {
+                    "type": "object",
+                    "properties": {
+                      "0": "server.submitted"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "name": "Modération",
+                "url": "https://discord.com/api/webhooks/123/abcd",
+                "events": [
+                  "server.submitted"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/webhooks/{id}": {
+      "patch": {
+        "summary": "Rename, change the events of, or pause a webhook (admin) (update)",
+        "description": "\n\n _app/controllers/webhooks_controller.ts_ - **update**",
+        "operationId": "adminUpdateWebhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The webhook id",
+            "schema": {
+              "example": "1",
+              "type": "number"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ADMIN"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": 1,
+                    "name": "Modération",
+                    "events": {
+                      "type": "object",
+                      "properties": {
+                        "0": "server.submitted",
+                        "1": "server_report.created"
+                      }
+                    },
+                    "enabled": false
+                  }
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Modération",
+                  "events": [
+                    "server.submitted",
+                    "server_report.created"
+                  ],
+                  "enabled": false
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Row not found"
+                  }
+                },
+                "example": {
+                  "message": "Row not found"
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": "Modération",
+                  "events": {
+                    "type": "object",
+                    "properties": {
+                      "0": "server.submitted",
+                      "1": "server_report.created"
+                    }
+                  },
+                  "enabled": false
+                }
+              },
+              "example": {
+                "name": "Modération",
+                "events": [
+                  "server.submitted",
+                  "server_report.created"
+                ],
+                "enabled": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a webhook (admin) (destroy)",
+        "description": "\n\n _app/controllers/webhooks_controller.ts_ - **destroy**",
+        "operationId": "adminDeleteWebhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The webhook id",
+            "schema": {
+              "example": "1",
+              "type": "number"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ADMIN"
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **204** (No Content) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Row not found"
+                  }
+                },
+                "example": {
+                  "message": "Row not found"
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/webhooks/{id}/test": {
+      "post": {
+        "summary": "Send a test message to a webhook (admin) (test)",
+        "description": "\n\n _app/controllers/webhooks_controller.ts_ - **test**",
+        "operationId": "adminTestWebhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The webhook id",
+            "schema": {
+              "example": "1",
+              "type": "number"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ADMIN"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": true,
+                    "status": 204,
+                    "error": ""
+                  }
+                },
+                "example": {
+                  "ok": true,
+                  "status": 204,
+                  "error": ""
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Row not found"
+                  }
+                },
+                "example": {
+                  "message": "Row not found"
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      }
+    },
     "/api/v1/admin/ownership-claims": {
       "get": {
         "summary": "List pending manual ownership claims (admin or support) (adminIndex)",
@@ -8448,10 +8984,10 @@
                     "status": "pending",
                     "evidence": "Discord: owner#1234",
                     "server": {
-                      "id": 554,
+                      "id": 681,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 895,
+                      "port": 66,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -8462,17 +8998,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 232,
+                      "user_id": 346,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 710,
+                      "vote_count": 882,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 100,
-                      "last_max_count": 469,
+                      "last_player_count": 320,
+                      "last_max_count": 404,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 71,
+                      "peak_player_count": 14,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8482,7 +9018,7 @@
                       "updated_at": "2021-03-23T16:13:08.489+01:00"
                     },
                     "user": {
-                      "id": 321,
+                      "id": 90,
                       "username": "Lorem Ipsum",
                       "verified": true,
                       "provider": {},
@@ -8490,7 +9026,7 @@
                       "avatar_url": "Lorem Ipsum",
                       "verification_token_expires": "2021-03-23T16:13:08.489+01:00",
                       "blacklisted_at": "2021-03-23T16:13:08.489+01:00",
-                      "blacklisted_by": 376,
+                      "blacklisted_by": 677,
                       "blacklist_reason": "Lorem Ipsum",
                       "created_at": "2021-03-23T16:13:08.489+01:00",
                       "updated_at": "2021-03-23T16:13:08.489+01:00"
@@ -8566,10 +9102,10 @@
                 "example": {
                   "message": "Claim approved.",
                   "server": {
-                    "id": 554,
+                    "id": 681,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 895,
+                    "port": 66,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -8580,17 +9116,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 232,
+                    "user_id": 346,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 710,
+                    "vote_count": 882,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 100,
-                    "last_max_count": 469,
+                    "last_player_count": 320,
+                    "last_max_count": 404,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 71,
+                    "peak_player_count": 14,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8781,10 +9317,10 @@
                       }
                     ],
                     "server": {
-                      "id": 554,
+                      "id": 681,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 895,
+                      "port": 66,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -8795,17 +9331,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 232,
+                      "user_id": 346,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 710,
+                      "vote_count": 882,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 100,
-                      "last_max_count": 469,
+                      "last_player_count": 320,
+                      "last_max_count": 404,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 71,
+                      "peak_player_count": 14,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8885,10 +9421,10 @@
                 "example": {
                   "message": "Verdict recorded.",
                   "server": {
-                    "id": 554,
+                    "id": 681,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 895,
+                    "port": 66,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -8899,17 +9435,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 232,
+                    "user_id": 346,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 710,
+                    "vote_count": 882,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 100,
-                    "last_max_count": 469,
+                    "last_player_count": 320,
+                    "last_max_count": 404,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 71,
+                    "peak_player_count": 14,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8960,7 +9496,7 @@
                 "$ref": "#/components/schemas/ReviewBoostValidator"
               },
               "example": {
-                "verdict": 515,
+                "verdict": 125,
                 "note": "Lorem Ipsum"
               }
             }
@@ -9136,10 +9672,10 @@
                 "example": {
                   "message": "Verdict recorded.",
                   "server": {
-                    "id": 554,
+                    "id": 681,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 895,
+                    "port": 66,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -9150,17 +9686,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 232,
+                    "user_id": 346,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 710,
+                    "vote_count": 882,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 100,
-                    "last_max_count": 469,
+                    "last_player_count": 320,
+                    "last_max_count": 404,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 71,
+                    "peak_player_count": 14,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -9211,7 +9747,7 @@
                 "$ref": "#/components/schemas/ReviewServerModerationValidator"
               },
               "example": {
-                "verdict": 296,
+                "verdict": 309,
                 "note": "Lorem Ipsum"
               }
             }
@@ -9245,10 +9781,10 @@
                     "details": "Took my payment, never gave the rank.",
                     "createdAt": "2026-05-28T12:00:00.000Z",
                     "server": {
-                      "id": 554,
+                      "id": 681,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 895,
+                      "port": 66,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -9259,17 +9795,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 232,
+                      "user_id": 346,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 710,
+                      "vote_count": 882,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 100,
-                      "last_max_count": 469,
+                      "last_player_count": 320,
+                      "last_max_count": 404,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 71,
+                      "peak_player_count": 14,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -10026,6 +10562,26 @@
     {
       "name": "POSTS_ADMIN",
       "description": "Everything related to POSTS_ADMIN"
+    },
+    {
+      "name": "ADMIN",
+      "description": "Everything related to ADMIN"
+    },
+    {
+      "name": "ADMIN",
+      "description": "Everything related to ADMIN"
+    },
+    {
+      "name": "ADMIN",
+      "description": "Everything related to ADMIN"
+    },
+    {
+      "name": "ADMIN",
+      "description": "Everything related to ADMIN"
+    },
+    {
+      "name": "ADMIN",
+      "description": "Everything related to ADMIN"
     },
     {
       "name": "SERVER OWNERSHIP",

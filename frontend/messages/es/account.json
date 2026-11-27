@@ -11,7 +11,8 @@
     "advertisements": "Anuncios",
     "ownershipClaims": "Solicitudes de propiedad",
     "boostReports": "Conectados sospechosos",
-    "serversPending": "Moderación de servidores"
+    "serversPending": "Moderación de servidores",
+    "webhooks": "Webhooks"
   },
   "common": {
     "loading": "Cargando…",

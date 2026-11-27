@@ -17,6 +17,7 @@ import {
   type OwnershipMethod,
 } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
+import WebhookService from '#services/webhook_service'
 
 export type ClaimOutcome =
   | { status: 'ok'; claim: ServerOwnershipClaim }
@@ -245,6 +246,7 @@ export default class ServerOwnershipService {
       evidence: data.evidence,
       evidenceUrl: data.evidenceUrl ?? null,
     })
+    await WebhookService.notifyOwnershipClaim(claim, server, user)
     return { status: 'ok', claim }
   }
 

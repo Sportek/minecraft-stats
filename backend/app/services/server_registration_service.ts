@@ -10,6 +10,7 @@ import {
 } from '../../minecraft-ping/minecraft_ping.js'
 import type { NormalizedPing } from '../../minecraft-ping/minecraft_ping.js'
 import type { ServerType } from '../constants/server_type.js'
+import WebhookService from '#services/webhook_service'
 
 type CreateServerData = Awaited<ReturnType<typeof CreateServerValidator.validate>>
 type UpdateServerData = Awaited<ReturnType<typeof UpdateServerValidator.validate>>
@@ -86,6 +87,7 @@ export default class ServerRegistrationService {
     await server.related('categories').attach(await Server.resolveCategoryIds(categories))
     await server.related('languages').attach(await Server.resolveLanguageIds(languages))
     await server.related('user').associate(user)
+    await WebhookService.notifyServerSubmitted(server, user)
 
     return { status: 'created', server }
   }
