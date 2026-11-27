@@ -63,7 +63,7 @@ export default class ArchiveOldPartitions extends BaseCommand {
     const toDrop: string[] = []
     for (const row of partitions.rows as Array<{ partition_name: string; bound: string }>) {
       // bound ressemble à : FOR VALUES FROM ('2024-01-01 00:00:00+00') TO ('2024-02-01 00:00:00+00')
-      const match = row.bound.match(/TO \('([^']+)'\)/)
+      const match = /TO \('([^']+)'\)/.exec(row.bound)
       if (!match) continue
       const partitionEnd = new Date(match[1])
       if (partitionEnd <= cutoff) {

@@ -116,7 +116,7 @@ function toolName(method: string, path: string, operationId?: string): string {
     .split('/')
     .filter(Boolean)
     .map((seg) => {
-      const paramMatch = seg.match(/^\{(.+)\}$/)
+      const paramMatch = /^\{(.+)\}$/.exec(seg)
       const base = paramMatch ? `By ${paramMatch[1]}` : seg
       return base
         .replace(/[-_]+/g, ' ')

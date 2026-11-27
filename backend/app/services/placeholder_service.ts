@@ -82,8 +82,8 @@ export default class PlaceholderService {
    */
   static async resolveTokens(tokens: string[]): Promise<Record<string, string>> {
     const parsed = tokens
-      .map((token) => ({ token, match: token.match(/^%([A-Z_]+)_(\d+)%$/) }))
-      .filter((entry): entry is { token: string; match: RegExpMatchArray } => entry.match !== null)
+      .map((token) => ({ token, match: /^%([A-Z_]+)_(\d+)%$/.exec(token) }))
+      .filter((entry): entry is { token: string; match: RegExpExecArray } => entry.match !== null)
 
     const pairs = parsed.map((entry) => ({
       name: entry.match[1],
