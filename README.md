@@ -48,7 +48,7 @@ Blog d'articles avec éditeur Tiptap côté admin. API REST versionnée `/api/v1
 | Charts | AG Charts Community |
 | Forms | React Hook Form + Zod |
 | Styling | Tailwind CSS + Radix UI (shadcn) |
-| Backend | AdonisJS 6 |
+| Backend | AdonisJS 7 (Node 26) |
 | ORM | Lucid |
 | Base de données | PostgreSQL |
 | Cache + rate limiting | Redis |
@@ -57,7 +57,7 @@ Blog d'articles avec éditeur Tiptap côté admin. API REST versionnée `/api/v1
 | Images | Sharp (PNG → WebP) |
 | Ping Minecraft | @minescope/mineping |
 | Monitoring | Prometheus + Grafana |
-| Hébergement | VPS Pulseheberg (France) |
+| Hébergement | VPS en France, derrière Cloudflare |
 
 ---
 
@@ -71,8 +71,8 @@ Blog d'articles avec éditeur Tiptap côté admin. API REST versionnée `/api/v1
               ┌────────────────────┴───────────────────┐
               │                                        │
         ┌─────▼──────┐                          ┌──────▼─────┐
-        │  Next.js   │  ── REST /api/v1 ──▶     │ AdonisJS 6 │
-        │  App Router│                          │  (Node 24) │
+        │  Next.js   │  ── REST /api/v1 ──▶     │ AdonisJS 7 │
+        │  App Router│                          │  (Node 26) │
         │  ISR + SSR │                          └──────┬─────┘
         └────────────┘                                 │
                                   ┌────────────────────┼───────────────────┐
@@ -125,12 +125,21 @@ Rate limiting adaptatif par route, validation VineJS, CORS configuré pour les d
 
 ```
 code/
-├── backend/         AdonisJS 6 — API REST + scheduler + ping Minecraft
+├── backend/         AdonisJS 7 — API REST + scheduler + ping Minecraft
 ├── frontend/        Next.js 16 — App Router + ISR + SSR
-├── docs/            Documentation interne, scripts ops
-├── analytics/       Données SQLite extraites pour analyses ad-hoc
+├── mcp/             Serveur MCP : l'API publique exposée aux agents IA
+├── automation/      Génération d'articles de blog
+├── docs/            Notes d'architecture et documentation technique
+├── compose.dev.yaml PostgreSQL + Redis pour le développement local
+├── CONTRIBUTING.md  Lancer le projet en local et proposer une PR
 └── CLAUDE.md        Guide pour le développement assisté par IA
 ```
+
+---
+
+## Contribuer
+
+Les contributions sont les bienvenues. [CONTRIBUTING.md](CONTRIBUTING.md) explique comment lancer le projet en local (frontend seul en quelques minutes, ou stack complète avec des données de démo) et comment proposer une PR. Les failles de sécurité se signalent en privé : voir [SECURITY.md](SECURITY.md).
 
 ---
 

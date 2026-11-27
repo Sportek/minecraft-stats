@@ -116,8 +116,10 @@ All three apps use **Yarn 4 (Berry)** via Corepack (`packageManager` field), wit
 
 - Backend extras: `yarn test` (Japa), `yarn typecheck`, `node ace migration:run|rollback`,
   `node ace make:migration <name>`, `node ace docs:generate`, `node ace scheduler:run`.
-- Local DB: `docker compose --env-file ./.env.development up -d` (see `backend/README.md`),
-  then `node ace migration:run`.
+- Local setup: `docker compose -f compose.dev.yaml up -d` (PostgreSQL + Redis only), then in
+  `backend/`: `cp .env.example .env`, `node ace generate:key`, `node ace migration:run`,
+  `node ace db:seed` (demo servers with 14 days of history). Backend on :9000, frontend on :3000.
+  `backend/compose.yaml` is the production stack — never use it locally. Full guide: `CONTRIBUTING.md`.
 - Tests live in `backend/tests/{unit,functional}/**/*.spec.ts`.
 
 ## Conventions

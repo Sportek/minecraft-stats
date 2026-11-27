@@ -22,3 +22,6 @@ docs/new-design/*.dc*
 docs/new-design/_*
 docs/new-design/*support*.js
 docs/new-design/*(1)*
+
+# Notes personnelles du mainteneur (gardées hors du dépôt public)
+memory/

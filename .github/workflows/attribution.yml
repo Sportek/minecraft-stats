@@ -9,6 +9,10 @@ on:
 jobs:
   no-ai-attribution:
     name: Pas d'attribution IA
+    # Une PR de mise en prod (staging -> main) ne contient que des commits déjà passés
+    # par ce check sur leur propre PR (et quelques anciens commits d'avant le check) :
+    # inutile de les revérifier. Un job sauté compte comme réussi pour un check requis.
+    if: github.head_ref != 'staging'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

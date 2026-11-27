@@ -1,0 +1,35 @@
+name: Bug
+description: Quelque chose ne marche pas comme prévu sur le site ou l'API.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Ce qui se passe
+      description: Le comportement observé, et celui que tu attendais.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Comment le reproduire
+      placeholder: |
+        1. Aller sur https://minecraft-stats.fr/...
+        2. Cliquer sur ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Page ou endpoint concerné
+      placeholder: https://minecraft-stats.com/servers/123 ou GET /api/v1/servers
+  - type: input
+    id: env
+    attributes:
+      label: Navigateur et appareil
+      placeholder: Firefox 140, Windows 11
+  - type: textarea
+    id: extra
+    attributes:
+      label: Captures, logs, autre contexte
