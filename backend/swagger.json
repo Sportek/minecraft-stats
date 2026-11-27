@@ -103,7 +103,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 881
+            "example": 843
           },
           "name": {
             "type": "string",
@@ -123,7 +123,7 @@
           },
           "weight": {
             "type": "number",
-            "example": 798
+            "example": 138
           },
           "show_on_home": {
             "type": "boolean",
@@ -176,11 +176,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 94
+            "example": 970
           },
           "advertisement_id": {
             "type": "number",
-            "example": 793
+            "example": 320
           },
           "type": {
             "$ref": "#/components/schemas/'impression'",
@@ -192,7 +192,7 @@
           },
           "server_id": {
             "type": "number",
-            "example": 518
+            "example": 148
           },
           "target_url": {
             "type": "string",
@@ -216,7 +216,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 411
+            "example": 357
           },
           "type": {
             "$ref": "#/components/schemas/'email'",
@@ -232,7 +232,7 @@
           },
           "blacklisted_by": {
             "type": "number",
-            "example": 466
+            "example": 72
           },
           "created_at": {
             "type": "string",
@@ -248,15 +248,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 886
+            "example": 614
           },
           "blacklisted_identifier_id": {
             "type": "number",
-            "example": 346
+            "example": 197
           },
           "user_id": {
             "type": "number",
-            "example": 270
+            "example": 788
           },
           "created_at": {
             "type": "string",
@@ -272,7 +272,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 484
+            "example": 658
           },
           "name": {
             "type": "string",
@@ -297,7 +297,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 975
+            "example": 859
           },
           "code": {
             "$ref": "#/components/schemas/LanguageCode",
@@ -330,7 +330,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 806
+            "example": 411
           },
           "uuid": {
             "type": "string",
@@ -372,15 +372,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 295
+            "example": 658
           },
           "visitor_id": {
             "type": "number",
-            "example": 804
+            "example": 676
           },
           "user_id": {
             "type": "number",
-            "example": 636
+            "example": 282
           },
           "path": {
             "type": "string",
@@ -396,7 +396,7 @@
           },
           "duration_ms": {
             "type": "number",
-            "example": 379
+            "example": 912
           },
           "created_at": {
             "type": "string",
@@ -420,7 +420,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 848
+            "example": 771
           },
           "cover_image": {
             "type": "string",
@@ -432,7 +432,7 @@
           },
           "view_count": {
             "type": "number",
-            "example": 606
+            "example": 282
           },
           "default_locale": {
             "type": "string",
@@ -445,7 +445,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 953
+            "example": 652
           },
           "author": {
             "$ref": "#/components/schemas/User",
@@ -477,15 +477,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 793
+            "example": 718
           },
           "post_id": {
             "type": "number",
-            "example": 778
+            "example": 356
           },
           "user_id": {
             "type": "number",
-            "example": 72
+            "example": 13
           },
           "visitor_id": {
             "type": "string",
@@ -522,11 +522,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 999
+            "example": 640
           },
           "post_id": {
             "type": "number",
-            "example": 519
+            "example": 499
           },
           "locale": {
             "type": "string",
@@ -571,7 +571,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 577
+            "example": 554
           },
           "name": {
             "type": "string",
@@ -583,7 +583,7 @@
           },
           "port": {
             "type": "number",
-            "example": 81
+            "example": 895
           },
           "type": {
             "$ref": "#/components/schemas/ServerType",
@@ -627,7 +627,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 748
+            "example": 232
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -675,7 +675,7 @@
           },
           "vote_count": {
             "type": "number",
-            "example": 940
+            "example": 710
           },
           "categories": {
             "type": "array",
@@ -698,11 +698,11 @@
           },
           "last_player_count": {
             "type": "number",
-            "example": 385
+            "example": 100
           },
           "last_max_count": {
             "type": "number",
-            "example": 736
+            "example": 469
           },
           "last_stats_at": {
             "type": "string",
@@ -711,7 +711,7 @@
           },
           "peak_player_count": {
             "type": "number",
-            "example": 221
+            "example": 71
           },
           "peak_player_at": {
             "type": "string",
@@ -756,11 +756,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 662
+            "example": 289
           },
           "server_id": {
             "type": "number",
-            "example": 26
+            "example": 621
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -772,7 +772,7 @@
           },
           "score_at_review": {
             "type": "number",
-            "example": 707
+            "example": 317
           },
           "signals_at_review": {
             "type": "array",
@@ -783,7 +783,7 @@
           },
           "reviewed_by": {
             "type": "number",
-            "example": 438
+            "example": 639
           },
           "reviewer": {
             "$ref": "#/components/schemas/User",
@@ -812,7 +812,7 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 676
+            "example": 255
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -820,7 +820,7 @@
           },
           "score": {
             "type": "number",
-            "example": 11
+            "example": 567
           },
           "level": {
             "$ref": "#/components/schemas/BoostLevel",
@@ -835,11 +835,11 @@
           },
           "detected_factor": {
             "type": "number",
-            "example": 983
+            "example": 645
           },
           "estimated_real_players": {
             "type": "number",
-            "example": 675
+            "example": 624
           },
           "window_from": {
             "type": "string",
@@ -853,7 +853,7 @@
           },
           "samples_count": {
             "type": "number",
-            "example": 76
+            "example": 960
           },
           "computed_at": {
             "type": "string",
@@ -869,27 +869,27 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 431
+            "example": 924
           },
           "weekly_growth": {
             "type": "number",
-            "example": 945
+            "example": 75
           },
           "monthly_growth": {
             "type": "number",
-            "example": 105
+            "example": 178
           },
           "last_week_average": {
             "type": "number",
-            "example": 985
+            "example": 815
           },
           "previous_week_average": {
             "type": "number",
-            "example": 414
+            "example": 503
           },
           "last_month_average": {
             "type": "number",
-            "example": 117
+            "example": 413
           },
           "last_updated": {
             "type": "string",
@@ -905,11 +905,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 61
+            "example": 433
           },
           "server_id": {
             "type": "number",
-            "example": 84
+            "example": 501
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -921,7 +921,7 @@
           },
           "reviewed_by": {
             "type": "number",
-            "example": 654
+            "example": 350
           },
           "reviewer": {
             "$ref": "#/components/schemas/User",
@@ -950,11 +950,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 689
+            "example": 5
           },
           "server_id": {
             "type": "number",
-            "example": 262
+            "example": 194
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -962,7 +962,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 484
+            "example": 347
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -996,7 +996,7 @@
           },
           "reviewed_by": {
             "type": "number",
-            "example": 862
+            "example": 146
           },
           "reviewer": {
             "$ref": "#/components/schemas/User",
@@ -1025,11 +1025,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 270
+            "example": 885
           },
           "server_id": {
             "type": "number",
-            "example": 156
+            "example": 295
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -1037,7 +1037,7 @@
           },
           "reporter_id": {
             "type": "number",
-            "example": 718
+            "example": 45
           },
           "reporter": {
             "$ref": "#/components/schemas/User",
@@ -1057,7 +1057,7 @@
           },
           "resolved_by": {
             "type": "number",
-            "example": 434
+            "example": 94
           },
           "resolver": {
             "$ref": "#/components/schemas/User",
@@ -1091,15 +1091,15 @@
           },
           "server_id": {
             "type": "number",
-            "example": 368
+            "example": 74
           },
           "player_count": {
             "type": "number",
-            "example": 180
+            "example": 784
           },
           "max_count": {
             "type": "number",
-            "example": 628
+            "example": 620
           },
           "created_at": {
             "type": "string",
@@ -1115,7 +1115,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 173
+            "example": 451
           },
           "server": {
             "$ref": "#/components/schemas/Server",
@@ -1123,11 +1123,11 @@
           },
           "server_id": {
             "type": "number",
-            "example": 134
+            "example": 675
           },
           "visitor_id": {
             "type": "number",
-            "example": 544
+            "example": 551
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -1135,7 +1135,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 984
+            "example": 169
           },
           "username": {
             "type": "string",
@@ -1172,7 +1172,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 983
+            "example": 894
           },
           "date": {
             "type": "string",
@@ -1181,15 +1181,15 @@
           },
           "http_requests": {
             "type": "number",
-            "example": 264
+            "example": 131
           },
           "http_errors": {
             "type": "number",
-            "example": 784
+            "example": 247
           },
           "unique_visitors": {
             "type": "number",
-            "example": 711
+            "example": 509
           },
           "countries": {
             "$ref": "#/components/schemas/Record<string, number>",
@@ -1214,7 +1214,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 49
+            "example": 321
           },
           "username": {
             "type": "string",
@@ -1248,7 +1248,7 @@
           },
           "blacklisted_by": {
             "type": "number",
-            "example": 968
+            "example": 376
           },
           "blacklist_reason": {
             "type": "string",
@@ -1287,7 +1287,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 572
+            "example": 645
           },
           "user": {
             "$ref": "#/components/schemas/User",
@@ -1295,7 +1295,7 @@
           },
           "user_id": {
             "type": "number",
-            "example": 328
+            "example": 232
           },
           "provider": {
             "$ref": "#/components/schemas/'google'",
@@ -1329,7 +1329,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 904
+            "example": 990
           },
           "uuid": {
             "type": "string",
@@ -1380,15 +1380,15 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 616
+            "example": 843
           },
           "visitor_id": {
             "type": "number",
-            "example": 245
+            "example": 576
           },
           "user_id": {
             "type": "number",
-            "example": 920
+            "example": 905
           },
           "linked_at": {
             "type": "string",
@@ -1423,7 +1423,7 @@
           },
           "type": {
             "type": "number",
-            "example": 678,
+            "example": 885,
             "choices": [
               "custom",
               "network"
@@ -1466,13 +1466,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 625
+              "example": 434
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 678,
+          "type": 885,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -1481,7 +1481,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            625
+            434
           ]
         },
         "description": "CreateAdvertisementValidator (Validator)"
@@ -1497,7 +1497,7 @@
           },
           "type": {
             "type": "number",
-            "example": 102,
+            "example": 893,
             "choices": [
               "custom",
               "network"
@@ -1539,13 +1539,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 577
+              "example": 714
             }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "type": 102,
+          "type": 893,
           "htmlContent": "Lorem Ipsum",
           "enabled": true,
           "weight": 1,
@@ -1554,7 +1554,7 @@
           "startsAt": "Lorem Ipsum",
           "endsAt": "Lorem Ipsum",
           "categoryIds": [
-            577
+            714
           ]
         },
         "description": "UpdateAdvertisementValidator (Validator)"
@@ -1600,7 +1600,7 @@
           },
           "durationMs": {
             "type": "number",
-            "example": 326,
+            "example": 955,
             "maximum": 86400000
           }
         },
@@ -1609,7 +1609,7 @@
           "path": "Lorem Ipsum",
           "referrer": "Lorem Ipsum",
           "title": "Lorem Ipsum",
-          "durationMs": 326
+          "durationMs": 955
         },
         "description": "TrackPageViewValidator (Validator)"
       },
@@ -1625,13 +1625,13 @@
           },
           "expiresInDays": {
             "type": "number",
-            "example": 149,
+            "example": 571,
             "maximum": 3650
           }
         },
         "example": {
           "name": "Lorem Ipsum",
-          "expiresInDays": 149
+          "expiresInDays": 571
         },
         "description": "CreateApiTokenValidator (Validator)"
       },
@@ -1640,12 +1640,12 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 864,
+            "example": 251,
             "required": true
           }
         },
         "example": {
-          "id": 864
+          "id": 251
         },
         "description": "CategoryIdValidator (Validator)"
       },
@@ -1668,7 +1668,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 331,
+            "example": 858,
             "required": true
           },
           "name": {
@@ -1678,7 +1678,7 @@
           }
         },
         "example": {
-          "id": 331,
+          "id": 858,
           "name": "Lorem Ipsum"
         },
         "description": "UpdateCategoryValidator (Validator)"
@@ -1688,15 +1688,15 @@
         "properties": {
           "fromDate": {
             "type": "number",
-            "example": 794
+            "example": 174
           },
           "toDate": {
             "type": "number",
-            "example": 593
+            "example": 85
           },
           "interval": {
             "type": "number",
-            "example": 254,
+            "example": 640,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -1708,19 +1708,19 @@
           },
           "categoryId": {
             "type": "number",
-            "example": 994
+            "example": 736
           },
           "languageId": {
             "type": "number",
-            "example": 151
+            "example": 340
           }
         },
         "example": {
-          "fromDate": 794,
-          "toDate": 593,
-          "interval": 254,
-          "categoryId": 994,
-          "languageId": 151
+          "fromDate": 174,
+          "toDate": 85,
+          "interval": 640,
+          "categoryId": 736,
+          "languageId": 340
         },
         "description": "GlobalStatValidator (Validator)"
       },
@@ -1729,7 +1729,7 @@
         "properties": {
           "defaultLocale": {
             "type": "number",
-            "example": 718,
+            "example": 458,
             "choices": [
               "fr",
               "en",
@@ -1749,7 +1749,7 @@
               "properties": {
                 "locale": {
                   "type": "number",
-                  "example": 71,
+                  "example": 794,
                   "choices": [
                     "fr",
                     "en",
@@ -1778,7 +1778,7 @@
                 },
                 "excerpt": {
                   "type": "number",
-                  "example": 31,
+                  "example": 332,
                   "maximum": 500
                 }
               }
@@ -1807,11 +1807,11 @@
           }
         },
         "example": {
-          "defaultLocale": 718,
+          "defaultLocale": 458,
           "coverImage": "Lorem Ipsum",
           "translations": [
             {
-              "locale": 71,
+              "locale": 794,
               "title": "Lorem Ipsum",
               "slug": "Lorem Ipsum",
               "content": "Lorem Ipsum",
@@ -1831,13 +1831,13 @@
           },
           "serverId": {
             "type": "number",
-            "example": 94,
+            "example": 864,
             "required": true
           }
         },
         "example": {
           "placeholderName": "Lorem Ipsum",
-          "serverId": 94
+          "serverId": 864
         },
         "description": "PreviewPlaceholderValidator (Validator)"
       },
@@ -1895,7 +1895,7 @@
         "properties": {
           "defaultLocale": {
             "type": "number",
-            "example": 117,
+            "example": 150,
             "choices": [
               "fr",
               "en",
@@ -1914,7 +1914,7 @@
               "properties": {
                 "locale": {
                   "type": "number",
-                  "example": 720,
+                  "example": 813,
                   "choices": [
                     "fr",
                     "en",
@@ -1941,7 +1941,7 @@
                 },
                 "excerpt": {
                   "type": "number",
-                  "example": 161,
+                  "example": 99,
                   "maximum": 500
                 }
               }
@@ -1969,11 +1969,11 @@
           }
         },
         "example": {
-          "defaultLocale": 117,
+          "defaultLocale": 150,
           "coverImage": "Lorem Ipsum",
           "translations": [
             {
-              "locale": 720,
+              "locale": 813,
               "title": "Lorem Ipsum",
               "slug": "Lorem Ipsum",
               "content": "Lorem Ipsum",
@@ -2005,7 +2005,7 @@
           },
           "type": {
             "type": "number",
-            "example": 943,
+            "example": 788,
             "choices": [
               "java",
               "bedrock"
@@ -2015,7 +2015,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 150
+              "example": 29
             },
             "required": true,
             "properties": {
@@ -2041,7 +2041,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 197
+              "example": 627
             },
             "required": true
           }
@@ -2050,7 +2050,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 943,
+          "type": 788,
           "categories": [
             "Lorem Ipsum"
           ],
@@ -2058,7 +2058,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            197
+            627
           ]
         },
         "description": "CreateServerValidator (Validator)"
@@ -2082,7 +2082,7 @@
           },
           "type": {
             "type": "number",
-            "example": 601,
+            "example": 247,
             "choices": [
               "java",
               "bedrock"
@@ -2092,7 +2092,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 299
+              "example": 412
             },
             "properties": {
               "items": {
@@ -2117,7 +2117,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 264
+              "example": 903
             }
           }
         },
@@ -2125,7 +2125,7 @@
           "name": "Lorem Ipsum",
           "address": "Lorem Ipsum",
           "port": 1,
-          "type": 601,
+          "type": 247,
           "categories": [
             "Lorem Ipsum"
           ],
@@ -2133,7 +2133,7 @@
           "website": "Lorem Ipsum",
           "motd": "Lorem Ipsum",
           "languages": [
-            264
+            903
           ]
         },
         "description": "UpdateServerValidator (Validator)"
@@ -2157,7 +2157,7 @@
         "properties": {
           "verdict": {
             "type": "number",
-            "example": 425,
+            "example": 515,
             "choices": [
               "boosting",
               "clean",
@@ -2172,7 +2172,7 @@
           }
         },
         "example": {
-          "verdict": 425,
+          "verdict": 515,
           "note": "Lorem Ipsum"
         },
         "description": "ReviewBoostValidator (Validator)"
@@ -2182,18 +2182,18 @@
         "properties": {
           "serverId": {
             "type": "number",
-            "example": 449,
+            "example": 25,
             "required": true
           },
           "categoryId": {
             "type": "number",
-            "example": 928,
+            "example": 916,
             "required": true
           }
         },
         "example": {
-          "serverId": 449,
-          "categoryId": 928
+          "serverId": 25,
+          "categoryId": 916
         },
         "description": "attachServerCategoryValidator (Validator)"
       },
@@ -2202,7 +2202,7 @@
         "properties": {
           "verdict": {
             "type": "number",
-            "example": 851,
+            "example": 296,
             "choices": [
               "approved",
               "blocked"
@@ -2216,7 +2216,7 @@
           }
         },
         "example": {
-          "verdict": 851,
+          "verdict": 296,
           "note": "Lorem Ipsum"
         },
         "description": "ReviewServerModerationValidator (Validator)"
@@ -2262,7 +2262,7 @@
         "properties": {
           "reason": {
             "type": "number",
-            "example": 886,
+            "example": 984,
             "choices": [
               "scam",
               "inappropriate_content",
@@ -2279,7 +2279,7 @@
           }
         },
         "example": {
-          "reason": 886,
+          "reason": 984,
           "details": "Lorem Ipsum"
         },
         "description": "CreateServerReportValidator (Validator)"
@@ -2334,7 +2334,7 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 343,
+            "example": 734,
             "required": true
           },
           "days": {
@@ -2352,7 +2352,7 @@
           }
         },
         "example": {
-          "server_id": 343,
+          "server_id": 734,
           "days": 1,
           "timezone": "Lorem Ipsum"
         },
@@ -2363,20 +2363,20 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 531,
+            "example": 951,
             "required": true
           },
           "fromDate": {
             "type": "number",
-            "example": 152
+            "example": 847
           },
           "toDate": {
             "type": "number",
-            "example": 880
+            "example": 297
           },
           "interval": {
             "type": "number",
-            "example": 701,
+            "example": 847,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -2388,7 +2388,7 @@
           },
           "format": {
             "type": "number",
-            "example": 479,
+            "example": 954,
             "choices": [
               "csv",
               "json"
@@ -2397,11 +2397,11 @@
           }
         },
         "example": {
-          "server_id": 531,
-          "fromDate": 152,
-          "toDate": 880,
-          "interval": 701,
-          "format": 479
+          "server_id": 951,
+          "fromDate": 847,
+          "toDate": 297,
+          "interval": 847,
+          "format": 954
         },
         "description": "StatExportValidator (Validator)"
       },
@@ -2410,24 +2410,24 @@
         "properties": {
           "server_id": {
             "type": "number",
-            "example": 672,
+            "example": 254,
             "required": true
           },
           "exactTime": {
             "type": "number",
-            "example": 361
+            "example": 606
           },
           "fromDate": {
             "type": "number",
-            "example": 291
+            "example": 512
           },
           "toDate": {
             "type": "number",
-            "example": 909
+            "example": 780
           },
           "interval": {
             "type": "number",
-            "example": 262,
+            "example": 623,
             "choices": [
               "30 minutes",
               "1 hour",
@@ -2439,11 +2439,11 @@
           }
         },
         "example": {
-          "server_id": 672,
-          "exactTime": 361,
-          "fromDate": 291,
-          "toDate": 909,
-          "interval": 262
+          "server_id": 254,
+          "exactTime": 606,
+          "fromDate": 512,
+          "toDate": 780,
+          "interval": 623
         },
         "description": "StatValidator (Validator)"
       },
@@ -2660,7 +2660,7 @@
     "/metrics": {
       "get": {
         "summary": " (handle)",
-        "description": "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\wt-img\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**",
+        "description": "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\wt-support\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**",
         "parameters": [],
         "tags": [
           ""
@@ -2717,10 +2717,10 @@
                 "example": [
                   {
                     "server": {
-                      "id": 577,
+                      "id": 554,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 81,
+                      "port": 895,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -2731,17 +2731,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 748,
+                      "user_id": 232,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 940,
+                      "vote_count": 710,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 385,
-                      "last_max_count": 736,
+                      "last_player_count": 100,
+                      "last_max_count": 469,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 221,
+                      "peak_player_count": 71,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -2754,12 +2754,12 @@
                       "<Category>"
                     ],
                     "growthStat": {
-                      "server_id": 431,
-                      "weekly_growth": 945,
-                      "monthly_growth": 105,
-                      "last_week_average": 985,
-                      "previous_week_average": 414,
-                      "last_month_average": 117,
+                      "server_id": 924,
+                      "weekly_growth": 75,
+                      "monthly_growth": 178,
+                      "last_week_average": 815,
+                      "previous_week_average": 503,
+                      "last_month_average": 413,
                       "last_updated": "2021-03-23T16:13:08.489+01:00"
                     }
                   }
@@ -3608,7 +3608,7 @@
                 "$ref": "#/components/schemas/CreateServerReportValidator"
               },
               "example": {
-                "reason": 886,
+                "reason": 984,
                 "details": "Lorem Ipsum"
               }
             }
@@ -3804,10 +3804,10 @@
                 "example": {
                   "verified": true,
                   "server": {
-                    "id": 577,
+                    "id": 554,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 81,
+                    "port": 895,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -3818,17 +3818,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 748,
+                    "user_id": 232,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 940,
+                    "vote_count": 710,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 385,
-                    "last_max_count": 736,
+                    "last_player_count": 100,
+                    "last_max_count": 469,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 221,
+                    "peak_player_count": 71,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -4063,10 +4063,10 @@
                 "example": {
                   "verified": true,
                   "server": {
-                    "id": 577,
+                    "id": 554,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 81,
+                    "port": 895,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -4077,17 +4077,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 748,
+                    "user_id": 232,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 940,
+                    "vote_count": 710,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 385,
-                    "last_max_count": 736,
+                    "last_player_count": 100,
+                    "last_max_count": 469,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 221,
+                    "peak_player_count": 71,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -4167,7 +4167,7 @@
     "/api/v1/servers/{id}/claim/manual": {
       "post": {
         "summary": "Submit a manual ownership claim (submitManual)",
-        "description": "Files a manual ownership request (evidence text + optional proof URL) for admin review. Used when neither MOTD nor DNS verification is possible. Rejected if the server is already verified. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **submitManual**",
+        "description": "Files a manual ownership request (evidence text + optional proof URL) for admin or support review. Used when neither MOTD nor DNS verification is possible. Rejected if the server is already verified. Requires authentication.\n\n _app/controllers/server_ownership_controller.ts_ - **submitManual**",
         "operationId": "submitServerManualClaim",
         "parameters": [
           {
@@ -6924,7 +6924,7 @@
               },
               "example": {
                 "name": "Lorem Ipsum",
-                "expiresInDays": 149
+                "expiresInDays": 571
               }
             }
           }
@@ -8424,7 +8424,7 @@
     },
     "/api/v1/admin/ownership-claims": {
       "get": {
-        "summary": "List pending manual ownership claims (admin) (adminIndex)",
+        "summary": "List pending manual ownership claims (admin or support) (adminIndex)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/server_ownership_controller.ts_ - **adminIndex**",
         "operationId": "adminListOwnershipClaims",
         "parameters": [],
@@ -8448,10 +8448,10 @@
                     "status": "pending",
                     "evidence": "Discord: owner#1234",
                     "server": {
-                      "id": 577,
+                      "id": 554,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 81,
+                      "port": 895,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -8462,17 +8462,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 748,
+                      "user_id": 232,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 940,
+                      "vote_count": 710,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 385,
-                      "last_max_count": 736,
+                      "last_player_count": 100,
+                      "last_max_count": 469,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 221,
+                      "peak_player_count": 71,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8482,7 +8482,7 @@
                       "updated_at": "2021-03-23T16:13:08.489+01:00"
                     },
                     "user": {
-                      "id": 49,
+                      "id": 321,
                       "username": "Lorem Ipsum",
                       "verified": true,
                       "provider": {},
@@ -8490,7 +8490,7 @@
                       "avatar_url": "Lorem Ipsum",
                       "verification_token_expires": "2021-03-23T16:13:08.489+01:00",
                       "blacklisted_at": "2021-03-23T16:13:08.489+01:00",
-                      "blacklisted_by": 968,
+                      "blacklisted_by": 376,
                       "blacklist_reason": "Lorem Ipsum",
                       "created_at": "2021-03-23T16:13:08.489+01:00",
                       "updated_at": "2021-03-23T16:13:08.489+01:00"
@@ -8532,7 +8532,7 @@
     },
     "/api/v1/admin/ownership-claims/{id}/approve": {
       "post": {
-        "summary": "Approve a manual ownership claim (admin) (approve)",
+        "summary": "Approve a manual ownership claim (admin or support) (approve)",
         "description": "Approves a pending manual claim and transfers server ownership to the requester. Returns 409 if the server was verified by someone else in the meantime. Admin only.\n\n _app/controllers/server_ownership_controller.ts_ - **approve**",
         "operationId": "adminApproveOwnershipClaim",
         "parameters": [
@@ -8566,10 +8566,10 @@
                 "example": {
                   "message": "Claim approved.",
                   "server": {
-                    "id": 577,
+                    "id": 554,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 81,
+                    "port": 895,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -8580,17 +8580,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 748,
+                    "user_id": 232,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 940,
+                    "vote_count": 710,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 385,
-                    "last_max_count": 736,
+                    "last_player_count": 100,
+                    "last_max_count": 469,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 221,
+                    "peak_player_count": 71,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8668,7 +8668,7 @@
     },
     "/api/v1/admin/ownership-claims/{id}/reject": {
       "post": {
-        "summary": "Reject a manual ownership claim (admin) (reject)",
+        "summary": "Reject a manual ownership claim (admin or support) (reject)",
         "description": "Rejects a pending manual claim with an optional note. Admin only.\n\n _app/controllers/server_ownership_controller.ts_ - **reject**",
         "operationId": "adminRejectOwnershipClaim",
         "parameters": [
@@ -8781,10 +8781,10 @@
                       }
                     ],
                     "server": {
-                      "id": 577,
+                      "id": 554,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 81,
+                      "port": 895,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -8795,17 +8795,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 748,
+                      "user_id": 232,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 940,
+                      "vote_count": 710,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 385,
-                      "last_max_count": 736,
+                      "last_player_count": 100,
+                      "last_max_count": 469,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 221,
+                      "peak_player_count": 71,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8885,10 +8885,10 @@
                 "example": {
                   "message": "Verdict recorded.",
                   "server": {
-                    "id": 577,
+                    "id": 554,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 81,
+                    "port": 895,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -8899,17 +8899,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 748,
+                    "user_id": 232,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 940,
+                    "vote_count": 710,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 385,
-                    "last_max_count": 736,
+                    "last_player_count": 100,
+                    "last_max_count": 469,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 221,
+                    "peak_player_count": 71,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -8960,7 +8960,7 @@
                 "$ref": "#/components/schemas/ReviewBoostValidator"
               },
               "example": {
-                "verdict": 425,
+                "verdict": 515,
                 "note": "Lorem Ipsum"
               }
             }
@@ -9136,10 +9136,10 @@
                 "example": {
                   "message": "Verdict recorded.",
                   "server": {
-                    "id": 577,
+                    "id": 554,
                     "name": "John Doe",
                     "address": "1028 Farland Street",
-                    "port": 81,
+                    "port": 895,
                     "type": {},
                     "version": "Lorem Ipsum",
                     "website": "Lorem Ipsum",
@@ -9150,17 +9150,17 @@
                     "resolved_endpoint": "Lorem Ipsum",
                     "motd_hash": "Lorem Ipsum",
                     "host_domain": "Lorem Ipsum",
-                    "user_id": 748,
+                    "user_id": 232,
                     "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                     "owner_verified_method": {},
                     "boost_status": {},
                     "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                    "vote_count": 940,
+                    "vote_count": 710,
                     "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                    "last_player_count": 385,
-                    "last_max_count": 736,
+                    "last_player_count": 100,
+                    "last_max_count": 469,
                     "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                    "peak_player_count": 221,
+                    "peak_player_count": 71,
                     "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                     "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                     "hidden_at": "2021-03-23T16:13:08.489+01:00",
@@ -9211,7 +9211,7 @@
                 "$ref": "#/components/schemas/ReviewServerModerationValidator"
               },
               "example": {
-                "verdict": 851,
+                "verdict": 296,
                 "note": "Lorem Ipsum"
               }
             }
@@ -9245,10 +9245,10 @@
                     "details": "Took my payment, never gave the rank.",
                     "createdAt": "2026-05-28T12:00:00.000Z",
                     "server": {
-                      "id": 577,
+                      "id": 554,
                       "name": "John Doe",
                       "address": "1028 Farland Street",
-                      "port": 81,
+                      "port": 895,
                       "type": {},
                       "version": "Lorem Ipsum",
                       "website": "Lorem Ipsum",
@@ -9259,17 +9259,17 @@
                       "resolved_endpoint": "Lorem Ipsum",
                       "motd_hash": "Lorem Ipsum",
                       "host_domain": "Lorem Ipsum",
-                      "user_id": 748,
+                      "user_id": 232,
                       "owner_verified_at": "2021-03-23T16:13:08.489+01:00",
                       "owner_verified_method": {},
                       "boost_status": {},
                       "boost_reviewed_at": "2021-03-23T16:13:08.489+01:00",
-                      "vote_count": 940,
+                      "vote_count": 710,
                       "last_online_at": "2021-03-23T16:13:08.489+01:00",
-                      "last_player_count": 385,
-                      "last_max_count": 736,
+                      "last_player_count": 100,
+                      "last_max_count": 469,
                       "last_stats_at": "2021-03-23T16:13:08.489+01:00",
-                      "peak_player_count": 221,
+                      "peak_player_count": 71,
                       "peak_player_at": "2021-03-23T16:13:08.489+01:00",
                       "next_ping_at": "2021-03-23T16:13:08.489+01:00",
                       "hidden_at": "2021-03-23T16:13:08.489+01:00",

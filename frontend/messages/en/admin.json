@@ -385,7 +385,6 @@
     "loading": "Loading…",
     "loadingList": "Loading claims…",
     "accessDenied": "Access denied",
-    "adminOnly": "This area is restricted to administrators.",
     "emptyTitle": "No pending requests",
     "emptyDescription": "Manual ownership requests will appear here for review.",
     "viewProof": "View proof",
@@ -395,7 +394,8 @@
     "rejectPrompt": "Reason for rejection (optional):",
     "approved": "Claim approved — ownership transferred.",
     "rejected": "Claim rejected.",
-    "error": "Action failed. Please try again."
+    "error": "Action failed. Please try again.",
+    "moderatorOnly": "This section is restricted to administrators and support staff."
   },
   "boostReports": {
     "title": "Suspicious player counts",

@@ -385,7 +385,6 @@
     "loading": "Chargement…",
     "loadingList": "Chargement des demandes…",
     "accessDenied": "Accès refusé",
-    "adminOnly": "Cette section est réservée aux administrateurs.",
     "emptyTitle": "Aucune demande en attente",
     "emptyDescription": "Les demandes manuelles de propriété apparaîtront ici pour revue.",
     "viewProof": "Voir la preuve",
@@ -395,7 +394,8 @@
     "rejectPrompt": "Motif du refus (optionnel) :",
     "approved": "Demande approuvée — propriété transférée.",
     "rejected": "Demande refusée.",
-    "error": "L'action a échoué. Veuillez réessayer."
+    "error": "L'action a échoué. Veuillez réessayer.",
+    "moderatorOnly": "Cette section est réservée aux administrateurs et au support."
   },
   "boostReports": {
     "title": "Connectés suspects",

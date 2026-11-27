@@ -100,7 +100,22 @@
     "heroBadge": "Editar",
     "heroSubtitle": "Actualiza los detalles y los ajustes de seguimiento de tu servidor.",
     "detailsTitle": "Detalles del servidor",
-    "detailsSubtitle": "Actualiza los detalles, las categorías y los idiomas de tu servidor."
+    "detailsSubtitle": "Actualiza los detalles, las categorías y los idiomas de tu servidor.",
+    "image": {
+      "change": "Cambiar la imagen",
+      "reset": "Usar el icono del juego",
+      "requiresVerification": "Verifica que eres el propietario de este servidor para cambiar su imagen.",
+      "verify": "Verificar la propiedad",
+      "cropTitle": "Recorta la imagen del servidor",
+      "cropDescription": "La imagen se muestra en formato cuadrado.",
+      "tooLargeTitle": "Imagen demasiado grande",
+      "tooLargeDescription": "El tamaño máximo es de 5 MB.",
+      "updated": "Imagen del servidor actualizada",
+      "uploadFailed": "Error al subir",
+      "resetDone": "Se vuelve a usar el icono del juego",
+      "resetFailed": "No se pudo volver al icono del juego",
+      "hint": "Haz clic en la imagen para reemplazarla. Se recorta en formato cuadrado."
+    }
   },
   "admin": {
     "label": "Admin",

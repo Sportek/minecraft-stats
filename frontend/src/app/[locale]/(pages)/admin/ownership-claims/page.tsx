@@ -17,6 +17,7 @@ import { Link } from "@/i18n/navigation";
 import type { AdminOwnershipClaim } from "@/types/server";
 import { Check, ExternalLink, Loader2, ShieldCheck, X } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { isModerator } from "@/lib/roles";
 import { useEffect, useState } from "react";
 
 const AdminOwnershipClaimsPage = () => {
@@ -39,8 +40,8 @@ const AdminOwnershipClaimsPage = () => {
   }, [token]);
 
   if (!user) return <AdminLoadingState label={t("loading")} />;
-  if (user.role !== "admin") {
-    return <AdminMessageState tone="destructive" title={t("accessDenied")} description={t("adminOnly")} />;
+  if (!isModerator(user)) {
+    return <AdminMessageState tone="destructive" title={t("accessDenied")} description={t("moderatorOnly")} />;
   }
 
   const handleApprove = async (claim: AdminOwnershipClaim) => {
