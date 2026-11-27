@@ -20,6 +20,7 @@ export interface Server {
   version: string | null;
   website: string | null;
   imageUrl: string;
+  hasCustomImage: boolean;
   // null pour un serveur orphelin (propriétaire ayant supprimé son compte).
   user: User | null;
   createdAt: Date;

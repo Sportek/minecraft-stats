@@ -227,7 +227,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                       title={t("serverForm.selectCategories")}
                       elements={categories.map((category) => ({ value: category.name, label: category.name }))}
                       onSelectionChange={handleCategorySelectionChange}
-                      defaultSelected={field.value.map((category) => ({ value: category, label: category }))}
+                      defaultSelected={field.value}
                       className="border border-input bg-background"
                     />
                   </FormControl>
@@ -250,13 +250,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
                         label: `${language.flag} ${language.name}`
                       }))}
                       onSelectionChange={handleLanguageSelectionChange}
-                      defaultSelected={field.value.map((code) => {
-                        const language = languages.find((l) => l.code === code);
-                        return {
-                          value: code,
-                          label: language ? `${language.flag} ${language.name}` : code
-                        };
-                      })}
+                      defaultSelected={field.value}
                       className="border border-input bg-background"
                     />
                   </FormControl>

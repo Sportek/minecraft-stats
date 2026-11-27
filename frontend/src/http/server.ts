@@ -16,6 +16,7 @@ import {
   ServerStat,
   ServerType,
 } from "@/types/server";
+import { localeHeaders } from "@/app/_cheatcode";
 import { apiFetch, ApiError } from "./client";
 
 export interface ServerPayload {
@@ -149,6 +150,26 @@ export const editServer = (serverId: number, data: ServerPayload, token: string)
  */
 export const setServerVisibility = (serverId: number, hidden: boolean, token: string) =>
   apiFetch<Server>(`/servers/${serverId}/visibility`, { method: "PATCH", token, body: { hidden } });
+
+type ServerImageResponse = { server: Pick<Server, "id" | "name" | "imageUrl" | "hasCustomImage"> };
+
+export const uploadServerImage = (serverId: number, file: File, token: string) => {
+  const formData = new FormData();
+  formData.append("image", file);
+  return apiFetch<ServerImageResponse>(`/servers/${serverId}/image`, {
+    method: "POST",
+    token,
+    body: formData,
+    headers: localeHeaders(),
+  });
+};
+
+export const resetServerImage = (serverId: number, token: string) =>
+  apiFetch<ServerImageResponse>(`/servers/${serverId}/image`, {
+    method: "DELETE",
+    token,
+    headers: localeHeaders(),
+  });
 
 /* -------------------------------------------------------------------------- */
 /*  Réclamation de propriété d'un serveur                                      */

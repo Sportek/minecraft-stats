@@ -71,6 +71,40 @@ class ImageStorageService {
     return `/images/servers/${serverId}`
   }
 
+  // Le frontend charge `<imageUrl>.webp` puis retombe sur `.png` : les deux formats sont requis.
+  async storeServerCustomImage(serverId: number, buffer: Buffer): Promise<string> {
+    const key = `images/servers/custom/${serverId}-${randomUUID()}`
+    const square = sharp(buffer, { limitInputPixels: 16_384 * 16_384, failOn: 'error' }).resize(
+      256,
+      256,
+      { fit: 'cover' }
+    )
+    const [webp, png] = await Promise.all([
+      square.clone().webp({ quality: 90 }).toBuffer(),
+      square.clone().png({ compressionLevel: 9 }).toBuffer(),
+    ])
+
+    const cacheControl = 'public, max-age=31536000, immutable'
+    await Promise.all([
+      this.disk.put(`${key}.webp`, webp, { contentType: 'image/webp', cacheControl }),
+      this.disk.put(`${key}.png`, png, { contentType: 'image/png', cacheControl }),
+    ])
+
+    return `/${key}`
+  }
+
+  async deleteServerCustomImage(publicPath: string): Promise<void> {
+    await Promise.all([
+      this.deletePublicAsset(`${publicPath}.webp`),
+      this.deletePublicAsset(`${publicPath}.png`),
+    ])
+  }
+
+  async existingServerFavicon(serverId: number): Promise<string | null> {
+    const base = `images/servers/${serverId}`
+    return (await this.disk.exists(`${base}.webp`)) ? `/${base}` : null
+  }
+
   /**
    * Stocke une image de blog (upload multipart) en WebP optimisé, redimensionnée
    * pour tenir dans 1920x1080. Retourne le chemin relatif (`/images/blog/<uuid>.webp`).

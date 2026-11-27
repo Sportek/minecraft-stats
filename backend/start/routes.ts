@@ -64,6 +64,13 @@ router
       .use([middleware.auth(), throttleLight('servers.visibility', 10), NO_STORE])
 
     router
+      .post('servers/:id/image', '#controllers/server_images_controller.update')
+      .use([middleware.auth(), throttleLight('servers.image', 10), NO_STORE])
+    router
+      .delete('servers/:id/image', '#controllers/server_images_controller.destroy')
+      .use([middleware.auth(), throttleLight('servers.image', 10), NO_STORE])
+
+    router
       .post('servers/:id/report', '#controllers/server_reports_controller.store')
       .use([middleware.auth(), throttleLight('servers.report', 10), NO_STORE])
 

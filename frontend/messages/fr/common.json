@@ -14,5 +14,11 @@
     "title": "Page introuvable",
     "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "backHome": "Retour à l'accueil"
+  },
+  "imageCrop": {
+    "zoom": "Zoom",
+    "hint": "Faites glisser l'image pour la placer, et utilisez le curseur pour zoomer.",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
   }
 }

@@ -1,10 +1,10 @@
 "use client";
 import { fetcher, getBaseUrl } from "@/app/_cheatcode";
-import DashboardHero from "@/components/account/dashboard-hero";
 import DashboardLayout from "@/components/account/dashboard-layout";
 import ServerBoostVerdict from "@/components/admin/server-boost-verdict";
 import EditServerForm from "@/components/form/edit-server-form";
 import Loader from "@/components/loader";
+import ServerEditHero from "@/components/serveur/server-edit-hero";
 import { useAuth } from "@/contexts/auth";
 import { Category, Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -38,11 +38,7 @@ const ServerEditPage = () => {
 
   return (
     <DashboardLayout>
-      <DashboardHero
-        title={t("edit.heroTitle")}
-        badge={t("edit.heroBadge")}
-        subtitle={t("edit.heroSubtitle")}
-      />
+      <ServerEditHero server={server.server} onChange={mutate} />
 
       {/* Server details */}
       <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs">

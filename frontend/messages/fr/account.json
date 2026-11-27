@@ -24,7 +24,8 @@
     "tooLargeTitle": "Image trop volumineuse",
     "tooLargeDescription": "La taille maximale est de 5 Mo.",
     "updated": "Photo de profil mise à jour",
-    "uploadFailed": "Échec de l'envoi"
+    "uploadFailed": "Échec de l'envoi",
+    "cropTitle": "Recadrer votre photo de profil"
   },
   "dangerZone": {
     "heading": "Zone de danger"

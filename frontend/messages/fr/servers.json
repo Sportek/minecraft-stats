@@ -100,7 +100,22 @@
     "heroBadge": "Modifier",
     "heroSubtitle": "Mettez à jour les détails et les paramètres de suivi de votre serveur.",
     "detailsTitle": "Détails du serveur",
-    "detailsSubtitle": "Mettez à jour les détails, catégories et langues de votre serveur."
+    "detailsSubtitle": "Mettez à jour les détails, catégories et langues de votre serveur.",
+    "image": {
+      "change": "Changer l'image",
+      "reset": "Utiliser l'icône en jeu",
+      "requiresVerification": "Vérifiez que vous êtes propriétaire de ce serveur pour changer son image.",
+      "verify": "Vérifier la propriété",
+      "cropTitle": "Recadrer l'image du serveur",
+      "cropDescription": "L'image est affichée en carré.",
+      "tooLargeTitle": "Image trop lourde",
+      "tooLargeDescription": "La taille maximale est de 5 Mo.",
+      "updated": "Image du serveur mise à jour",
+      "uploadFailed": "Échec de l'envoi",
+      "resetDone": "L'icône en jeu est de nouveau utilisée",
+      "resetFailed": "Impossible de revenir à l'icône en jeu",
+      "hint": "Cliquez sur l'image pour la remplacer. Elle est recadrée en carré."
+    }
   },
   "admin": {
     "label": "Admin",

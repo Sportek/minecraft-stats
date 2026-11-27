@@ -21,4 +21,9 @@ export default class ServerPolicy extends BasePolicy {
     if (user.role === 'admin') return true
     return server.userId === user.id && server.ownerVerifiedAt !== null
   }
+
+  async updateImage(user: User, server: Server): Promise<AuthorizerResponse> {
+    if (user.role === 'admin') return true
+    return server.userId === user.id && server.ownerVerifiedAt !== null
+  }
 }
