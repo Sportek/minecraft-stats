@@ -19,11 +19,17 @@ function env(key: string, fallback?: string): string {
   return value
 }
 
+function trimTrailingSlashes(value: string) {
+  let end = value.length
+  while (end > 0 && value[end - 1] === '/') end--
+  return value.slice(0, end)
+}
+
 /**
  * URL de base de l'API Minecraft Stats (sans slash final).
  * En production / Docker, pointe vers le service backend (ex: http://adonis_app:3333).
  */
-export const API_BASE_URL = env('API_BASE_URL', 'http://localhost:3333').replace(/\/+$/, '')
+export const API_BASE_URL = trimTrailingSlashes(env('API_BASE_URL', 'http://localhost:3333'))
 
 /**
  * URL du spec OpenAPI à charger au démarrage. Par défaut l'endpoint /swagger du backend,
