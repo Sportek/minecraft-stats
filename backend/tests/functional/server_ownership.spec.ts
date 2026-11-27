@@ -278,6 +278,41 @@ test.group('Server ownership — claims', (group) => {
     assert.equal(claim.evidenceUrl, 'https://imgur.com/proof')
   })
 
+  test('submitManual complète une URL de preuve saisie sans protocole', async ({
+    client,
+    assert,
+  }) => {
+    const user = await createUser()
+    const server = await createServer()
+
+    const response = await client
+      .post(`/api/v1/servers/${server.id}/claim/manual`)
+      .bearerToken(await tokenFor(user))
+      .json({ evidence: 'Je suis le proprio, voici la preuve.', evidenceUrl: 'imgur.com/proof' })
+
+    response.assertStatus(200)
+    const claim = await ServerOwnershipClaim.query()
+      .where('server_id', server.id)
+      .where('user_id', user.id)
+      .firstOrFail()
+    assert.equal(claim.evidenceUrl, 'https://imgur.com/proof')
+  })
+
+  test('submitManual refuse une URL de preuve qui n’est pas http(s) (422)', async ({ client }) => {
+    const user = await createUser()
+    const server = await createServer()
+
+    const response = await client
+      .post(`/api/v1/servers/${server.id}/claim/manual`)
+      .bearerToken(await tokenFor(user))
+      .json({
+        evidence: 'Je suis le proprio, voici la preuve.',
+        evidenceUrl: 'javascript:alert(1)',
+      })
+
+    response.assertStatus(422)
+  })
+
   test('submitManual refuse une preuve trop courte (422)', async ({ client }) => {
     const user = await createUser()
     const server = await createServer()
