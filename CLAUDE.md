@@ -124,6 +124,10 @@ All three apps use **Yarn 4 (Berry)** via Corepack (`packageManager` field), wit
 
 ## Conventions
 
+- **No comments by default.** Don't add comments, JSDoc blocks or explanatory headers to code
+  you write or touch. Only comment when the code is genuinely hard to understand without it
+  (an external constraint, a non-obvious workaround, truly complex logic) — one or two short lines.
+  Prefer clearer names and smaller functions. See the `writing-clean-code` skill.
 - **New endpoint**: route (`routes.ts`, rate-limited) → controller → VineJS validator
   (`app/validators/`) → policy → Swagger annotations → frontend client in `src/http/`.
 - **API docs**: auto-generated (`adonis-autoswagger`) — UI at `/docs`, JSON at `/swagger`.
