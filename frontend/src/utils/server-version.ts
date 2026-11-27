@@ -44,6 +44,6 @@ export function formatVersion(versions: string[]) {
   } else if(versions.length === 1) {
     return versions[0];
   } else {
-    return `${versions[0]}-${versions[versions.length - 1]}`;
+    return `${versions[0]}-${versions.at(-1)}`;
   }
 }
