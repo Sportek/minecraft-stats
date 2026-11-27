@@ -3,28 +3,18 @@ import type ServerOwnershipClaim from '#models/server_ownership_claim'
 import type ServerReport from '#models/server_report'
 import type User from '#models/user'
 import Webhook from '#models/webhook'
-import env from '#start/env'
+import {
+  type DiscordEmbed,
+  ownershipClaimMessage,
+  serverReportMessage,
+  serverSubmittedMessage,
+  testMessage,
+} from '#services/webhook_messages'
 import logger from '@adonisjs/core/services/logger'
 import { DateTime } from 'luxon'
 import type { WebhookEvent } from '../constants/webhook.js'
 
 const SEND_TIMEOUT_MS = 5000
-
-const COLORS = {
-  info: 0x3b82f6,
-  warning: 0xf59e0b,
-  danger: 0xef4444,
-  success: 0x22c55e,
-} as const
-
-interface DiscordEmbed {
-  title: string
-  url?: string
-  color: number
-  description?: string
-  fields?: { name: string; value: string; inline?: boolean }[]
-  timestamp?: string
-}
 
 export interface WebhookDelivery {
   ok: boolean
@@ -35,62 +25,21 @@ export interface WebhookDelivery {
 const truncate = (text: string, max: number) =>
   text.length > max ? `${text.slice(0, max - 1)}…` : text
 
-const adminUrl = (path: string) => {
-  const base = env.get('WEBSITE_URL')
-  return base ? `${base.replace(/\/$/, '')}${path}` : undefined
-}
-
-const serverField = (server: Server) => ({
-  name: 'Serveur',
-  value: truncate(`${server.name} (${server.address}:${server.port})`, 1024),
-})
-
 export default class WebhookService {
   static async notifyOwnershipClaim(claim: ServerOwnershipClaim, server: Server, user: User) {
-    const fields = [serverField(server), { name: 'Demandeur', value: user.username, inline: true }]
-    if (claim.evidence) fields.push({ name: 'Preuve', value: truncate(claim.evidence, 1024) })
-    if (claim.evidenceUrl)
-      fields.push({ name: 'Lien de preuve', value: truncate(claim.evidenceUrl, 1024) })
-
-    await this.notify('ownership_claim.created', {
-      title: 'Nouvelle demande de propriété',
-      url: adminUrl('/admin/ownership-claims'),
-      color: COLORS.info,
-      fields,
-    })
+    await this.notify('ownership_claim.created', ownershipClaimMessage(claim, server, user))
   }
 
   static async notifyServerSubmitted(server: Server, user: User) {
-    await this.notify('server.submitted', {
-      title: 'Nouveau serveur à modérer',
-      url: adminUrl('/admin/servers-pending'),
-      color: COLORS.warning,
-      fields: [serverField(server), { name: 'Soumis par', value: user.username, inline: true }],
-    })
+    await this.notify('server.submitted', serverSubmittedMessage(server, user))
   }
 
   static async notifyServerReport(report: ServerReport, server: Server, reporter: User) {
-    const fields = [
-      serverField(server),
-      { name: 'Motif', value: report.reason, inline: true },
-      { name: 'Signalé par', value: reporter.username, inline: true },
-    ]
-    if (report.details) fields.push({ name: 'Détails', value: truncate(report.details, 1024) })
-
-    await this.notify('server_report.created', {
-      title: 'Nouveau signalement',
-      url: adminUrl('/admin/servers-pending'),
-      color: COLORS.danger,
-      fields,
-    })
+    await this.notify('server_report.created', serverReportMessage(report, server, reporter))
   }
 
   static sendTest(webhook: Webhook): Promise<WebhookDelivery> {
-    return this.deliver(webhook, {
-      title: 'Webhook connecté',
-      color: COLORS.success,
-      description: `Le webhook « ${webhook.name} » recevra : ${webhook.events.join(', ')}.`,
-    })
+    return this.deliver(webhook, testMessage(webhook))
   }
 
   // La requête qui déclenche l'événement n'attend que la lecture des webhooks, pas Discord.
