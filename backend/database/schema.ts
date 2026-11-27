@@ -405,7 +405,7 @@ export class ServerModerationReviewSchema extends BaseModel {
 }
 
 export class ServerOwnershipClaimSchema extends BaseModel {
-  static $columns = ['createdAt', 'evidence', 'evidenceUrl', 'expiresAt', 'id', 'method', 'reviewNote', 'reviewedBy', 'serverId', 'status', 'token', 'updatedAt', 'userId', 'verifiedAt'] as const
+  static $columns = ['createdAt', 'evidence', 'evidenceUrl', 'expiresAt', 'id', 'locale', 'method', 'reviewNote', 'reviewedBy', 'serverId', 'status', 'token', 'updatedAt', 'userId', 'verifiedAt'] as const
   $columns = ServerOwnershipClaimSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -417,6 +417,8 @@ export class ServerOwnershipClaimSchema extends BaseModel {
   declare expiresAt: DateTime | null
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare locale: string | null
   @column()
   declare method: string
   @column()

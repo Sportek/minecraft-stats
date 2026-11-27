@@ -63,6 +63,9 @@ export default class ServerOwnershipClaim extends BaseModel {
   @column({ columnName: 'review_note' })
   declare reviewNote: string | null
 
+  @column()
+  declare locale: string | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

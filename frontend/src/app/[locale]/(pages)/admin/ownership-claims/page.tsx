@@ -20,6 +20,8 @@ import { useFormatter, useTranslations } from "next-intl";
 import { isModerator } from "@/lib/roles";
 import { useEffect, useState } from "react";
 
+const externalUrl = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`);
+
 const AdminOwnershipClaimsPage = () => {
   const { user, getToken } = useAuth();
   const t = useTranslations("Admin.ownershipClaims");
@@ -127,7 +129,8 @@ const AdminOwnershipClaimsPage = () => {
                 )}
                 {claim.evidenceUrl && (
                   <a
-                    href={claim.evidenceUrl}
+                    href={externalUrl(claim.evidenceUrl)}
+                    title={claim.evidenceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex w-fit items-center gap-1 text-sm text-primary underline-offset-4 hover:underline"

@@ -31,5 +31,23 @@
     "ignore": "If you didn't try to sign in with {provider}, you can safely ignore this email — nothing will change on your account.",
     "footerReason": "You are receiving this email because a sign-in with a new provider was attempted on your Minecraft-Stats.fr account.",
     "copyright": "© Minecraft-Stats.fr, All Rights Reserved."
+  },
+  "ownershipApproved": {
+    "subject": "You now own {server}",
+    "title": "Ownership request approved",
+    "greeting": "Hello {username},",
+    "intro": "Our team approved your request: you are now the verified owner of this server on Minecraft-Stats.",
+    "noteLabel": "Message from the team",
+    "cta": "Manage my server",
+    "footerReason": "You are receiving this email because you requested ownership of a server on Minecraft-Stats."
+  },
+  "ownershipRejected": {
+    "subject": "Your ownership request for {server}",
+    "title": "Ownership request declined",
+    "greeting": "Hello {username},",
+    "intro": "Our team could not approve your ownership request for this server. You can send a new one with stronger proof, or use the MOTD or DNS verification instead.",
+    "noteLabel": "Reason",
+    "cta": "View the server",
+    "footerReason": "You are receiving this email because you requested ownership of a server on Minecraft-Stats."
   }
 }

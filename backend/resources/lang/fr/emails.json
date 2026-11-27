@@ -31,5 +31,23 @@
     "ignore": "Si vous n'êtes pas à l'origine de cette tentative, vous pouvez ignorer cet e-mail : rien ne changera sur votre compte.",
     "footerReason": "Vous recevez cet e-mail car une connexion avec un nouveau fournisseur a été tentée sur votre compte Minecraft-Stats.fr.",
     "copyright": "© Minecraft-Stats.fr, Tous droits réservés."
+  },
+  "ownershipApproved": {
+    "subject": "Vous êtes propriétaire de {server}",
+    "title": "Demande de propriété acceptée",
+    "greeting": "Bonjour {username},",
+    "intro": "Notre équipe a validé votre demande : vous êtes maintenant le propriétaire confirmé de ce serveur sur Minecraft-Stats.fr.",
+    "noteLabel": "Message de l'équipe",
+    "cta": "Gérer mon serveur",
+    "footerReason": "Vous recevez cet e-mail car vous avez demandé la propriété d'un serveur sur Minecraft-Stats.fr."
+  },
+  "ownershipRejected": {
+    "subject": "Votre demande de propriété pour {server}",
+    "title": "Demande de propriété refusée",
+    "greeting": "Bonjour {username},",
+    "intro": "Notre équipe n'a pas pu valider votre demande de propriété pour ce serveur. Vous pouvez en envoyer une nouvelle avec une preuve plus complète, ou utiliser la vérification par MOTD ou par DNS.",
+    "noteLabel": "Motif",
+    "cta": "Voir le serveur",
+    "footerReason": "Vous recevez cet e-mail car vous avez demandé la propriété d'un serveur sur Minecraft-Stats.fr."
   }
 }
