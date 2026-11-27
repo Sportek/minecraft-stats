@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Badge } from "./badge";
 
 import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "@/lib/utils";
@@ -18,20 +19,28 @@ interface MultiSelectProps {
   readonly title: string;
   readonly onSelectionChange?: (selected: string[]) => void;
   readonly className?: string;
-  readonly defaultSelected?: readonly { value: string; label: string }[];
+  readonly defaultSelected?: readonly string[];
 }
 
 export function FancyMultiSelect({ elements, title, onSelectionChange, className, defaultSelected }: MultiSelectProps) {
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<readonly { value: string; label: string }[]>(defaultSelected || []);
+  const [selectedValues, setSelectedValues] = React.useState<readonly string[]>(defaultSelected ?? []);
   const [inputValue, setInputValue] = React.useState("");
 
+  // Libellés relus dans `elements` à chaque rendu : la liste peut arriver après le premier rendu.
+  const selected = selectedValues.map(
+    (value) => elements.find((element) => element.value === value) ?? { value, label: value }
+  );
+
+  const updateSelection = (next: readonly string[]) => {
+    setSelectedValues(next);
+    onSelectionChange?.([...next]);
+  };
+
   const handleUnselect = (element: { value: string; label: string }) => {
-    const next = selected.filter((s) => s.value !== element.value);
-    setSelected(next);
-    onSelectionChange?.(next.map((s) => s.value));
+    updateSelection(selectedValues.filter((value) => value !== element.value));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -39,9 +48,7 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
     if (input) {
       if (e.key === "Delete" || e.key === "Backspace") {
         if (input.value === "") {
-          const next = selected.slice(0, -1);
-          setSelected(next);
-          onSelectionChange?.(next.map((s) => s.value));
+          updateSelection(selectedValues.slice(0, -1));
         }
       }
       if (e.key === "Escape") {
@@ -54,77 +61,79 @@ export function FancyMultiSelect({ elements, title, onSelectionChange, className
     return null;
   }
 
-  const selectables = elements.filter((element) => !selected.some((s) => s.value === element.value));
+  const selectables = elements.filter((element) => !selectedValues.includes(element.value));
 
   return (
-    <Command onKeyDown={handleKeyDown} className={cn("overflow-visible bg-transparent h-full dark:bg-transparent", className)}>
-      <div className="group rounded-md px-3 py-2 text-sm h-full w-full">
-        <div className="flex flex-wrap gap-1">
-          {selected.map((element) => {
-            return (
-              <Badge key={element.value} variant="secondary">
-                {element.label}
-                <button
-                  className="rounded-full outline-hidden"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleUnselect(element);
-                    }
-                  }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onClick={() => handleUnselect(element)}
-                >
-                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                </button>
-              </Badge>
-            );
-          })}
-          <CommandPrimitive.Input
-            ref={inputRef}
-            value={inputValue}
-            onValueChange={setInputValue}
-            onBlur={() => setOpen(false)}
-            onFocus={() => setOpen(true)}
-            placeholder={selected.length === 0 ? title : ""}
-            className="ml-2 flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground"
-          />
-        </div>
-      </div>
-      <div className="relative">
-        <CommandList>
-          {open && selectables.length > 0 ? (
-            <div className="absolute top-0 z-20 w-full rounded-md border border-border bg-popover text-popover-foreground shadow-md outline-hidden animate-in">
-              <CommandGroup className="h-full overflow-auto">
-                {selectables.map((element) => {
-                  return (
-                    <CommandItem
-                      key={element.value}
+    <Popover open={open && selectables.length > 0}>
+      <Command onKeyDown={handleKeyDown} className={cn("overflow-visible bg-transparent h-full dark:bg-transparent", className)}>
+        <PopoverAnchor asChild>
+          <div className="group rounded-md px-3 py-2 text-sm h-full w-full">
+            <div className="flex flex-wrap gap-1">
+              {selected.map((element) => {
+                return (
+                  <Badge key={element.value} variant="secondary">
+                    {element.label}
+                    <button
+                      className="rounded-full outline-hidden"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleUnselect(element);
+                        }
+                      }}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                       }}
-                      onSelect={() => {
-                        if (!selected.some((s) => s.value === element.value)) {
-                          setInputValue("");
-                          const next = [...selected, element];
-                          setSelected(next);
-                          onSelectionChange?.(next.map((s) => s.value));
-                        }
-                      }}
-                      className={"cursor-pointer"}
+                      onClick={() => handleUnselect(element)}
                     >
-                      {element.label}
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
+                      <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                    </button>
+                  </Badge>
+                );
+              })}
+              <CommandPrimitive.Input
+                ref={inputRef}
+                value={inputValue}
+                onValueChange={setInputValue}
+                onBlur={() => setOpen(false)}
+                onFocus={() => setOpen(true)}
+                placeholder={selected.length === 0 ? title : ""}
+                className="ml-2 flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground"
+              />
             </div>
-          ) : null}
-        </CommandList>
-      </div>
-    </Command>
+          </div>
+        </PopoverAnchor>
+        <PopoverContent
+          align="start"
+          className="w-(--radix-popover-trigger-width) p-0"
+          // Le focus doit rester dans l'input : c'est son blur qui referme la liste.
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          <CommandList className="max-h-60">
+            <CommandGroup>
+              {selectables.map((element) => {
+                return (
+                  <CommandItem
+                    key={element.value}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onSelect={() => {
+                      setInputValue("");
+                      updateSelection([...selectedValues, element.value]);
+                    }}
+                    className={"cursor-pointer"}
+                  >
+                    {element.label}
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          </CommandList>
+        </PopoverContent>
+      </Command>
+    </Popover>
   );
 }
