@@ -17,6 +17,7 @@ import {
   type OwnershipMethod,
 } from '../constants/server_ownership.js'
 import type { ServerType } from '../constants/server_type.js'
+import WebhookService from '#services/webhook_service'
 
 export type ClaimOutcome =
   | { status: 'ok'; claim: ServerOwnershipClaim }
@@ -61,7 +62,7 @@ export function textContainsToken(text: string, expectedValue: string): boolean 
  * Réclamation de propriété d'un serveur. Trois chemins :
  *  - MOTD (self-service) : jeton inséré dans la MOTD, lu via ping. Couverture max.
  *  - DNS (self-service)  : jeton publié en TXT, sans coupure pour les joueurs.
- *  - Manuel (filet)      : preuve libre revue par un admin.
+ *  - Manuel (filet)      : preuve libre revue par un admin ou le support.
  *
  * Règle de conflit commune : une preuve technique transfère la propriété SAUF si le
  * serveur est déjà vérifié par quelqu'un d'autre — auquel cas la demande est bloquée
@@ -231,7 +232,7 @@ export default class ServerOwnershipService {
     return this.verifyTokenClaim(server, user, 'dns')
   }
 
-  /** Soumet (ou remplace) une demande manuelle en attente de revue admin. */
+  /** Soumet (ou remplace) une demande manuelle en attente de revue (admin ou support). */
   static async submitManualClaim(
     server: Server,
     user: User,
@@ -245,6 +246,7 @@ export default class ServerOwnershipService {
       evidence: data.evidence,
       evidenceUrl: data.evidenceUrl ?? null,
     })
+    await WebhookService.notifyOwnershipClaim(claim, server, user)
     return { status: 'ok', claim }
   }
 
@@ -266,7 +268,7 @@ export default class ServerOwnershipService {
   /** Approuve une demande manuelle : transfère la propriété au demandeur. */
   static async approveManualClaim(
     claim: ServerOwnershipClaim,
-    admin: User,
+    reviewer: User,
     note?: string
   ): Promise<ReviewOutcome> {
     const server = await Server.query()
@@ -280,7 +282,7 @@ export default class ServerOwnershipService {
     await this.transferOwnership(server, claim.userId, 'manual')
     claim.status = 'verified'
     claim.verifiedAt = DateTime.now()
-    claim.reviewedBy = admin.id
+    claim.reviewedBy = reviewer.id
     claim.reviewNote = note ?? null
     await claim.save()
     return { status: 'ok', server }
@@ -289,11 +291,11 @@ export default class ServerOwnershipService {
   /** Rejette une demande manuelle avec un motif facultatif. */
   static async rejectManualClaim(
     claim: ServerOwnershipClaim,
-    admin: User,
+    reviewer: User,
     note?: string
   ): Promise<void> {
     claim.status = 'rejected'
-    claim.reviewedBy = admin.id
+    claim.reviewedBy = reviewer.id
     claim.reviewNote = note ?? null
     await claim.save()
   }

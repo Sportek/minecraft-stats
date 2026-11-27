@@ -539,7 +539,7 @@ export class ServerVoteSchema extends BaseModel {
 }
 
 export class ServerSchema extends BaseModel {
-  static $columns = ['address', 'boostReviewedAt', 'boostStatus', 'categoryId', 'createdAt', 'faviconHash', 'hiddenAt', 'hostDomain', 'id', 'imageUrl', 'lastMaxCount', 'lastOnlineAt', 'lastPlayerCount', 'lastStatsAt', 'moderationReviewedAt', 'moderationStatus', 'motd', 'motdHash', 'name', 'nextPingAt', 'ownerVerifiedAt', 'ownerVerifiedMethod', 'peakPlayerAt', 'peakPlayerCount', 'port', 'resolvedEndpoint', 'type', 'updatedAt', 'userId', 'version', 'voteCount', 'website'] as const
+  static $columns = ['address', 'boostReviewedAt', 'boostStatus', 'categoryId', 'createdAt', 'faviconHash', 'hasCustomImage', 'hiddenAt', 'hostDomain', 'id', 'imageUrl', 'lastMaxCount', 'lastOnlineAt', 'lastPlayerCount', 'lastStatsAt', 'moderationReviewedAt', 'moderationStatus', 'motd', 'motdHash', 'name', 'nextPingAt', 'ownerVerifiedAt', 'ownerVerifiedMethod', 'peakPlayerAt', 'peakPlayerCount', 'port', 'resolvedEndpoint', 'type', 'updatedAt', 'userId', 'version', 'voteCount', 'website'] as const
   $columns = ServerSchema.$columns
   @column()
   declare address: string
@@ -553,6 +553,8 @@ export class ServerSchema extends BaseModel {
   declare createdAt: DateTime | null
   @column()
   declare faviconHash: string | null
+  @column()
+  declare hasCustomImage: boolean
   @column.dateTime()
   declare hiddenAt: DateTime | null
   @column()
@@ -722,4 +724,31 @@ export class VisitorSchema extends BaseModel {
   declare userAgent: string | null
   @column()
   declare uuid: string
+}
+
+export class WebhookSchema extends BaseModel {
+  static $columns = ['createdAt', 'createdBy', 'enabled', 'events', 'id', 'lastError', 'lastSentAt', 'lastStatus', 'name', 'updatedAt', 'url'] as const
+  $columns = WebhookSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare createdBy: number | null
+  @column()
+  declare enabled: boolean
+  @column()
+  declare events: any
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare lastError: string | null
+  @column.dateTime()
+  declare lastSentAt: DateTime | null
+  @column()
+  declare lastStatus: number | null
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare url: string
 }

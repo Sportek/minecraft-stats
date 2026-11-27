@@ -11,7 +11,8 @@
     "advertisements": "Advertisements",
     "ownershipClaims": "Ownership claims",
     "boostReports": "Suspicious player counts",
-    "serversPending": "Server moderation"
+    "serversPending": "Server moderation",
+    "webhooks": "Webhooks"
   },
   "common": {
     "loading": "Loading...",
@@ -24,7 +25,8 @@
     "tooLargeTitle": "Image too large",
     "tooLargeDescription": "Maximum size is 5 MB.",
     "updated": "Profile picture updated",
-    "uploadFailed": "Upload failed"
+    "uploadFailed": "Upload failed",
+    "cropTitle": "Crop your profile picture"
   },
   "dangerZone": {
     "heading": "Danger zone"

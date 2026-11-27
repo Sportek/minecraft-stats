@@ -12,9 +12,10 @@ interface DashboardHeroProps {
    * `editable` to let the user upload a new picture by clicking the tile.
    */
   avatar?: { name: string; src?: string | null; editable?: boolean };
+  tile?: React.ReactNode;
 }
 
-const AVATAR_TILE_CLASSES =
+export const HERO_TILE_CLASSES =
   "-mt-10 h-[72px] w-[72px] rounded-2xl border-4 border-card text-2xl shadow-md";
 
 /**
@@ -23,22 +24,24 @@ const AVATAR_TILE_CLASSES =
  * with the server cards); without it, a plain title + action header. The title
  * always sits on the card surface — never over the dark gradient — for contrast.
  */
-const DashboardHero = ({ title, subtitle, badge, action, avatar }: DashboardHeroProps) => (
+const DashboardHero = ({ title, subtitle, badge, action, avatar, tile }: DashboardHeroProps) => (
   <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
     <div className="relative h-20 bg-[linear-gradient(110deg,hsl(204_100%_32%),hsl(214_90%_22%))]">
       <div className="absolute inset-0 bg-[radial-gradient(120%_140%_at_100%_0%,rgba(255,255,255,0.18),transparent_60%)]" />
     </div>
     <div className="relative z-10 px-6 pb-5">
-      {avatar &&
+      {tile}
+      {!tile &&
+        avatar &&
         (avatar.editable ? (
-          <EditableAvatar name={avatar.name} className={AVATAR_TILE_CLASSES} />
+          <EditableAvatar name={avatar.name} className={HERO_TILE_CLASSES} />
         ) : (
-          <AvatarTile name={avatar.name} src={avatar.src} className={AVATAR_TILE_CLASSES} />
+          <AvatarTile name={avatar.name} src={avatar.src} className={HERO_TILE_CLASSES} />
         ))}
       <div
         className={cn(
           "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
-          avatar ? "mt-3" : "mt-5"
+          avatar || tile ? "mt-3" : "mt-5"
         )}
       >
         <div className="min-w-0">

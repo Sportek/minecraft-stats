@@ -14,7 +14,7 @@ import { CreateManualClaimValidator, ReviewClaimValidator } from '#validators/se
  * confirmé). Ces endpoints permettent au vrai propriétaire de récupérer l'accès :
  *  - MOTD (self-service) : insérer un jeton dans la MOTD → lu via ping. Couverture max.
  *  - DNS (self-service)  : publier un TXT contenant un jeton → vérification auto.
- *  - Manuel (filet)      : soumettre une preuve → revue par un admin.
+ *  - Manuel (filet)      : soumettre une preuve → revue par un admin ou le support.
  */
 export default class ServerOwnershipController {
   /** Sérialisation publique d'un dossier (jamais le jeton brut). */
@@ -252,7 +252,7 @@ export default class ServerOwnershipController {
    * @operationId submitServerManualClaim
    * @tag SERVER OWNERSHIP
    * @summary Submit a manual ownership claim
-   * @description Files a manual ownership request (evidence text + optional proof URL) for admin review. Used when neither MOTD nor DNS verification is possible. Rejected if the server is already verified. Requires authentication.
+   * @description Files a manual ownership request (evidence text + optional proof URL) for admin or support review. Used when neither MOTD nor DNS verification is possible. Rejected if the server is already verified. Requires authentication.
    * @paramPath id - The server id - @type(number) @required
    * @requestBody <CreateManualClaimValidator>
    * @responseBody 200 - {"claim": {"method": "manual", "status": "pending"}, "message": "Your request was submitted for review."}
@@ -285,7 +285,7 @@ export default class ServerOwnershipController {
    * @adminIndex
    * @operationId adminListOwnershipClaims
    * @tag SERVER OWNERSHIP
-   * @summary List pending manual ownership claims (admin)
+   * @summary List pending manual ownership claims (admin or support)
    * @description Returns every manual ownership claim awaiting review, oldest first, with the server and requester preloaded. Admin only.
    * @responseBody 200 - [{"id": 1, "method": "manual", "status": "pending", "evidence": "Discord: owner#1234", "server": "<Server>", "user": "<User>"}]
    * @responseBody 403 - {"error": "Access denied. Admin privileges required."}
@@ -298,7 +298,7 @@ export default class ServerOwnershipController {
    * @approve
    * @operationId adminApproveOwnershipClaim
    * @tag SERVER OWNERSHIP
-   * @summary Approve a manual ownership claim (admin)
+   * @summary Approve a manual ownership claim (admin or support)
    * @description Approves a pending manual claim and transfers server ownership to the requester. Returns 409 if the server was verified by someone else in the meantime. Admin only.
    * @paramPath id - The claim id - @type(number) @required
    * @requestBody <ReviewClaimValidator>
@@ -308,13 +308,13 @@ export default class ServerOwnershipController {
    */
   async approve(ctx: HttpContext) {
     const { params, request, auth, response, i18n } = ctx
-    const admin = auth.user!
+    const reviewer = auth.user!
     const claim = await ServerOwnershipClaim.find(params.id)
     if (!claim)
       return response.notFound({ message: i18n.t('messages.serverOwnership.claimNotFound') })
 
     const { note } = await ReviewClaimValidator.validate(request.only(['note']))
-    const result = await ServerOwnershipService.approveManualClaim(claim, admin, note)
+    const result = await ServerOwnershipService.approveManualClaim(claim, reviewer, note)
     if (result.status === 'already_verified') {
       return response.conflict({
         message: i18n.t('messages.serverOwnership.alreadyVerified'),
@@ -328,7 +328,7 @@ export default class ServerOwnershipController {
    * @reject
    * @operationId adminRejectOwnershipClaim
    * @tag SERVER OWNERSHIP
-   * @summary Reject a manual ownership claim (admin)
+   * @summary Reject a manual ownership claim (admin or support)
    * @description Rejects a pending manual claim with an optional note. Admin only.
    * @paramPath id - The claim id - @type(number) @required
    * @requestBody <ReviewClaimValidator>
@@ -337,13 +337,13 @@ export default class ServerOwnershipController {
    */
   async reject(ctx: HttpContext) {
     const { params, request, auth, response, i18n } = ctx
-    const admin = auth.user!
+    const reviewer = auth.user!
     const claim = await ServerOwnershipClaim.find(params.id)
     if (!claim)
       return response.notFound({ message: i18n.t('messages.serverOwnership.claimNotFound') })
 
     const { note } = await ReviewClaimValidator.validate(request.only(['note']))
-    await ServerOwnershipService.rejectManualClaim(claim, admin, note)
+    await ServerOwnershipService.rejectManualClaim(claim, reviewer, note)
     return { message: i18n.t('messages.serverOwnership.rejected') }
   }
 }

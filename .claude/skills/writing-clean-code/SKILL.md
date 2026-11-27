@@ -21,7 +21,7 @@ Before finishing any code change, scan for these:
 
 ```
 - [ ] No nested ternaries (max one level, and only when it reads cleanly)
-- [ ] Comments explain WHY, not WHAT — no narrating the obvious
+- [ ] No comments unless the code is genuinely impossible to follow without one
 - [ ] No redundant null/undefined guards for values that can't be null
 - [ ] try/catch only around code that can actually throw, and errors aren't swallowed
 - [ ] No helper/abstraction introduced for a single caller
@@ -51,21 +51,27 @@ const label = STATUS_LABELS[status] ?? 'Unknown'
 For conditional JSX, prefer early returns or extracting a small component over
 deeply nested `cond ? <A/> : cond2 ? <B/> : <C/>`.
 
-## 2. Comments explain WHY, not WHAT
+## 2. No comments by default
 
-Do not narrate code that already says what it does. Comment the non-obvious: a
-reason, a trade-off, a workaround, a link to an issue, a subtle invariant.
+The maintainers don't want comments in this codebase: they find them noisy, and
+they drift out of date while the code doesn't. Write code that reads on its own
+(clear names, small functions) instead of explaining it.
+
+Add a comment only when a reader would genuinely be stuck without it: a
+non-obvious constraint from outside the code (a library bug, a protocol quirk, a
+production incident), or logic complex enough that the code alone can't convey it.
+One or two short lines, then stop. That also covers JSDoc blocks: don't document
+a function whose name and types already say what it does.
 
 ```ts
-// ❌ Bad — restates the code
-// increment the counter by one
-counter += 1
-// loop over the users
-for (const user of users) { ... }
+// ❌ Bad — narrates the code or justifies an obvious choice
+// Fetch the server, then check permissions
+const server = await findServer(id)
+/** Removes the custom image. */
+async function removeCustomImage() { ... }
 
-// ✅ Good — explains the why
-// Stripe rounds half-up; we round half-even to match the ledger totals.
-const amount = roundHalfEven(raw)
+// ✅ Fine — a constraint nobody could guess from the code
+// adonis-autoswagger calls Object.keys() on every object value: a null here breaks docs:generate.
 ```
 
 Delete commented-out code — version control already keeps it.

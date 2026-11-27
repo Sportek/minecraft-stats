@@ -2,7 +2,7 @@ import Server from '#models/server'
 import { snapshotTrafficDay } from '#services/analytics_counters'
 import BoostDetectionService from '#services/boost_detection_service'
 import DuplicateDetectionService from '#services/duplicate_detection_service'
-import ImageStorageService from '#services/image_storage_service'
+import { storeFaviconIfChanged } from '#services/server_favicon'
 import StatsService from '#services/stat_service'
 import logger from '@adonisjs/core/services/logger'
 import Database from '@adonisjs/lucid/services/db'
@@ -96,34 +96,6 @@ async function releasePingLock(serverId: number): Promise<void> {
     await redis.del(key)
   } catch {
     // Pas grave — le TTL nettoiera le lock.
-  }
-}
-
-/**
- * Empreinte du favicon : sert à la fois à la détection de doublon et à décider
- * s'il faut réécrire l'image. On ne réuploade sur le stockage (S3 en prod) que si
- * le favicon a réellement changé — ou s'il n'existe pas encore. Réécrire des
- * octets identiques à chaque ping ne ferait que générer des PUT S3 inutiles (les
- * favicons ne changent quasi jamais), ce qui a dominé la facture AWS. Le hash
- * suffit donc à détecter les vrais changements.
- *
- * Mute le serveur sans le sauvegarder — l'appelant persiste.
- */
-async function storeFaviconIfChanged(server: Server, favicon?: string): Promise<void> {
-  if (!favicon) return
-
-  const faviconHash = DuplicateDetectionService.hashFavicon(favicon)
-  if (server.imageUrl && faviconHash === server.faviconHash) return
-
-  try {
-    server.imageUrl = await ImageStorageService.storeServerFavicon(server.id, favicon)
-    server.faviconHash = faviconHash
-  } catch (error) {
-    // On n'avance pas faviconHash : le prochain ping retentera l'upload.
-    logger.warn(
-      { serverId: server.id, err: (error as Error).message },
-      'SCHEDULER: image processing failed'
-    )
   }
 }
 

@@ -14,5 +14,11 @@
     "title": "Página no encontrada",
     "description": "La página que buscas no existe o ha sido movida.",
     "backHome": "Volver al inicio"
+  },
+  "imageCrop": {
+    "zoom": "Zoom",
+    "hint": "Arrastra la imagen para colocarla y usa el control deslizante para hacer zoom.",
+    "cancel": "Cancelar",
+    "save": "Guardar"
   }
 }

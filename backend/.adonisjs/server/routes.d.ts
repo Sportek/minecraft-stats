@@ -15,6 +15,8 @@ export type ScannedRoutes = {
     'server_votes.store': { paramsTuple: [ParamValue]; params: {'serverId': ParamValue} }
     'server_votes.status': { paramsTuple: [ParamValue]; params: {'serverId': ParamValue} }
     'servers.update_visibility': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_reports.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.status': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.start_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -204,6 +206,7 @@ export type ScannedRoutes = {
   POST: {
     'servers.store': { paramsTuple?: []; params?: {} }
     'server_votes.store': { paramsTuple: [ParamValue]; params: {'serverId': ParamValue} }
+    'server_images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_reports.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.start_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.verify_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -261,6 +264,7 @@ export type ScannedRoutes = {
   }
   DELETE: {
     'servers.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'servers.categories.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'server_id': ParamValue,'id': ParamValue} }
     'categories.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }

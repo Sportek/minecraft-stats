@@ -30,16 +30,16 @@ const MODERATION_ITEMS: NavItem[] = [
     key: "serversPending",
     icon: "material-symbols:fact-check-outline",
   },
-];
-
-const ADMIN_ITEMS: NavItem[] = [
-  { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
-  { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
   {
     href: "/admin/ownership-claims",
     key: "ownershipClaims",
     icon: "material-symbols:verified-user-outline",
   },
+];
+
+const ADMIN_ITEMS: NavItem[] = [
+  { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
+  { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
   {
     href: "/admin/boost-reports",
     key: "boostReports",
@@ -47,6 +47,7 @@ const ADMIN_ITEMS: NavItem[] = [
   },
   ...MODERATION_ITEMS,
   { href: "/admin/advertisements", key: "advertisements", icon: "material-symbols:ad-group-outline" },
+  { href: "/admin/webhooks", key: "webhooks", icon: "material-symbols:webhook" },
 ];
 
 const isActive = (pathname: string | null, href: string) =>

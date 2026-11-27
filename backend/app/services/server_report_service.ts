@@ -3,6 +3,7 @@ import ServerReport from '#models/server_report'
 import type User from '#models/user'
 import { DateTime } from 'luxon'
 import type { ReportReason } from '../constants/server_report.js'
+import WebhookService from '#services/webhook_service'
 
 export default class ServerReportService {
   static async hasOpenReport(serverId: number, reporterId: number): Promise<boolean> {
@@ -20,13 +21,15 @@ export default class ServerReportService {
     reason: ReportReason,
     details?: string
   ): Promise<ServerReport> {
-    return ServerReport.create({
+    const report = await ServerReport.create({
       serverId: server.id,
       reporterId: reporter.id,
       reason,
       details: details ?? null,
       status: 'open',
     })
+    await WebhookService.notifyServerReport(report, server, reporter)
+    return report
   }
 
   static async listOpen(): Promise<ServerReport[]> {

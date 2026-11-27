@@ -11,7 +11,7 @@ function uid() {
   return randomUUID().replace(/-/g, '').slice(0, 10)
 }
 
-async function createUser(role: 'user' | 'admin' = 'user') {
+async function createUser(role: User['role'] = 'user') {
   return User.create({
     username: `owner_${uid()}`,
     email: `${uid()}@example.com`,
@@ -335,6 +335,57 @@ test.group('Server ownership — claims', (group) => {
       .get('/api/v1/admin/ownership-claims')
       .bearerToken(await tokenFor(user))
     response.assertStatus(403)
+  })
+
+  test('un rédacteur ne peut pas lister les demandes (403)', async ({ client }) => {
+    const writer = await createUser('writer')
+    const response = await client
+      .get('/api/v1/admin/ownership-claims')
+      .bearerToken(await tokenFor(writer))
+    response.assertStatus(403)
+  })
+
+  test('le support liste les demandes manuelles en attente', async ({ client, assert }) => {
+    const requester = await createUser()
+    const server = await createServer()
+    await client
+      .post(`/api/v1/servers/${server.id}/claim/manual`)
+      .bearerToken(await tokenFor(requester))
+      .json({ evidence: 'Demande de propriété à revoir.' })
+
+    const support = await createUser('support')
+    const response = await client
+      .get('/api/v1/admin/ownership-claims')
+      .bearerToken(await tokenFor(support))
+
+    response.assertStatus(200)
+    assert.exists(response.body().find((c: { serverId: number }) => c.serverId === server.id))
+  })
+
+  test('le support refuse une demande manuelle', async ({ client, assert }) => {
+    const requester = await createUser()
+    const server = await createServer()
+    await client
+      .post(`/api/v1/servers/${server.id}/claim/manual`)
+      .bearerToken(await tokenFor(requester))
+      .json({ evidence: 'Preuve insuffisante, à refuser.' })
+    const claim = await ServerOwnershipClaim.query()
+      .where('server_id', server.id)
+      .where('user_id', requester.id)
+      .firstOrFail()
+
+    const support = await createUser('support')
+    const response = await client
+      .post(`/api/v1/admin/ownership-claims/${claim.id}/reject`)
+      .bearerToken(await tokenFor(support))
+      .json({ note: 'Preuve insuffisante' })
+
+    response.assertStatus(200)
+    await claim.refresh()
+    assert.equal(claim.status, 'rejected')
+    assert.equal(claim.reviewedBy, support.id)
+    await server.refresh()
+    assert.isNull(server.ownerVerifiedAt)
   })
 
   test('un admin liste les demandes manuelles en attente', async ({ client, assert }) => {

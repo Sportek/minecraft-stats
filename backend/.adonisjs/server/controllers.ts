@@ -14,6 +14,7 @@ export const controllers = {
   Posts: () => import('#controllers/posts_controller'),
   ServerBoost: () => import('#controllers/server_boost_controller'),
   ServerCategories: () => import('#controllers/server_categories_controller'),
+  ServerImages: () => import('#controllers/server_images_controller'),
   ServerModeration: () => import('#controllers/server_moderation_controller'),
   ServerOwnership: () => import('#controllers/server_ownership_controller'),
   ServerReports: () => import('#controllers/server_reports_controller'),
@@ -23,5 +24,6 @@ export const controllers = {
   Uploads: () => import('#controllers/uploads_controller'),
   UserProviders: () => import('#controllers/user_providers_controller'),
   Users: () => import('#controllers/users_controller'),
+  Webhooks: () => import('#controllers/webhooks_controller'),
   WebsiteStats: () => import('#controllers/website_stats_controller'),
 }

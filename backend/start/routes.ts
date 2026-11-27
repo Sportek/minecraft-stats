@@ -64,6 +64,13 @@ router
       .use([middleware.auth(), throttleLight('servers.visibility', 10), NO_STORE])
 
     router
+      .post('servers/:id/image', '#controllers/server_images_controller.update')
+      .use([middleware.auth(), throttleLight('servers.image', 10), NO_STORE])
+    router
+      .delete('servers/:id/image', '#controllers/server_images_controller.destroy')
+      .use([middleware.auth(), throttleLight('servers.image', 10), NO_STORE])
+
+    router
       .post('servers/:id/report', '#controllers/server_reports_controller.store')
       .use([middleware.auth(), throttleLight('servers.report', 10), NO_STORE])
 
@@ -314,16 +321,32 @@ router
           .get('analytics/users', '#controllers/analytics_controller.users')
           .use([middleware.admin(), throttleLight('admin.analytics.users', 30), NO_STORE])
 
+        router
+          .get('webhooks', '#controllers/webhooks_controller.index')
+          .use([middleware.admin(), throttleLight('admin.webhooks.index', 30), NO_STORE])
+        router
+          .post('webhooks', '#controllers/webhooks_controller.store')
+          .use([middleware.admin(), throttleLight('admin.webhooks.write', 20), NO_STORE])
+        router
+          .patch('webhooks/:id', '#controllers/webhooks_controller.update')
+          .use([middleware.admin(), throttleLight('admin.webhooks.write', 20), NO_STORE])
+        router
+          .delete('webhooks/:id', '#controllers/webhooks_controller.destroy')
+          .use([middleware.admin(), throttleLight('admin.webhooks.write', 20), NO_STORE])
+        router
+          .post('webhooks/:id/test', '#controllers/webhooks_controller.test')
+          .use([middleware.admin(), throttleLight('admin.webhooks.test', 10), NO_STORE])
+
         // Ownership claims — manual review queue (admin only)
         router
           .get('ownership-claims', '#controllers/server_ownership_controller.adminIndex')
-          .use([middleware.admin(), throttleLight('admin.ownership.index', 30), NO_STORE])
+          .use([middleware.moderator(), throttleLight('admin.ownership.index', 30), NO_STORE])
         router
           .post('ownership-claims/:id/approve', '#controllers/server_ownership_controller.approve')
-          .use([middleware.admin(), throttleLight('admin.ownership.approve', 20), NO_STORE])
+          .use([middleware.moderator(), throttleLight('admin.ownership.approve', 20), NO_STORE])
         router
           .post('ownership-claims/:id/reject', '#controllers/server_ownership_controller.reject')
-          .use([middleware.admin(), throttleLight('admin.ownership.reject', 20), NO_STORE])
+          .use([middleware.moderator(), throttleLight('admin.ownership.reject', 20), NO_STORE])
 
         // Connectés suspects — file de revue du gonflage de joueurs (admin only)
         router

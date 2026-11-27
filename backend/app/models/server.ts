@@ -74,6 +74,9 @@ export default class Server extends BaseModel {
   @column()
   declare imageUrl: string | null
 
+  @column()
+  declare hasCustomImage: boolean
+
   // Empreintes de détection de doublon (cf. DuplicateDetectionService).
   // Toutes indexées : la recherche de doublon se fait par égalité de hash.
   @column({ columnName: 'favicon_hash' })

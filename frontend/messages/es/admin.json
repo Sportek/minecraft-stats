@@ -385,7 +385,6 @@
     "loading": "Cargando…",
     "loadingList": "Cargando solicitudes…",
     "accessDenied": "Acceso denegado",
-    "adminOnly": "Esta sección está restringida a administradores.",
     "emptyTitle": "No hay solicitudes pendientes",
     "emptyDescription": "Las solicitudes manuales de propiedad aparecerán aquí para su revisión.",
     "viewProof": "Ver prueba",
@@ -395,7 +394,8 @@
     "rejectPrompt": "Motivo del rechazo (opcional):",
     "approved": "Solicitud aprobada: propiedad transferida.",
     "rejected": "Solicitud rechazada.",
-    "error": "La acción falló. Inténtalo de nuevo."
+    "error": "La acción falló. Inténtalo de nuevo.",
+    "moderatorOnly": "Esta sección está restringida a administradores y soporte."
   },
   "boostReports": {
     "title": "Conectados sospechosos",
@@ -483,5 +483,42 @@
     "reportedOn": "Reportado el {date}",
     "resolveReport": "Resolver",
     "reportResolved": "Reporte resuelto."
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "subtitle": "Recibe una notificación de Discord con cada nueva solicitud de propiedad, servidor enviado o denuncia.",
+    "countBadge": "{count, plural, =0 {ninguno} one {# webhook} other {# webhooks}}",
+    "loading": "Cargando…",
+    "loadingList": "Cargando webhooks…",
+    "accessDenied": "Acceso denegado",
+    "adminOnly": "Esta sección está reservada a los administradores.",
+    "error": "Se ha producido un error.",
+    "addTitle": "Añadir un webhook de Discord",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Canal #moderación",
+    "urlLabel": "URL del webhook de Discord",
+    "eventsLabel": "Eventos que recibir",
+    "add": "Añadir",
+    "events": {
+      "ownership_claim.created": "Nueva solicitud de propiedad",
+      "server.submitted": "Nuevo servidor por moderar",
+      "server_report.created": "Nueva denuncia"
+    },
+    "created": "Webhook añadido",
+    "deleted": "Webhook eliminado",
+    "needOneEvent": "Un webhook debe recibir al menos un evento.",
+    "emptyTitle": "Ningún webhook",
+    "emptyDescription": "Añade la URL de un webhook de Discord para recibir avisos en un canal.",
+    "paused": "En pausa",
+    "neverSent": "Todavía no se ha enviado nada.",
+    "lastOk": "Último envío correcto el {date}.",
+    "lastFailed": "Último envío fallido el {date}: {error}",
+    "test": "Enviar una prueba",
+    "testSent": "Mensaje de prueba enviado",
+    "testFailed": "Error en el envío: {error}",
+    "pause": "Pausar",
+    "resume": "Reactivar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Eliminar el webhook «{name}»?"
   }
 }

@@ -42,7 +42,10 @@
     "hidden": "Ce serveur a choisi de ne pas être référencé sur Minecraft Stats.",
     "blocked": "Ce serveur a été retiré de Minecraft Stats par la modération.",
     "duplicateHidden": "Ce serveur a demandé à ne pas être référencé sur Minecraft Stats et ne peut pas être ajouté.",
-    "visibilityRequiresVerification": "Vérifiez la propriété de ce serveur avant de pouvoir le masquer."
+    "visibilityRequiresVerification": "Vérifiez la propriété de ce serveur avant de pouvoir le masquer.",
+    "imageRequiresVerification": "Vérifiez la propriété de ce serveur avant de pouvoir changer son image.",
+    "noImageProvided": "Aucune image fournie",
+    "invalidUpload": "Téléversement invalide"
   },
   "serverOwnership": {
     "unauthorized": "Non autorisé",
