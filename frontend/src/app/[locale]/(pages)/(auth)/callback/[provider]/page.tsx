@@ -6,10 +6,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { AccessToken, User } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import { useRouter } from "@/i18n/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 

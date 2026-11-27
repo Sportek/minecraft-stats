@@ -18,8 +18,8 @@ interface TooltipState {
 
 /** Linear interpolation between two #rrggbb colors, returning an rgb() string. */
 function lerpHex(from: string, to: string, t: number): string {
-  const a = [1, 3, 5].map((i) => parseInt(from.slice(i, i + 2), 16));
-  const b = [1, 3, 5].map((i) => parseInt(to.slice(i, i + 2), 16));
+  const a = [1, 3, 5].map((i) => Number.parseInt(from.slice(i, i + 2), 16));
+  const b = [1, 3, 5].map((i) => Number.parseInt(to.slice(i, i + 2), 16));
   const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
   return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
 }

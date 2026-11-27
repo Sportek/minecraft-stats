@@ -33,7 +33,7 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
   }, [isOpen]);
 
   const handleInsert = (placeholderName: string) => {
-    if (!serverId || isNaN(Number(serverId))) {
+    if (!serverId || Number.isNaN(Number(serverId))) {
       alert("Please enter a valid server ID");
       return;
     }
@@ -45,7 +45,7 @@ export function PlaceholderPicker({ onInsert }: PlaceholderPickerProps) {
   };
 
   const handleCopy = (placeholderName: string) => {
-    if (!serverId || isNaN(Number(serverId))) {
+    if (!serverId || Number.isNaN(Number(serverId))) {
       alert("Please enter a valid server ID");
       return;
     }

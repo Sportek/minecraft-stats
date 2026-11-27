@@ -27,7 +27,7 @@ function pickWeightedAd(ads: PublicAd[]): PublicAd | null {
     cursor -= Math.max(1, ad.weight);
     if (cursor <= 0) return ad;
   }
-  return ads[ads.length - 1];
+  return ads.at(-1) ?? null;
 }
 
 /**

@@ -31,7 +31,7 @@ const DEFAULT_PORT: Record<"java" | "bedrock", string> = {
 };
 
 const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
-  const { data, isLoading, error } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
+  const { data, isLoading } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
   const { data: languagesData } = useSWRImmutable<Language[]>(`${getBaseUrl()}/languages`, fetcher);
 
   const categories = data || [];
@@ -50,7 +50,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     })
     .refine(
       (data) => {
-        return parseInt(data.port) >= 1 && parseInt(data.port) <= 65535;
+        return Number.parseInt(data.port) >= 1 && Number.parseInt(data.port) <= 65535;
       },
       {
         path: ["port"],
@@ -99,7 +99,7 @@ const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
     try {
       const server = await addServer({
         ...credentials,
-        port: parseInt(credentials.port),
+        port: Number.parseInt(credentials.port),
         website: cleanWebsiteHost(credentials.website) || undefined,
       });
       form.reset();

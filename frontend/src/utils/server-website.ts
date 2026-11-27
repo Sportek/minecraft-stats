@@ -19,6 +19,12 @@ const MULTIPART_TLDS = new Set([
 
 const IPV4 = /^\d{1,3}(\.\d{1,3}){3}$/;
 
+function trimTrailingSlashes(value: string) {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end--;
+  return value.slice(0, end);
+}
+
 /**
  * Strips any leading scheme from a website value, tolerating malformed ones like
  * `https//host` (missing colon) or duplicated slashes, plus trailing slashes.
@@ -26,10 +32,7 @@ const IPV4 = /^\d{1,3}(\.\d{1,3}){3}$/;
  */
 export function cleanWebsiteHost(value: string | null | undefined): string {
   if (!value) return "";
-  return value
-    .trim()
-    .replace(/^\s*https?:?\/\/+/i, "")
-    .replace(/\/+$/, "");
+  return trimTrailingSlashes(value.trim().replace(/^\s*https?:?\/\/+/i, ""));
 }
 
 /**
@@ -62,7 +65,7 @@ export function deriveServerWebsite(address: string | null | undefined): string 
   const labels = host.split(".").filter(Boolean);
   if (labels.length < 2) return null;
 
-  const tld = labels[labels.length - 1];
+  const tld = labels.at(-1) ?? "";
   if (!/^[a-z]{2,}$/.test(tld)) return null;
 
   const lastTwo = labels.slice(-2).join(".");

@@ -44,7 +44,7 @@ const DEFAULT_PORT = 25565
 const truncate = (text: string, max: number) =>
   text.length > max ? `${text.slice(0, max - 1)}…` : text
 
-const escapeMarkdown = (text: string) => text.replace(/([\\`*_~|>[\]()])/g, '\\$1')
+const escapeMarkdown = (text: string) => text.replaceAll(/([\\`*_~|>[\]()])/g, String.raw`\$1`)
 
 const quote = (text: string, max = 900) =>
   truncate(text.trim(), max)

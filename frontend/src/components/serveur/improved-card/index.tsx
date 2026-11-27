@@ -1,4 +1,4 @@
-import { Category, Server, ServerStat } from "@/types/server";
+import { Server, ServerStat } from "@/types/server";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useFormatter, useTranslations } from "next-intl";
 import StatCard from "../stat-card";
@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ImprovedCardProps {
   server: Server;
   stats: ServerStat[];
-  categories: Category[];
   isLoading: boolean;
 }
 

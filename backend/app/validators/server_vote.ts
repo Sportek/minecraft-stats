@@ -12,7 +12,7 @@ export const CreateServerVoteValidator = vine.compile(
     username: vine
       .string()
       .trim()
-      .regex(/^[a-zA-Z0-9_]{3,16}$/),
+      .regex(/^\w{3,16}$/),
     visitorId: vine.string().uuid(),
     acceptedTerms: vine.boolean(),
     turnstileToken: vine.string().optional(),
