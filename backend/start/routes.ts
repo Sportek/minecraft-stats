@@ -324,13 +324,13 @@ router
         // Ownership claims — manual review queue (admin only)
         router
           .get('ownership-claims', '#controllers/server_ownership_controller.adminIndex')
-          .use([middleware.admin(), throttleLight('admin.ownership.index', 30), NO_STORE])
+          .use([middleware.moderator(), throttleLight('admin.ownership.index', 30), NO_STORE])
         router
           .post('ownership-claims/:id/approve', '#controllers/server_ownership_controller.approve')
-          .use([middleware.admin(), throttleLight('admin.ownership.approve', 20), NO_STORE])
+          .use([middleware.moderator(), throttleLight('admin.ownership.approve', 20), NO_STORE])
         router
           .post('ownership-claims/:id/reject', '#controllers/server_ownership_controller.reject')
-          .use([middleware.admin(), throttleLight('admin.ownership.reject', 20), NO_STORE])
+          .use([middleware.moderator(), throttleLight('admin.ownership.reject', 20), NO_STORE])
 
         // Connectés suspects — file de revue du gonflage de joueurs (admin only)
         router

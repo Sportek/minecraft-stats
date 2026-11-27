@@ -30,16 +30,16 @@ const MODERATION_ITEMS: NavItem[] = [
     key: "serversPending",
     icon: "material-symbols:fact-check-outline",
   },
-];
-
-const ADMIN_ITEMS: NavItem[] = [
-  { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
-  { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
   {
     href: "/admin/ownership-claims",
     key: "ownershipClaims",
     icon: "material-symbols:verified-user-outline",
   },
+];
+
+const ADMIN_ITEMS: NavItem[] = [
+  { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
+  { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
   {
     href: "/admin/boost-reports",
     key: "boostReports",
