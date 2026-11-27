@@ -483,5 +483,42 @@
     "reportedOn": "Reported on {date}",
     "resolveReport": "Resolve",
     "reportResolved": "Report resolved."
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "subtitle": "Get a Discord notification for every new ownership request, submitted server or report.",
+    "countBadge": "{count, plural, =0 {none} one {# webhook} other {# webhooks}}",
+    "loading": "Loading…",
+    "loadingList": "Loading webhooks…",
+    "accessDenied": "Access denied",
+    "adminOnly": "This section is restricted to administrators.",
+    "error": "Something went wrong.",
+    "addTitle": "Add a Discord webhook",
+    "nameLabel": "Name",
+    "namePlaceholder": "#moderation channel",
+    "urlLabel": "Discord webhook URL",
+    "eventsLabel": "Events to receive",
+    "add": "Add",
+    "events": {
+      "ownership_claim.created": "New ownership request",
+      "server.submitted": "New server to moderate",
+      "server_report.created": "New report"
+    },
+    "created": "Webhook added",
+    "deleted": "Webhook deleted",
+    "needOneEvent": "A webhook must receive at least one event.",
+    "emptyTitle": "No webhooks",
+    "emptyDescription": "Add a Discord webhook URL to get notified in a channel.",
+    "paused": "Paused",
+    "neverSent": "Nothing sent yet.",
+    "lastOk": "Last delivery succeeded on {date}.",
+    "lastFailed": "Last delivery failed on {date}: {error}",
+    "test": "Send a test",
+    "testSent": "Test message sent",
+    "testFailed": "Delivery failed: {error}",
+    "pause": "Pause",
+    "resume": "Resume",
+    "delete": "Delete",
+    "confirmDelete": "Delete the webhook \"{name}\"?"
   }
 }
