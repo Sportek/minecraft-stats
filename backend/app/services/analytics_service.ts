@@ -46,7 +46,7 @@ export default class AnalyticsService {
    * renvoie `XX`/`T1` quand le pays est inconnu ou anonymisé — on les écarte.
    */
   static normalizeCountry(value: string | undefined): string | null {
-    if (!value || value.length !== 2) return null
+    if (value?.length !== 2) return null
     const code = value.toUpperCase()
     return code === 'XX' || code === 'T1' ? null : code
   }

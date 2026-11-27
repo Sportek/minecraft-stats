@@ -10,9 +10,9 @@ import Script from "next/script";
  */
 function toJsonLd(data: unknown): string {
   return JSON.stringify(data)
-    .replace(/</g, "\\u003c")
-    .replace(/>/g, "\\u003e")
-    .replace(/&/g, "\\u0026");
+    .replaceAll("<", String.raw`\u003c`)
+    .replaceAll(">", String.raw`\u003e`)
+    .replaceAll("&", String.raw`\u0026`);
 }
 
 // Short UI locale (next-intl) → BCP47 tag for schema.org `inLanguage`.

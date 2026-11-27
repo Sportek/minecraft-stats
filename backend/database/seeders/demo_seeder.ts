@@ -101,8 +101,11 @@ export default class DemoSeeder extends BaseSeeder {
 
     // Champs « dernier ping » et pic que le scheduler tient à jour en prod : sans
     // eux, la liste affiche les serveurs comme hors ligne.
-    const last = rows[rows.length - 1]
-    const peak = rows.reduce((best, row) => (row.player_count > best.player_count ? row : best))
+    const last = rows.at(-1)!
+    const peak = rows.reduce(
+      (best, row) => (row.player_count > best.player_count ? row : best),
+      last
+    )
     await server
       .merge({
         lastPlayerCount: last.player_count,

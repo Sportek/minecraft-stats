@@ -68,16 +68,18 @@ export default class AdvertisementsController {
 
     let visible = ads
     if (placement === 'server') {
-      const categoryIds = String(request.input('categoryIds', ''))
-        .split(',')
-        .map((v) => Number.parseInt(v, 10))
-        .filter((v) => Number.isFinite(v))
+      const categoryIds = new Set(
+        String(request.input('categoryIds', ''))
+          .split(',')
+          .map((v) => Number.parseInt(v, 10))
+          .filter((v) => Number.isFinite(v))
+      )
 
       // Une pub sans catégorie cible toutes les catégories ; sinon il faut un recoupement.
       visible = ads.filter(
         (ad) =>
           ad.categories.length === 0 ||
-          ad.categories.some((category) => categoryIds.includes(category.id))
+          ad.categories.some((category) => categoryIds.has(category.id))
       )
     }
 

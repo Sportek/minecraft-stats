@@ -38,11 +38,7 @@ const ServerCard = ({ server, stats, categories, growthStat, isFull, showChart =
           />
         </div>
         <div className="shrink-0">
-          <ServerStatus
-            stats={stats}
-            growthStat={growthStat}
-            lastOnlineAt={server.lastOnlineAt ? new Date(server.lastOnlineAt).toISOString() : null}
-          />
+          <ServerStatus stats={stats} growthStat={growthStat} />
         </div>
       </div>
 

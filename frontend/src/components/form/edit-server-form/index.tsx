@@ -54,7 +54,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
    })
    .refine(
      (data) => {
-       return parseInt(data.port) >= 1 && parseInt(data.port) <= 65535;
+       return Number.parseInt(data.port) >= 1 && Number.parseInt(data.port) <= 65535;
      },
      {
        path: ["port"],
@@ -104,7 +104,7 @@ const EditServerForm: FC<EditServerFormProps> = ({ server, serverCategories, upd
     try {
       await editServer(
         server.id,
-        { ...credentials, port: parseInt(credentials.port), website: cleanWebsiteHost(credentials.website) || undefined },
+        { ...credentials, port: Number.parseInt(credentials.port), website: cleanWebsiteHost(credentials.website) || undefined },
         getToken() ?? ""
       );
       form.reset();

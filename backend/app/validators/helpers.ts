@@ -24,7 +24,7 @@ function isPrivateOrReservedIp(host: string): boolean {
   if (version === 6) {
     const h = host.toLowerCase()
     // IPv4-mapped (::ffff:a.b.c.d) → on teste la partie IPv4 embarquée.
-    const mapped = h.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/)
+    const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(h)
     if (mapped) return isPrivateOrReservedIp(mapped[1])
     return (
       h === '::1' || // loopback

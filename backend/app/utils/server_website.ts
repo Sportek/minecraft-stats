@@ -41,7 +41,7 @@ export function deriveServerWebsite(address: string | null | undefined): string 
   const labels = host.split('.').filter(Boolean)
   if (labels.length < 2) return null
 
-  const tld = labels[labels.length - 1]
+  const tld = labels.at(-1) ?? ''
   if (!/^[a-z]{2,}$/.test(tld)) return null
 
   const lastTwo = labels.slice(-2).join('.')
