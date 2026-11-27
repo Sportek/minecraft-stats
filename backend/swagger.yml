@@ -78,7 +78,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 694
+          example: 881
         name:
           type: "string"
           example: "John Doe"
@@ -93,7 +93,7 @@ components:
           example: true
         weight:
           type: "number"
-          example: 804
+          example: 798
         show_on_home:
           type: "boolean"
           example: true
@@ -133,10 +133,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 653
+          example: 94
         advertisement_id:
           type: "number"
-          example: 29
+          example: 793
         type:
           $ref: "#/components/schemas/'impression'"
           example: null
@@ -145,7 +145,7 @@ components:
           example: "Lorem Ipsum"
         server_id:
           type: "number"
-          example: 822
+          example: 518
         target_url:
           type: "string"
           example: "Lorem Ipsum"
@@ -163,7 +163,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 543
+          example: 411
         type:
           $ref: "#/components/schemas/'email'"
           example: null
@@ -175,7 +175,7 @@ components:
           example: "Lorem Ipsum"
         blacklisted_by:
           type: "number"
-          example: 909
+          example: 466
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -187,13 +187,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 519
+          example: 886
         blacklisted_identifier_id:
           type: "number"
-          example: 737
+          example: 346
         user_id:
           type: "number"
-          example: 418
+          example: 270
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -205,7 +205,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 594
+          example: 484
         name:
           type: "string"
           example: "John Doe"
@@ -224,7 +224,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 15
+          example: 975
         code:
           $ref: "#/components/schemas/LanguageCode"
           example: null
@@ -249,7 +249,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 249
+          example: 806
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -281,13 +281,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 698
+          example: 295
         visitor_id:
           type: "number"
-          example: 117
+          example: 804
         user_id:
           type: "number"
-          example: 143
+          example: 636
         path:
           type: "string"
           example: "Lorem Ipsum"
@@ -299,7 +299,7 @@ components:
           example: "Lorem Ipsum"
         duration_ms:
           type: "number"
-          example: 613
+          example: 379
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -317,7 +317,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 174
+          example: 848
         cover_image:
           type: "string"
           example: "Lorem Ipsum"
@@ -326,7 +326,7 @@ components:
           example: true
         view_count:
           type: "number"
-          example: 337
+          example: 606
         default_locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -336,7 +336,7 @@ components:
           format: "date-time"
         user_id:
           type: "number"
-          example: 159
+          example: 953
         author:
           $ref: "#/components/schemas/User"
           example: null
@@ -360,13 +360,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 229
+          example: 793
         post_id:
           type: "number"
-          example: 432
+          example: 778
         user_id:
           type: "number"
-          example: 952
+          example: 72
         visitor_id:
           type: "string"
           example: "Lorem Ipsum"
@@ -394,10 +394,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 753
+          example: 999
         post_id:
           type: "number"
-          example: 451
+          example: 519
         locale:
           type: "string"
           example: "Lorem Ipsum"
@@ -431,7 +431,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 874
+          example: 577
         name:
           type: "string"
           example: "John Doe"
@@ -440,7 +440,7 @@ components:
           example: "1028 Farland Street"
         port:
           type: "number"
-          example: 35
+          example: 81
         type:
           $ref: "#/components/schemas/ServerType"
           example: null
@@ -456,6 +456,9 @@ components:
         image_url:
           type: "string"
           example: "Lorem Ipsum"
+        has_custom_image:
+          type: "boolean"
+          example: true
         favicon_hash:
           type: "string"
           example: "Lorem Ipsum"
@@ -470,7 +473,7 @@ components:
           example: "Lorem Ipsum"
         user_id:
           type: "number"
-          example: 159
+          example: 748
         user:
           $ref: "#/components/schemas/User"
           example: null
@@ -506,7 +509,7 @@ components:
             example: null
         vote_count:
           type: "number"
-          example: 182
+          example: 940
         categories:
           type: "array"
           items:
@@ -523,22 +526,33 @@ components:
           format: "date-time"
         last_player_count:
           type: "number"
-          example: 296
+          example: 385
         last_max_count:
           type: "number"
-          example: 771
+          example: 736
         last_stats_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
         peak_player_count:
           type: "number"
-          example: 547
+          example: 221
         peak_player_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
         next_ping_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        hidden_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        moderation_status:
+          $ref: "#/components/schemas/ModerationStatus"
+          example: null
+        moderation_reviewed_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
@@ -557,10 +571,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 730
+          example: 662
         server_id:
           type: "number"
-          example: 286
+          example: 26
         server:
           $ref: "#/components/schemas/Server"
           example: null
@@ -569,7 +583,7 @@ components:
           example: null
         score_at_review:
           type: "number"
-          example: 473
+          example: 707
         signals_at_review:
           type: "array"
           items:
@@ -577,7 +591,7 @@ components:
             example: null
         reviewed_by:
           type: "number"
-          example: 427
+          example: 438
         reviewer:
           $ref: "#/components/schemas/User"
           example: null
@@ -599,13 +613,13 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 516
+          example: 676
         server:
           $ref: "#/components/schemas/Server"
           example: null
         score:
           type: "number"
-          example: 160
+          example: 11
         level:
           $ref: "#/components/schemas/BoostLevel"
           example: null
@@ -616,10 +630,10 @@ components:
             example: null
         detected_factor:
           type: "number"
-          example: 684
+          example: 983
         estimated_real_players:
           type: "number"
-          example: 643
+          example: 675
         window_from:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -630,7 +644,7 @@ components:
           format: "date-time"
         samples_count:
           type: "number"
-          example: 692
+          example: 76
         computed_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -642,43 +656,77 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 660
+          example: 431
         weekly_growth:
           type: "number"
-          example: 772
+          example: 945
         monthly_growth:
           type: "number"
-          example: 282
+          example: 105
         last_week_average:
           type: "number"
-          example: 132
+          example: 985
         previous_week_average:
           type: "number"
-          example: 997
+          example: 414
         last_month_average:
           type: "number"
-          example: 615
+          example: 117
         last_updated:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "ServerGrowthStat (Model)"
+    ServerModerationReview:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 61
+        server_id:
+          type: "number"
+          example: 84
+        server:
+          $ref: "#/components/schemas/Server"
+          example: null
+        verdict:
+          $ref: "#/components/schemas/ModerationVerdict"
+          example: null
+        reviewed_by:
+          type: "number"
+          example: 654
+        reviewer:
+          $ref: "#/components/schemas/User"
+          example: null
+        note:
+          type: "string"
+          example: "Lorem Ipsum"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerModerationReview (Model)"
     ServerOwnershipClaim:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 141
+          example: 689
         server_id:
           type: "number"
-          example: 889
+          example: 262
         server:
           $ref: "#/components/schemas/Server"
           example: null
         user_id:
           type: "number"
-          example: 795
+          example: 484
         user:
           $ref: "#/components/schemas/User"
           example: null
@@ -704,7 +752,7 @@ components:
           format: "date-time"
         reviewed_by:
           type: "number"
-          example: 214
+          example: 862
         reviewer:
           $ref: "#/components/schemas/User"
           example: null
@@ -720,25 +768,69 @@ components:
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
       description: "ServerOwnershipClaim (Model)"
-    ServerStat:
+    ServerReport:
       type: "object"
       required: []
       properties:
         id:
           type: "number"
-          example: 155
+          example: 270
+        server_id:
+          type: "number"
+          example: 156
+        server:
+          $ref: "#/components/schemas/Server"
+          example: null
+        reporter_id:
+          type: "number"
+          example: 718
+        reporter:
+          $ref: "#/components/schemas/User"
+          example: null
+        reason:
+          $ref: "#/components/schemas/ReportReason"
+          example: null
+        details:
+          type: "string"
+          example: "Lorem Ipsum"
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+          example: null
+        resolved_by:
+          type: "number"
+          example: 434
+        resolver:
+          $ref: "#/components/schemas/User"
+          example: null
+        resolved_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "ServerReport (Model)"
+    ServerStat:
+      type: "object"
+      required: []
+      properties:
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 932
+          example: 368
         player_count:
           type: "number"
-          example: 142
+          example: 180
         max_count:
           type: "number"
-          example: 777
+          example: 628
         created_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -750,22 +842,22 @@ components:
       properties:
         id:
           type: "number"
-          example: 768
+          example: 173
         server:
           $ref: "#/components/schemas/Server"
           example: null
         server_id:
           type: "number"
-          example: 513
+          example: 134
         visitor_id:
           type: "number"
-          example: 571
+          example: 544
         user:
           $ref: "#/components/schemas/User"
           example: null
         user_id:
           type: "number"
-          example: 721
+          example: 984
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -793,20 +885,20 @@ components:
       properties:
         id:
           type: "number"
-          example: 146
+          example: 983
         date:
           type: "string"
           example: "2021-03-23"
           format: "date-time"
         http_requests:
           type: "number"
-          example: 758
+          example: 264
         http_errors:
           type: "number"
-          example: 301
+          example: 784
         unique_visitors:
           type: "number"
-          example: 658
+          example: 711
         countries:
           $ref: "#/components/schemas/Record<string, number>"
           example: null
@@ -825,7 +917,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 725
+          example: 49
         username:
           type: "string"
           example: "Lorem Ipsum"
@@ -851,7 +943,7 @@ components:
           format: "date-time"
         blacklisted_by:
           type: "number"
-          example: 336
+          example: 968
         blacklist_reason:
           type: "string"
           example: "Lorem Ipsum"
@@ -880,13 +972,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 437
+          example: 572
         user:
           $ref: "#/components/schemas/User"
           example: null
         user_id:
           type: "number"
-          example: 591
+          example: 328
         provider:
           $ref: "#/components/schemas/'google'"
           example: null
@@ -912,7 +1004,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 937
+          example: 904
         uuid:
           type: "string"
           example: "Lorem Ipsum"
@@ -950,13 +1042,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 686
+          example: 616
         visitor_id:
           type: "number"
-          example: 119
+          example: 245
         user_id:
           type: "number"
-          example: 324
+          example: 920
         linked_at:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -983,7 +1075,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 141
+          example: 678
           choices:
             - "custom"
             - "network"
@@ -1017,10 +1109,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 362
+            example: 625
       example:
         name: "Lorem Ipsum"
-        type: 141
+        type: 678
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -1029,7 +1121,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 362
+          - 625
       description: "CreateAdvertisementValidator (Validator)"
     UpdateAdvertisementValidator:
       type: "object"
@@ -1041,7 +1133,7 @@ components:
           maxLength: 255
         type:
           type: "number"
-          example: 851
+          example: 102
           choices:
             - "custom"
             - "network"
@@ -1074,10 +1166,10 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 299
+            example: 577
       example:
         name: "Lorem Ipsum"
-        type: 851
+        type: 102
         htmlContent: "Lorem Ipsum"
         enabled: true
         weight: 1
@@ -1086,7 +1178,7 @@ components:
         startsAt: "Lorem Ipsum"
         endsAt: "Lorem Ipsum"
         categoryIds:
-          - 299
+          - 577
       description: "UpdateAdvertisementValidator (Validator)"
     IdentifyVisitorValidator:
       type: "object"
@@ -1121,14 +1213,14 @@ components:
           maxLength: 512
         durationMs:
           type: "number"
-          example: 114
+          example: 326
           maximum: 86400000
       example:
         visitorId: "Lorem Ipsum"
         path: "Lorem Ipsum"
         referrer: "Lorem Ipsum"
         title: "Lorem Ipsum"
-        durationMs: 114
+        durationMs: 326
       description: "TrackPageViewValidator (Validator)"
     CreateApiTokenValidator:
       type: "object"
@@ -1141,21 +1233,21 @@ components:
           maxLength: 100
         expiresInDays:
           type: "number"
-          example: 881
+          example: 149
           maximum: 3650
       example:
         name: "Lorem Ipsum"
-        expiresInDays: 881
+        expiresInDays: 149
       description: "CreateApiTokenValidator (Validator)"
     CategoryIdValidator:
       type: "object"
       properties:
         id:
           type: "number"
-          example: 750
+          example: 864
           required: true
       example:
-        id: 750
+        id: 864
       description: "CategoryIdValidator (Validator)"
     CreateCategoryValidator:
       type: "object"
@@ -1172,14 +1264,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 87
+          example: 331
           required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
           required: true
       example:
-        id: 87
+        id: 331
         name: "Lorem Ipsum"
       description: "UpdateCategoryValidator (Validator)"
     GlobalStatValidator:
@@ -1187,13 +1279,13 @@ components:
       properties:
         fromDate:
           type: "number"
-          example: 55
+          example: 794
         toDate:
           type: "number"
-          example: 377
+          example: 593
         interval:
           type: "number"
-          example: 220
+          example: 254
           choices:
             - "30 minutes"
             - "1 hour"
@@ -1203,23 +1295,23 @@ components:
             - "1 week"
         categoryId:
           type: "number"
-          example: 151
+          example: 994
         languageId:
           type: "number"
-          example: 658
+          example: 151
       example:
-        fromDate: 55
-        toDate: 377
-        interval: 220
-        categoryId: 151
-        languageId: 658
+        fromDate: 794
+        toDate: 593
+        interval: 254
+        categoryId: 994
+        languageId: 151
       description: "GlobalStatValidator (Validator)"
     CreatePostValidator:
       type: "object"
       properties:
         defaultLocale:
           type: "number"
-          example: 10
+          example: 718
           choices:
             - "fr"
             - "en"
@@ -1236,7 +1328,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 512
+                example: 71
                 choices:
                   - "fr"
                   - "en"
@@ -1260,7 +1352,7 @@ components:
                 required: true
               excerpt:
                 type: "number"
-                example: 21
+                example: 31
                 maximum: 500
           required: true
           properties:
@@ -1278,10 +1370,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 10
+        defaultLocale: 718
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 512
+          - locale: 71
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1296,11 +1388,11 @@ components:
           required: true
         serverId:
           type: "number"
-          example: 858
+          example: 94
           required: true
       example:
         placeholderName: "Lorem Ipsum"
-        serverId: 858
+        serverId: 94
       description: "PreviewPlaceholderValidator (Validator)"
     ResolvePlaceholdersValidator:
       type: "object"
@@ -1343,7 +1435,7 @@ components:
       properties:
         defaultLocale:
           type: "number"
-          example: 450
+          example: 117
           choices:
             - "fr"
             - "en"
@@ -1359,7 +1451,7 @@ components:
             properties:
               locale:
                 type: "number"
-                example: 803
+                example: 720
                 choices:
                   - "fr"
                   - "en"
@@ -1381,7 +1473,7 @@ components:
                 minimum: 10
               excerpt:
                 type: "number"
-                example: 943
+                example: 161
                 maximum: 500
           properties:
             items:
@@ -1398,10 +1490,10 @@ components:
                 type: "string"
                 example: "Lorem Ipsum"
       example:
-        defaultLocale: 450
+        defaultLocale: 117
         coverImage: "Lorem Ipsum"
         translations:
-          - locale: 803
+          - locale: 720
             title: "Lorem Ipsum"
             slug: "Lorem Ipsum"
             content: "Lorem Ipsum"
@@ -1426,18 +1518,15 @@ components:
           required: true
         type:
           type: "number"
-          example: 702
+          example: 943
           choices:
             - "java"
             - "bedrock"
-        imageUrl:
-          type: "string"
-          example: "Lorem Ipsum"
         categories:
           type: "array"
           items:
             type: "number"
-            example: 380
+            example: 150
           required: true
           properties:
             items:
@@ -1456,21 +1545,20 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 726
+            example: 197
           required: true
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 702
-        imageUrl: "Lorem Ipsum"
+        type: 943
         categories:
           - "Lorem Ipsum"
         version: "Lorem Ipsum"
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 726
+          - 197
       description: "CreateServerValidator (Validator)"
     UpdateServerValidator:
       type: "object"
@@ -1488,18 +1576,15 @@ components:
           minimum: 1
         type:
           type: "number"
-          example: 390
+          example: 601
           choices:
             - "java"
             - "bedrock"
-        imageUrl:
-          type: "string"
-          example: "Lorem Ipsum"
         categories:
           type: "array"
           items:
             type: "number"
-            example: 309
+            example: 299
           properties:
             items:
               type: "string"
@@ -1517,27 +1602,36 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 311
+            example: 264
       example:
         name: "Lorem Ipsum"
         address: "Lorem Ipsum"
         port: 1
-        type: 390
-        imageUrl: "Lorem Ipsum"
+        type: 601
         categories:
           - "Lorem Ipsum"
         version: "Lorem Ipsum"
         website: "Lorem Ipsum"
         motd: "Lorem Ipsum"
         languages:
-          - 311
+          - 264
       description: "UpdateServerValidator (Validator)"
+    UpdateServerVisibilityValidator:
+      type: "object"
+      properties:
+        hidden:
+          type: "boolean"
+          example: true
+          required: true
+      example:
+        hidden: true
+      description: "UpdateServerVisibilityValidator (Validator)"
     ReviewBoostValidator:
       type: "object"
       properties:
         verdict:
           type: "number"
-          example: 953
+          example: 425
           choices:
             - "boosting"
             - "clean"
@@ -1548,7 +1642,7 @@ components:
           example: "Lorem Ipsum"
           maxLength: 2000
       example:
-        verdict: 953
+        verdict: 425
         note: "Lorem Ipsum"
       description: "ReviewBoostValidator (Validator)"
     attachServerCategoryValidator:
@@ -1556,16 +1650,34 @@ components:
       properties:
         serverId:
           type: "number"
-          example: 291
+          example: 449
           required: true
         categoryId:
           type: "number"
-          example: 406
+          example: 928
           required: true
       example:
-        serverId: 291
-        categoryId: 406
+        serverId: 449
+        categoryId: 928
       description: "attachServerCategoryValidator (Validator)"
+    ReviewServerModerationValidator:
+      type: "object"
+      properties:
+        verdict:
+          type: "number"
+          example: 851
+          choices:
+            - "approved"
+            - "blocked"
+          required: true
+        note:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 2000
+      example:
+        verdict: 851
+        note: "Lorem Ipsum"
+      description: "ReviewServerModerationValidator (Validator)"
     CreateManualClaimValidator:
       type: "object"
       properties:
@@ -1593,6 +1705,27 @@ components:
       example:
         note: "Lorem Ipsum"
       description: "ReviewClaimValidator (Validator)"
+    CreateServerReportValidator:
+      type: "object"
+      properties:
+        reason:
+          type: "number"
+          example: 886
+          choices:
+            - "scam"
+            - "inappropriate_content"
+            - "offline"
+            - "fake_playercount"
+            - "other"
+          required: true
+        details:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 2000
+      example:
+        reason: 886
+        details: "Lorem Ipsum"
+      description: "CreateServerReportValidator (Validator)"
     CreateServerVoteValidator:
       type: "object"
       properties:
@@ -1632,7 +1765,7 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 32
+          example: 343
           required: true
         days:
           type: "number"
@@ -1646,7 +1779,7 @@ components:
           required: true
           maxLength: 64
       example:
-        server_id: 32
+        server_id: 343
         days: 1
         timezone: "Lorem Ipsum"
       description: "DailyRhythmValidator (Validator)"
@@ -1655,17 +1788,17 @@ components:
       properties:
         server_id:
           type: "number"
-          example: 70
+          example: 531
           required: true
         fromDate:
           type: "number"
-          example: 519
+          example: 152
         toDate:
           type: "number"
-          example: 384
+          example: 880
         interval:
           type: "number"
-          example: 780
+          example: 701
           choices:
             - "30 minutes"
             - "1 hour"
@@ -1675,37 +1808,37 @@ components:
             - "1 week"
         format:
           type: "number"
-          example: 785
+          example: 479
           choices:
             - "csv"
             - "json"
           required: true
       example:
-        server_id: 70
-        fromDate: 519
-        toDate: 384
-        interval: 780
-        format: 785
+        server_id: 531
+        fromDate: 152
+        toDate: 880
+        interval: 701
+        format: 479
       description: "StatExportValidator (Validator)"
     StatValidator:
       type: "object"
       properties:
         server_id:
           type: "number"
-          example: 15
+          example: 672
           required: true
         exactTime:
           type: "number"
-          example: 6
+          example: 361
         fromDate:
           type: "number"
-          example: 921
+          example: 291
         toDate:
           type: "number"
-          example: 615
+          example: 909
         interval:
           type: "number"
-          example: 278
+          example: 262
           choices:
             - "30 minutes"
             - "1 hour"
@@ -1714,11 +1847,11 @@ components:
             - "1 day"
             - "1 week"
       example:
-        server_id: 15
-        exactTime: 6
-        fromDate: 921
-        toDate: 615
-        interval: 278
+        server_id: 672
+        exactTime: 361
+        fromDate: 291
+        toDate: 909
+        interval: 262
       description: "StatValidator (Validator)"
     ChangePasswordValidator:
       type: "object"
@@ -1883,7 +2016,7 @@ paths:
   /metrics:
     get:
       summary: " (handle)"
-      description: "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\code\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**"
+      description: "\n\n _C:\\Users\\Gabriel\\Desktop\\Minecraft-Stats\\wt-img\\backend\\config/../app/PrometheusMetricController.ts_ - **handle**"
       parameters: []
       tags:
         - ""
@@ -1924,43 +2057,47 @@ paths:
                   type: "object"
               example:
                 - server:
-                    id: 874
+                    id: 577
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 35
+                    port: 81
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
                     motd: "Lorem Ipsum"
                     image_url: "Lorem Ipsum"
+                    has_custom_image: true
                     favicon_hash: "Lorem Ipsum"
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
                     host_domain: "Lorem Ipsum"
-                    user_id: 159
+                    user_id: 748
                     owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                     owner_verified_method: {}
                     boost_status: {}
                     boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                    vote_count: 182
+                    vote_count: 940
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 296
-                    last_max_count: 771
+                    last_player_count: 385
+                    last_max_count: 736
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 547
+                    peak_player_count: 221
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    hidden_at: "2021-03-23T16:13:08.489+01:00"
+                    moderation_status: {}
+                    moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
                     updated_at: "2021-03-23T16:13:08.489+01:00"
                   categories:
                     - "<Category>"
                   growthStat:
-                    server_id: 660
-                    weekly_growth: 772
-                    monthly_growth: 282
-                    last_week_average: 132
-                    previous_week_average: 997
-                    last_month_average: 615
+                    server_id: 431
+                    weekly_growth: 945
+                    monthly_growth: 105
+                    last_week_average: 985
+                    previous_week_average: 414
+                    last_month_average: 117
                     last_updated: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
         401:
@@ -2242,6 +2379,261 @@ paths:
                     rule: "uuid"
           description: "Returns **422** (Unprocessable Entity) as **application/json**"
       security: []
+  /api/v1/servers/{id}/visibility:
+    patch:
+      summary: " (updateVisibility)"
+      description: "\n\n _app/controllers/servers_controller.ts_ - **updateVisibility**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/servers/{id}/image:
+    post:
+      summary: "Upload a custom image for a server (update)"
+      description: "Replaces the server image with an uploaded one (multipart field `image`, max 5 MB, `jpg`, `jpeg`, `png`, `webp` or `gif`). The image is cropped to a 256x256 square and stored as WebP and PNG; the periodic ping then stops replacing it with the server favicon. Requires authentication as the verified owner of the server, or as an admin.\n\n _app/controllers/server_images_controller.ts_ - **update**"
+      operationId: "updateServerImage"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: "134"
+            type: "number"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  server:
+                    type: "object"
+                    properties:
+                      id: 134
+                      name: "Hypixel"
+                      imageUrl: "/images/servers/custom/134-3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44"
+                      hasCustomImage: true
+              example:
+                server:
+                  id: 134
+                  name: "Hypixel"
+                  imageUrl: "/images/servers/custom/134-3f1c2c5e-8b7d-4f1a-9b6e-1d8a0c2e3f44"
+                  hasCustomImage: true
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "No image provided"
+              example:
+                error: "No image provided"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Verify ownership of this server before you can change its image."
+              example:
+                message: "Verify ownership of this server before you can change its image."
+          description: "Returns **403** (Forbidden) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                image:
+                  type: "string"
+                  format: "binary"
+              required: []
+    delete:
+      summary: "Remove the custom image of a server (destroy)"
+      description: "Deletes the custom image and goes back to the server favicon: the stored favicon is shown again right away when there is one, and the next ping refreshes it. Requires authentication as the verified owner of the server, or as an admin.\n\n _app/controllers/server_images_controller.ts_ - **destroy**"
+      operationId: "resetServerImage"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: "134"
+            type: "number"
+          required: true
+      tags:
+        - "SERVERS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  server:
+                    type: "object"
+                    properties:
+                      id: 134
+                      name: "Hypixel"
+                      imageUrl: "/images/servers/134"
+                      hasCustomImage: false
+              example:
+                server:
+                  id: 134
+                  name: "Hypixel"
+                  imageUrl: "/images/servers/134"
+                  hasCustomImage: false
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Verify ownership of this server before you can change its image."
+              example:
+                message: "Verify ownership of this server before you can change its image."
+          description: "Returns **403** (Forbidden) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/servers/{id}/report:
+    post:
+      summary: "Report a server (authenticated) (store)"
+      description: "Flags a server for admin/support review — distinct from the moderation queue a new submission goes through: this is for a server already live (or pending) that a member finds problematic (scam, offline, inappropriate content…). Does not change the server's moderation status by itself. Rejects a second open report from the same member on the same server with 409. Requires authentication.\n\n _app/controllers/server_reports_controller.ts_ - **store**"
+      operationId: "reportServer"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: "134"
+            type: "number"
+          required: true
+      tags:
+        - "SERVER REPORTS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Report submitted."
+              example:
+                message: "Report submitted."
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        409:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "You already have an open report on this server."
+              example:
+                message: "You already have an open report on this server."
+          description: "Returns **409** (Conflict) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServerReportValidator"
+            example:
+              reason: 886
+              details: "Lorem Ipsum"
   /api/v1/servers/{id}/claim:
     get:
       summary: " (status)"
@@ -2365,32 +2757,36 @@ paths:
               example:
                 verified: true
                 server:
-                  id: 874
+                  id: 577
                   name: "John Doe"
                   address: "1028 Farland Street"
-                  port: 35
+                  port: 81
                   type: {}
                   version: "Lorem Ipsum"
                   website: "Lorem Ipsum"
                   motd: "Lorem Ipsum"
                   image_url: "Lorem Ipsum"
+                  has_custom_image: true
                   favicon_hash: "Lorem Ipsum"
                   resolved_endpoint: "Lorem Ipsum"
                   motd_hash: "Lorem Ipsum"
                   host_domain: "Lorem Ipsum"
-                  user_id: 159
+                  user_id: 748
                   owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                   owner_verified_method: {}
                   boost_status: {}
                   boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                  vote_count: 182
+                  vote_count: 940
                   last_online_at: "2021-03-23T16:13:08.489+01:00"
-                  last_player_count: 296
-                  last_max_count: 771
+                  last_player_count: 385
+                  last_max_count: 736
                   last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                  peak_player_count: 547
+                  peak_player_count: 221
                   peak_player_at: "2021-03-23T16:13:08.489+01:00"
                   next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  hidden_at: "2021-03-23T16:13:08.489+01:00"
+                  moderation_status: {}
+                  moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                   created_at: "2021-03-23T16:13:08.489+01:00"
                   updated_at: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
@@ -2538,32 +2934,36 @@ paths:
               example:
                 verified: true
                 server:
-                  id: 874
+                  id: 577
                   name: "John Doe"
                   address: "1028 Farland Street"
-                  port: 35
+                  port: 81
                   type: {}
                   version: "Lorem Ipsum"
                   website: "Lorem Ipsum"
                   motd: "Lorem Ipsum"
                   image_url: "Lorem Ipsum"
+                  has_custom_image: true
                   favicon_hash: "Lorem Ipsum"
                   resolved_endpoint: "Lorem Ipsum"
                   motd_hash: "Lorem Ipsum"
                   host_domain: "Lorem Ipsum"
-                  user_id: 159
+                  user_id: 748
                   owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                   owner_verified_method: {}
                   boost_status: {}
                   boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                  vote_count: 182
+                  vote_count: 940
                   last_online_at: "2021-03-23T16:13:08.489+01:00"
-                  last_player_count: 296
-                  last_max_count: 771
+                  last_player_count: 385
+                  last_max_count: 736
                   last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                  peak_player_count: 547
+                  peak_player_count: 221
                   peak_player_at: "2021-03-23T16:13:08.489+01:00"
                   next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  hidden_at: "2021-03-23T16:13:08.489+01:00"
+                  moderation_status: {}
+                  moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                   created_at: "2021-03-23T16:13:08.489+01:00"
                   updated_at: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
@@ -2953,6 +3353,18 @@ paths:
                 tier: "guest"
                 unlockedBy: "login"
           description: "Returns **400** (Bad Request) as **application/json**"
+        410:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server has chosen not to be listed on Minecraft Stats."
+                  hidden: true
+              example:
+                message: "This server has chosen not to be listed on Minecraft Stats."
+                hidden: true
+          description: "Returns **410** (Gone) as **application/json**"
         500:
           content:
             application/json:
@@ -3042,6 +3454,18 @@ paths:
                 tier: "guest"
                 unlockedBy: "login"
           description: "Returns **400** (Bad Request) as **application/json**"
+        410:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server has chosen not to be listed on Minecraft Stats."
+                  hidden: true
+              example:
+                message: "This server has chosen not to be listed on Minecraft Stats."
+                hidden: true
+          description: "Returns **410** (Gone) as **application/json**"
       security: []
   /api/v1/servers/{server_id}/stats/daily-rhythm:
     get:
@@ -3293,6 +3717,18 @@ paths:
                 tier: "guest"
                 unlockedBy: "login"
           description: "Returns **400** (Bad Request) as **application/json**"
+        410:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "This server has chosen not to be listed on Minecraft Stats."
+                  hidden: true
+              example:
+                message: "This server has chosen not to be listed on Minecraft Stats."
+                hidden: true
+          description: "Returns **410** (Gone) as **application/json**"
         500:
           content:
             application/json:
@@ -4379,7 +4815,7 @@ paths:
               $ref: "#/components/schemas/CreateApiTokenValidator"
             example:
               name: "Lorem Ipsum"
-              expiresInDays: 881
+              expiresInDays: 149
   /api/v1/account/api-tokens/{id}:
     delete:
       summary: "Revoke an API token (destroy)"
@@ -5315,6 +5751,21 @@ paths:
       security:
         - BearerAuth:
             - "access"
+  /api/v1/admin/analytics/users:
+    get:
+      summary: " (users)"
+      description: "\n\n _app/controllers/analytics_controller.ts_ - **users**"
+      parameters: []
+      tags:
+        - "ADMIN"
+      responses:
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/admin/ownership-claims:
     get:
       summary: "List pending manual ownership claims (admin) (adminIndex)"
@@ -5337,36 +5788,40 @@ paths:
                   status: "pending"
                   evidence: "Discord: owner#1234"
                   server:
-                    id: 874
+                    id: 577
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 35
+                    port: 81
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
                     motd: "Lorem Ipsum"
                     image_url: "Lorem Ipsum"
+                    has_custom_image: true
                     favicon_hash: "Lorem Ipsum"
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
                     host_domain: "Lorem Ipsum"
-                    user_id: 159
+                    user_id: 748
                     owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                     owner_verified_method: {}
                     boost_status: {}
                     boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                    vote_count: 182
+                    vote_count: 940
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 296
-                    last_max_count: 771
+                    last_player_count: 385
+                    last_max_count: 736
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 547
+                    peak_player_count: 221
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    hidden_at: "2021-03-23T16:13:08.489+01:00"
+                    moderation_status: {}
+                    moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
                     updated_at: "2021-03-23T16:13:08.489+01:00"
                   user:
-                    id: 725
+                    id: 49
                     username: "Lorem Ipsum"
                     verified: true
                     provider: {}
@@ -5374,7 +5829,7 @@ paths:
                     avatar_url: "Lorem Ipsum"
                     verification_token_expires: "2021-03-23T16:13:08.489+01:00"
                     blacklisted_at: "2021-03-23T16:13:08.489+01:00"
-                    blacklisted_by: 336
+                    blacklisted_by: 968
                     blacklist_reason: "Lorem Ipsum"
                     created_at: "2021-03-23T16:13:08.489+01:00"
                     updated_at: "2021-03-23T16:13:08.489+01:00"
@@ -5422,32 +5877,36 @@ paths:
               example:
                 message: "Claim approved."
                 server:
-                  id: 874
+                  id: 577
                   name: "John Doe"
                   address: "1028 Farland Street"
-                  port: 35
+                  port: 81
                   type: {}
                   version: "Lorem Ipsum"
                   website: "Lorem Ipsum"
                   motd: "Lorem Ipsum"
                   image_url: "Lorem Ipsum"
+                  has_custom_image: true
                   favicon_hash: "Lorem Ipsum"
                   resolved_endpoint: "Lorem Ipsum"
                   motd_hash: "Lorem Ipsum"
                   host_domain: "Lorem Ipsum"
-                  user_id: 159
+                  user_id: 748
                   owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                   owner_verified_method: {}
                   boost_status: {}
                   boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                  vote_count: 182
+                  vote_count: 940
                   last_online_at: "2021-03-23T16:13:08.489+01:00"
-                  last_player_count: 296
-                  last_max_count: 771
+                  last_player_count: 385
+                  last_max_count: 736
                   last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                  peak_player_count: 547
+                  peak_player_count: 221
                   peak_player_at: "2021-03-23T16:13:08.489+01:00"
                   next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  hidden_at: "2021-03-23T16:13:08.489+01:00"
+                  moderation_status: {}
+                  moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                   created_at: "2021-03-23T16:13:08.489+01:00"
                   updated_at: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
@@ -5564,32 +6023,36 @@ paths:
                       points: 70
                       detail: "100.0 % des relevés sont divisibles par 4 — multiplicateur ×4"
                   server:
-                    id: 874
+                    id: 577
                     name: "John Doe"
                     address: "1028 Farland Street"
-                    port: 35
+                    port: 81
                     type: {}
                     version: "Lorem Ipsum"
                     website: "Lorem Ipsum"
                     motd: "Lorem Ipsum"
                     image_url: "Lorem Ipsum"
+                    has_custom_image: true
                     favicon_hash: "Lorem Ipsum"
                     resolved_endpoint: "Lorem Ipsum"
                     motd_hash: "Lorem Ipsum"
                     host_domain: "Lorem Ipsum"
-                    user_id: 159
+                    user_id: 748
                     owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                     owner_verified_method: {}
                     boost_status: {}
                     boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                    vote_count: 182
+                    vote_count: 940
                     last_online_at: "2021-03-23T16:13:08.489+01:00"
-                    last_player_count: 296
-                    last_max_count: 771
+                    last_player_count: 385
+                    last_max_count: 736
                     last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                    peak_player_count: 547
+                    peak_player_count: 221
                     peak_player_at: "2021-03-23T16:13:08.489+01:00"
                     next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    hidden_at: "2021-03-23T16:13:08.489+01:00"
+                    moderation_status: {}
+                    moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                     created_at: "2021-03-23T16:13:08.489+01:00"
                     updated_at: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
@@ -5636,32 +6099,36 @@ paths:
               example:
                 message: "Verdict recorded."
                 server:
-                  id: 874
+                  id: 577
                   name: "John Doe"
                   address: "1028 Farland Street"
-                  port: 35
+                  port: 81
                   type: {}
                   version: "Lorem Ipsum"
                   website: "Lorem Ipsum"
                   motd: "Lorem Ipsum"
                   image_url: "Lorem Ipsum"
+                  has_custom_image: true
                   favicon_hash: "Lorem Ipsum"
                   resolved_endpoint: "Lorem Ipsum"
                   motd_hash: "Lorem Ipsum"
                   host_domain: "Lorem Ipsum"
-                  user_id: 159
+                  user_id: 748
                   owner_verified_at: "2021-03-23T16:13:08.489+01:00"
                   owner_verified_method: {}
                   boost_status: {}
                   boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
-                  vote_count: 182
+                  vote_count: 940
                   last_online_at: "2021-03-23T16:13:08.489+01:00"
-                  last_player_count: 296
-                  last_max_count: 771
+                  last_player_count: 385
+                  last_max_count: 736
                   last_stats_at: "2021-03-23T16:13:08.489+01:00"
-                  peak_player_count: 547
+                  peak_player_count: 221
                   peak_player_at: "2021-03-23T16:13:08.489+01:00"
                   next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  hidden_at: "2021-03-23T16:13:08.489+01:00"
+                  moderation_status: {}
+                  moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
                   created_at: "2021-03-23T16:13:08.489+01:00"
                   updated_at: "2021-03-23T16:13:08.489+01:00"
           description: "Returns **200** (OK) as **application/json**"
@@ -5688,8 +6155,292 @@ paths:
             schema:
               $ref: "#/components/schemas/ReviewBoostValidator"
             example:
-              verdict: 953
+              verdict: 425
               note: "Lorem Ipsum"
+  /api/v1/admin/servers/pending:
+    get:
+      summary: "List servers awaiting moderation (admin or support) (adminIndex)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/server_moderation_controller.ts_ - **adminIndex**"
+      operationId: "adminListPendingServers"
+      parameters: []
+      tags:
+        - "SERVER MODERATION"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - id: 1
+                  name: "Hypixel"
+                  address: "mc.hypixel.net"
+                  moderationStatus: "pending"
+                  createdAt: "2026-05-28T12:00:00.000Z"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Access denied. Moderator privileges required."
+              example:
+                error: "Access denied. Moderator privileges required."
+          description: "Returns **403** (Forbidden) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/admin/servers/search:
+    get:
+      summary: "Search any server to approve/block it (admin or support) (search)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/server_moderation_controller.ts_ - **search**"
+      operationId: "adminSearchServersForModeration"
+      parameters:
+        - in: "query"
+          name: "search"
+          description: "Substring matched against name and address (case-insensitive)"
+          schema:
+            example: "hypixel"
+            type: "string"
+          required: false
+      tags:
+        - "SERVER MODERATION"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - id: 1
+                  name: "Hypixel"
+                  address: "mc.hypixel.net"
+                  moderationStatus: "approved"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Access denied. Moderator privileges required."
+              example:
+                error: "Access denied. Moderator privileges required."
+          description: "Returns **403** (Forbidden) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/admin/servers/{id}/review:
+    post:
+      summary: "Approve or block a server (admin or support) (review)"
+      description: "Records a moderation verdict. `approved` lists the server on every public surface and resumes pinging immediately — this is also how a previous block is lifted, there is no separate \"unblock\" action. `blocked` removes it from every public surface and stops pinging, independently of the owner's own hide toggle (`hidden_at`): only an admin or support can lift it. Admin or support only.\n\n _app/controllers/server_moderation_controller.ts_ - **review**"
+      operationId: "adminReviewServerModeration"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The server id"
+          schema:
+            example: "134"
+            type: "number"
+          required: true
+      tags:
+        - "SERVER MODERATION"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Verdict recorded."
+                  server:
+                    $ref: "#/components/schemas/Server"
+              example:
+                message: "Verdict recorded."
+                server:
+                  id: 577
+                  name: "John Doe"
+                  address: "1028 Farland Street"
+                  port: 81
+                  type: {}
+                  version: "Lorem Ipsum"
+                  website: "Lorem Ipsum"
+                  motd: "Lorem Ipsum"
+                  image_url: "Lorem Ipsum"
+                  has_custom_image: true
+                  favicon_hash: "Lorem Ipsum"
+                  resolved_endpoint: "Lorem Ipsum"
+                  motd_hash: "Lorem Ipsum"
+                  host_domain: "Lorem Ipsum"
+                  user_id: 748
+                  owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                  owner_verified_method: {}
+                  boost_status: {}
+                  boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
+                  vote_count: 940
+                  last_online_at: "2021-03-23T16:13:08.489+01:00"
+                  last_player_count: 385
+                  last_max_count: 736
+                  last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                  peak_player_count: 221
+                  peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                  next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                  hidden_at: "2021-03-23T16:13:08.489+01:00"
+                  moderation_status: {}
+                  moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Server not found"
+              example:
+                message: "Server not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewServerModerationValidator"
+            example:
+              verdict: 851
+              note: "Lorem Ipsum"
+  /api/v1/admin/servers/reports:
+    get:
+      summary: "List open server reports (admin or support) (adminIndex)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/server_reports_controller.ts_ - **adminIndex**"
+      operationId: "adminListServerReports"
+      parameters: []
+      tags:
+        - "SERVER REPORTS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - id: 1
+                  reason: "scam"
+                  details: "Took my payment, never gave the rank."
+                  createdAt: "2026-05-28T12:00:00.000Z"
+                  server:
+                    id: 577
+                    name: "John Doe"
+                    address: "1028 Farland Street"
+                    port: 81
+                    type: {}
+                    version: "Lorem Ipsum"
+                    website: "Lorem Ipsum"
+                    motd: "Lorem Ipsum"
+                    image_url: "Lorem Ipsum"
+                    has_custom_image: true
+                    favicon_hash: "Lorem Ipsum"
+                    resolved_endpoint: "Lorem Ipsum"
+                    motd_hash: "Lorem Ipsum"
+                    host_domain: "Lorem Ipsum"
+                    user_id: 748
+                    owner_verified_at: "2021-03-23T16:13:08.489+01:00"
+                    owner_verified_method: {}
+                    boost_status: {}
+                    boost_reviewed_at: "2021-03-23T16:13:08.489+01:00"
+                    vote_count: 940
+                    last_online_at: "2021-03-23T16:13:08.489+01:00"
+                    last_player_count: 385
+                    last_max_count: 736
+                    last_stats_at: "2021-03-23T16:13:08.489+01:00"
+                    peak_player_count: 221
+                    peak_player_at: "2021-03-23T16:13:08.489+01:00"
+                    next_ping_at: "2021-03-23T16:13:08.489+01:00"
+                    hidden_at: "2021-03-23T16:13:08.489+01:00"
+                    moderation_status: {}
+                    moderation_reviewed_at: "2021-03-23T16:13:08.489+01:00"
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
+                  reporter:
+                    id: 2
+                    username: "player"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Access denied. Moderator privileges required."
+              example:
+                error: "Access denied. Moderator privileges required."
+          description: "Returns **403** (Forbidden) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/admin/servers/reports/{id}/resolve:
+    post:
+      summary: "Dismiss a report (admin or support) (resolve)"
+      description: "Marks a report as resolved without touching the reported server's moderation status — use the moderation review endpoint separately if the server itself needs approving/blocking. Admin or support only.\n\n _app/controllers/server_reports_controller.ts_ - **resolve**"
+      operationId: "adminResolveServerReport"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The report id"
+          schema:
+            example: ""
+            type: "number"
+          required: true
+      tags:
+        - "SERVER REPORTS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Report resolved."
+              example:
+                message: "Report resolved."
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Report not found"
+              example:
+                message: "Report not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
   /api/v1/admin/users:
     get:
       summary: " (adminIndex)"
@@ -5968,6 +6719,12 @@ tags:
     description: "Everything related to SERVERS"
   - name: "SERVERS"
     description: "Everything related to SERVERS"
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
+  - name: "SERVERS"
+    description: "Everything related to SERVERS"
+  - name: "SERVER REPORTS"
+    description: "Everything related to SERVER REPORTS"
   - name: "SERVER OWNERSHIP"
     description: "Everything related to SERVER OWNERSHIP"
   - name: "SERVER OWNERSHIP"
@@ -6060,6 +6817,16 @@ tags:
     description: "Everything related to SERVER BOOST"
   - name: "SERVER BOOST"
     description: "Everything related to SERVER BOOST"
+  - name: "SERVER MODERATION"
+    description: "Everything related to SERVER MODERATION"
+  - name: "SERVER MODERATION"
+    description: "Everything related to SERVER MODERATION"
+  - name: "SERVER MODERATION"
+    description: "Everything related to SERVER MODERATION"
+  - name: "SERVER REPORTS"
+    description: "Everything related to SERVER REPORTS"
+  - name: "SERVER REPORTS"
+    description: "Everything related to SERVER REPORTS"
   - name: "UPLOADS"
     description: "Everything related to UPLOADS"
   - name: "UPLOADS"
