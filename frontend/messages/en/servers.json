@@ -100,7 +100,22 @@
     "heroBadge": "Edit",
     "heroSubtitle": "Update your server's details and tracking settings.",
     "detailsTitle": "Server details",
-    "detailsSubtitle": "Update your server's details, categories, and languages."
+    "detailsSubtitle": "Update your server's details, categories, and languages.",
+    "image": {
+      "change": "Change image",
+      "reset": "Use the in-game icon",
+      "requiresVerification": "Verify that you own this server to change its image.",
+      "verify": "Verify ownership",
+      "cropTitle": "Crop the server image",
+      "cropDescription": "The image is shown as a square.",
+      "tooLargeTitle": "Image too large",
+      "tooLargeDescription": "Maximum size is 5 MB.",
+      "updated": "Server image updated",
+      "uploadFailed": "Upload failed",
+      "resetDone": "The in-game icon is used again",
+      "resetFailed": "Could not restore the in-game icon",
+      "hint": "Click the image to replace it. It is cropped to a square."
+    }
   },
   "admin": {
     "label": "Admin",

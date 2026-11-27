@@ -1,6 +1,7 @@
 "use client";
 
 import { AvatarTile } from "@/components/ui/avatar-tile";
+import { ImageCropDialog } from "@/components/ui/image-crop-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/auth";
 import { uploadUserAvatar } from "@/http/auth";
@@ -19,8 +20,8 @@ interface EditableAvatarProps {
 
 /**
  * Profile avatar that doubles as its own upload control: clicking the tile opens
- * a file picker, uploads the image, and refreshes the auth user so every avatar
- * (top bar included) updates immediately.
+ * a file picker, then a square crop dialog; the cropped image is uploaded and the
+ * auth user refreshed so every avatar (top bar included) updates immediately.
  */
 export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
   const t = useTranslations("Account");
@@ -28,8 +29,9 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
-  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
@@ -39,10 +41,15 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
       return;
     }
 
+    setPendingFile(file);
+  };
+
+  const upload = async (cropped: File) => {
     setIsUploading(true);
     try {
-      const updatedUser = await uploadUserAvatar(file, getToken() ?? "");
+      const updatedUser = await uploadUserAvatar(cropped, getToken() ?? "");
       setUser(updatedUser);
+      setPendingFile(null);
       toast({ title: t("avatar.updated"), variant: "success" });
     } catch (error) {
       toast({
@@ -84,6 +91,12 @@ export const EditableAvatar = ({ name, className }: EditableAvatarProps) => {
         accept="image/png,image/jpeg,image/webp,image/gif"
         className="hidden"
         onChange={handleFile}
+      />
+      <ImageCropDialog
+        file={pendingFile}
+        title={t("avatar.cropTitle")}
+        onCancel={() => setPendingFile(null)}
+        onConfirm={upload}
       />
     </div>
   );

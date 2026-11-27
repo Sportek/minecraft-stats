@@ -14,5 +14,11 @@
     "title": "Page not found",
     "description": "The page you are looking for doesn't exist or has been moved.",
     "backHome": "Back to home"
+  },
+  "imageCrop": {
+    "zoom": "Zoom",
+    "hint": "Drag the image to position it, and use the slider to zoom.",
+    "cancel": "Cancel",
+    "save": "Save"
   }
 }
