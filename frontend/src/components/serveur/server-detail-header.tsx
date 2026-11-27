@@ -3,10 +3,11 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Category, Server, ServerGrowthStat, ServerStat } from "@/types/server";
 import { getLastStat } from "@/utils/stats";
 import { formatGrowth } from "@/lib/format";
-import { BadgeCheck, TriangleAlert } from "lucide-react";
+import { Ban, BadgeCheck, Clock, TriangleAlert } from "lucide-react";
 import ServerImage from "./card/server-image";
 import ServerInfo from "./card/server-info";
 import ServerCategories from "./card/server-category";
+import ReportServerButton from "./report-server-button";
 import VoteButton from "./vote-button";
 
 interface ServerDetailHeaderProps {
@@ -51,6 +52,7 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
                 address={server.address}
                 website={server.website}
                 languages={server.languages}
+                nameAddon={<ReportServerButton serverId={server.id} serverName={server.name} />}
               />
             </div>
           </div>
@@ -96,8 +98,22 @@ const ServerDetailHeader = ({ server, stats, categories, growthStat }: ServerDet
             BoostDetectionService côté API). L'avertissement passe en premier — il
             qualifie le chiffre affiché juste au-dessus. Le CTA de revendication vit
             dans le bandeau sous l'en-tête, cf. ClaimServerBanner. */}
-        {(server.boostStatus === "boosting" || server.ownerVerifiedAt !== null) && (
+        {(server.boostStatus === "boosting" ||
+          server.ownerVerifiedAt !== null ||
+          server.moderationStatus !== "approved") && (
           <div className="flex flex-wrap justify-end gap-2">
+            {server.moderationStatus === "pending" && (
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                {t("moderation.pendingBadge")}
+              </span>
+            )}
+            {server.moderationStatus === "blocked" && (
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-xs font-medium text-destructive">
+                <Ban className="h-3.5 w-3.5" />
+                {t("moderation.blockedBadge")}
+              </span>
+            )}
             {server.boostStatus === "boosting" && (
               <span className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-xs font-medium text-destructive">
                 <TriangleAlert className="h-3.5 w-3.5" />

@@ -31,6 +31,8 @@ const getRoleBadgeVariant = (role: string): BadgeProps["variant"] => {
       return "destructive";
     case "writer":
       return "accent";
+    case "support":
+      return "outline";
     default:
       return "secondary";
   }

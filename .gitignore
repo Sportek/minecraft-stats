@@ -1,5 +1,10 @@
 # Claude Code / BMAD
-.claude/
+# La config partagée (settings.json) et les skills du projet sont versionnés ;
+# le reste de .claude/ (settings.local.json, skills BMAD) reste propre à chacun.
+.claude/*
+!.claude/settings.json
+!.claude/skills/
+.claude/skills/bmad-*/
 _bmad/
 _bmad-output/
 
@@ -17,3 +22,6 @@ docs/new-design/*.dc*
 docs/new-design/_*
 docs/new-design/*support*.js
 docs/new-design/*(1)*
+
+# Notes personnelles du mainteneur (gardées hors du dépôt public)
+memory/

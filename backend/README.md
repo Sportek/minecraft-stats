@@ -1,47 +1,35 @@
-Pour du développement en local, vous pouvez utiliser le fichier `docker-compose.override.yml`.
+# Backend — Minecraft Stats
 
-```yml
-services:
-  pgsql:
-    ports:
-      - '5432:5432'  # Expose le port PostgreSQL pour un accès local
+AdonisJS 7 (TypeScript, Lucid) sur PostgreSQL, Redis pour le cache et le rate
+limiting. Expose l'API REST `/api/v1` et fait tourner le scheduler qui pingue les
+serveurs Minecraft.
 
-  adonis_app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      NODE_ENV: development
-    env_file:
-      - .env.development
-    volumes:
-      - ./backend:/home/node/app  # Monte le code source local
-      - /home/node/app/node_modules  # Empêche les conflits entre les dépendances locales et du conteneur
-    command: npm run dev  # Commande pour exécuter le serveur en mode développement
-    ports:
-      - '9000:9000'
-    depends_on:
-      - pgsql
-
-  adonis_scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      NODE_ENV: development
-    env_file:
-      - .env.development
-    command: 'node ace scheduler:run'
-    depends_on:
-      - pgsql
-      - adonis_app
-    volumes:
-      - ./backend:/home/node/app  # Monte le code source local
-      - /home/node/app/node_modules
-```
-
-Vous pouvez utiliser la commande suivante :
+## Développement local
 
 ```bash
-docker compose --env-file ./.env.development up -d
+docker compose -f ../compose.dev.yaml up -d   # PostgreSQL + Redis
+yarn install
+cp .env.example .env
+node ace generate:key
+node ace migration:run
+node ace db:seed                              # serveurs de démo
+yarn dev                                      # http://localhost:9000
 ```
+
+Détails (ports déjà pris, variables d'environnement, scheduler) dans
+[CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## Commandes utiles
+
+| Commande | Rôle |
+|---|---|
+| `yarn test` | Tests Japa (`tests/unit`, `tests/functional`), demande PostgreSQL et Redis |
+| `node ace test unit` | Tests unitaires seuls, sans base ni Redis |
+| `yarn typecheck` / `yarn lint` | Vérifications statiques |
+| `node ace docs:generate` | Régénère la doc Swagger (`/docs`, `/swagger`) ; doit passer avant de pousser |
+| `node ace make:migration <nom>` | Nouvelle migration (voir le skill `scaffolding-adonis-resources`) |
+| `node ace scheduler:run` | Lance le scheduler (pings, rollups, croissance) |
+| `node ace backfill:hourly-stats` puis `backfill:daily-stats` | Recalcule les agrégats, voir [docs/stats-rollups.md](../docs/stats-rollups.md) |
+
+`compose.yaml` est la stack de **production** (images publiées, réseau Dokploy) : ne
+pas l'utiliser en local.

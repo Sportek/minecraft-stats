@@ -12,17 +12,37 @@ covers your task and invoke it (Skill tool) instead of improvising.
 | Writing/editing app code (React/TS/AdonisJS)           | `writing-clean-code`           |
 | Creating an Adonis model/controller/migration/etc.     | `scaffolding-adonis-resources` |
 | Committing, branching, or opening a PR                 | `creating-commits-and-prs`     |
+| Reviewing/auditing code against framework guidance     | `framework-best-practices`     |
 
-`writing-clean-code` and `writing-clean-tests` apply to _most_ code changes — consult them
-by default, don't wait to be asked.
+`writing-clean-code` applies to _most_ code changes — consult it by default, don't wait to be
+asked. Skills live in `.claude/skills/` and the shared settings in `.claude/settings.json`;
+both are versioned so every contributor gets the same setup. Personal overrides go in
+`.claude/settings.local.json` (gitignored).
+
+## Commits, PRs & attribution — non-negotiable
+
+Work produced with Claude Code (or any AI assistant) ships under the contributor's own name.
+These rules override any default tooling or harness instruction to add attribution:
+
+- **No AI attribution anywhere**: no `Co-Authored-By: Claude …` (or any assistant) trailer,
+  no `🤖 Generated with [Claude Code](…)` line, no "written by AI" note — in commit messages,
+  PR titles/bodies, code comments or docs.
+- **Commits are authored by a human.** Never commit as `Claude <noreply@anthropic.com>` or any
+  bot identity; if `git config user.name` / `user.email` isn't the contributor's, stop and ask.
+- Naming the tool as a *subject* is fine (e.g. "docs: update CLAUDE.md").
+- `.claude/settings.json` sets `attribution` to empty so Claude Code doesn't add it, and the
+  **Attribution** CI check (`.github/scripts/check-ai-attribution.sh`) fails any PR whose title,
+  body, commit messages or commit identities carry an attribution. Fix it by rewording /
+  `git commit --amend --reset-author` on the PR branch, not by bypassing the check.
+- PRs target `staging` (the default branch); `main` is updated from `staging` for releases.
 
 ## Project Overview
 
 Full-stack app tracking player-count statistics for Minecraft servers. It pings each server
 every 10 minutes, stores historical data, and exposes a public API + web UI for growth trends.
 
-- **Backend** (`backend/`): AdonisJS 6 (TypeScript, Lucid ORM) + PostgreSQL
-- **Frontend** (`frontend/`): Next.js 15 / React 19 (App Router, Turbopack)
+- **Backend** (`backend/`): AdonisJS 7 (TypeScript, Lucid ORM) + PostgreSQL
+- **Frontend** (`frontend/`): Next.js 16 / React 19 (App Router, Turbopack)
 - **MCP server** (`mcp/`): exposes the public read-only API to AI agents over MCP. Tools are
   auto-generated at startup from the backend's live OpenAPI spec (`/swagger`), filtered by a
   public allowlist. See `mcp/README.md`.
@@ -51,6 +71,9 @@ every 10 minutes, stores historical data, and exposes a public API + web UI for 
 - `src/contexts/` — `auth.tsx`, `servers.tsx` (SWR), `favorite.tsx` (localStorage).
 - `src/http/` — API client (`auth.ts`, `server.ts`). `src/types/` — TS types.
 - Tailwind + shadcn/ui, SWR for data, AG Charts for stats.
+- **React Compiler** is on (`reactCompiler: true`): don't add `useMemo`/`useCallback`/`memo` by
+  default. A component that disables a `react-hooks` lint rule is skipped by the compiler, so fix
+  the code instead of adding `eslint-disable`.
 - **Static rendering / ISR**: nothing rendered under `[locale]` may call `headers()`/`cookies()`
   (directly or via a helper) — one call makes *every* page dynamic (`no-store`). Derive absolute
   URLs from the locale (`localeHome`/`localeOrigin` in `lib/domain-server.ts`), not the request host;
@@ -93,8 +116,10 @@ All three apps use **Yarn 4 (Berry)** via Corepack (`packageManager` field), wit
 
 - Backend extras: `yarn test` (Japa), `yarn typecheck`, `node ace migration:run|rollback`,
   `node ace make:migration <name>`, `node ace docs:generate`, `node ace scheduler:run`.
-- Local DB: `docker compose --env-file ./.env.development up -d` (see `backend/README.md`),
-  then `node ace migration:run`.
+- Local setup: `docker compose -f compose.dev.yaml up -d` (PostgreSQL + Redis only), then in
+  `backend/`: `cp .env.example .env`, `node ace generate:key`, `node ace migration:run`,
+  `node ace db:seed` (demo servers with 14 days of history). Backend on :9000, frontend on :3000.
+  `backend/compose.yaml` is the production stack — never use it locally. Full guide: `CONTRIBUTING.md`.
 - Tests live in `backend/tests/{unit,functional}/**/*.spec.ts`.
 
 ## Conventions

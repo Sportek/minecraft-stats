@@ -24,6 +24,14 @@ const WRITER_ITEMS: NavItem[] = [
   { href: "/admin/posts", key: "articles", icon: "material-symbols:article-outline" },
 ];
 
+const MODERATION_ITEMS: NavItem[] = [
+  {
+    href: "/admin/servers-pending",
+    key: "serversPending",
+    icon: "material-symbols:fact-check-outline",
+  },
+];
+
 const ADMIN_ITEMS: NavItem[] = [
   { href: "/admin/analytics", key: "analytics", icon: "material-symbols:bar-chart-4-bars" },
   { href: "/admin/users", key: "users", icon: "material-symbols:group-outline" },
@@ -37,6 +45,7 @@ const ADMIN_ITEMS: NavItem[] = [
     key: "boostReports",
     icon: "material-symbols:release-alert-outline",
   },
+  ...MODERATION_ITEMS,
   { href: "/admin/advertisements", key: "advertisements", icon: "material-symbols:ad-group-outline" },
 ];
 
@@ -46,6 +55,7 @@ const isActive = (pathname: string | null, href: string) =>
 const buildItems = (role: string | undefined): NavItem[] => {
   if (role === "admin") return [...BASE_ITEMS, ...WRITER_ITEMS, ...ADMIN_ITEMS];
   if (role === "writer") return [...BASE_ITEMS, ...WRITER_ITEMS];
+  if (role === "support") return [...BASE_ITEMS, ...MODERATION_ITEMS];
   return BASE_ITEMS;
 };
 

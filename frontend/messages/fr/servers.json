@@ -187,5 +187,31 @@
   },
   "boost": {
     "badge": "Connectés non fiables"
+  },
+  "moderation": {
+    "pendingBadge": "En attente d'approbation",
+    "blockedBadge": "Bloqué par la modération"
+  },
+  "report": {
+    "button": "Signaler",
+    "dialogTitle": "Signaler « {name} »",
+    "dialogDescription": "Explique-nous ce qui ne va pas — ça part directement à l'équipe de modération, pas au propriétaire du serveur.",
+    "reasonLabel": "Motif",
+    "reasons": {
+      "scam": "Arnaque",
+      "inappropriate_content": "Contenu inapproprié",
+      "offline": "Toujours hors ligne / injoignable",
+      "fake_playercount": "Nombre de connectés truqué",
+      "other": "Autre"
+    },
+    "detailsLabel": "Détails (optionnel)",
+    "detailsPlaceholder": "Tout ce qui peut nous aider à vérifier — ce qui s'est passé, quand…",
+    "submit": "Envoyer le signalement",
+    "success": {
+      "title": "Signalement envoyé",
+      "body": "Merci — notre équipe va regarder ça.",
+      "close": "Fermer"
+    },
+    "error": "Le signalement n'a pas pu être envoyé. Veuillez réessayer."
   }
 }

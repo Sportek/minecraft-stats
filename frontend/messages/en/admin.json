@@ -204,12 +204,14 @@
       "total": "Total Users",
       "admins": "Admins",
       "writers": "Writers",
+      "support": "Support",
       "members": "Members"
     },
     "tabs": {
       "all": "All",
       "admins": "Admins",
       "writers": "Writers",
+      "support": "Support",
       "users": "Users"
     },
     "searchPlaceholder": "Search by username...",
@@ -222,6 +224,7 @@
     "roles": {
       "user": "User",
       "writer": "Writer",
+      "support": "Support",
       "admin": "Admin"
     },
     "ownRoleError": "You cannot change your own role.",
@@ -421,6 +424,7 @@
     "statusInconclusive": "Inconclusive",
     "reviewedOn": "Reviewed on {date}",
     "notePrompt": "Note for the log (optional):",
+    "noteTooLong": "The note cannot exceed {max} characters.",
     "confirmBoosting": "Confirm that \"{server}\" inflates its player count? The server will get a public badge and be demoted in player-count rankings.",
     "saved": "Verdict recorded.",
     "error": "The action failed. Please try again.",
@@ -439,5 +443,45 @@
       "current": "Current verdict:",
       "none": "None"
     }
+  },
+  "serversPending": {
+    "title": "Server moderation",
+    "subtitle": "Servers awaiting approval before going public, and servers blocked by a moderator.",
+    "queueBadge": "{count} pending",
+    "loading": "Loading…",
+    "loadingList": "Loading servers…",
+    "accessDenied": "Access denied",
+    "moderatorOnly": "This section is restricted to administrators and support staff.",
+    "emptyTitle": "Nothing to review",
+    "emptyDescription": "Newly submitted servers awaiting approval will appear here.",
+    "statusPending": "Pending approval",
+    "statusBlocked": "Blocked",
+    "submittedOn": "Submitted on {date}",
+    "reviewedOn": "Reviewed on {date}",
+    "searchTitle": "Search any server",
+    "searchPlaceholder": "Search by name or address…",
+    "searchEmpty": "No server matches.",
+    "verdictApprove": "Approve",
+    "verdictBlock": "Block",
+    "verdictUnblock": "Unblock",
+    "notePrompt": "Note for the log (optional):",
+    "noteTooLong": "The note cannot exceed {max} characters.",
+    "confirmBlock": "Block \"{server}\"? It will disappear from every public page and stop being pinged until an admin or support user lifts the block.",
+    "saved": "Verdict recorded.",
+    "error": "The action failed. Please try again.",
+    "reportsTitle": "Reports ({count})",
+    "reportsEmpty": "No open report — reported servers will show up here.",
+    "reportReason": "Reason: {reason}",
+    "reportReasons": {
+      "scam": "Scam",
+      "inappropriate_content": "Inappropriate content",
+      "offline": "Always offline / unreachable",
+      "fake_playercount": "Fake player count",
+      "other": "Other"
+    },
+    "reportedBy": "Reported by {username}",
+    "reportedOn": "Reported on {date}",
+    "resolveReport": "Resolve",
+    "reportResolved": "Report resolved."
   }
 }

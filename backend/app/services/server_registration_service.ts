@@ -80,6 +80,7 @@ export default class ServerRegistrationService {
       faviconHash: fingerprint.faviconHash,
       resolvedEndpoint: fingerprint.resolvedEndpoint,
       motdHash: fingerprint.motdHash,
+      moderationStatus: 'pending',
     })
 
     await server.related('categories').attach(await Server.resolveCategoryIds(categories))

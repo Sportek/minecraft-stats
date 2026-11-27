@@ -1,0 +1,30 @@
+name: Attribution
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  no-ai-attribution:
+    name: Pas d'attribution IA
+    # Une PR de mise en prod (staging -> main) ne contient que des commits déjà passés
+    # par ce check sur leur propre PR (et quelques anciens commits d'avant le check) :
+    # inutile de les revérifier. Un job sauté compte comme réussi pour un check requis.
+    if: github.head_ref != 'staging'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Titre et description passent par l'environnement, jamais interpolés dans le
+      # script : un titre de PR contenant du shell ne doit pas pouvoir s'exécuter.
+      - name: Vérifier commits, titre et description
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: .github/scripts/check-ai-attribution.sh

@@ -15,6 +15,7 @@ export type ScannedRoutes = {
     'server_votes.store': { paramsTuple: [ParamValue]; params: {'serverId': ParamValue} }
     'server_votes.status': { paramsTuple: [ParamValue]; params: {'serverId': ParamValue} }
     'servers.update_visibility': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_reports.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.status': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.start_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.verify_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -89,6 +90,11 @@ export type ScannedRoutes = {
     'server_ownership.reject': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_boost.admin_index': { paramsTuple?: []; params?: {} }
     'server_boost.review': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_moderation.admin_index': { paramsTuple?: []; params?: {} }
+    'server_moderation.search': { paramsTuple?: []; params?: {} }
+    'server_moderation.review': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_reports.admin_index': { paramsTuple?: []; params?: {} }
+    'server_reports.resolve': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.update_role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -139,6 +145,9 @@ export type ScannedRoutes = {
     'analytics.users': { paramsTuple?: []; params?: {} }
     'server_ownership.admin_index': { paramsTuple?: []; params?: {} }
     'server_boost.admin_index': { paramsTuple?: []; params?: {} }
+    'server_moderation.admin_index': { paramsTuple?: []; params?: {} }
+    'server_moderation.search': { paramsTuple?: []; params?: {} }
+    'server_reports.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.admin_index': { paramsTuple?: []; params?: {} }
@@ -183,6 +192,9 @@ export type ScannedRoutes = {
     'analytics.users': { paramsTuple?: []; params?: {} }
     'server_ownership.admin_index': { paramsTuple?: []; params?: {} }
     'server_boost.admin_index': { paramsTuple?: []; params?: {} }
+    'server_moderation.admin_index': { paramsTuple?: []; params?: {} }
+    'server_moderation.search': { paramsTuple?: []; params?: {} }
+    'server_reports.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_index': { paramsTuple?: []; params?: {} }
     'users.admin_show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.admin_index': { paramsTuple?: []; params?: {} }
@@ -192,6 +204,7 @@ export type ScannedRoutes = {
   POST: {
     'servers.store': { paramsTuple?: []; params?: {} }
     'server_votes.store': { paramsTuple: [ParamValue]; params: {'serverId': ParamValue} }
+    'server_reports.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.start_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.verify_motd': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.start_dns': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -226,6 +239,8 @@ export type ScannedRoutes = {
     'server_ownership.approve': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_ownership.reject': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'server_boost.review': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_moderation.review': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'server_reports.resolve': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'advertisements.store': { paramsTuple?: []; params?: {} }
     'uploads.upload_image': { paramsTuple?: []; params?: {} }
   }

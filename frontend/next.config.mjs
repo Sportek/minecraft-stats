@@ -33,6 +33,9 @@ const cspReportOnly = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Don't let `next dev` write/restore a managed AGENTS.md when it detects an AI agent.
+  agentRules: false,
+
   // Enable standalone output for optimized Docker builds
   output: "standalone",
 
@@ -77,6 +80,9 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  // React Compiler : mémoïse automatiquement les composants. Ceux qui désactivent une
+  // règle react-hooks (eslint-disable) sont ignorés par le compilateur et restent tels quels.
+  reactCompiler: true,
   productionBrowserSourceMaps: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",

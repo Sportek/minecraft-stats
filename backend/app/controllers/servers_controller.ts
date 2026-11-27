@@ -138,14 +138,8 @@ export default class ServersController {
     }
   }
 
-  /**
-   * Fiche publique d'un serveur, sous une forme cachable : l'absence et le masquage
-   * sont mis en cache au même titre que la fiche, pour ne pas repayer la requête à
-   * chaque visite d'un lien mort.
-   */
-  private async loadPublicServer(serverId: number) {
-    // withHidden : un serveur masqué répond 410 (page dédiée), pas 404.
-    const server = await Server.query()
+  private async findServerForDetail(serverId: number): Promise<Server | null> {
+    return Server.query()
       .apply((scopes) => scopes.withHidden())
       .where('id', serverId)
       .preload('user', (userQuery) => userQuery.select('id', 'username', 'avatarUrl'))
@@ -153,17 +147,30 @@ export default class ServersController {
       .preload('categories')
       .preload('languages')
       .first()
-    if (!server) return { status: 'missing' as const }
-    if (server.hiddenAt) return { status: 'hidden' as const }
+  }
 
+  private async buildServerBody(server: Server) {
     const stats = await ServerStat.query()
       .where('server_id', server.id)
       .orderBy('created_at', 'desc')
       .limit(1)
-    return {
-      status: 'visible' as const,
-      body: { server, stats, categories: server.categories, growthStat: server.growthStat },
-    }
+    return { server, stats, categories: server.categories, growthStat: server.growthStat }
+  }
+
+  private async loadPublicServer(serverId: number) {
+    const server = await this.findServerForDetail(serverId)
+    if (!server) return { status: 'missing' as const }
+    if (server.hiddenAt) return { status: 'hidden' as const }
+    if (server.moderationStatus === 'pending') return { status: 'missing' as const }
+    if (server.moderationStatus === 'blocked') return { status: 'blocked' as const }
+
+    return { status: 'visible' as const, body: await this.buildServerBody(server) }
+  }
+
+  private async loadServerForModerator(serverId: number) {
+    const server = await this.findServerForDetail(serverId)
+    if (!server) return { status: 'missing' as const }
+    return { status: 'visible' as const, body: await this.buildServerBody(server) }
   }
 
   /**
@@ -171,17 +178,26 @@ export default class ServersController {
    * @operationId showServer
    * @tag SERVERS
    * @summary Get a single server by id
-   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. A server hidden by its owner returns 410 with `hidden: true` and no server details. Responses are cached for 60 seconds and purged whenever the server is modified; pass `nocache=1` to bypass the cache (effective in non-production environments or for admin users). Publicly accessible.
+   * @description Returns a single server with its preloaded categories, languages, growthStat, and the most recent ServerStat snapshot. A server hidden by its owner returns 410 with `hidden: true` and no server details; a server blocked by moderation returns 410 with `blocked: true`; a server still pending moderation returns 404 as if it did not exist — EXCEPT for an authenticated admin/support caller (silent auth), who sees it in full regardless of moderation status, so a server reachable only through the moderation queue or a direct link can still be reviewed. Responses are cached for 60 seconds and purged whenever the server is modified (never for the admin/support view, which always reads fresh); pass `nocache=1` to bypass the cache (effective in non-production environments or for admin users). Publicly accessible.
    * @paramPath id - The server id - @type(number) @example(134) @required
    * @responseBody 200 - {"server": "<Server>", "stats": ["<ServerStat>"], "categories": ["<Category>"], "growthStat": "<ServerGrowthStat>"}
    * @responseBody 404 - {"message": "Server not found"}
    * @responseBody 410 - {"message": "This server has chosen not to be listed on Minecraft Stats.", "hidden": true}
+   * @responseBody 410 - {"message": "This server has been removed from Minecraft Stats by moderation.", "blocked": true}
    */
   async show(ctx: HttpContext) {
-    const { params, response, i18n } = ctx
+    const { params, response, i18n, auth } = ctx
     const serverId = Number(params.id)
     if (!Number.isInteger(serverId) || serverId <= 0) {
       return response.notFound({ message: i18n.t('messages.servers.notFound') })
+    }
+
+    if (auth.user?.isModerator) {
+      const result = await this.loadServerForModerator(serverId)
+      if (result.status === 'missing') {
+        return response.notFound({ message: i18n.t('messages.servers.notFound') })
+      }
+      return result.body
     }
 
     const result = await CacheService.cacheOrFetch(
@@ -195,6 +211,9 @@ export default class ServersController {
     }
     if (result.status === 'hidden') {
       return response.gone({ message: i18n.t('messages.servers.hidden'), hidden: true })
+    }
+    if (result.status === 'blocked') {
+      return response.gone({ message: i18n.t('messages.servers.blocked'), blocked: true })
     }
     return result.body
   }

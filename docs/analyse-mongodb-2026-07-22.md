@@ -171,7 +171,7 @@ Le candidat pertinent n'est pas MongoDB « document » mais les **time series co
 donc Lucid, les migrations, les policies et les jointures continuent de fonctionner. Ses
 *continuous aggregates* font exactement, et automatiquement, ce que `backfill:hourly-stats` et
 `backfill:daily-stats` font à la main — avec rafraîchissement incrémental, ce qui supprimerait
-la procédure de backfill d'une heure documentée dans `memory/stats-rollups-backfill.md`.
+la procédure de backfill d'une heure documentée dans `docs/stats-rollups.md`.
 
 ---
 

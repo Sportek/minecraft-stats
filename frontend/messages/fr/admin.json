@@ -204,12 +204,14 @@
       "total": "Total des utilisateurs",
       "admins": "Administrateurs",
       "writers": "Rédacteurs",
+      "support": "Support",
       "members": "Membres"
     },
     "tabs": {
       "all": "Tous",
       "admins": "Administrateurs",
       "writers": "Rédacteurs",
+      "support": "Support",
       "users": "Utilisateurs"
     },
     "searchPlaceholder": "Rechercher par nom d'utilisateur...",
@@ -222,6 +224,7 @@
     "roles": {
       "user": "Utilisateur",
       "writer": "Rédacteur",
+      "support": "Support",
       "admin": "Administrateur"
     },
     "ownRoleError": "Vous ne pouvez pas modifier votre propre rôle.",
@@ -421,6 +424,7 @@
     "statusInconclusive": "Non concluant",
     "reviewedOn": "Revu le {date}",
     "notePrompt": "Note pour le journal (optionnelle) :",
+    "noteTooLong": "La note ne peut pas dépasser {max} caractères.",
     "confirmBoosting": "Confirmer que « {server} » gonfle ses connectés ? Le serveur recevra un badge public et sera rétrogradé dans les classements par nombre de joueurs.",
     "saved": "Verdict enregistré.",
     "error": "L'action a échoué. Veuillez réessayer.",
@@ -439,5 +443,45 @@
       "current": "Verdict actuel :",
       "none": "Aucun"
     }
+  },
+  "serversPending": {
+    "title": "Modération des serveurs",
+    "subtitle": "Serveurs en attente d'approbation avant mise en ligne, et serveurs bloqués par un modérateur.",
+    "queueBadge": "{count} en attente",
+    "loading": "Chargement…",
+    "loadingList": "Chargement des serveurs…",
+    "accessDenied": "Accès refusé",
+    "moderatorOnly": "Cette section est réservée aux administrateurs et au support.",
+    "emptyTitle": "Rien à revoir",
+    "emptyDescription": "Les serveurs nouvellement soumis en attente d'approbation apparaîtront ici.",
+    "statusPending": "En attente d'approbation",
+    "statusBlocked": "Bloqué",
+    "submittedOn": "Soumis le {date}",
+    "reviewedOn": "Revu le {date}",
+    "searchTitle": "Rechercher n'importe quel serveur",
+    "searchPlaceholder": "Rechercher par nom ou adresse…",
+    "searchEmpty": "Aucun serveur ne correspond.",
+    "verdictApprove": "Approuver",
+    "verdictBlock": "Bloquer",
+    "verdictUnblock": "Débloquer",
+    "notePrompt": "Note pour le journal (optionnelle) :",
+    "noteTooLong": "La note ne peut pas dépasser {max} caractères.",
+    "confirmBlock": "Bloquer « {server} » ? Il disparaîtra de toutes les pages publiques et ne sera plus pingué jusqu'à ce qu'un admin ou le support lève le blocage.",
+    "saved": "Verdict enregistré.",
+    "error": "L'action a échoué. Veuillez réessayer.",
+    "reportsTitle": "Signalements ({count})",
+    "reportsEmpty": "Aucun signalement ouvert — les serveurs signalés apparaîtront ici.",
+    "reportReason": "Motif : {reason}",
+    "reportReasons": {
+      "scam": "Arnaque",
+      "inappropriate_content": "Contenu inapproprié",
+      "offline": "Toujours hors ligne / injoignable",
+      "fake_playercount": "Nombre de connectés truqué",
+      "other": "Autre"
+    },
+    "reportedBy": "Signalé par {username}",
+    "reportedOn": "Signalé le {date}",
+    "resolveReport": "Résoudre",
+    "reportResolved": "Signalement résolu."
   }
 }

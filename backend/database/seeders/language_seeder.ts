@@ -17,6 +17,7 @@ export default class extends BaseSeeder {
         updated_at: now,
       }))
 
-    await Language.createMany(languages)
+    // Relançable (db:seed, DemoSeeder) : une langue déjà présente est mise à jour, pas dupliquée.
+    await Language.updateOrCreateMany('code', languages)
   }
 }
