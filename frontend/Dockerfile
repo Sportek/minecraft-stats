@@ -25,7 +25,6 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Accept build arguments for NEXT_PUBLIC_* variables
@@ -61,12 +60,14 @@ ENV NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL
 # Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# node_modules est monté depuis `deps` au lieu d'être copié : un COPY en ferait une
+# deuxième couche de ~650 Mo, réexportée dans le cache de build à chaque changement
+# de yarn.lock. Le montage est en écriture (`rw`) parce que certains outils écrivent
+# dans node_modules/.cache ; ces écritures sont jetées à la fin de l'étape.
+# `.next/cache` (~130 Mo) ne sert qu'aux builds incrémentaux locaux : supprimé dans la
+# même étape, il ne gonfle ni la couche ni le cache exporté.
+RUN --mount=type=bind,from=deps,source=/app/node_modules,target=/app/node_modules,rw \
+  yarn run build && rm -rf .next/cache
 
 # Production image, copy all the files and run next
 FROM base AS runner
