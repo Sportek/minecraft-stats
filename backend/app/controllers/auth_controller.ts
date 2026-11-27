@@ -113,7 +113,7 @@ export default class AuthController {
     // Anti-énumération : la réponse est toujours identique. On n'envoie le mail que
     // pour un compte local vérifié — les comptes OAuth n'ont pas de mot de passe
     // utilisable (le login les rejette), un reset ne leur servirait à rien.
-    if (user && user.verified && !user.provider) {
+    if (user?.verified && !user.provider) {
       // Token brut fort envoyé par mail ; seul son hash SHA-256 est persisté, donc
       // une fuite de la table ne permet pas de forger un reset. Valide 1h.
       const rawToken = randomBytes(32).toString('base64url')
@@ -146,11 +146,7 @@ export default class AuthController {
     const user = await User.findBy('password_reset_token', tokenHash)
 
     // Message unique pour token inconnu OU expiré : on ne distingue pas les deux.
-    if (
-      !user ||
-      !user.passwordResetTokenExpires ||
-      user.passwordResetTokenExpires < DateTime.now()
-    ) {
+    if (!user?.passwordResetTokenExpires || user.passwordResetTokenExpires < DateTime.now()) {
       return response.badRequest({ message: i18n.t('messages.auth.invalidResetToken') })
     }
 

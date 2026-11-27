@@ -27,7 +27,7 @@ export default class UserProvidersController {
       .first()
 
     // Message unique pour token inconnu OU expiré : on ne distingue pas les deux.
-    if (!link || !link.linkTokenExpiresAt || link.linkTokenExpiresAt < DateTime.now()) {
+    if (!link?.linkTokenExpiresAt || link.linkTokenExpiresAt < DateTime.now()) {
       return response.badRequest({ message: i18n.t('messages.auth.invalidProviderLinkToken') })
     }
 

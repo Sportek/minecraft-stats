@@ -60,7 +60,7 @@ export async function fetchSpec(retries = 10, delayMs = 3000): Promise<OpenApiSp
       // parseYaml gère les deux formats indifféremment.
       const text = await res.text()
       const spec = parseYaml(text) as OpenApiSpec
-      if (!spec || !spec.paths) throw new Error('Spec OpenAPI invalide : "paths" manquant')
+      if (!spec?.paths) throw new Error('Spec OpenAPI invalide : "paths" manquant')
       return spec
     } catch (error) {
       lastError = error
