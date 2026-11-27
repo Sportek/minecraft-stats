@@ -24,5 +24,6 @@ export const controllers = {
   Uploads: () => import('#controllers/uploads_controller'),
   UserProviders: () => import('#controllers/user_providers_controller'),
   Users: () => import('#controllers/users_controller'),
+  Webhooks: () => import('#controllers/webhooks_controller'),
   WebsiteStats: () => import('#controllers/website_stats_controller'),
 }

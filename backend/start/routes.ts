@@ -321,6 +321,22 @@ router
           .get('analytics/users', '#controllers/analytics_controller.users')
           .use([middleware.admin(), throttleLight('admin.analytics.users', 30), NO_STORE])
 
+        router
+          .get('webhooks', '#controllers/webhooks_controller.index')
+          .use([middleware.admin(), throttleLight('admin.webhooks.index', 30), NO_STORE])
+        router
+          .post('webhooks', '#controllers/webhooks_controller.store')
+          .use([middleware.admin(), throttleLight('admin.webhooks.write', 20), NO_STORE])
+        router
+          .patch('webhooks/:id', '#controllers/webhooks_controller.update')
+          .use([middleware.admin(), throttleLight('admin.webhooks.write', 20), NO_STORE])
+        router
+          .delete('webhooks/:id', '#controllers/webhooks_controller.destroy')
+          .use([middleware.admin(), throttleLight('admin.webhooks.write', 20), NO_STORE])
+        router
+          .post('webhooks/:id/test', '#controllers/webhooks_controller.test')
+          .use([middleware.admin(), throttleLight('admin.webhooks.test', 10), NO_STORE])
+
         // Ownership claims — manual review queue (admin only)
         router
           .get('ownership-claims', '#controllers/server_ownership_controller.adminIndex')
