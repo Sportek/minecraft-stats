@@ -31,7 +31,7 @@ const DEFAULT_PORT: Record<"java" | "bedrock", string> = {
 };
 
 const AddServerForm: FC<AddServerFormProps> = ({ className, ...props }) => {
-  const { data, isLoading, error } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
+  const { data, isLoading } = useSWRImmutable<Category[]>(`${getBaseUrl()}/categories`, fetcher);
   const { data: languagesData } = useSWRImmutable<Language[]>(`${getBaseUrl()}/languages`, fetcher);
 
   const categories = data || [];
