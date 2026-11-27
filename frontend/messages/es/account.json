@@ -24,7 +24,8 @@
     "tooLargeTitle": "Imagen demasiado grande",
     "tooLargeDescription": "El tamaño máximo es de 5 MB.",
     "updated": "Foto de perfil actualizada",
-    "uploadFailed": "Error al subir"
+    "uploadFailed": "Error al subir",
+    "cropTitle": "Recorta tu foto de perfil"
   },
   "dangerZone": {
     "heading": "Zona de peligro"
