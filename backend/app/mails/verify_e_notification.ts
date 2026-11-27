@@ -6,7 +6,7 @@ export default class VerifyENotification extends BaseMail {
   from = 'no-reply@minecraft-stats.fr'
   subject: string
 
-  private t: ReturnType<typeof i18nManager.locale>
+  private readonly t: ReturnType<typeof i18nManager.locale>
 
   constructor(
     public user: User,

@@ -11,8 +11,8 @@ export default class OwnershipClaimReviewedNotification extends BaseMail {
   from = 'no-reply@minecraft-stats.fr'
   subject: string
 
-  private t: ReturnType<typeof i18nManager.locale>
-  private key: string
+  private readonly t: ReturnType<typeof i18nManager.locale>
+  private readonly key: string
 
   constructor(
     public user: User,
